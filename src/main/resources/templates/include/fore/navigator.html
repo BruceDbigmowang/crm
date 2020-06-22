@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>诺而为CRM登录页面</title>
+</head>
+<body >
+    <div th:fragment="html">
+        <div class="navitagorDiv" style="color:#999;">
+            <nav class="navbar navbar-default navbar-fixed-top navbar-inverse" style="width:100%;height:7.5%;background-color: #303342;">
+                <div style="display:inline-block;width:22%;line-height:48px;vertical-align:middle;color: #975c32;padding-left:40px;position: relative;float: left">
+                    <img style="vertical-align:middle;hiehgt:50px;float:none !important;margin-top: -10px;"  src="./image/logo1.png" width="60px">
+                    <div style="display: inline-block">
+                        <span class="" style="font-size: 18px;padding:0px 2px 0px 2px;">|</span>
+                        <span style="font-size:14px;color: #da894f">诺而为CRM管理系统</span>
+                    </div>
+                </div>
+
+                <div style="width:78%;float:left;line-height: 50px">
+<!--                    <span >公司名称</span>-->
+<!---->
+                    <div style="float:right;text-align:center;display:inline-block;">
+
+                        <div id="operatebook" style="cursor:pointer;float:left;line-height:50px;margin-left: -80px">
+                            <span class=" glyphicon glyphicon-bell" style="font-size: 20px;top:8px;color: white"></span>
+                            <i class="badge" style="position: absolute;top: 8px;background-color: red;padding:2px 5px;">99+</i>
+                        </div>
+                        <span style="position: absolute;right: 160px;font-size: 20px;color: white;">|</span>
+
+                        <ul class="top-right" style="position: relative;padding-left: 10px;">
+                            <li class="dropdown-link">
+                                <a href="#" class="btn dropdown-toggle" id="dropdownMenu1" data-toggle="dropdown">
+                                    <img src="./image/logo1.png" class="img-circle" height="40px" style="margin-top: -10px"/>
+                                    <b style="color: white">chenpeng</b>
+                                    <span class="caret" style="color: white"></span>
+                                </a>
+                                <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
+                                    <li >
+                                        <a href="#">个人中心</a>
+                                    </li>
+                                    <li>
+                                        <a th:href="@{logout}">退出</a>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+
+                </div>
+            </nav>
+        </div>
+    </div>
+</body>
+</html>

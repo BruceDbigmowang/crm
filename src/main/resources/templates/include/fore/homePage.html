@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>诺而为CRM管理系统</title>
+    <script src="./js/jquery/2.0.0/jquery.min.js"></script>
+    <style type="text/css">
+        ul,li{
+            list-style: none;
+        }
+        li.parent_li a.first_menu span.open{
+            position: absolute;
+            right: 25px;
+            top: 0px;
+        }
+        li.children_li a.secound_menu span.open{
+            position: absolute;
+            right: 5px;
+            top: 0px;
+        }
+        li.parent_li a.first_menu span.closed{
+            position: absolute;
+            right: 25px;
+            top: 0px;
+        }
+        li.parent_li a.secound_menu span.closed{
+            position: absolute;
+            right: 5px;
+            top: 0px;
+        }
+        .hide_ul{
+            display: none;
+        }
+        .show_ul{
+            padding-left: 0px;
+        }
+        div.parent_li_head{
+            /*background-color:#333333;*/
+            cursor:pointer;
+        }
+        div.parent_li_head index{
+            background-color:#2c2c2c;
+        }
+        div.left_menu ul li ul li{
+            cursor:pointer;
+        }
+        div.left_menu ul li ul li:hover{
+            background-color: #303342;
+        }
+        .color_change{
+            background-color:#ff9334;
+            color:white;
+        }
+
+        ul.tree{
+            height:100%;
+            line-height:35px;
+            text-align:center;
+            padding-left: 0px;
+        }
+
+        li.parent_li{
+            position: relative;
+            display: block;
+        }
+        li.parent_li a.first_menu{
+            display: block;
+            margin: 0px -20px;
+            position: relative;
+            padding: 1px 20px 1px 54px;
+            text-align: left;
+        }
+        li.parent_li a.secound_menu{
+            display: block;
+            margin: 0px 0px;
+            position: relative;
+            padding: 1px 20px 1px 35px;
+            text-align: left;
+        }
+        span.icon{
+            position: absolute;
+            left: 25px;
+            top: 2px;
+            width: 24px;
+            height: 24px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body >
+    <div th:fragment="html">
+
+        <div class="content_container" style="width:100%;height:100%;position:absolute;">
+            <div class="left_container" style="width:14%;height:100%;overflow:hidden;background-color:#303342;float:left;position: relative">
+                <div class="left_menu" style="width:106%;height:100%;color:#999;overflow-x:hidden;overflow-y:scroll;">
+                    <ul class="tree" style="">
+
+                        <li class="parent_li" style="">
+                            <div class="parent_li_head">
+                                <a href="#" class="first_menu" style="">
+                                    <span class="icon color1" style="">
+                                        <i class="	glyphicon glyphicon-wrench"></i>
+                                    </span>
+                                    日程管理
+                                    <span class="closed" style="">
+                                        <i class="glyphicon glyphicon-chevron-down" ></i>
+                                    </span>
+                                </a>
+                            </div>
+                            <ul class="hide_ul">
+                                <li class="children_li">
+                                    <div class="parent_li_head">
+                                        <a href="#" class="secound_menu" style="">
+                                            <span class="icon color1" style="">
+
+                                            </span>
+                                                    待办事项
+                                                    <span class="closed" style="">
+                                                <i class="glyphicon glyphicon-chevron-down" ></i>
+                                            </span>
+                                        </a>
+                                    </div>
+
+                                    <ul class="hide_ul">
+                                        <li>
+                                            <div class="same_div" link_url="include/fore/homePages/scheduleManage/doList/travelPlan.html">出差计划</div>
+                                        </li>
+                                        <li>
+                                            <div class="same_div" link_url="include/fore/homePages/scheduleManage/doList/visitRecord.html">拜访记录</div>
+                                        </li>
+                                        <li>
+                                            <div class="same_div" link_url="include/fore/homePages/scheduleManage/doList/eventTrack.html">事件跟踪</div>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+
+                        </li>
+                        <li class="parent_li">
+                            <div class="parent_li_head">
+                                <a href="#" class="first_menu" style="">
+                                    <span class="icon color1" style="">
+                                        <i class="	glyphicon glyphicon-wrench"></i>
+                                    </span>
+                                    客户管理
+                                    <span class="closed" style="">
+                                        <i class="glyphicon glyphicon-chevron-down" ></i>
+                                    </span>
+                                </a>
+                            </div>
+
+                            <ul class="hide_ul">
+                                <li>
+                                    <div class="same_div" link_url="include/fore/homePages/customerManage/customerMaintain/accountMaintain.html">账号维护</div>
+                                </li>
+                                <li>
+                                    <div class="same_div" link_url="include/fore/homePages/customerManage/customerMaintain/customerBase.html">客户维护</div>
+                                </li>
+                                <li class="children_li">
+                                    <div class="parent_li_head">
+                                        <a href="#" class="secound_menu" style="">
+                                            <span class="icon color1" style="">
+
+                                            </span>
+                                            客户应收款
+                                            <span class="closed" style="">
+                                                <i class="glyphicon glyphicon-chevron-down" ></i>
+                                            </span>
+                                        </a>
+                                    </div>
+                                    <ul class="hide_ul">
+                                        <li>
+                                            <div class="same_div" link_url="include/fore/homePages/customerManage/customerReceive/receiveDueReport.html">到期应收款明细</div>
+                                        </li>
+                                        <li>
+                                            <div class="same_div" link_url="include/fore/homePages/customerManage/customerReceive/invoiceReport.html">开票明细</div>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="children_li">
+                                    <div class="parent_li_head">
+                                        <a href="#" class="secound_menu" style="">
+                                            <span class="icon color1" style="">
+
+                                            </span>
+                                            竞争对手维护
+                                            <span class="closed" style="">
+                                                <i class="glyphicon glyphicon-chevron-down" ></i>
+                                            </span>
+                                        </a>
+                                    </div>
+                                    <ul class="hide_ul">
+                                        <li>
+                                            <div class="same_div" link_url="include/fore/homePages/customerManage/competitorMaintain/competitorBase.html">竞争对手新增</div>
+                                        </li>
+                                        <li>
+                                            <div class="same_div" link_url="include/fore/homePages/customerManage/competitorMaintain/marketWorth.html">潜在市场价值</div>
+                                        </li>
+                                        <li>
+                                            <div class="same_div" link_url="include/fore/homePages/customerManage/competitorMaintain/serviceDirection.html">业务风向</div>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="parent_li">
+                            <div class="parent_li_head">
+                                <a href="#" class="first_menu" style="">
+                                    <span class="icon color1" style="">
+                                        <i class="	glyphicon glyphicon-wrench"></i>
+                                    </span>
+                                    商机管理
+                                    <span class="closed" style="">
+                                        <i class="glyphicon glyphicon-chevron-down" ></i>
+                                    </span>
+                                </a>
+                            </div>
+                            <ul class="hide_ul">
+                                <li class="children_li">
+                                    <div class="parent_li_head">
+                                        <a href="#" class="secound_menu" style="">
+                                            <span class="icon color1" style="">
+
+                                            </span>
+                                            营销费用
+                                            <span class="closed" style="">
+                                                <i class="glyphicon glyphicon-chevron-down" ></i>
+                                            </span>
+                                        </a>
+                                    </div>
+                                    <ul class="hide_ul">
+                                        <li>
+                                            <div class="same_div" link_url="include/fore/homePages/businessManage/marketCostMaintain/costBase.html">费用新增</div>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="children_li">
+                                    <div class="parent_li_head">
+                                        <a href="#" class="secound_menu" style="">
+                                            <span class="icon color1" style="">
+
+                                            </span>
+                                            营销分类
+                                            <span class="closed" style="">
+                                                <i class="glyphicon glyphicon-chevron-down" ></i>
+                                            </span>
+                                        </a>
+                                    </div>
+                                    <ul class="hide_ul">
+                                        <li>
+                                            <div class="same_div" link_url="include/fore/homePages/businessManage/marketClassify/seminarCommunication.html">研讨交流会</div>
+                                        </li>
+                                        <li>
+                                            <div class="same_div" link_url="include/fore/homePages/businessManage/marketClassify/email.html">邮件营销</div>
+                                        </li>
+                                        <li>
+                                            <div class="same_div" link_url="include/fore/homePages/businessManage/marketClassify/wechatGZH.html">公众号文案</div>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="children_li">
+                                    <div class="parent_li_head">
+                                        <a href="#" class="secound_menu" style="">
+                                            <span class="icon color1" style="">
+
+                                            </span>
+                                            市场活动
+                                            <span class="closed" style="">
+                                                <i class="glyphicon glyphicon-chevron-down" ></i>
+                                            </span>
+                                        </a>
+                                    </div>
+                                    <ul class="hide_ul">
+                                        <li>
+                                            <div class="same_div" link_url="include/fore/homePages/businessManage/marketActivity/activityBase.html">市场活动维护</div>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="children_li">
+                                    <div class="parent_li_head">
+                                        <a href="#" class="secound_menu" style="">
+                                            <span class="icon color1" style="">
+
+                                            </span>
+                                            市场调查
+                                            <span class="closed" style="">
+                                                <i class="glyphicon glyphicon-chevron-down" ></i>
+                                            </span>
+                                        </a>
+                                    </div>
+                                    <ul class="hide_ul">
+                                        <li>
+                                            <div class="same_div" link_url="include/fore/homePages/businessManage/marketSurvey/surveyBase.html">市场调查维护</div>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="children_li">
+                                    <div class="parent_li_head">
+                                        <a href="#" class="secound_menu" style="">
+                                            <span class="icon color1" style="">
+
+                                            </span>
+                                            商机/线索
+                                            <span class="closed" style="">
+                                                <i class="glyphicon glyphicon-chevron-down" ></i>
+                                            </span>
+                                        </a>
+                                    </div>
+                                    <ul class="hide_ul">
+                                        <li>
+                                            <div class="same_div" link_url="include/fore/homePages/businessManage/marketOpportunities/opportunitiesBase.html">商机/线索维护</div>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="children_li">
+                                    <div class="parent_li_head">
+                                        <a href="#" class="secound_menu" style="">
+                                            <span class="icon color1" style="">
+
+                                            </span>
+                                            样品管理
+                                            <span class="closed" style="">
+                                                <i class="glyphicon glyphicon-chevron-down" ></i>
+                                            </span>
+                                        </a>
+                                    </div>
+                                    <ul class="hide_ul">
+                                        <li>
+                                            <div class="same_div" link_url="include/fore/homePages/businessManage/sampleMaintain/sampleApplication.html">样品申请</div>
+                                        </li>
+                                        <li>
+                                            <div class="same_div" link_url="include/fore/homePages/businessManage/sampleMaintain/samplePath.html">样品动线</div>
+                                        </li>
+                                        <li>
+                                            <div class="same_div" link_url="include/fore/homePages/businessManage/sampleMaintain/sampleStock.html">样品回库</div>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="children_li">
+                                    <div class="parent_li_head">
+                                        <a href="#" class="secound_menu" style="">
+                                            <span class="icon color1" style="">
+                                            </span>
+                                            商机管理
+                                            <span class="closed" style="">
+                                                <i class="glyphicon glyphicon-chevron-down" ></i>
+                                            </span>
+                                        </a>
+                                    </div>
+                                    <ul class="hide_ul">
+                                        <li>
+                                            <div class="same_div" link_url="include/fore/homePages/businessManage/businessMaintain/businessTrack.html">商机跟踪</div>
+                                        </li>
+                                        <li>
+                                            <div class="same_div" link_url="include/fore/homePages/businessManage/businessMaintain/businessReport.html">商机统计</div>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <li class="parent_li">
+                            <div class="parent_li_head">
+                                <a href="#" class="first_menu" style="">
+                                    <span class="icon color1" style="">
+                                        <i class="	glyphicon glyphicon-wrench"></i>
+                                    </span>
+                                    销售过程
+                                    <span class="closed" style="">
+                                        <i class="glyphicon glyphicon-chevron-down" ></i>
+                                    </span>
+                                </a>
+                            </div>
+                            <ul class="hide_ul">
+                                <li class="children_li">
+                                    <div class="parent_li_head">
+                                        <a href="#" class="secound_menu" style="">
+                                            <span class="icon color1" style="">
+
+                                            </span>
+                                            销售预测
+                                            <span class="closed" style="">
+                                                <i class="glyphicon glyphicon-chevron-down" ></i>
+                                            </span>
+                                        </a>
+                                    </div>
+                                    <ul class="hide_ul">
+                                        <li>
+                                            <div class="same_div" link_url="include/fore/homePages/saleProcessManage/salePredictionMaintain/salePredictionBase.html">销售预测维护</div>
+                                        </li>
+                                        <li>
+                                            <div class="same_div" link_url="include/fore/homePages/saleProcessManage/salePredictionMaintain/saleFunnel.html">销售漏斗</div>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="children_li">
+                                    <div class="parent_li_head">
+                                        <a href="#" class="secound_menu" style="">
+                                            <span class="icon color1" style="">
+
+                                            </span>
+                                            销售计划
+                                            <span class="closed" style="">
+                                                <i class="glyphicon glyphicon-chevron-down" ></i>
+                                            </span>
+                                        </a>
+                                    </div>
+                                    <ul class="hide_ul">
+                                        <li>
+                                            <div class="same_div" link_url="include/fore/homePages/saleProcessManage/salePlanMaintain/salePlanBase.html">销售计划编制</div>
+                                        </li>
+                                        <li>
+                                            <div class="same_div" link_url="include/fore/homePages/saleProcessManage/salePlanMaintain/saleCostEstimate.html">销售费用估算</div>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="children_li">
+                                    <div class="parent_li_head">
+                                        <a href="#" class="secound_menu" style="">
+                                             <span class="icon color1" style="">
+
+                                            </span>
+                                            尽调
+                                            <span class="closed" style="">
+                                                <i class="glyphicon glyphicon-chevron-down" ></i>
+                                            </span>
+                                        </a>
+                                    </div>
+                                    <ul class="hide_ul">
+                                        <li>
+                                            <div class="same_div" link_url="include/fore/homePages/saleProcessManage/inquiryMaintain/inquiryBase.html">现场尽调</div>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="children_li">
+                                    <div class="parent_li_head">
+                                        <a href="#" class="secound_menu" style="">
+                                            <span class="icon color1" style="">
+
+                                            </span>
+                                            销售价格
+                                            <span class="closed" style="">
+                                                <i class="glyphicon glyphicon-chevron-down" ></i>
+                                            </span>
+                                        </a>
+                                    </div>
+                                    <ul class="hide_ul">
+                                        <li>
+                                            <div class="same_div" link_url="include/fore/homePages/saleProcessManage/salePriceMaintain/productKindBase.html">品名种类维护</div>
+                                        </li>
+                                        <li>
+                                            <div class="same_div" link_url="include/fore/homePages/saleProcessManage/salePriceMaintain/priceListBase.html">销售价格维护</div>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="children_li">
+                                    <div class="parent_li_head">
+                                        <a href="#" class="secound_menu" style="">
+                                            <span class="icon color1" style="">
+
+                                            </span>
+                                            总包方案
+                                            <span class="closed" style="">
+                                                <i class="glyphicon glyphicon-chevron-down" ></i>
+                                            </span>
+                                        </a>
+                                    </div>
+                                    <ul class="hide_ul">
+                                        <li>
+                                            <div class="same_div" link_url="include/fore/homePages/saleProcessManage/solutionMaintain/protocolBase.html">保密协议维护</div>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="children_li">
+                                    <div class="parent_li_head">
+                                        <a href="#" class="secound_menu" style="">
+                                            <span class="icon color1" style="">
+
+                                            </span>
+                                            项目管理
+                                            <span class="closed" style="">
+                                                <i class="glyphicon glyphicon-chevron-down" ></i>
+                                            </span>
+                                        </a>
+                                    </div>
+                                    <ul class="hide_ul">
+                                        <li>
+                                            <div class="same_div" link_url="include/fore/homePages/saleProcessManage/projectMaintain/projectBase.html">项目维护</div>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="children_li">
+                                    <div class="parent_li_head">
+                                        <a href="#" class="secound_menu" style="">
+                                            <span class="icon color1" style="">
+
+                                            </span>
+                                            订单追踪
+                                            <span class="closed" style="">
+                                                <i class="glyphicon glyphicon-chevron-down" ></i>
+                                            </span>
+                                        </a>
+                                    </div>
+                                    <ul class="hide_ul">
+                                        <li>
+                                            <div class="same_div" link_url="include/fore/homePages/saleProcessManage/orderTrackMaintain/orderTrack.html">订单执行跟踪</div>
+                                        </li>
+                                        <li>
+                                            <div class="same_div" link_url="include/fore/homePages/saleProcessManage/orderTrackMaintain/orderReport.html">成交状态</div>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="children_li">
+                                    <div class="parent_li_head">
+                                        <a href="#" class="secound_menu" style="">
+                                            <span class="icon color1" style="">
+
+                                            </span>
+                                            销售费用
+                                            <span class="closed" style="">
+                                                <i class="glyphicon glyphicon-chevron-down" ></i>
+                                            </span>
+                                        </a>
+                                    </div>
+                                    <ul class="hide_ul">
+                                        <li>
+                                            <div class="same_div" link_url="include/fore/homePages/saleProcessManage/saleCostMaintain/saleCostBase.html">销售费用维护</div>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="parent_li">
+                            <div class="parent_li_head">
+                                <a href="#" class="first_menu" style="">
+                                    <span class="icon color1" style="">
+                                        <i class="	glyphicon glyphicon-wrench"></i>
+                                    </span>
+                                    服务管理
+                                    <span class="closed" style="">
+                                        <i class="glyphicon glyphicon-chevron-down" ></i>
+                                    </span>
+                                </a>
+
+                            </div>
+
+                            <ul class="hide_ul">
+                                <li class="children_li">
+                                    <div class="parent_li_head">
+                                        <a href="#" class="secound_menu" style="">
+                                            <span class="icon color1" style="">
+
+                                            </span>
+                                            产品档案
+                                            <span class="closed" style="">
+                                                <i class="glyphicon glyphicon-chevron-down" ></i>
+                                            </span>
+                                        </a>
+                                    </div>
+                                    <ul class="hide_ul">
+                                        <li>
+                                            <div class="same_div" link_url="include/fore/homePages/serviceManage/productArchiveMaintain/productArchiveBase.html">产品档案维护</div>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="children_li">
+                                    <div class="parent_li_head">
+                                        <a href="#" class="secound_menu" style="">
+                                            <span class="icon color1" style="">
+                                            </span>
+                                            合同管理
+                                            <span class="closed" style="">
+                                                <i class="glyphicon glyphicon-chevron-down" ></i>
+                                            </span>
+                                        </a>
+                                    </div>
+                                    <ul class="hide_ul">
+                                        <li>
+                                            <div class="same_div" link_url="include/fore/homePages/serviceManage/contractMaintain/contractBase.html">总包合同维护</div>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="children_li">
+                                    <div class="parent_li_head">
+                                        <a href="#" class="secound_menu" style="">
+                                            <span class="icon color1" style="">
+
+                                            </span>
+                                            服务报价
+                                            <span class="closed" style="">
+                                                <i class="glyphicon glyphicon-chevron-down" ></i>
+                                            </span>
+                                        </a>
+                                    </div>
+                                    <ul class="hide_ul">
+                                        <li>
+                                            <div class="same_div" link_url="include/fore/homePages/serviceManage/priceQuoteMaintain/priceQuoteBase.html">报价维护</div>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="children_li">
+                                    <div class="parent_li_head">
+                                        <a href="#" class="secound_menu" style="">
+                                            <span class="icon color1" style="">
+
+                                            </span>
+                                            客户关怀
+                                            <span class="closed" style="">
+                                                <i class="glyphicon glyphicon-chevron-down" ></i>
+                                            </span>
+                                        </a>
+                                    </div>
+                                    <ul class="hide_ul">
+                                        <li>
+                                            <div class="same_div" link_url="include/fore/homePages/serviceManage/customerCareMaintain/customerCareBase.html">客户关怀维护</div>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="children_li">
+                                    <div class="parent_li_head">
+                                        <a href="#" class="secound_menu" style="">
+                                            <span class="icon color1" style="">
+
+                                            </span>
+                                            服务报表
+                                            <span class="closed" style="">
+                                                <i class="glyphicon glyphicon-chevron-down" ></i>
+                                            </span>
+                                        </a>
+                                    </div>
+                                    <ul class="hide_ul">
+                                        <li>
+                                            <div class="same_div" link_url="include/fore/homePages/serviceManage/serviceReportMaintain/serviceReport.html">待定</div>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="parent_li">
+                            <div class="parent_li_head">
+                                <a href="#" class="first_menu" style="">
+                                    <span class="icon color1" style="">
+                                        <i class="	glyphicon glyphicon-wrench"></i>
+                                    </span>
+                                    报表管理
+                                    <span class="closed" style="">
+                                        <i class="glyphicon glyphicon-chevron-down" ></i>
+                                    </span>
+                                </a>
+                            </div>
+
+                            <ul class="hide_ul">
+                                <li class="children_li">
+                                    <div class="parent_li_head">
+                                        <a href="#" class="secound_menu" style="">
+                                            <span class="icon color1" style="">
+
+                                            </span>
+                                            销售报表
+                                            <span class="closed" style="">
+                                                <i class="glyphicon glyphicon-chevron-down" ></i>
+                                            </span>
+                                        </a>
+                                    </div>
+                                    <ul class="hide_ul">
+                                        <li>
+                                            <div class="same_div" link_url="include/fore/homePages/reportManage/saleMaintain/salePlanReport.html">销售计划完成分析报表</div>
+                                        </li>
+                                        <li>
+                                            <div class="same_div" link_url="include/fore/homePages/reportManage/saleMaintain/competitorReport.html">竞争对手分析报表</div>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="children_li">
+                                    <div class="parent_li_head">
+                                        <a href="#" class="secound_menu" style="">
+                                            <span class="icon color1" style="">
+
+                                            </span>
+                                            服务追踪
+                                            <span class="closed" style="">
+                                                <i class="glyphicon glyphicon-chevron-down" ></i>
+                                            </span>
+                                        </a>
+                                    </div>
+                                    <ul class="hide_ul">
+                                        <li>
+                                            <div class="same_div" link_url="include/fore/homePages/reportManage/serviceTrackMaintain/serviceContractReport.html">服务合同追踪报表</div>
+                                        </li>
+                                        <li>
+                                            <div class="same_div" link_url="include/fore/homePages/reportManage/serviceTrackMaintain/serviceIncomeReport.html">服务收入报表</div>
+                                        </li>
+                                        <li>
+                                            <div class="same_div" link_url="include/fore/homePages/reportManage/serviceTrackMaintain/repairReport.html">维修假话报表</div>
+                                        </li>
+                                        <li>
+                                            <div class="same_div" link_url="include/fore/homePages/reportManage/serviceTrackMaintain/stockReport.html">现场库存报表</div>
+                                        </li>
+                                        <li>
+                                            <div class="same_div" link_url="include/fore/homePages/reportManage/serviceTrackMaintain/empExpatriateReport.html">外派员工报表</div>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <li class="parent_li">
+                            <div class="parent_li_head">
+                                <a href="#" class="first_menu" style="">
+                                    <span class="icon color1" style="">
+                                        <i class="	glyphicon glyphicon-wrench"></i>
+                                    </span>
+                                    系统配置
+                                    <span class="closed" style="">
+                                        <i class="glyphicon glyphicon-chevron-down" ></i>
+                                    </span>
+                                </a>
+
+                            </div>
+
+                            <ul class="hide_ul">
+                                <li class="children_li">
+                                    <div class="parent_li_head">
+                                        <a href="#" class="secound_menu" style="">
+                                            <span class="icon color1" style="">
+
+                                            </span>
+                                            账号角色维护
+                                            <span class="closed" style="">
+                                                <i class="glyphicon glyphicon-chevron-down" ></i>
+                                            </span>
+                                        </a>
+                                    </div>
+                                    <ul class="hide_ul">
+                                        <li>
+                                            <div class="same_div" link_url="include/fore/homePages/systemConfigManage/accountRoleMaintain/accountBase.html">账号维护</div>
+                                        </li>
+                                        <li>
+                                            <div class="same_div" link_url="include/fore/homePages/systemConfigManage/accountRoleMaintain/roleBase.html">角色维护</div>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="children_li">
+                                    <div class="parent_li_head">
+                                        <a href="#" class="secound_menu" style="">
+                                            <span class="icon color1" style="">
+
+                                            </span>
+                                            系统设置
+                                            <span class="closed" style="">
+                                                <i class="glyphicon glyphicon-chevron-down" ></i>
+                                            </span>
+                                        </a>
+                                    </div>
+                                    <ul class="hide_ul">
+                                        <li>
+                                            <div class="same_div" link_url="include/fore/homePages/systemConfigManage/functionMaintain/webPage.html">页面设置</div>
+                                        </li>
+                                        <li>
+                                            <div class="same_div" link_url="include/fore/homePages/systemConfigManage/functionMaintain/message.html">消息提醒</div>
+                                        </li>
+                                        <li>
+                                            <div class="same_div" link_url="include/fore/homePages/systemConfigManage/functionMaintain/dataField.html">功能字段</div>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="right_container" id="right_container" style="width:84%;height:100%;float:left;display:inline-block;margin-left:0px;">
+                <!-- 该处为xhr填充子页面 -->
+<!--                <div th:replace="homePages/index::html"></div>-->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(function() {
+
+            $(".parent_li_head").each(function(){
+                $(this).on("click",function(){
+                    var span = $(this).children()[0].childNodes[3];
+
+                    //如果span的class为open
+                    if(span.className=="open"){
+                        //将span的class设为closed
+                        span.className="closed";
+                        //将span的下一个兄弟元素的class改为hide
+                        span.parentNode.parentNode.nextElementSibling.className="hide_ul";
+
+                        span.children[0].className ="glyphicon glyphicon-chevron-down";
+                    }else{//否则
+                        //查找class为tree的元素下的一个class为open的span,保存在open中
+                        var open=document.querySelector("[class=tree] span[class=open]");
+// 		      	if(open!=null){
+// 				//设置open的class为closed
+// 		        	open.className="closed";
+// 				//设置open的下一个兄弟元素的class为hide
+// 		          	open.parentNode.nextElementSibling.className="hide_ul";
+// 		      	}
+                        span.className="open";
+                        span.parentNode.parentNode.nextElementSibling.className="show_ul";
+
+                        span.children[0].className = "glyphicon glyphicon-chevron-up";
+                    }
+                });
+
+            });
+
+            $("div.left_menu ul li ul li div").click(function(){
+                $("div.left_menu ul li ul li div").removeClass();
+                $("li.index_page div").removeClass();
+
+                var div_class = $(this).parent().attr("class");
+                if (div_class == "" || typeof (div_class) == "undefined") $(this).addClass("color_change");
+
+                var target= $(this).attr("link_url");
+                if (target) showAtRight(target);
+            });
+            $("li.index_page div").click(function(){
+                $("li.index_page div").removeClass();
+                $("div.left_menu ul li ul li div").removeClass();
+                $(this).addClass("color_change");
+            });
+
+        });
+
+        /**
+         * xml指向jsp页面
+         * @param url
+         * @returns
+         */
+        function showAtRight(url) {
+            var xmlHttp;
+            if (window.XMLHttpRequest) {
+                // code for IE7+, Firefox, Chrome, Opera, Safari
+                xmlHttp=new XMLHttpRequest();    //���� XMLHttpRequest����
+            }
+            else {
+                // code for IE6, IE5
+                xmlHttp=new ActiveXObject("Microsoft.XMLHTTP");
+            }
+            xmlHttp.onreadystatechange=function() {
+                //onreadystatechange �� ��readystate�仯ʱ���ú���ķ���
+                if (xmlHttp.readyState == 4) {
+                    //xmlHttp.readyState == 4    ����    finished downloading response
+                    if (xmlHttp.status == 200) {
+                        //xmlHttp.status == 200        ����    ��������������
+                        document.getElementById("right_container").innerHTML=xmlHttp.responseText;    //����ҳ����id="content"��div�������
+                        executeScript(xmlHttp.responseText);    //ִ�дӷ��������ص�ҳ�������������JavaScript����
+                    }
+                    //����״̬����
+                    else if (xmlHttp.status == 404){
+                        alert("出错了  （错误代码：404 Not Found），……！");
+                        /* ��404�Ĵ��� */
+                        return;
+                    }
+                    else if (xmlHttp.status == 403) {
+                        alert("出错了   （错误代码：403 Forbidden），……");
+                        /* ��403�Ĵ���  */
+                        return;
+                    }
+                    else {
+                        alert("出错了   （错误代码：" + request.status + "），……");
+                        /* �Գ������������������ʾ����Ĵ���   */
+                        return;
+                    }
+                }
+            }
+            //�������͵��������ϵ�ָ���ļ���urlָ����ļ������д���
+            xmlHttp.open("GET", url, true);        //true��ʾ�첽����
+            xmlHttp.send();
+        }
+        function executeScript(html){
+            var reg = /<script[^>]*>([^\x00]+)$/i;
+            //������HTMLƬ�ΰ�<\/script>���
+            var htmlBlock = html.split("<\/script>");
+            for (var i in htmlBlock)
+            {
+                var blocks;//ƥ��������ʽ���������飬blocks[1]����������һ�νű����ݣ���Ϊǰ��reg���������������Ž����˲������
+                if (blocks = htmlBlock[i].match(reg))
+                {
+                    //������ܴ��ڵ�ע�ͱ�ǣ�����ע�ͽ�β-->���Ժ��Դ���evalһ������������
+                    var code = blocks[1].replace(/<!--/, '');
+                    try
+                    {
+                        eval(code) //ִ�нű�
+                    }
+                    catch (e)
+                    {
+                    }
+                }
+            }
+        }
+    </script>
+</body>
+</html>
