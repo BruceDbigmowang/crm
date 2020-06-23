@@ -67,7 +67,7 @@ public class MyShiroRealm extends AuthorizingRealm {
                 String password = user.getPassword();
                 //把用户名和密码封装到AuthenticationInfo对象中
                 ByteSource salt = ByteSource.Util.bytes(user.getSalt());
-                SimpleAuthenticationInfo authenticationInfo = new SimpleAuthenticationInfo(user, password, salt, "shiroRealm");
+                SimpleAuthenticationInfo authenticationInfo = new SimpleAuthenticationInfo(user1, password, salt, "shiroRealm");
                 return authenticationInfo;
             }
         }

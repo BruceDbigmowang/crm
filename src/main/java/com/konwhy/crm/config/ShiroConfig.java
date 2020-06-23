@@ -32,11 +32,10 @@ public class ShiroConfig {
          */
         Map<String , String> perms = new HashMap<String , String>();
         perms.put("/foreLogin" , "anon");
-        perms.put("/foreIndex" , "authc");
-        perms.put("/foreRegister" , "anon");
+        perms.put("/homePage" , "authc");
 
-        shiroFilterFactoryBean.setLoginUrl("doLogin");
-        shiroFilterFactoryBean.setUnauthorizedUrl("foreLogin");
+        shiroFilterFactoryBean.setLoginUrl("loginPage");
+        shiroFilterFactoryBean.setUnauthorizedUrl("loginPage");
         shiroFilterFactoryBean.setFilterChainDefinitionMap(perms);
 
         return shiroFilterFactoryBean;

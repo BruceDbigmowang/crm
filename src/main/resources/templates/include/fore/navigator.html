@@ -5,6 +5,39 @@
     <title>诺而为CRM登录页面</title>
 </head>
 <body >
+
+<script>
+    // $("ul.dropdown-menu li a").click(function(){
+    //     $("ul.dropdown-menu li a").removeClass();
+    //     $("li.index_page div").removeClass();
+    //
+    //     var div_class = $(this).parent().attr("class");
+    //     if (div_class == "" || typeof (div_class) == "undefined") $(this).addClass("color_change");
+    //
+    //     var target= $(this).attr("link_url");
+    //     if (target) showAtRight(target);
+    // });
+    function changePage(obj){
+        $("#personCenter").removeClass();
+        $("li.index_page div").removeClass();
+
+        var target= $("#personCenter").attr("link_url");
+        if (target) showAtRight(target);
+
+        $.ajax({
+            url:"getPersonInfo",
+            type:"post",
+            async:false,
+            dataType: "json",
+            success: function(data){
+                alert("qq");
+            },
+            error: function(data){
+                alert("ww");
+            }
+        });
+    }
+</script>
     <div th:fragment="html">
         <div class="navitagorDiv" style="color:#999;">
             <nav class="navbar navbar-default navbar-fixed-top navbar-inverse" style="width:100%;height:7.5%;background-color: #303342;">
@@ -31,12 +64,12 @@
                             <li class="dropdown-link">
                                 <a href="#" class="btn dropdown-toggle" id="dropdownMenu1" data-toggle="dropdown">
                                     <img src="./image/logo1.png" class="img-circle" height="40px" style="margin-top: -10px"/>
-                                    <b style="color: white">chenpeng</b>
+                                    <b style="color: white" th:text="${session.user.name}"></b>
                                     <span class="caret" style="color: white"></span>
                                 </a>
                                 <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
                                     <li >
-                                        <a href="#">个人中心</a>
+                                        <a id="personCenter" link_url="include/fore/homePages/userManage/userCenter.html" onclick="changePage(this);">个人中心</a>
                                     </li>
                                     <li>
                                         <a th:href="@{logout}">退出</a>

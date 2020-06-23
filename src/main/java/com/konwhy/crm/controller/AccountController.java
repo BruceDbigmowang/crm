@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpSession;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 @Controller
@@ -50,6 +51,8 @@ public class AccountController {
                         //获取当前用对象，放入到session中
                         IUser user = (IUser)subject.getPrincipal();
                         subject.getSession().setAttribute("user",user);
+//                        IUser person = (IUser)session.getAttribute("user");
+//                        System.out.println(person.getAccount());
                         return Result.success();
                     }else{
 
@@ -110,6 +113,7 @@ public class AccountController {
                         user.setAccount(account);
 
                         password = MD5Utils.addMD5(password).toString();
+                        user.setName("用户"+account);
                         user.setPassword(password);
                         user.setSalt("abc");
                         user.setPhone(phone);
@@ -173,6 +177,7 @@ public class AccountController {
                     user.setAccount(account);
 
                     password = MD5Utils.addMD5(password).toString();
+                    user.setName("用户"+account);
                     user.setPassword(password);
                     user.setSalt("abc");
                     user.setPhone(phone);
@@ -237,6 +242,7 @@ public class AccountController {
 
                     password = MD5Utils.addMD5(password).toString();
                     user.setPassword(password);
+                    user.setName("用户"+account);
                     user.setSalt("abc");
                     user.setPhone(phone);
                     if(company != null && !"".equals(company)){
@@ -290,6 +296,17 @@ public class AccountController {
         if(subject.isAuthenticated())
             subject.logout();
         return "redirect:loginPage";
+    }
+
+    @RequestMapping("/getPersonInfo")
+    @ResponseBody
+    public Object loadInfo(HttpSession session){
+
+        IUser iUser = (IUser)session.getAttribute("user");
+        System.out.println(iUser.getAccount());
+        Map<String , Object>map = new HashMap<>();
+        map.put("user" , iUser);
+        return map;
     }
 
 }
