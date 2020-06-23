@@ -2,9 +2,33 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>账号维护</title>
 </head>
 <body>
+
+<div>
+    <div>
+        <table border="0px;">
+            <tr>
+                <td>账号</td><td><input></td>
+                <td>所属公司</td><td><input></td>
+                <td>手机号</td><td><input></td>
+                <td>角色</td><td><input></td>
+                <td><button>查询</button></td>
+            </tr>
+        </table>
+    </div>
+    <div style="margin-top: 100px;">
+        <table class="table table-striped table-bordered table-hover  table-condensed">
+            <thead>
+            <tr>
+                <td>账号</td><td>姓名</td><td>所属公司</td><td>手机号</td><td>邮箱</td><td>系统角色</td>
+            </tr>
+            </thead>
+            <tbody id="allUser"></tbody>
+        </table>
+    </div>
+</div>
 
 </body>
 </html>

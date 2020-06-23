@@ -31,9 +31,7 @@
         box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(102,175,233,.6)
     }
 </style>
-<script>
 
-</script>
 
 
 <div style="width: 400px;margin:0px auto;margin-top: 50px;">
@@ -41,36 +39,49 @@
         <tr>
             <td style="width: 100px;text-align: center;height: 40px;font-size: 16px;">账  号</td>
             <td>
-                <input v-model="user.account" style="width: 100%;height: 100%;font-size: 16px;" readonly>
+                <input id="userAccount" style="width: 100%;height: 100%;font-size: 16px;" readonly>
             </td>
         </tr>
         <tr>
             <td style="width: 100px;text-align: center;height: 40px;font-size: 16px;">姓  名</td>
             <td>
-                <input v-model="user.name" style="width: 100%;height: 100%;font-size: 16px;">
+                <input id="userName" style="width: 100%;height: 100%;font-size: 16px;">
             </td>
         </tr>
         <tr>
             <td style="width: 100px;text-align: center;height: 40px;font-size: 16px;">所属公司</td>
             <td>
-                <input v-model="user.company" style="width: 100%;height: 100%;font-size: 16px;">
+                <input id="userCompany" style="width: 100%;height: 100%;font-size: 16px;">
             </td>
         </tr>
         <tr>
             <td style="width: 100px;text-align: center;height: 40px;font-size: 16px;">邮箱</td>
             <td>
-                <input v-model="user.email" style="width: 100%;height: 100%;font-size: 16px;">
+                <input id="userEmail" style="width: 100%;height: 100%;font-size: 16px;">
             </td>
         </tr>
         <tr>
             <td style="width: 100px;text-align: center;height: 40px;font-size: 16px;">手机号</td>
             <td>
-                <input v-model="user.phone" style="width: 100%;height: 100%;font-size: 16px;">
+                <input id="userPhone" style="width: 100%;height: 100%;font-size: 16px;">
+            </td>
+        </tr>
+        <tr>
+            <td style="width: 100px;text-align: center;height: 40px;font-size: 16px;">新密码</td>
+            <td>
+                <input id="password1" type="password" style="width: 100%;height: 100%;font-size: 16px;">
+            </td>
+        </tr>
+        <tr>
+            <td style="width: 100px;text-align: center;height: 40px;font-size: 16px;">确认密码</td>
+            <td>
+                <input id="password2" type="password" style="width: 100%;height: 100%;font-size: 16px;">
             </td>
         </tr>
         <tr>
             <td colspan="2" style="width: 100px;text-align: center;height: 40px;font-size: 16px;">
-                <button class="btn btn-primary" onclick="changePage()">提  交</button>
+                <button class="btn btn-primary" onclick="getPersonalInfo()">查  询</button>
+                <button class="btn btn-primary" onclick="savePersonalInfo()">提  交</button>
             </td>
 
         </tr>

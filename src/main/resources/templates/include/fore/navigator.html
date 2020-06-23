@@ -7,16 +7,6 @@
 <body >
 
 <script>
-    // $("ul.dropdown-menu li a").click(function(){
-    //     $("ul.dropdown-menu li a").removeClass();
-    //     $("li.index_page div").removeClass();
-    //
-    //     var div_class = $(this).parent().attr("class");
-    //     if (div_class == "" || typeof (div_class) == "undefined") $(this).addClass("color_change");
-    //
-    //     var target= $(this).attr("link_url");
-    //     if (target) showAtRight(target);
-    // });
     function changePage(obj){
         $("#personCenter").removeClass();
         $("li.index_page div").removeClass();
@@ -24,18 +14,6 @@
         var target= $("#personCenter").attr("link_url");
         if (target) showAtRight(target);
 
-        $.ajax({
-            url:"getPersonInfo",
-            type:"post",
-            async:false,
-            dataType: "json",
-            success: function(data){
-                alert("qq");
-            },
-            error: function(data){
-                alert("ww");
-            }
-        });
     }
 </script>
     <div th:fragment="html">
