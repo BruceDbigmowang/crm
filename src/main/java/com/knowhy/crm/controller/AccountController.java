@@ -42,6 +42,7 @@ public class AccountController {
     public Object dologin(@RequestBody Map<String,String> userData, Model model , HttpSession session){
 
         String account = userData.get("name");
+        System.out.println(account);
         String password = userData.get("password");
         String validateCode = userData.get("validateCode");
 
@@ -76,7 +77,8 @@ public class AccountController {
                         return Result.fail("用户名或密码不正确!");
                     }
                 }catch (Exception e){
-                    return Result.fail("用户名或密码不正确!");
+                    System.out.println(e.getMessage());
+                    return Result.fail("用户名或密码不正确!!!");
                 }
             }else{
                 return Result.fail("验证码不正确!");

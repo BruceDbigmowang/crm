@@ -50,27 +50,17 @@ public class MyShiroRealm extends AuthorizingRealm {
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
         System.out.println("执行了认证的方法");
         String account = authenticationToken.getPrincipal().toString();
+        //使用账号或手机号查询到具体某一个用户
         IUser user = userService.findUserByAccount(account);
-        //账号登录
-        if(user != null ){
-            System.out.println("用户："+user.getAccount());
-            String password = user.getPassword();
-            //把用户名和密码封装到AuthenticationInfo对象中
-            ByteSource salt = ByteSource.Util.bytes(user.getSalt());
-            SimpleAuthenticationInfo authenticationInfo = new SimpleAuthenticationInfo(user,password,salt ,"shiroRealm");
-            return authenticationInfo;
-        }else{
-            //手机号登录
-            IUser user1 = userService.findByPhone(account);
-            if(user != null ) {
-                System.out.println("用户：" + user.getAccount());
-                String password = user.getPassword();
-                //把用户名和密码封装到AuthenticationInfo对象中
-                ByteSource salt = ByteSource.Util.bytes(user.getSalt());
-                SimpleAuthenticationInfo authenticationInfo = new SimpleAuthenticationInfo(user1, password, salt, "shiroRealm");
-                return authenticationInfo;
-            }
+        if(user == null){
+            user = userService.findByPhone(account);
         }
-        return null;
+        //账号登录
+        System.out.println("用户："+user.getAccount());
+        String password = user.getPassword();
+        //把用户名和密码封装到AuthenticationInfo对象中
+        ByteSource salt = ByteSource.Util.bytes(user.getSalt());
+        SimpleAuthenticationInfo authenticationInfo = new SimpleAuthenticationInfo(user,password,salt ,"shiroRealm");
+        return authenticationInfo;
     }
 }

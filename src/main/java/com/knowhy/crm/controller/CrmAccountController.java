@@ -6,11 +6,13 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.knowhy.crm.entity.CrmAccount;
 import com.knowhy.crm.mapper.CrmAccountMapper;
+import com.knowhy.crm.pojo.Roles;
 import com.knowhy.crm.service.RoleService;
 import com.knowhy.crm.util.pojo.UserInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.knowhy.crm.controller.BaseController;
 
@@ -36,17 +38,27 @@ public class CrmAccountController extends BaseController {
     RoleService roleService;
 
     @RequestMapping("/selectUserByPage")
-    public Map<String,Object> selectByPage(){
+    public Map<String,Object> selectByPage(@RequestParam("start")int start){
         Map<String,Object> map = new HashMap<>();
 
         QueryWrapper<CrmAccount> queryWrapper =  new QueryWrapper<>();
         queryWrapper.orderByDesc("account");
 
-        Page<CrmAccount> page = new Page<>(1,5);  // 查询第1页，每页返回5条
+        Page<CrmAccount> page = new Page<>(start,10);  // 查询第1页，每页返回5条
         IPage<CrmAccount> iPage = crmAccountMapper.selectPage(page,queryWrapper);
+
+        int total = (int)iPage.getTotal();
+        int size;
+        if(total%10 == 0){
+            size = total/10;
+        }else{
+            size = total/10 + 1;
+        }
+
+        List<CrmAccount> crmAccountList = iPage.getRecords();
         List<UserInfo> userInfoList = new ArrayList<>();
-        for(int i = 0 ; i < iPage.getSize() ; i++){
-            CrmAccount crmAccount = iPage.getRecords().get(i);
+        for(int i = 0 ; i < crmAccountList.size() ; i++){
+            CrmAccount crmAccount = crmAccountList.get(i);
             UserInfo userInfo = new UserInfo();
             String account = crmAccount.getAccount();
             userInfo.setAccount(account);
@@ -58,6 +70,63 @@ public class CrmAccountController extends BaseController {
             userInfoList.add(userInfo);
         }
         map.put("user" , userInfoList);
+        map.put("size",size);
+        return map;
+    }
+
+    @RequestMapping("/selectUserByPageAndCondition")
+    public Map<String,Object> selectByPageAndCondition(@RequestParam("start")int start , @RequestParam("account")String userAccount , @RequestParam("company")String company , @RequestParam("phone")String phone ){
+        Map<String,Object> map = new HashMap<>();
+
+        QueryWrapper<CrmAccount> queryWrapper =  new QueryWrapper<>();
+        queryWrapper.orderByDesc("account");
+        if(!userAccount.isEmpty()){
+            queryWrapper.eq("account" , userAccount);
+        }
+        if(!company.isEmpty()){
+            queryWrapper.eq("company" , company);
+        }
+        if(!phone.isEmpty()){
+            queryWrapper.eq("phone" , phone);
+        }
+
+        Page<CrmAccount> page = new Page<>(start,10);  // 查询第1页，每页返回5条
+        IPage<CrmAccount> iPage = crmAccountMapper.selectPage(page,queryWrapper);
+
+        int total = (int)iPage.getTotal();
+        int size;
+        if(total%10 == 0){
+            size = total/10;
+        }else{
+            size = total/10 + 1;
+        }
+
+        List<CrmAccount> crmAccountList = iPage.getRecords();
+        List<UserInfo> userInfoList = new ArrayList<>();
+        for(int i = 0 ; i < crmAccountList.size() ; i++){
+            CrmAccount crmAccount = crmAccountList.get(i);
+            UserInfo userInfo = new UserInfo();
+            String account = crmAccount.getAccount();
+            userInfo.setAccount(account);
+            userInfo.setName(crmAccount.getName());
+            userInfo.setCompany(crmAccount.getCompany());
+            userInfo.setEmail(crmAccount.getEmail());
+            userInfo.setPhone(crmAccount.getPhone());
+            userInfo.setRole(roleService.findByAccount(account));
+            userInfoList.add(userInfo);
+        }
+        map.put("user" , userInfoList);
+        map.put("size",size);
+        return map;
+    }
+
+    @RequestMapping("/getAllRoles")
+    public Map<String , Object> getAllRoles(){
+        Map<String , Object> map = new HashMap<>();
+
+        List<Roles> roles = roleService.findAll();
+        map.put("roles" , roles);
+
         return map;
     }
 

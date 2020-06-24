@@ -51,7 +51,12 @@ public class UserService {
     }
 
     public IUser findUserByAccount(String account){
-        return iUserDAO.findByAccount(account).get(0);
+        List<IUser> iUserList = iUserDAO.findByAccount(account);
+        if(iUserList == null || iUserList.size() == 0){
+            return null;
+        }else{
+            return iUserList.get(0);
+        }
     }
 
     public  boolean AccountExist(String account){
@@ -112,6 +117,8 @@ public class UserService {
 
     public IUser findByPhone(String phone){
         List<IUser> iUserList = iUserDAO.findByPhone(phone);
+        System.out.println(phone);
+        System.out.println(iUserList.size());
         if(iUserList == null || iUserList.size() == 0){
             return null;
         }else{
