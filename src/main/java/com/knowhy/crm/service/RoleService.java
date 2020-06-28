@@ -6,7 +6,9 @@ import com.knowhy.crm.pojo.Roles;
 import com.knowhy.crm.pojo.UserRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -35,5 +37,43 @@ public class RoleService {
 
     public List<Roles> findAll(){
         return rolesDAO.findAll();
+    }
+
+    public List<String> findRolesByAccount(String account){
+        List<Roles> rolesList = rolesDAO.findByAccount(account);
+        if(rolesList != null || rolesList.size()!= 0){
+            List<String> roles = new ArrayList<>();
+            for(int i = 0 ; i < rolesList.size() ; i++){
+                String roleName = rolesList.get(i).getRoleName();
+                if(!roles.contains(roleName)){
+                    roles.add(roleName);
+                }
+            }
+            return roles;
+        }else{
+            return null;
+        }
+    }
+
+    @Transactional
+    public String changeRoles(String account , int[] roles){
+        List<UserRole> userRoleList = userRoleDAO.findByAccount(account);
+        int size = userRoleList.size();
+        int[] had = new int[size];
+        for(int i = 0 ; i < userRoleList.size() ; i++){
+            had[i] = userRoleList.get(i).getId();
+        }
+        if(had.equals(roles)){
+            return "";
+        }else{
+            userRoleDAO.deleteByAccount(account);
+            for(int i = 0 ; i < roles.length ; i++){
+                UserRole userRole = new UserRole();
+                userRole.setAccount(account);
+                userRole.setId(roles[i]);
+                userRoleDAO.save(userRole);
+            }
+            return "角色修改成功";
+        }
     }
 }

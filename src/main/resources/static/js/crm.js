@@ -89,7 +89,7 @@ function getUserByPage() {
             $("#pageDIV").html("");
             var user = data.user;
             for(var i = 0 ; i < user.length ; i++){
-                $("#allUser").append("<tr>"+"<td>"+user[i].account+"</td>"+"<td>"+user[i].name+"</td>"+"<td>"+user[i].company+"</td>"+"<td>"+user[i].phone+"</td>"+"<td>"+user[i].email+"</td>"+"<td>"+user[i].role+"</td>"+"<td>"+"<a data-toggle=\"modal\" data-target=\"#myModal\" onclick=\"showAllRoles()\">修改角色</a>"+"</td>"+"</tr>");
+                $("#allUser").append("<tr>"+"<td>"+user[i].account+"</td>"+"<td>"+user[i].name+"</td>"+"<td>"+user[i].company+"</td>"+"<td>"+user[i].phone+"</td>"+"<td>"+user[i].email+"</td>"+"<td>"+user[i].role+"</td>"+"<td>"+'<a data-toggle="modal" data-target="#myModal" onclick="showAllRoles('+user[i].account+')">修改角色</a>'+"</td>"+"</tr>");
             }
             pages = data.size;
 
@@ -113,7 +113,7 @@ function getNextUserByPage() {
                 $("#allUser").html("");
                 var user = data.user;
                 for(var i = 0 ; i < user.length ; i++){
-                    $("#allUser").append("<tr>"+"<td>"+user[i].account+"</td>"+"<td>"+user[i].name+"</td>"+"<td>"+user[i].company+"</td>"+"<td>"+user[i].phone+"</td>"+"<td>"+user[i].email+"</td>"+"<td>"+user[i].role+"</td>"+"<td>"+"<a data-toggle=\"modal\" data-target=\"#myModal\" onclick=\"showAllRoles()\">修改角色</a>"+"</td>"+"</tr>");
+                    $("#allUser").append("<tr>"+"<td>"+user[i].account+"</td>"+"<td>"+user[i].name+"</td>"+"<td>"+user[i].company+"</td>"+"<td>"+user[i].phone+"</td>"+"<td>"+user[i].email+"</td>"+"<td>"+user[i].role+"</td>"+"<td>"+'<a data-toggle="modal" data-target="#myModal" onclick="showAllRoles('+user[i].account+')">修改角色</a>'+"</td>"+"</tr>");
                 }
             }
         });
@@ -135,7 +135,7 @@ function getPreviousUserByPage() {
                 $("#allUser").html("");
                 var user = data.user;
                 for(var i = 0 ; i < user.length ; i++){
-                    $("#allUser").append("<tr>"+"<td>"+user[i].account+"</td>"+"<td>"+user[i].name+"</td>"+"<td>"+user[i].company+"</td>"+"<td>"+user[i].phone+"</td>"+"<td>"+user[i].email+"</td>"+"<td>"+user[i].role+"</td>"+"<td>"+"<a data-toggle=\"modal\" data-target=\"#myModal\" onclick=\"showAllRoles()\">修改角色</a>"+"</td>"+"</tr>");
+                    $("#allUser").append("<tr>"+"<td>"+user[i].account+"</td>"+"<td>"+user[i].name+"</td>"+"<td>"+user[i].company+"</td>"+"<td>"+user[i].phone+"</td>"+"<td>"+user[i].email+"</td>"+"<td>"+user[i].role+"</td>"+"<td>"+'<a data-toggle="modal" data-target="#myModal" onclick="showAllRoles('+user[i].account+')">修改角色</a>'+"</td>"+"</tr>");
                 }
             }
         });
@@ -154,7 +154,7 @@ function getFirstUserByPage() {
             $("#allUser").html("");
             var user = data.user;
             for(var i = 0 ; i < user.length ; i++){
-                $("#allUser").append("<tr>"+"<td>"+user[i].account+"</td>"+"<td>"+user[i].name+"</td>"+"<td>"+user[i].company+"</td>"+"<td>"+user[i].phone+"</td>"+"<td>"+user[i].email+"</td>"+"<td>"+user[i].role+"</td>"+"<td>"+"<a data-toggle=\"modal\" data-target=\"#myModal\" onclick=\"showAllRoles()\">修改角色</a>"+"</td>"+"</tr>");
+                $("#allUser").append("<tr>"+"<td>"+user[i].account+"</td>"+"<td>"+user[i].name+"</td>"+"<td>"+user[i].company+"</td>"+"<td>"+user[i].phone+"</td>"+"<td>"+user[i].email+"</td>"+"<td>"+user[i].role+"</td>"+"<td>"+'<a data-toggle="modal" data-target="#myModal" onclick="showAllRoles('+user[i].account+')">修改角色</a>'+"</td>"+"</tr>");
             }
         }
     });
@@ -172,7 +172,7 @@ function getLastUserByPage() {
             $("#allUser").html("");
             var user = data.user;
             for(var i = 0 ; i < user.length ; i++){
-                $("#allUser").append("<tr>"+"<td>"+user[i].account+"</td>"+"<td>"+user[i].name+"</td>"+"<td>"+user[i].company+"</td>"+"<td>"+user[i].phone+"</td>"+"<td>"+user[i].email+"</td>"+"<td>"+user[i].role+"</td>"+"<td>"+"<a data-toggle=\"modal\" data-target=\"#myModal\" onclick=\"showAllRoles()\">修改角色</a>"+"</td>"+"</tr>");
+                $("#allUser").append("<tr>"+"<td>"+user[i].account+"</td>"+"<td>"+user[i].name+"</td>"+"<td>"+user[i].company+"</td>"+"<td>"+user[i].phone+"</td>"+"<td>"+user[i].email+"</td>"+"<td>"+user[i].role+"</td>"+"<td>"+'<a data-toggle="modal" data-target="#myModal" onclick="showAllRoles('+user[i].account+')">修改角色</a>'+"</td>"+"</tr>");
             }
         }
     });
@@ -196,7 +196,7 @@ function selectByConditionFirstPage() {
             $("#allUser").html("");
             var user = data.user;
             for(var i = 0 ; i < user.length ; i++){
-                $("#allUser").append("<tr>"+"<td>"+user[i].account+"</td>"+"<td>"+user[i].name+"</td>"+"<td>"+user[i].company+"</td>"+"<td>"+user[i].phone+"</td>"+"<td>"+user[i].email+"</td>"+"<td>"+user[i].role+"</td>"+"<td>"+"<a data-toggle=\"modal\" data-target=\"#myModal\" onclick=\"showAllRoles()\">修改角色</a>"+"</td>"+"</tr>");
+                $("#allUser").append("<tr>"+"<td>"+user[i].account+"</td>"+"<td>"+user[i].name+"</td>"+"<td>"+user[i].company+"</td>"+"<td>"+user[i].phone+"</td>"+"<td>"+user[i].email+"</td>"+"<td>"+user[i].role+"</td>"+"<td>"+'<a data-toggle="modal" data-target="#myModal" onclick="showAllRoles('+user[i].account+')">修改角色</a>'+"</td>"+"</tr>");
             }
             pages = data.size;
             $("#pageDIV").append("<a href=\"#\" onclick=\"getFirstUserByPageAndCondition()\">首 页</a>&nbsp&nbsp<a href=\"#\" onclick=\"getPreviousUserByPageAndCondition()\">上一页</a>&nbsp&nbsp<a href=\"#\" onclick=\"getNextUserByPageAndCondition()\">下一页</a>&nbsp&nbsp<a href=\"#\" onclick=\"getLastUserByPageAndCondition()\">尾 页</a>");
@@ -224,7 +224,7 @@ function getNextUserByPageAndCondition() {
                 $("#allUser").html("");
                 var user = data.user;
                 for(var i = 0 ; i < user.length ; i++){
-                    $("#allUser").append("<tr>"+"<td>"+user[i].account+"</td>"+"<td>"+user[i].name+"</td>"+"<td>"+user[i].company+"</td>"+"<td>"+user[i].phone+"</td>"+"<td>"+user[i].email+"</td>"+"<td>"+user[i].role+"</td>"+"<td>"+"<a data-toggle=\"modal\" data-target=\"#myModal\" onclick=\"showAllRoles()\">修改角色</a>"+"</td>"+"</tr>");
+                    $("#allUser").append("<tr>"+"<td>"+user[i].account+"</td>"+"<td>"+user[i].name+"</td>"+"<td>"+user[i].company+"</td>"+"<td>"+user[i].phone+"</td>"+"<td>"+user[i].email+"</td>"+"<td>"+user[i].role+"</td>"+"<td>"+'<a data-toggle="modal" data-target="#myModal" onclick="showAllRoles('+user[i].account+')">修改角色</a>'+"</td>"+"</tr>");
                 }
             }
         });
@@ -249,7 +249,7 @@ function getPreviousUserByPageAndCondition() {
                 $("#allUser").html("");
                 var user = data.user;
                 for(var i = 0 ; i < user.length ; i++){
-                    $("#allUser").append("<tr>"+"<td>"+user[i].account+"</td>"+"<td>"+user[i].name+"</td>"+"<td>"+user[i].company+"</td>"+"<td>"+user[i].phone+"</td>"+"<td>"+user[i].email+"</td>"+"<td>"+user[i].role+"</td>"+"<td>"+"<a data-toggle=\"modal\" data-target=\"#myModal\" onclick=\"showAllRoles()\">修改角色</a>"+"</td>"+"</tr>");
+                    $("#allUser").append("<tr>"+"<td>"+user[i].account+"</td>"+"<td>"+user[i].name+"</td>"+"<td>"+user[i].company+"</td>"+"<td>"+user[i].phone+"</td>"+"<td>"+user[i].email+"</td>"+"<td>"+user[i].role+"</td>"+"<td>"+'<a data-toggle="modal" data-target="#myModal" onclick="showAllRoles('+user[i].account+')">修改角色</a>'+"</td>"+"</tr>");
                 }
             }
         });
@@ -271,7 +271,7 @@ function getFirstUserByPageAndCondition() {
             $("#allUser").html("");
             var user = data.user;
             for(var i = 0 ; i < user.length ; i++){
-                $("#allUser").append("<tr>"+"<td>"+user[i].account+"</td>"+"<td>"+user[i].name+"</td>"+"<td>"+user[i].company+"</td>"+"<td>"+user[i].phone+"</td>"+"<td>"+user[i].email+"</td>"+"<td>"+user[i].role+"</td>"+"<td>"+"<a data-toggle=\"modal\" data-target=\"#myModal\" onclick=\"showAllRoles()\">修改角色</a>"+"</td>"+"</tr>");
+                $("#allUser").append("<tr>"+"<td>"+user[i].account+"</td>"+"<td>"+user[i].name+"</td>"+"<td>"+user[i].company+"</td>"+"<td>"+user[i].phone+"</td>"+"<td>"+user[i].email+"</td>"+"<td>"+user[i].role+"</td>"+"<td>"+'<a data-toggle="modal" data-target="#myModal" onclick="showAllRoles('+user[i].account+')">修改角色</a>'+"</td>"+"</tr>");
             }
         }
     });
@@ -292,24 +292,55 @@ function getLastUserByPageAndCondition() {
             $("#allUser").html("");
             var user = data.user;
             for(var i = 0 ; i < user.length ; i++){
-                $("#allUser").append("<tr>"+"<td>"+user[i].account+"</td>"+"<td>"+user[i].name+"</td>"+"<td>"+user[i].company+"</td>"+"<td>"+user[i].phone+"</td>"+"<td>"+user[i].email+"</td>"+"<td>"+user[i].role+"</td>"+"<td>"+"<a data-toggle=\"modal\" data-target=\"#myModal\" onclick=\"showAllRoles()\">修改角色</a>"+"</td>"+"</tr>");
+                $("#allUser").append("<tr>"+"<td>"+user[i].account+"</td>"+"<td>"+user[i].name+"</td>"+"<td>"+user[i].company+"</td>"+"<td>"+user[i].phone+"</td>"+"<td>"+user[i].email+"</td>"+"<td>"+user[i].role+"</td>"+"<td>"+'<a data-toggle="modal" data-target="#myModal" onclick="showAllRoles('+user[i].account+')">修改角色</a>'+"</td>"+"</tr>");
             }
         }
     });
 }
 
 //在模态框中显示所有角色
-function showAllRoles() {
+function showAllRoles(account) {
+    $("#RoleAccount").val(account);
     $.ajax({
         type:"post",
+        data:{"account":account},
         url:"getAllRoles",
         async:false,
         success:function (data) {
             $("#roleTab").html("");
             var roles = data.roles;
+            var had = data.had;
             for(var i = 0 ; i < roles.length ; i++){
-                $("#roleTab").append("<tr><td><input name=\"rolecheck\" type=\"checkbox\"></td><td>"+roles[i].roleName+"</td></tr>");
+                if(had.includes(roles[i].roleName)){
+                    $("#roleTab").append('<tr><td><input name="rolecheck" type="checkbox" value='+roles[i].id+' checked></td><td>'+roles[i].roleName+"</td></tr>");
+                }else{
+                    $("#roleTab").append('<tr><td><input name="rolecheck" type="checkbox" value='+roles[i].id+'></td><td>'+roles[i].roleName+"</td></tr>");
+                }
             }
+        }
+    })
+}
+
+function changeRoles() {
+    var account = $("#RoleAccount").val();
+    var arr=[];
+    $.each($('input[name=rolecheck]:checked'),function(){
+        arr.push($(this).val());
+    });
+    var data = {"account":account , "roles":arr};
+    $.ajax({
+        type:"post",
+        data:data,
+        url:"updateRoles",
+        async:false,
+        success:function (data) {
+            if(data.includes("成功")){
+                alert(data);
+                getUserByPage();
+            }
+        },
+        error:function () {
+            alert("程序出错");
         }
     })
 }

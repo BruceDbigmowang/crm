@@ -81,13 +81,13 @@ public class CrmAccountController extends BaseController {
         QueryWrapper<CrmAccount> queryWrapper =  new QueryWrapper<>();
         queryWrapper.orderByDesc("account");
         if(!userAccount.isEmpty()){
-            queryWrapper.eq("account" , userAccount);
+            queryWrapper.eq("account" , userAccount.trim());
         }
         if(!company.isEmpty()){
-            queryWrapper.eq("company" , company);
+            queryWrapper.eq("company" , company.trim());
         }
         if(!phone.isEmpty()){
-            queryWrapper.eq("phone" , phone);
+            queryWrapper.eq("phone" , phone.trim());
         }
 
         Page<CrmAccount> page = new Page<>(start,10);  // 查询第1页，每页返回5条
@@ -121,13 +121,19 @@ public class CrmAccountController extends BaseController {
     }
 
     @RequestMapping("/getAllRoles")
-    public Map<String , Object> getAllRoles(){
+    public Map<String , Object> getAllRoles(@RequestParam("account")String account){
         Map<String , Object> map = new HashMap<>();
 
         List<Roles> roles = roleService.findAll();
+        List<String> had = roleService.findRolesByAccount(account);
         map.put("roles" , roles);
-
+        map.put("had" , had);
         return map;
+    }
+
+    @RequestMapping("/updateRoles")
+    public String changeRoles(@RequestParam("account")String account , @RequestParam("roles[]")int[] roles){
+        return roleService.changeRoles(account , roles);
     }
 
 }

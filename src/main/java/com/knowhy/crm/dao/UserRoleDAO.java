@@ -9,4 +9,6 @@ import java.util.List;
 
 public interface UserRoleDAO extends JpaRepository<UserRole, PrimaryKeyAccountRole> {
     List<UserRole> findByAccount(String account);
+
+    void deleteByAccount(String account);
 }

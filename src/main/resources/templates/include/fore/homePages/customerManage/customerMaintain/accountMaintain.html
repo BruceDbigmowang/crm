@@ -41,13 +41,14 @@
             </div>
             <div class="modal-body" style="height: 175px;overflow: auto">
                 <p>选择角色</p>
+                <input type="hidden" id="RoleAccount">
                 <table id="roleTab" border="0px">
 
                 </table>
             </div>
             <div class="modal-footer">
                 <button data-dismiss="modal" class="btn btn-default" type="button">关闭</button>
-                <button class="btn btn-primary" type="button">提交</button>
+                <button class="btn btn-primary" type="button" onclick="changeRoles()">提交</button>
             </div>
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
