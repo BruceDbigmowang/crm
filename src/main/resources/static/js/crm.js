@@ -89,7 +89,7 @@ function getUserByPage() {
             $("#pageDIV").html("");
             var user = data.user;
             for(var i = 0 ; i < user.length ; i++){
-                $("#allUser").append("<tr>"+"<td>"+user[i].account+"</td>"+"<td>"+user[i].name+"</td>"+"<td>"+user[i].company+"</td>"+"<td>"+user[i].phone+"</td>"+"<td>"+user[i].email+"</td>"+"<td>"+user[i].role+"</td>"+"<td>"+'<a data-toggle="modal" data-target="#myModal" onclick="showAllRoles('+user[i].account+')">修改角色</a>'+"</td>"+"</tr>");
+                $("#allUser").append("<tr>"+"<td>"+user[i].account+"</td>"+"<td>"+user[i].name+"</td>"+"<td>"+user[i].company+"</td>"+"<td>"+user[i].phone+"</td>"+"<td>"+user[i].email+"</td>"+"<td>"+user[i].role+"</td>"+"<td>"+'<a data-toggle="modal" data-target="#myModal" onclick="showAllRoles('+user[i].account+')">修改角色</a>'+"&nbsp&nbsp" +'<a onclick="deleteUser( '+user[i].account+')">删除账号</a>'+"</td>"+"</tr>");
             }
             pages = data.size;
 
@@ -113,7 +113,7 @@ function getNextUserByPage() {
                 $("#allUser").html("");
                 var user = data.user;
                 for(var i = 0 ; i < user.length ; i++){
-                    $("#allUser").append("<tr>"+"<td>"+user[i].account+"</td>"+"<td>"+user[i].name+"</td>"+"<td>"+user[i].company+"</td>"+"<td>"+user[i].phone+"</td>"+"<td>"+user[i].email+"</td>"+"<td>"+user[i].role+"</td>"+"<td>"+'<a data-toggle="modal" data-target="#myModal" onclick="showAllRoles('+user[i].account+')">修改角色</a>'+"</td>"+"</tr>");
+                    $("#allUser").append("<tr>"+"<td>"+user[i].account+"</td>"+"<td>"+user[i].name+"</td>"+"<td>"+user[i].company+"</td>"+"<td>"+user[i].phone+"</td>"+"<td>"+user[i].email+"</td>"+"<td>"+user[i].role+"</td>"+"<td>"+'<a data-toggle="modal" data-target="#myModal" onclick="showAllRoles('+user[i].account+')">修改角色</a>'+"&nbsp&nbsp" +'<a onclick="deleteUser( '+user[i].account+')">删除账号</a>'+"</td>"+"</tr>");
                 }
             }
         });
@@ -135,7 +135,7 @@ function getPreviousUserByPage() {
                 $("#allUser").html("");
                 var user = data.user;
                 for(var i = 0 ; i < user.length ; i++){
-                    $("#allUser").append("<tr>"+"<td>"+user[i].account+"</td>"+"<td>"+user[i].name+"</td>"+"<td>"+user[i].company+"</td>"+"<td>"+user[i].phone+"</td>"+"<td>"+user[i].email+"</td>"+"<td>"+user[i].role+"</td>"+"<td>"+'<a data-toggle="modal" data-target="#myModal" onclick="showAllRoles('+user[i].account+')">修改角色</a>'+"</td>"+"</tr>");
+                    $("#allUser").append("<tr>"+"<td>"+user[i].account+"</td>"+"<td>"+user[i].name+"</td>"+"<td>"+user[i].company+"</td>"+"<td>"+user[i].phone+"</td>"+"<td>"+user[i].email+"</td>"+"<td>"+user[i].role+"</td>"+"<td>"+'<a data-toggle="modal" data-target="#myModal" onclick="showAllRoles('+user[i].account+')">修改角色</a>'+"&nbsp&nbsp" +'<a onclick="deleteUser( '+user[i].account+')">删除账号</a>'+"</td>"+"</tr>");
                 }
             }
         });
@@ -154,7 +154,7 @@ function getFirstUserByPage() {
             $("#allUser").html("");
             var user = data.user;
             for(var i = 0 ; i < user.length ; i++){
-                $("#allUser").append("<tr>"+"<td>"+user[i].account+"</td>"+"<td>"+user[i].name+"</td>"+"<td>"+user[i].company+"</td>"+"<td>"+user[i].phone+"</td>"+"<td>"+user[i].email+"</td>"+"<td>"+user[i].role+"</td>"+"<td>"+'<a data-toggle="modal" data-target="#myModal" onclick="showAllRoles('+user[i].account+')">修改角色</a>'+"</td>"+"</tr>");
+                $("#allUser").append("<tr>"+"<td>"+user[i].account+"</td>"+"<td>"+user[i].name+"</td>"+"<td>"+user[i].company+"</td>"+"<td>"+user[i].phone+"</td>"+"<td>"+user[i].email+"</td>"+"<td>"+user[i].role+"</td>"+"<td>"+'<a data-toggle="modal" data-target="#myModal" onclick="showAllRoles('+user[i].account+')">修改角色</a>'+"&nbsp&nbsp" +'<a onclick="deleteUser('+user[i].account+')">删除账号</a>'+"</td>"+"</tr>");
             }
         }
     });
@@ -172,7 +172,7 @@ function getLastUserByPage() {
             $("#allUser").html("");
             var user = data.user;
             for(var i = 0 ; i < user.length ; i++){
-                $("#allUser").append("<tr>"+"<td>"+user[i].account+"</td>"+"<td>"+user[i].name+"</td>"+"<td>"+user[i].company+"</td>"+"<td>"+user[i].phone+"</td>"+"<td>"+user[i].email+"</td>"+"<td>"+user[i].role+"</td>"+"<td>"+'<a data-toggle="modal" data-target="#myModal" onclick="showAllRoles('+user[i].account+')">修改角色</a>'+"</td>"+"</tr>");
+                $("#allUser").append("<tr>"+"<td>"+user[i].account+"</td>"+"<td>"+user[i].name+"</td>"+"<td>"+user[i].company+"</td>"+"<td>"+user[i].phone+"</td>"+"<td>"+user[i].email+"</td>"+"<td>"+user[i].role+"</td>"+"<td>"+'<a data-toggle="modal" data-target="#myModal" onclick="showAllRoles('+user[i].account+')">修改角色</a>'+"&nbsp&nbsp" +'<a onclick="deleteUser( '+user[i].account+')">删除账号</a>'+"</td>"+"</tr>");
             }
         }
     });
@@ -196,7 +196,7 @@ function selectByConditionFirstPage() {
             $("#allUser").html("");
             var user = data.user;
             for(var i = 0 ; i < user.length ; i++){
-                $("#allUser").append("<tr>"+"<td>"+user[i].account+"</td>"+"<td>"+user[i].name+"</td>"+"<td>"+user[i].company+"</td>"+"<td>"+user[i].phone+"</td>"+"<td>"+user[i].email+"</td>"+"<td>"+user[i].role+"</td>"+"<td>"+'<a data-toggle="modal" data-target="#myModal" onclick="showAllRoles('+user[i].account+')">修改角色</a>'+"</td>"+"</tr>");
+                $("#allUser").append("<tr>"+"<td>"+user[i].account+"</td>"+"<td>"+user[i].name+"</td>"+"<td>"+user[i].company+"</td>"+"<td>"+user[i].phone+"</td>"+"<td>"+user[i].email+"</td>"+"<td>"+user[i].role+"</td>"+"<td>"+'<a data-toggle="modal" data-target="#myModal" onclick="showAllRoles('+user[i].account+')">修改角色</a>'+"&nbsp&nbsp" +'<a onclick="deleteUser( '+user[i].account+')">删除账号</a>'+"</td>"+"</tr>");
             }
             pages = data.size;
             $("#pageDIV").append("<a href=\"#\" onclick=\"getFirstUserByPageAndCondition()\">首 页</a>&nbsp&nbsp<a href=\"#\" onclick=\"getPreviousUserByPageAndCondition()\">上一页</a>&nbsp&nbsp<a href=\"#\" onclick=\"getNextUserByPageAndCondition()\">下一页</a>&nbsp&nbsp<a href=\"#\" onclick=\"getLastUserByPageAndCondition()\">尾 页</a>");
@@ -224,7 +224,7 @@ function getNextUserByPageAndCondition() {
                 $("#allUser").html("");
                 var user = data.user;
                 for(var i = 0 ; i < user.length ; i++){
-                    $("#allUser").append("<tr>"+"<td>"+user[i].account+"</td>"+"<td>"+user[i].name+"</td>"+"<td>"+user[i].company+"</td>"+"<td>"+user[i].phone+"</td>"+"<td>"+user[i].email+"</td>"+"<td>"+user[i].role+"</td>"+"<td>"+'<a data-toggle="modal" data-target="#myModal" onclick="showAllRoles('+user[i].account+')">修改角色</a>'+"</td>"+"</tr>");
+                    $("#allUser").append("<tr>"+"<td>"+user[i].account+"</td>"+"<td>"+user[i].name+"</td>"+"<td>"+user[i].company+"</td>"+"<td>"+user[i].phone+"</td>"+"<td>"+user[i].email+"</td>"+"<td>"+user[i].role+"</td>"+"<td>"+'<a data-toggle="modal" data-target="#myModal" onclick="showAllRoles('+user[i].account+')">修改角色</a>'+"&nbsp&nbsp" +'<a onclick="deleteUser( '+user[i].account+'">删除账号</a>'+"</td>"+"</tr>");
                 }
             }
         });
@@ -249,7 +249,7 @@ function getPreviousUserByPageAndCondition() {
                 $("#allUser").html("");
                 var user = data.user;
                 for(var i = 0 ; i < user.length ; i++){
-                    $("#allUser").append("<tr>"+"<td>"+user[i].account+"</td>"+"<td>"+user[i].name+"</td>"+"<td>"+user[i].company+"</td>"+"<td>"+user[i].phone+"</td>"+"<td>"+user[i].email+"</td>"+"<td>"+user[i].role+"</td>"+"<td>"+'<a data-toggle="modal" data-target="#myModal" onclick="showAllRoles('+user[i].account+')">修改角色</a>'+"</td>"+"</tr>");
+                    $("#allUser").append("<tr>"+"<td>"+user[i].account+"</td>"+"<td>"+user[i].name+"</td>"+"<td>"+user[i].company+"</td>"+"<td>"+user[i].phone+"</td>"+"<td>"+user[i].email+"</td>"+"<td>"+user[i].role+"</td>"+"<td>"+'<a data-toggle="modal" data-target="#myModal" onclick="showAllRoles('+user[i].account+')">修改角色</a>'+"&nbsp&nbsp" +'<a onclick="deleteUser( '+user[i].account+'">删除账号</a>'+"</td>"+"</tr>");
                 }
             }
         });
@@ -271,7 +271,7 @@ function getFirstUserByPageAndCondition() {
             $("#allUser").html("");
             var user = data.user;
             for(var i = 0 ; i < user.length ; i++){
-                $("#allUser").append("<tr>"+"<td>"+user[i].account+"</td>"+"<td>"+user[i].name+"</td>"+"<td>"+user[i].company+"</td>"+"<td>"+user[i].phone+"</td>"+"<td>"+user[i].email+"</td>"+"<td>"+user[i].role+"</td>"+"<td>"+'<a data-toggle="modal" data-target="#myModal" onclick="showAllRoles('+user[i].account+')">修改角色</a>'+"</td>"+"</tr>");
+                $("#allUser").append("<tr>"+"<td>"+user[i].account+"</td>"+"<td>"+user[i].name+"</td>"+"<td>"+user[i].company+"</td>"+"<td>"+user[i].phone+"</td>"+"<td>"+user[i].email+"</td>"+"<td>"+user[i].role+"</td>"+"<td>"+'<a data-toggle="modal" data-target="#myModal" onclick="showAllRoles('+user[i].account+')">修改角色</a>'+"&nbsp&nbsp" +'<a onclick="deleteUser( '+user[i].account+'">删除账号</a>'+"</td>"+"</tr>");
             }
         }
     });
@@ -292,7 +292,7 @@ function getLastUserByPageAndCondition() {
             $("#allUser").html("");
             var user = data.user;
             for(var i = 0 ; i < user.length ; i++){
-                $("#allUser").append("<tr>"+"<td>"+user[i].account+"</td>"+"<td>"+user[i].name+"</td>"+"<td>"+user[i].company+"</td>"+"<td>"+user[i].phone+"</td>"+"<td>"+user[i].email+"</td>"+"<td>"+user[i].role+"</td>"+"<td>"+'<a data-toggle="modal" data-target="#myModal" onclick="showAllRoles('+user[i].account+')">修改角色</a>'+"</td>"+"</tr>");
+                $("#allUser").append("<tr>"+"<td>"+user[i].account+"</td>"+"<td>"+user[i].name+"</td>"+"<td>"+user[i].company+"</td>"+"<td>"+user[i].phone+"</td>"+"<td>"+user[i].email+"</td>"+"<td>"+user[i].role+"</td>"+"<td>"+'<a data-toggle="modal" data-target="#myModal" onclick="showAllRoles('+user[i].account+')">修改角色</a>'+"&nbsp&nbsp" +'<a onclick="deleteUser( '+user[i].account+'">删除账号</a>'+"</td>"+"</tr>");
             }
         }
     });
@@ -340,6 +340,88 @@ function changeRoles() {
             }
         },
         error:function () {
+            alert("程序出错");
+        }
+    })
+}
+
+
+function getRoleCheckbox() {
+    $.ajax({
+        type:"post",
+        url:"onlyGetAllRoles",
+        async:false,
+        success:function(data){
+            var roles = data.roles;
+            $("#userRole").html("");
+            for(var i = 0 ; i < roles.length ; i++){
+                $("#userRole").append('<input type="checkbox" name="userRoleCheck" value="'+roles[i].id+'">'+roles[i].roleName+"<br>");
+            }
+        }
+    })
+}
+
+function insertNewAccount() {
+    var arr=[];
+    $.each($('input[name=userRoleCheck]:checked'),function(){
+        arr.push($(this).val());
+    });
+    var account = $("#userAccount").val();
+    var password = $("#userPassword").val();
+    var email = $("#userEmail").val();
+    var phone = $("#userPhone").val();
+    var company = $("#userCompany").val();
+    var data = {"account":account , "password":password , "email":email , "phone":phone , "company":company , "roles":arr};
+    var errorInfo = "";
+    if(account == ""){
+        errorInfo = errorInfo+"账号  ";
+    }
+    if(password == ""){
+        errorInfo = errorInfo+"密码  ";
+    }
+    if (email == ""){
+        errorInfo = errorInfo+"邮箱  ";
+    }
+    if(phone == ""){
+        errorInfo = errorInfo+"手机号  ";
+    }
+    if(arr.length == 0){
+        errorInfo = errorInfo+"角色  ";
+    }
+    if(errorInfo == ""){
+        if(!/^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/.test(email)){
+            alert("邮箱输入的格式不正确");
+        }else{
+            $.ajax({
+                type:"post",
+                data:data,
+                url:"addAccount",
+                async:false,
+                success:function(data){
+                    alert(data);
+                    getUserByPage();
+                },
+                error:function () {
+                    alert("程序出错");
+                }
+            })
+        }
+    }else{
+        alert(errorInfo+"是必填项或必选项");
+    }
+}
+
+function deleteUser(account) {
+    $.ajax({
+        type:"post",
+        data:{"account":account},
+        url:"deleteUser",
+        async:false,
+        success:function (data) {
+            alert(data);
+            getUserByPage();
+        },
+        error:function(){
             alert("程序出错");
         }
     })

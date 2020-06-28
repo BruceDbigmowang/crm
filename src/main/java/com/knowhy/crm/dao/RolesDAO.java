@@ -11,4 +11,6 @@ public interface RolesDAO extends JpaRepository<Roles, Integer> {
     @Query(value = "select distinct r.* from CRM_Account a , AccountAndRole ar , CRM_Role r  where " +
             "a.account = ar.userAccount and r.roleId = ar.roleId and a.account = ?1 ", nativeQuery = true)
     List<Roles> findByAccount(String account);
+
+
 }

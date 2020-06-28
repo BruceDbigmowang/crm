@@ -8,6 +8,7 @@ import com.knowhy.crm.entity.CrmAccount;
 import com.knowhy.crm.mapper.CrmAccountMapper;
 import com.knowhy.crm.pojo.Roles;
 import com.knowhy.crm.service.RoleService;
+import com.knowhy.crm.service.UserService;
 import com.knowhy.crm.util.pojo.UserInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,6 +37,8 @@ public class CrmAccountController extends BaseController {
     CrmAccountMapper crmAccountMapper;
     @Autowired
     RoleService roleService;
+    @Autowired
+    UserService userService;
 
     @RequestMapping("/selectUserByPage")
     public Map<String,Object> selectByPage(@RequestParam("start")int start){
@@ -134,6 +137,25 @@ public class CrmAccountController extends BaseController {
     @RequestMapping("/updateRoles")
     public String changeRoles(@RequestParam("account")String account , @RequestParam("roles[]")int[] roles){
         return roleService.changeRoles(account , roles);
+    }
+
+    @RequestMapping("/onlyGetAllRoles")
+    public Map<String , Object> selectAllRoles(){
+        Map<String , Object> map = new HashMap<>();
+
+        List<Roles> roles = roleService.findAll();
+        map.put("roles" , roles);
+        return map;
+    }
+
+    @RequestMapping("/deleteUser")
+    public String deleteFromAccount(@RequestParam("account")String account){
+        try{
+            userService.deleteAccount(account);
+        }catch (Exception e){
+            return e.getMessage();
+        }
+        return "账号删除成功";
     }
 
 }

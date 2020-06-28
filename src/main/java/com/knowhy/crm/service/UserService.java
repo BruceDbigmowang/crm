@@ -8,6 +8,7 @@ import com.knowhy.crm.pojo.RoleFunc;
 import com.knowhy.crm.pojo.UserRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -126,7 +127,10 @@ public class UserService {
         }
     }
 
-//    public List<UserInfo> showAllSystemUser(){
-//
-//    }
+
+    @Transactional
+    public void deleteAccount(String account){
+        iUserDAO.deleteByAccount(account);
+        userRoleDAO.deleteByAccount(account);
+    }
 }

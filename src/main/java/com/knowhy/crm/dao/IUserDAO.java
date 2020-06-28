@@ -9,6 +9,7 @@ public interface IUserDAO extends JpaRepository<IUser, String> {
     List<IUser> findByPhone(String phone);
     List<IUser> findByAccount(String account);
     List<IUser> findByEmail(String email);
-
     List<IUser> findByAccountAndEmail(String account, String email);
+
+    void deleteByAccount(String account);
 }

@@ -111,7 +111,7 @@ public class AccountController {
                     if(userService.phoneUsed(phone)){
                         return Result.fail("该手机号已被注册");
                     }else{
-                        IUser user = new IUser();
+
                         /**
                          * 生成账号
                          */
@@ -128,7 +128,7 @@ public class AccountController {
 //                        }else{
 //                            account = target;
 //                        }
-
+                        IUser user = new IUser();
                         user.setAccount(account);
 
                         password = MD5Utils.addMD5(password).toString();
@@ -401,6 +401,61 @@ public class AccountController {
             return e.getMessage();
         }
         return "数据保存成功";
+    }
+
+    @RequestMapping("/addAccount")
+    @ResponseBody
+    public String addNewAccount(@RequestParam("account") String userAccount , @RequestParam("password") String userPassword , @RequestParam("email") String userEmail , @RequestParam("phone") String userPhone , @RequestParam("company") String userCompany , @RequestParam("roles[]") int[] userRoleCheck){
+        if(!userService.AccountExist(userAccount)){
+            if(userService.phoneUsed(userPhone)){
+                return "该手机号已被注册";
+            }else{
+                if(!userCompany.isEmpty()){
+                    if(companyInfoService.completeSurvey(userCompany) == 0){
+                        return "您还未完成在线尽调";
+                    }else{
+                        IUser user = new IUser();
+                        user.setAccount(userAccount);
+
+                        userPassword = MD5Utils.addMD5(userPassword).toString();
+                        user.setName("用户"+userAccount);
+                        user.setPassword(userPassword);
+                        user.setSalt("abc");
+                        user.setPhone(userPhone);
+                        user.setCompany(userCompany);
+                        user.setCreateTime(new Date());
+                        user.setStatus("O");
+                        user.setEmail(userEmail);
+
+                        userService.createAccount(user);
+                        for(int i = 0 ; i < userRoleCheck.length ; i++){
+                            userService.setRole(userAccount , userRoleCheck[i]);
+                        }
+                        return "注册成功";
+                    }
+                }else{
+                    IUser user = new IUser();
+                    user.setAccount(userAccount);
+
+                    userPassword = MD5Utils.addMD5(userPassword).toString();
+                    user.setName("用户"+userAccount);
+                    user.setPassword(userPassword);
+                    user.setSalt("abc");
+                    user.setPhone(userPhone);
+                    user.setCreateTime(new Date());
+                    user.setStatus("O");
+                    user.setEmail(userEmail);
+
+                    userService.createAccount(user);
+                    for(int i = 0 ; i < userRoleCheck.length ; i++){
+                        userService.setRole(userAccount , userRoleCheck[i]);
+                    }
+                    return "注册成功";
+                }
+            }
+        }else{
+            return "该账号已被使用";
+        }
     }
 
 }
