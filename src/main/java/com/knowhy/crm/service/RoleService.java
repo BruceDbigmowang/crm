@@ -76,4 +76,14 @@ public class RoleService {
             return "角色修改成功";
         }
     }
+
+    public boolean isCustomer(int roleId){
+        Roles role = rolesDAO.getOne(roleId);
+        String roleName = role.getRoleName();
+        if(roleName.equals("客户")){
+            return true;
+        }else{
+            return false;
+        }
+    }
 }

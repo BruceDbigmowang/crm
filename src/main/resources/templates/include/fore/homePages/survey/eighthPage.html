@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div style="margin-top: 50px;width: 100%;overflow: auto;height: 500px;">
+    <div style="width:500px;margin:0px auto;">
+        <h4 style="text-align: center;">您公司刀具种类信息及其占比<br>（以下为非必填项）</h4>
+        <table class="table" style="text-align: left;">
+            <tr>
+                <td colspan="2" style="font-size: 14px;">硬质合金旋转类</td>
+            </tr>
+            <tr>
+                <td style="font-size: 14px;">钻铰类头约占<p style="color: red;">(若不清楚填0或者不填)</p></td>
+                <td style="font-size: 14px;"><input id="ztzb" style="font-size: 14px;width: 200px;border:0px;" type="text" maxlength="10" placeholder="请填写钻头占比" title="若不清楚则填写 0"><span style="margin-left: 5%;font-size: 14px;">%</span></td>
+            </tr>
+            <tr>
+                <td style="font-size: 14px;">铣刀约占<p style="color: red;">(若不清楚填0或者不填)</p></td>
+                <td><input id="xdzb" style="font-size: 14px;width: 200px;border:0px;" type="text" maxlength="10" placeholder="请填写铣刀占比"><span style="margin-left: 5%;font-size: 14px;">%</span></td>
+            </tr>
+            <tr>
+                <td style="font-size: 14px;">丝锥约占<p style="color: red;">(若不清楚填0或者不填)</p></td>
+                <td><input id="szzb" style="font-size: 14px;width: 200px;border:0px;" type="text" maxlength="10" placeholder="请填写丝锥占比"><span style="margin-left: 5%;font-size: 14px;">%</span></td>
+            </tr>
+            <tr>
+                <td style="font-size: 14px;">其它约占<p style="color: red;">(若不清楚填0或者不填)</p></td>
+                <td><input id="qtOne" style="font-size: 14px;width: 200px;border:0px;" type="text" maxlength="10" placeholder="请填写其它占比"><span style="margin-left: 5%;font-size: 14px;">%</span></td>
+            </tr>
+
+            <tr>
+                <td colspan="2" style="font-size: 14px;">硬质合金刀片类</td>
+            </tr>
+            <tr>
+                <td style="font-size: 14px;">车刀片约占<p style="color: red;">(若不清楚填0或者不填)</p></td>
+                <td><input id="cdpzb" style="font-size: 14px;width: 200px;border:0px;" type="text" maxlength="10" placeholder="请填写车刀片占比"><span style="margin-left: 5%;font-size: 14px;">%</span></td>
+            </tr>
+            <tr>
+                <td style="font-size: 14px;">铣刀片约占<p style="color: red;">(若不清楚填0或者不填)</p></td>
+                <td><input id="xdpzb" style="font-size: 14px;width: 200px;border:0px;" type="text" maxlength="10" placeholder="请填写铣刀片占比"><span style="margin-left: 5%;font-size: 14px;">%</span></td>
+            </tr>
+            <tr>
+                <td style="font-size: 14px;">钻镗刀片类约占<p style="color: red;">(若不清楚填0或者不填)</p></td>
+                <td><input id="tdpzb" style="font-size: 14px;width: 200px;border:0px;" type="text" maxlength="10" placeholder="请填写镗刀片占比"><span style="margin-left: 5%;font-size: 14px;">%</span></td>
+            </tr>
+            <tr>
+                <td style="font-size: 14px;">其它约占<p style="color: red;">(若不清楚填0或者不填)</p></td>
+                <td><input id="qtTwo" style="font-size: 14px;width: 200px;border:0px;" type="text" maxlength="10" placeholder="请填写其它占比"><span style="margin-left: 5%;font-size: 14px;">%</span></td>
+            </tr>
+
+            <tr>
+                <td colspan="2" style="font-size: 14px;">超硬刀具类</td>
+            </tr>
+            <tr>
+                <td style="font-size: 14px;">CBN 约占<p style="color: red;">(若不清楚填0或者不填)</p></td>
+                <td><input id="cbn" style="font-size: 14px;width: 200px;border:0px;" type="text" maxlength="10" placeholder="请填写CBN占比"><span style="margin-left: 5%;font-size: 14px;">%</span></td>
+            </tr>
+            <tr>
+                <td style="font-size: 14px;">PCD 约占<p style="color: red;">(若不清楚填0或者不填)</p></td>
+                <td><input id="pcd" style="font-size: 14px;width: 200px;border:0px;" type="text" maxlength="10" placeholder="请填写PCD占比"><span style="margin-left: 5%;font-size: 14px;">%</span></td>
+            </tr>
+            <tr>
+                <td style="font-size: 14px;">焊接超硬约占<p style="color: red;">(若不清楚填0或者不填)</p></td>
+                <td><input id="hjzb" style="font-size: 14px;width: 200px;border:0px;" type="text" maxlength="10" placeholder="请填写焊接超硬占比"><span style="margin-left: 5%;font-size: 14px;">%</span></td>
+            </tr>
+            <tr>
+                <td style="font-size: 14px;">您公司是否使用高速钢刀具</td>
+                <td style="font-size: 14px;">
+                    <input name="hasGSG" type="radio" style="width: 15px;" value="有" onclick="chooseShow()">有
+                    <input name="hasGSG" type="radio" style="width: 15px;margin-left: 5%;" value="非常少" onclick="chooseHide()">非常少<br>
+                    <input name="hasGSG" type="radio" style="width: 15px;" value="无" onclick="chooseHide()">无
+                </td>
+            </tr>
+            <tr id="brandGSG" style="display: none;">
+                <td style="font-size: 14px;">高速钢刀具品牌</td>
+                <td style="font-size: 14px;">
+                    <input name="gsgBrand" type="checkbox" style="width: 15px;" value="进口品牌">进口品牌
+                    <input name="gsgBrand" type="checkbox" style="width: 15px;margin-left: 5%;" value="国产品牌">国产品牌
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2" style="text-align: center;">
+                    <button class="btn btn-primary" onclick="saveTenthPage()">下一页</button>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+</body>
+</html>

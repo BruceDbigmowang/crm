@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface CompanyInfoDAO extends JpaRepository<CompanyInfo, Integer> {
     List<CompanyInfo> findByCompanyName(String companyName);
+
+    List<CompanyInfo> findByCompanyNameAndCreateDate(String companyName , String createDate);
 }

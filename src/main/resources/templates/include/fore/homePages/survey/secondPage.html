@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<div style="margin-top: 50px;width: 100%">
+    <table class="table" style="width: 500px;margin:0px auto">
+        <tr>
+            <td style="font-size: 14px;">您公司的注册资本</td>
+            <td style="font-size: 14px;"><input id="registerMoney" style="width: 85%;font-size: 14px;border: 0px;" maxlength="18" placeholder="请输入注册资本"><span style="margin-left: 5%">万元</span></td>
+        </tr>
+        <tr>
+            <td style="font-size: 14px;">您公司成立于</td>
+            <td style="font-size: 14px;"><input id="establishTime" style="width: 90%;font-size: 14px;border: 0px;" placeholder="请输入公司成立时间" maxlength="4"><span style="margin-left: 5%">年</span></td>
+        </tr>
+        <tr>
+            <td style="font-size: 14px;"><span style="color: red" y>*</span>您公司的性质</td>
+            <td style="font-size: 14px;">
+                <select id="bussinessNature"  class="selectpicker" style="border: 0px;font-size: 14px;">
+                    <option value="0">国有企业</option>
+                    <option value="1">中外合资</option>
+                    <option value="2">外企独资</option>
+                    <option value="3">民营上市公司</option>
+                    <option value="4">民营企业</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td style="font-size: 14px;"><span style="color: red" y>*</span>您公司有几个子公司</td>
+            <td style="font-size: 14px;">
+                <input type="radio" name="son" style="width: 20px;" value="0个">0个
+                <input type="radio" name="son" style="width: 20px;margin-left: 5%;" value="1-3个">1-3个
+                <input type="radio" name="son" style="width: 20px;margin-left: 5%;" value="4-6个">4-6个<br>
+                <input type="radio" name="son" style="width: 20px;" value="7个以上">7个以上
+            </td>
+        </tr>
+        <tr>
+            <td style="font-size: 14px;"><span style="color: red" y>*</span>您公司员工数量</td>
+            <td style="font-size: 14px;">
+                <input type="radio" name="employee" style="width: 20px;" value="500人以下">500人以下
+                <input type="radio" name="employee" style="width: 20px;margin-left: 5%;" value="500-2000人">500-2000人<br>
+                <input type="radio" name="employee" style="width: 20px;" value="2000-5000人">2000-5000人<br>
+                <input type="radio" name="employee" style="width: 20px;" value="5000人以上">5000人以上
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2" style="text-align: center">
+                <button class="btn btn-primary" onclick="saveSecondPart()">下一页</button>
+            </td>
+        </tr>
+    </table>
+</div>
+
+</body>
+</html>

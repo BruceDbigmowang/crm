@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<div style="margin-top: 50px;width: 100%;overflow: auto;height: 500px;">
+    <table class="table" style="width:500px;text-align: left;margin:0px auto;">
+        <tr>
+            <td style="font-size: 14px;width: 160px;"><span style="color: red" y>*</span>您公司目前的刀具库存总金额约为（万元）</td>
+            <td style="font-size: 14px;">
+                <input name="stockMoney" type="radio" style="width: 15px;" value="<200 万元"><200 <br>
+                <input name="stockMoney" type="radio" style="width: 15px;" value="200-500万元">200-500<br>
+                <input name="stockMoney" type="radio" style="width: 15px;" value="500-1000万元">500-1000<br>
+                <input name="stockMoney" type="radio" style="width: 15px;" value="1000-2000万元">1000-2000<br>
+                <input name="stockMoney" type="radio" style="width: 15px;" value="2000万元以上">2000以上
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2" style="font-size: 14px;width: 160px;">
+                您公司刀具库龄的占比（非必填项）
+            </td>
+        </tr>
+        <tr>
+            <td style="font-size: 14px;"><90 天约占</td>
+            <td><input id="stockOne" style="font-size: 14px;width: 200px;border:0px;" type="text" maxlength="10" placeholder="库龄<90天的占比"><span style="margin-left: 5%;font-size: 14px;">%</span></td>
+        </tr>
+        <tr>
+            <td style="font-size: 14px;">90-180 天约占</td>
+            <td><input id="stockTwo" style="font-size: 14px;width: 200px;border:0px;" type="text" maxlength="10" placeholder="库龄90-180天的占比"><span style="margin-left: 5%;font-size: 14px;">%</span></td>
+        </tr>
+        <tr>
+            <td style="font-size: 14px;">180-365 天约占</td>
+            <td><input id="stockThree" style="font-size: 14px;width: 200px;border:0px;" type="text" maxlength="10" placeholder="库龄180-365天的占比"><span style="margin-left: 5%;font-size: 14px;">%</span></td>
+        </tr>
+        <tr>
+            <td style="font-size: 14px;">365 天以上约占</td>
+            <td><input id="stockFour" style="font-size: 14px;width: 200px;border:0px;" type="text" placeholder="库龄>365天的占比"><span style="margin-left: 5%;font-size: 14px;">%</span></td>
+        </tr>
+        <tr>
+            <td colspan="2" style="font-size: 14px;">您公司刀具库存占比约为（非必填项）</td>
+        </tr>
+        <tr>
+            <td style="font-size: 14px;">标准刀具约占</td>
+            <td><input id="normTool" style="font-size: 14px;width: 200px;border:0px;" type="text" maxlength="10" placeholder="标准刀具占比"><span style="margin-left: 5%;font-size: 14px;">%</span></td>
+        </tr>
+        <tr>
+            <td style="font-size: 14px;">非标刀具约占</td>
+            <td><input id="unnormTool" style="font-size: 14px;width: 200px;border:0px;" type="text" maxlength="10" placeholder="非标刀具占比"><span style="margin-left: 5%;font-size: 14px;">%</span></td>
+        </tr>
+        <tr>
+            <td colspan="2" style="text-align: center">
+                <button class="btn btn-primary" onclick="saveEleventhPage()">下一页</button>
+            </td>
+        </tr>
+    </table>
+</div>
+
+</body>
+</html>

@@ -3,6 +3,8 @@
 <head th:include="include/fore/header::html">
 <head >
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>诺而为CRM管理系统</title>
 
     <!-- 外部文件引入-->
@@ -17,10 +19,76 @@
 <!--    <link th:href="@{static/css/fore/imageValidate.css}" rel="stylesheet">-->
 </head>
 <body style="width:100%;height:92.5%;position:absolute;top:7.5%;">
+
     <div id="homeMainArea" style="">
         <div th:replace="include/fore/navigator::html"></div>
         <div th:replace="include/fore/homePage::html"></div>
         <div th:replace="include/fore/footer::html"></div>
     </div>
+
+    <script>
+        $(function(){
+            $.ajax({
+                type:"post",
+                url:"checkCompleteSurvey",
+                async:true,
+                success:function (data) {
+                    switch (data) {
+                        case 1:
+                            alert("您还未完成在线尽调");
+                            var link_url="include/fore/homePages/survey/firstPage.html";
+                            showAtRight(link_url);
+                            break;
+                        case 2:
+                            alert("您还未完成在线尽调");
+                            var link_url="include/fore/homePages/survey/secondPage.html";
+                            showAtRight(link_url);
+                            break;
+                        case 3:
+                            alert("您还未完成在线尽调");
+                            var link_url="include/fore/homePages/survey/thirdPage.html";
+                            showAtRight(link_url);
+                            break;
+                        case 4:
+                            alert("您还未完成在线尽调");
+                            var link_url="include/fore/homePages/survey/fourthPage.html";
+                            showAtRight(link_url);
+                            break;
+                        case 5:
+                            alert("您还未完成在线尽调");
+                            var link_url="include/fore/homePages/survey/fifthPage.html";
+                            showAtRight(link_url);
+                            break;
+                        case 6:
+                            alert("您还未完成在线尽调");
+                            var link_url="include/fore/homePages/survey/eighthPage.html";
+                            showAtRight(link_url);
+                            break;
+                        case 9:
+                            alert("欢迎使用诺而为CRM系统");
+                            break;
+
+                    }
+                }
+            })
+        })
+
+        //第三页：上传图片 保存内容
+        function uploadImages(){
+            $.ajaxFileUpload({
+                type:"post",
+                fileElementId:"images",
+                url:"updatePic",
+                async:false,
+                dataType:'text',
+                success:function(data){
+                    alert(data);
+                },
+                error:function(){
+                    alert("设备类型文件上传出错");
+                }
+            })
+        }
+    </script>
 </body>
 </html>

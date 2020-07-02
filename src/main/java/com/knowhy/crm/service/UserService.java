@@ -2,10 +2,7 @@ package com.knowhy.crm.service;
 
 import com.knowhy.crm.dao.*;
 import com.knowhy.crm.dao.*;
-import com.knowhy.crm.pojo.Func;
-import com.knowhy.crm.pojo.IUser;
-import com.knowhy.crm.pojo.RoleFunc;
-import com.knowhy.crm.pojo.UserRole;
+import com.knowhy.crm.pojo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -132,5 +129,50 @@ public class UserService {
     public void deleteAccount(String account){
         iUserDAO.deleteByAccount(account);
         userRoleDAO.deleteByAccount(account);
+    }
+
+    public List<IUser> findAllCustomer(){
+        List<Roles> rolesList = rolesDAO.findByRoleName("客户");
+        if(rolesList == null || rolesList.size() == 0){
+            return null;
+        }else{
+            int roleId = rolesList.get(0).getId();
+            List<UserRole> userRoleList = userRoleDAO.findById(roleId);
+            if(userRoleList == null || userRoleList.size() == 0){
+                return null;
+            }else {
+                List<IUser> iUserList = new ArrayList<>();
+                for(int i = 0 ; i < userRoleList.size() ; i++){
+                    String account = userRoleList.get(i).getAccount();
+                    IUser iUser = iUserDAO.getOne(account);
+                    iUserList.add(iUser);
+                }
+                return iUserList;
+            }
+        }
+    }
+
+    public String getCompany(String account){
+        IUser iUser = iUserDAO.getOne(account);
+        return iUser.getCompany();
+    }
+
+    public boolean sureCustomer(String account){
+        List<UserRole> userRoleList = userRoleDAO.findByAccount(account);
+        if(userRoleList == null || userRoleList.size() == 0){
+            return false;
+        }else{
+            List<String> roleName = new ArrayList<>();
+            for(int i = 0 ; i < userRoleList.size() ; i++){
+                int roleId = userRoleList.get(i).getId();
+                Roles role = rolesDAO.getOne(roleId);
+                roleName.add(role.getRoleName());
+            }
+            if(roleName.contains("客户")){
+                return true;
+            }else{
+                return false;
+            }
+        }
     }
 }

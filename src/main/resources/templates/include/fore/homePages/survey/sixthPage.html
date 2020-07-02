@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div style="margin-top: 50px;width: 100%;overflow: auto;height: 500px;">
+    <table class="table" style="width:500px;text-align: left;margin:0px auto;">
+        <tr>
+            <td style="font-size: 14px;"><span style="color: red" y>*</span>您公司主要使用的设备类型</td>
+            <td style="font-size: 14px;">
+                <input name="assetType" type="checkbox" style="width: 15px;" value="普通加工中心">普通加工中心
+                <input name="assetType" type="checkbox" style="width: 15px;margin-left: 5%;" value="车床">车床<br>
+                <input name="assetType" type="checkbox" style="width: 15px;" value="五轴加工中心">五轴加工中心
+                <input name="assetType" type="checkbox" style="width: 15px;margin-left: 5%;" value="专机">专机
+            </td>
+        </tr>
+        <tr>
+            <td style="font-size: 14px;"><span style="color: red" y>*</span>您公司刀具采购的主要来源有（可多选）</td>
+            <td style="font-size: 14px;">
+                <input name="assetSource" type="checkbox" style="width: 15px;" value="欧美进口">欧美进口
+                <input name="assetSource" type="checkbox" style="width: 15px;margin-left: 5%;" value="日本进口">日本进口<br>
+                <input name="assetSource" type="checkbox" style="width: 15px;" value="合资品牌">合资品牌
+                <input name="assetSource" type="checkbox" style="width: 15px;margin-left: 5%;" value="纯国产设备">纯国产设备
+            </td>
+        </tr>
+        <tr>
+            <td style="font-size: 14px;">您公司的主要设备品牌</td>
+            <td><input id="brand" style="font-size: 14px;width: 100%;border: 0px;" type="text" maxlength="100" placeholder="请填写您公司的主要设备品牌"></td>
+        </tr>
+        <tr>
+            <td style="font-size: 14px;"><span style="color: red" y>*</span>您公司设备数量约为（台）</td>
+            <td style="font-size: 14px;">
+                <input name="assetNum" type="radio" style="width: 15px;" value="< 50">< 50
+                <input name="assetNum" type="radio" style="width: 15px;margin-left: 5%;" value="50 - 150">50 - 150<br>
+                <input name="assetNum" type="radio" style="width: 15px;" value="150 - 250">150 - 250
+                <input name="assetNum" type="radio" style="width: 15px;margin-left: 5%;" value="250以上">250以上
+            </td>
+        </tr>
+        <tr>
+            <td style="font-size: 14px;"><span style="color: red" y>*</span>您公司主要设备使用年限</td>
+            <td style="font-size: 14px;">
+                <input name="life" type="radio" style="width: 15px;" value="<3 年"><3 年
+                <input name="life" type="radio" style="width: 15px;margin-left: 5%;" value="3-5 年">3-5 年<br>
+                <input name="life" type="radio" style="width: 15px;" value="5-10 年">5-10 年
+                <input name="life" type="radio" style="width: 15px;margin-left: 5%;" value="10 年以上">10 年以上
+            </td>
+        </tr>
+        <tr>
+            <td style="font-size: 14px;"><span style="color: red" y>*</span>您公司的产品主要生产形式</td>
+            <td style="font-size: 14px;">
+                <input name="format" type="radio" style="width: 15px;" value="多品种小批量">多品种小批量<br>
+                <input name="format" type="radio" style="width: 15px;" value="小品种大批量">小品种大批量<br>
+                <input name="format" type="radio" style="width: 15px;" value="两种情况均有">两种情况均有
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2" style="text-align: center;">
+                <button class="btn btn-primary" onclick="saveEightPage()">下一页</button>
+            </td>
+        </tr>
+    </table>
+</div>
+</body>
+</html>

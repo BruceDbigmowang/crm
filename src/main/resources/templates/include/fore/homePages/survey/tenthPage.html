@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div style="margin-top: 50px;width: 100%;overflow: auto;height: 500px;">
+    <table class="table" style="width:500px;text-align: left;margin:0px auto;">
+        <tr>
+            <td style="font-size: 14px;width: 180px;"><span style="color: red" y>*</span>您公司是否使用ERP 管理系统</td>
+            <td style="font-size: 14px;">
+                <input name="erp" type="radio" style="width: 15px;" value="是" onclick="ERPShow()">是
+                <input name="erp" type="radio" style="width: 15px;margin-left: 5%;" value="否" onclick="ERPHide()">否
+            </td>
+        </tr>
+        <tr id="erpBrand" style="display: none;">
+            <td style="font-size: 14px;"><span style="color: red" y>*</span>ERP品牌</td>
+            <td><input id="erpBrand2" style="font-size: 14px;width: 200px;border:0px;" type="text" maxlength="100" placeholder="请填写使用的ERP系统品牌"></td>
+        </tr>
+        <tr>
+            <td style="font-size: 14px;"><span style="color: red" y>*</span>您公司是否使用MES 管理系统</td>
+            <td style="font-size: 14px;">
+                <input name="mes" type="radio" style="width: 15px;" value="是" onclick="MESShow()">是
+                <input name="mes" type="radio" style="width: 15px;margin-left: 5%;" value="否" onclick="MESHide()">否
+            </td>
+        </tr>
+        <tr id="mesBrand" style="display: none;">
+            <td style="font-size: 14px;"><span style="color: red" y>*</span>MES品牌</td>
+            <td><input id="mesBrand2" style="font-size: 14px;width: 200px;border:0px;" type="text" maxlength="100" placeholder="请填写使用的MES系统品牌"></td>
+        </tr>
+        <tr>
+            <td style="font-size: 14px;">您公司生产现场的换班安排</td>
+            <td style="font-size: 14px;">
+                <input name="arrange" type="radio" style="width: 15px;" value="8小时" >8小时
+                <input name="arrange" type="radio" style="width: 15px;margin-left: 5%;" value="10小时">10小时<br>
+                <input name="arrange" type="radio" style="width: 15px;" value="12小时">12小时
+                <input name="arrange" type="radio" style="width: 15px;margin-left: 5%;" value="其它">其它
+            </td>
+        </tr>
+        <tr>
+            <td style="font-size: 14px;">您公司生产休息</td>
+            <td style="font-size: 14px;">
+                <input name="rest" type="radio" style="width: 15px;" value="周末2天" >周末2天<br>
+                <input name="rest" type="radio" style="width: 15px;" value="周末1天">周末1天<br>
+                <input name="rest" type="radio" style="width: 15px;" value="其它">其它
+            </td>
+        </tr>
+        <tr>
+            <td style="font-size: 14px;">您公司生产线共有</td>
+            <td><input id="productNum" style="font-size: 14px;width: 200px;border:0px;" type="text" placeholder="公司生产线数量"><span style="margin-left: 5%;font-size: 14px;">条</span></td>
+        </tr>
+        <tr>
+            <td colspan="2" style="text-align: center;">
+                <button class="btn btn-primary" onclick="saveTwelfthPage()">下一页</button>
+            </td>
+        </tr>
+    </table>
+</div>
+</body>
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div style="margin-top: 50px;width: 100%;">
+    <table class="table" style="font-size: 18px;width:500px;margin:0px auto;">
+        <tr>
+            <td style="font-size: 14px;"><span style="color: red" y>*</span>您公司的全称</td>
+            <td colspan="2"><input id="companyName" placeholder="请输入您公司的全称" style="font-size: 14px;width: 100%;border: 0px;" maxlength="30"></td>
+        </tr>
+        <tr>
+            <td style="font-size: 14px;"><span style="color: red" y>*</span>您的姓名</td>
+            <td colspan="2"><input id="contact"  style="font-size: 14px;width: 100%;border: 0px;" placeholder="请输入您的姓名" maxlength="30"></td>
+        </tr>
+        <tr>
+            <td style="font-size: 14px;"><span style="color: red" y>*</span>您的联系方式</td>
+            <td><input id="contactWay" name="contactWay" placeholder="请输入你的联系方式" style="width:100%;font-size: 14px;border: 0px;" maxlength="11"></td>
+            <td style="width: 95px;"><button style="width: 96px;height: 34px;border: 0px;" id="getting" class="btn btn-success" value="获取验证码">获取验证码</button></td>
+        </tr>
+        <tr>
+            <td style="font-size: 14px;"><span style="color: red" y>*</span>输入验证码</td>
+            <td  colspan="2"><input id="vcode" style="width: 100%;font-size: 14px;border: 0px;" placeholder="请输入验证码" onblur="sureVcode()" maxlength="6"><span id="result" style="font-size: 14px;"></span></td>
+        </tr>
+        <tr>
+            <td style="font-size: 14px;"><span style="color: red" y>*</span>微信号与手机号一致</td>
+            <td  colspan="2"  style="font-size: 14px;"><input type="radio" name="wechat" value="0" style="width: 20px;" onclick="chooseNO()">否
+                <input type="radio" name="wechat" value="1" style="width: 20px;margin-left: 5%;" onclick="chooseYES()">是
+            </td>
+        </tr>
+        <tr id="wechat" style="display: none;">
+            <td style="font-size: 14px;"><span style="color: red" y>*</span>您的微信号</td>
+            <td  colspan="2" style="font-size: 14px;"><input id="wechatNum" placeholder="请输入您的微信号" maxlength="30" style="width: 100%;border: 0px;"></td>
+        </tr>
+        <tr>
+            <td colspan="3" style="text-align: center;">
+                <button class="btn btn-primary" onclick="sureBeforeSbmit()">下一页</button>
+            </td>
+        </tr>
+    </table>
+</div>
+</body>
+</html>

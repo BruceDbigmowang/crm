@@ -1,6 +1,7 @@
 package com.knowhy.crm.controller;
 
 import com.knowhy.crm.service.CompanyInfoService;
+import com.knowhy.crm.service.RoleService;
 import com.knowhy.crm.service.UserService;
 import com.knowhy.crm.util.MD5Utils;
 import com.knowhy.crm.util.Result;
@@ -12,6 +13,7 @@ import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,7 +34,11 @@ public class AccountController {
     @Autowired
     UserService userService;
     @Autowired
+    RoleService roleService;
+    @Autowired
     PathService pathService;
+
+
 
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
@@ -71,6 +77,8 @@ public class AccountController {
                         path.setRecord(record);
                         path.setCreateTime(now);
                         pathService.writeRecord(path);
+                        //测试阶段，验证码为固定值111111
+                        session.setAttribute("code" , "111111");
                         return Result.success();
                     }else{
 
@@ -455,6 +463,99 @@ public class AccountController {
             }
         }else{
             return "该账号已被使用";
+        }
+    }
+
+    @RequestMapping("/registerNewAccount")
+    @Transactional
+    @ResponseBody
+    public String newAccountRegister(@RequestParam("account")String account , @RequestParam("email")String email , @RequestParam("phone")String phone , @RequestParam("vcode")String vcode , @RequestParam("company")String company , @RequestParam("password")String password , @RequestParam("identity")int identity){
+        String sessionVcode = "111111";
+        if(!vcode.equals(sessionVcode)){
+            return "验证码填写错误";
+        }else{
+           if(userService.AccountExist(account)){
+               return "该账号已被注册";
+           } else{
+               if(userService.phoneUsed(phone)){
+                   return "该手机号已被使用";
+               }else{
+                   if(roleService.isCustomer(identity)){
+                       if("".equals(company)){
+                           return "公司未填写";
+                       }else{
+                           /**
+                            * 注册客户
+                            */
+                           try{
+                               IUser user = new IUser();
+                               user.setAccount(account);
+                               password = MD5Utils.addMD5(password).toString();
+                               user.setName("用户"+account);
+                               user.setPassword(password);
+                               user.setSalt("abc");
+                               user.setPhone(phone);
+                               user.setCompany(company);
+                               user.setCreateTime(new Date());
+                               user.setStatus("O");
+                               user.setEmail(email);
+
+                               userService.createAccount(user);
+                               userService.setRole(account , identity);
+                           }catch (Exception e){
+                               return e.getMessage();
+                           }
+                           return "OK";
+                       }
+                   }else{
+                       /**
+                        * 注册非客户
+                        */
+                       try{
+                           IUser user = new IUser();
+                           user.setAccount(account);
+                           password = MD5Utils.addMD5(password).toString();
+                           user.setName("用户"+account);
+                           user.setPassword(password);
+                           user.setSalt("abc");
+                           user.setPhone(phone);
+//                       user.setCompany(company);
+                           user.setCreateTime(new Date());
+                           user.setStatus("O");
+                           user.setEmail(email);
+                           userService.createAccount(user);
+                           userService.setRole(account , identity);
+                       }catch (Exception e){
+                           return e.getMessage();
+                       }
+                        return "OK";
+                   }
+               }
+           }
+        }
+    }
+
+    /**
+     *登录进入主页后
+     * 首先判断登录账号的角色是否是客户角色
+     * 若是客户角色，判断是否完成在线尽调
+     * 当中包含未做在线尽调、完成部分以及完成在线尽调
+     */
+    @RequestMapping("/checkCompleteSurvey")
+    @ResponseBody
+    public int checkSurvey(HttpSession session){
+        IUser iUser = (IUser)session.getAttribute("user");
+        String account = iUser.getAccount();
+        String company = iUser.getCompany();
+        if(userService.sureCustomer(account)){
+            int result = companyInfoService.sureSurvey(company);
+            if(result != 1 && result != 9){
+                int cid = companyInfoService.getCid(company);
+                session.setAttribute("cid" , cid);
+            }
+            return result;
+        }else{
+            return 9;
         }
     }
 

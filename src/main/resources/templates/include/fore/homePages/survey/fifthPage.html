@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<div style="margin-top: 50px;width: 100%;overflow: auto;height: 500px;">
+    <table class="table" style="width:500px;text-align: left;margin:0px auto;">
+        <tr>
+            <td style="font-size: 14px;"><span style="color: red" y>*</span>您公司近三年的平均产值约为</td>
+            <td style="font-size: 14px;">
+                <input name="output" type="radio" style="width: 15px;" value="<1 亿元"><1 亿元
+                <input name="output" type="radio" style="width: 15px;margin-left: 5%;" value="2-5 亿元">2-5 亿元<br>
+                <input name="output" type="radio" style="width: 15px;" value="5-10 亿元">5-10 亿元
+                <input name="output" type="radio" style="width: 15px;margin-left: 5%;" value="10-20 亿元">10-20 亿元<br>
+                <input name="output" type="radio" style="width: 15px;" value="20 亿元以上">20 亿元以上
+            </td>
+        </tr>
+        <tr>
+            <td style="font-size: 14px;"><span style="color: red" y>*</span>您公司的产品销售市场主要为（可多选）</td>
+            <td style="font-size: 14px;">
+                <input name="market" type="checkbox" style="width: 15px;" value="国内">国内
+                <input name="market" type="checkbox" style="width: 15px;margin-left: 5%;" value="出口">出口
+            </td>
+        </tr>
+        <tr>
+            <td style="font-size: 14px;">您公司的主要竞争对手(请填写企业简称)</td>
+            <td style="font-size: 14px;"><input id="competitor" style="font-size: 14px;width: 100%;border: 0px;" type="text" maxlength="30" placeholder="请填写企业名称"></td>
+        </tr>
+        <tr>
+            <td style="font-size: 14px;">您公司未来三年的的发展计划为（可多选）</td>
+            <td style="font-size: 14px;">
+                <input name="plan" type="checkbox" style="width: 15px;" value="扩充产能">扩充产能
+                <input name="plan" type="checkbox" style="width: 15px;margin-left: 5%;" value="争取上市">争取上市<br>
+                <input name="plan" type="checkbox" style="width: 15px;;" value="减少投入寻求合作">减少投入寻求合作<br>
+                <input name="plan" type="checkbox" style="width: 15px;" value="研发新产品">研发新产品<br>
+                <input name="plan" type="checkbox" style="width: 15px;" value="扩大市场份额">扩大市场份额<br>
+                <input name="plan" type="checkbox" style="width: 15px;" value="引入新项目">引入新项目<br>
+                <input name="plan" type="checkbox" style="width: 15px;" value="加工自动化改造">加工自动化改造
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2" style="text-align: center">
+                <button class="btn btn-primary" onclick="saveSevenPage()">下一页</button>
+            </td>
+        </tr>
+    </table>
+</div>
+
+</body>
+</html>

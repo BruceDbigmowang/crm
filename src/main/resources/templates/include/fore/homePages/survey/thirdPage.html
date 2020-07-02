@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<div style="margin-top: 50px;width: 100%">
+    <table class="table" style="width: 500px;margin:0px auto;text-align: left;">
+        <tr>
+            <td style="font-size: 14px;"><span style="color: red" y>*</span>您公司所在的行业</td>
+            <td>
+                <input type="radio" name="bussiness" style="width: 20px; " value="汽车" onclick="chooseCar()">汽车
+                <input type="radio" name="bussiness" style="width: 20px;margin-left: 5%;" value="航空军工" onclick="chooseAir()">航空军工
+                <input type="radio" name="bussiness" style="width: 20px;margin-left: 5%;" value="医疗" onclick="chooseMedical()">医疗<br>
+                <input type="radio" name="bussiness" style="width: 20px;" value="重工" onclick="chooseIndustry()">重工
+                <input type="radio" name="bussiness" style="width: 20px;margin-left: 5%;" value="精密模具" onclick="chooseMouldl()">精密模具
+                <input type="radio" name="bussiness" style="width: 20px;margin-left: 5%;" value="3C行业" onclick="choose3C()">3C行业<br>
+                <input type="radio" name="bussiness" style="width: 20px;"value="其它" onclick="chooseOther()">其它
+            </td>
+        </tr>
+        <tr id="bussiness"></tr>
+        <tr id="products"></tr>
+        <tr id="pic" style="display: none;font-size: 14px;">
+            <td style="font-size: 14px;">上传图片</td>
+            <td><input id="images" name="images" type="file"accept="image/*" multiple="multiple" onchange="uploadImages()"></td>
+        </tr>
+        <tr>
+            <td colspan="2" style="text-align: center;">
+                <button class="btn btn-primary" onclick="saveFourthPage()">下一页</button>
+            </td>
+        </tr>
+    </table>
+</div>
+
+</body>
+</html>

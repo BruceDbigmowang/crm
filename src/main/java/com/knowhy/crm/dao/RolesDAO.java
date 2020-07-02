@@ -12,5 +12,5 @@ public interface RolesDAO extends JpaRepository<Roles, Integer> {
             "a.account = ar.userAccount and r.roleId = ar.roleId and a.account = ?1 ", nativeQuery = true)
     List<Roles> findByAccount(String account);
 
-
+    List<Roles> findByRoleName(String name);
 }

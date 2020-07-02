@@ -35,4 +35,9 @@ public class ForePageController {
     public String home(){
         return "fore/home";
     }
+
+    @RequestMapping("/foreRegister")
+    public String toRegister(){
+        return "fore/registerAccount";
+    }
 }
