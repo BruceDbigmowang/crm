@@ -6,6 +6,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.math.BigDecimal;
 import java.util.Date;
 
 @Entity
@@ -13,13 +14,21 @@ import java.util.Date;
 @JsonIgnoreProperties({"handler" , "hibernateLazyInitializer"})
 public class SalesPlan {
     @Id
-    @Column(name = "salesPlanId")
+    @Column(name = "salesPlanNumber")
     String no;
 
     @Column(name = "company")
     String company;
     @Column(name = "salesPlanDesc")
     String describe;
+
+    BigDecimal costEstimate;
+    String costType;
+    String costCenter;
+    BigDecimal amount;
+    BigDecimal appliedAmount;
+    BigDecimal usedAmount;
+
     @Column(name = "totalStatus")
     String status;
     @Column(name = "firstVisitStatus")
@@ -67,6 +76,54 @@ public class SalesPlan {
 
     public void setDescribe(String describe) {
         this.describe = describe;
+    }
+
+    public BigDecimal getCostEstimate() {
+        return costEstimate;
+    }
+
+    public void setCostEstimate(BigDecimal costEstimate) {
+        this.costEstimate = costEstimate;
+    }
+
+    public String getCostType() {
+        return costType;
+    }
+
+    public void setCostType(String costType) {
+        this.costType = costType;
+    }
+
+    public String getCostCenter() {
+        return costCenter;
+    }
+
+    public void setCostCenter(String costCenter) {
+        this.costCenter = costCenter;
+    }
+
+    public BigDecimal getAmount() {
+        return amount;
+    }
+
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
+    }
+
+    public BigDecimal getAppliedAmount() {
+        return appliedAmount;
+    }
+
+    public void setAppliedAmount(BigDecimal appliedAmount) {
+        this.appliedAmount = appliedAmount;
+    }
+
+    public BigDecimal getUsedAmount() {
+        return usedAmount;
+    }
+
+    public void setUsedAmount(BigDecimal usedAmount) {
+        this.usedAmount = usedAmount;
     }
 
     public String getStatus() {

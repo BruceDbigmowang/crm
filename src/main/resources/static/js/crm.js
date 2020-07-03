@@ -1450,3 +1450,166 @@ function saveFourteenthPage() {
         }
     })
 }
+
+function createSalePlan() {
+    var salePlanNumber = $("#salePlanNumber").val();
+    var costEstimate = $("#costEstimate").val();
+    var costType = $("#costType option:selected").text();
+    var costCenter = $("#costCenter").val();
+    var company = $("#company").val();
+    var amount = $("#amount").val();
+    var applied = $("#applied").val();
+    var used = $("#used").val();
+    var data = {"salePlanNumber":salePlanNumber , "costEstimate":costEstimate , "costType":costType , "costCenter":costCenter , "company":company , "amount":amount , "applied":applied , "used":used};
+    var url = "createNewSalePlan";
+    $.ajax({
+        type:"post",
+        data:data,
+        url:url,
+        async:false,
+        success:function (data) {
+            alert(data);
+        },
+        error:function () {
+            alert("程序出错");
+        }
+    })
+ }
+//格式化时间显示 yyyy-MM-dd hh:mm:ss
+function format(inputTime) {
+    var date = new Date(inputTime);
+    var y = date.getFullYear();
+    var m = date.getMonth() + 1;
+    m = m < 10 ? ('0' + m) : m;
+    var d = date.getDate();
+    d = d < 10 ? ('0' + d) : d;
+    var h = date.getHours();
+    h = h < 10 ? ('0' + h) : h;
+    var minute = date.getMinutes();
+    var second = date.getSeconds();
+    minute = minute < 10 ? ('0' + minute) : minute;
+    second = second < 10 ? ('0' + second) : second;
+    return y + '-' + m + '-' + d + ' ' + h + ':' + minute + ':' + second;
+}
+
+var salestart = 1;
+var salePages;
+function findAllSalePlan() {
+    $.ajax({
+        type:"post",
+        data:{"start":salestart},
+        url:"getAllSalePlan",
+        async:false,
+        success:function(data){
+            $("#salePlanData").html("");
+            var result = data.result;
+            if(result == "暂无数据"){
+                alert("暂无数据")
+            }else{
+                var salePlans = data.salePlans;
+                salePages = data.size;
+                for(var i = 0 ; i < salePlans.length ; i++){
+                    $("#salePlanData").append("<tr>"+"<td>"+salePlans[i].salesPlanNumber+"</td>"+"<td>"+salePlans[i].company+"</td>"+"<td>"+format(salePlans[i].createTime)+"</td>"+"<td>"+salePlans[i].creater+"</td>"+"<td>"+salePlans[i].totalStatus+"</td>")
+                }
+            }
+        }
+    })
+}
+
+function findAllSalePlanNext() {
+    salestart = salestart +1;
+    if(salestart > salePages){
+        alert("此页为最后一页");
+    }else{
+        $.ajax({
+            type:"post",
+            data:{"start":salestart},
+            url:"getAllSalePlan",
+            async:false,
+            success:function(data){
+                $("#salePlanData").html("");
+                var result = data.result;
+                if(result == "暂无数据"){
+                    alert("暂无数据")
+                }else{
+                    var salePlans = data.salePlans;
+                    for(var i = 0 ; i < salePlans.length ; i++){
+                        $("#salePlanData").append("<tr>"+"<td>"+salePlans[i].salesPlanNumber+"</td>"+"<td>"+salePlans[i].company+"</td>"+"<td>"+format(salePlans[i].createTime)+"</td>"+"<td>"+salePlans[i].creater+"</td>"+"<td>"+salePlans[i].totalStatus+"</td>")
+                    }
+                }
+            }
+        })
+    }
+}
+
+function findAllSalePlanPrevious() {
+    salestart = salestart - 1;
+    if(salestart == 0){
+        alert("此页为第一页");
+    }else{
+        $.ajax({
+            type:"post",
+            data:{"start":salestart},
+            url:"getAllSalePlan",
+            async:false,
+            success:function(data){
+                $("#salePlanData").html("");
+                var result = data.result;
+                if(result == "暂无数据"){
+                    alert("暂无数据")
+                }else{
+                    var salePlans = data.salePlans;
+                    for(var i = 0 ; i < salePlans.length ; i++){
+                        $("#salePlanData").append("<tr>"+"<td>"+salePlans[i].salesPlanNumber+"</td>"+"<td>"+salePlans[i].company+"</td>"+"<td>"+format(salePlans[i].createTime)+"</td>"+"<td>"+salePlans[i].creater+"</td>"+"<td>"+salePlans[i].totalStatus+"</td>")
+                    }
+                }
+            }
+        })
+    }
+}
+
+function findAllSalePlanFirst() {
+    salestart = 1;
+    $.ajax({
+        type:"post",
+        data:{"start":salestart},
+        url:"getAllSalePlan",
+        async:false,
+        success:function(data){
+            $("#salePlanData").html("");
+            var result = data.result;
+            if(result == "暂无数据"){
+                alert("暂无数据")
+            }else{
+                var salePlans = data.salePlans;
+                salePages = data.size;
+                for(var i = 0 ; i < salePlans.length ; i++){
+                    $("#salePlanData").append("<tr>"+"<td>"+salePlans[i].salesPlanNumber+"</td>"+"<td>"+salePlans[i].company+"</td>"+"<td>"+format(salePlans[i].createTime)+"</td>"+"<td>"+salePlans[i].creater+"</td>"+"<td>"+salePlans[i].totalStatus+"</td>")
+                }
+            }
+        }
+    })
+}
+
+function findAllSalePlanLast() {
+    salestart = salePages;
+    $.ajax({
+        type:"post",
+        data:{"start":salestart},
+        url:"getAllSalePlan",
+        async:false,
+        success:function(data){
+            $("#salePlanData").html("");
+            var result = data.result;
+            if(result == "暂无数据"){
+                alert("暂无数据")
+            }else{
+                var salePlans = data.salePlans;
+                salePages = data.size;
+                for(var i = 0 ; i < salePlans.length ; i++){
+                    $("#salePlanData").append("<tr>"+"<td>"+salePlans[i].salesPlanNumber+"</td>"+"<td>"+salePlans[i].company+"</td>"+"<td>"+format(salePlans[i].createTime)+"</td>"+"<td>"+salePlans[i].creater+"</td>"+"<td>"+salePlans[i].totalStatus+"</td>")
+                }
+            }
+        }
+    })
+}
