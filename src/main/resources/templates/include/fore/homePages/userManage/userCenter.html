@@ -32,6 +32,12 @@
     }
 </style>
 
+<script>
+    $(function(){
+        getPersonalInfo();
+    })
+</script>
+
 
 
 <div style="width: 400px;margin:0px auto;margin-top: 50px;">
@@ -69,18 +75,18 @@
         <tr>
             <td style="width: 100px;text-align: center;height: 40px;font-size: 16px;">新密码</td>
             <td>
-                <input id="password1" type="password" style="width: 100%;height: 100%;font-size: 16px;">
+                <input id="password1" type="password" style="width: 100%;height: 100%;font-size: 16px;" placeholder="修改密码">
             </td>
         </tr>
         <tr>
-            <td style="width: 100px;text-align: center;height: 40px;font-size: 16px;">确认密码</td>
+            <td style="width: 100px;text-align: center;height: 40px;font-size: 16px;" >确认密码</td>
             <td>
-                <input id="password2" type="password" style="width: 100%;height: 100%;font-size: 16px;">
+                <input id="password2" type="password" style="width: 100%;height: 100%;font-size: 16px;" placeholder="确认密码">
             </td>
         </tr>
         <tr>
             <td colspan="2" style="width: 100px;text-align: center;height: 40px;font-size: 16px;">
-                <button class="btn btn-primary" onclick="getPersonalInfo()">查  询</button>
+<!--                <button class="btn btn-primary" onclick="getPersonalInfo()">查  询</button>-->
                 <button class="btn btn-primary" onclick="savePersonalInfo()">提  交</button>
             </td>
 

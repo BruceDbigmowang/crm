@@ -134,6 +134,14 @@ public class CrmAccountController extends BaseController {
         return map;
     }
 
+    @RequestMapping("/findAllRoles")
+    public Map<String , Object> findRoles(){
+        Map<String , Object> map = new HashMap<>();
+        List<Roles> roles = roleService.findAll();
+        map.put("roles" , roles);
+        return map;
+    }
+
     @RequestMapping("/updateRoles")
     public String changeRoles(@RequestParam("account")String account , @RequestParam("roles[]")int[] roles){
         return roleService.changeRoles(account , roles);

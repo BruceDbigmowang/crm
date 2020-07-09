@@ -24,6 +24,7 @@
 <body style="background-image: url(../../static/image/login.png);background-size: 100%;background-repeat: no-repeat;">
 <script>
     $(function(){
+        getAllRole();
         /*仿刷新：检测是否存在cookie*/
         if($.cookie("captcha")){
             var count = $.cookie("captcha");
@@ -52,7 +53,7 @@
                 if (isNaN(contactWay)) {
                     alert("手机号码填写错误,含有非法字符,手机号只能是数字");
                 } else {
-                    // sendCode();
+                    sendCode();
                     var btn = $(this);
                     var count = 60;
                     var resend = setInterval(function(){
@@ -74,6 +75,38 @@
             }
         });
     });
+
+    function sendCode() {
+        var contactWay = $("#userPhone").val();
+
+        $.ajax({
+            type:"post",
+            data:{"contactWay":contactWay},
+            url:"sendVcode",
+            async:false,
+            success:function(data){
+                alert(data);
+            },
+            error:function () {
+                alert("获取验证码失败");
+            }
+        })
+    }
+
+    function getAllRole() {
+        $.ajax({
+            type:"post",
+            url:"findAllRoles",
+            async:false,
+            success:function (data) {
+                $("#userIdentity").html("");
+                var roles = data.roles;
+                for(var i = 0 ; i < roles.length ; i++){
+                    $("#userIdentity").append('<option value="'+roles[i].id+'">'+roles[i].roleName+"</option>");
+                }
+            }
+        })
+    }
 </script>
 <div class="login-form" style="padding-top: 0px;">
     <form onsubmit="registerNow()">

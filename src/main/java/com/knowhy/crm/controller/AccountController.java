@@ -319,7 +319,7 @@ public class AccountController {
                 path.setCreateTime(now);
                 pathService.writeRecord(path);
 
-                return Result.fail("重置成功");
+                return Result.success("重置成功");
             }else{
                 return Result.fail("密码输入不一致");
             }
@@ -469,8 +469,8 @@ public class AccountController {
     @RequestMapping("/registerNewAccount")
     @Transactional
     @ResponseBody
-    public String newAccountRegister(@RequestParam("account")String account , @RequestParam("email")String email , @RequestParam("phone")String phone , @RequestParam("vcode")String vcode , @RequestParam("company")String company , @RequestParam("password")String password , @RequestParam("identity")int identity){
-        String sessionVcode = "111111";
+    public String newAccountRegister(HttpSession session , @RequestParam("account")String account , @RequestParam("email")String email , @RequestParam("phone")String phone , @RequestParam("vcode")String vcode , @RequestParam("company")String company , @RequestParam("password")String password , @RequestParam("identity")int identity){
+        String sessionVcode = (String)session.getAttribute("code");
         if(!vcode.equals(sessionVcode)){
             return "验证码填写错误";
         }else{

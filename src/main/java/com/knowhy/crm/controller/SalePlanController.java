@@ -30,6 +30,43 @@ public class SalePlanController {
     @Resource
     CrmSalesplanMapper crmSalesplanMapper;
 
+    @RequestMapping("/createSalePlanFirst")
+    public String createPlan(HttpSession session , @RequestParam("number")String number , @RequestParam("name")String name , @RequestParam("describe")String describe){
+        SalesPlan salesPlan = new SalesPlan();
+        if("".equals(number)){
+            return "请填写销售计划编号";
+        }else{
+            salesPlan.setNo(number);
+        }
+
+        if("".equals(name)){
+            return "请填写客户名称";
+        }else{
+            salesPlan.setCompany(name);
+        }
+
+        if("".equals(describe)){
+            return "请填写销售描述";
+        }else{
+            salesPlan.setDescribe(describe);
+        }
+
+        salesPlan.setCreateTime(new Date());
+        IUser user = (IUser)session.getAttribute("user");
+        salesPlan.setCreater(user.getAccount());
+
+        try{
+
+            salePlanService.createSalePlan(salesPlan);
+        }catch (Exception e){
+            return e.getMessage();
+        }
+        return "OK";
+
+    }
+
+
+
     @RequestMapping("/createNewSalePlan")
     public String createNew(HttpSession session , @RequestParam("salePlanNumber")String salePlanNum , @RequestParam("costEstimate") String costEstimate , @RequestParam("company")String company , @RequestParam("costType")String costType , @RequestParam("costCenter")String costCenter , @RequestParam("amount")String amount , @RequestParam("applied")String applied , @RequestParam("used")String used){
         SalesPlan salesPlan = new SalesPlan();
@@ -96,9 +133,7 @@ public class SalePlanController {
             }
        }
        try{
-           salesPlan.setCreateTime(new Date());
-           IUser user = (IUser)session.getAttribute("user");
-           salesPlan.setCreater(user.getAccount());
+
            salePlanService.createSalePlan(salesPlan);
        }catch (Exception e){
            return e.getMessage();
@@ -141,4 +176,67 @@ public class SalePlanController {
         }
         return map;
     }
+
+    @RequestMapping("/findSalePlanByNumber")
+    public Map<String , Object> findByNumber(@RequestParam("number")String number){
+        Map<String , Object> map = new HashMap<>();
+        SalesPlan salesPlan = salePlanService.findById(number);
+        if(salesPlan == null){
+            map.put("result" , "暂无数据");
+            return map;
+        }else{
+
+            String totalStatus = salesPlan.getStatus();
+            if(totalStatus == null){
+                salesPlan.setStatus("尚未进行");
+            }else if(totalStatus == "END"){
+                salesPlan.setStatus("已完成");
+            }else{
+                salesPlan.setStatus("进行中");
+            }
+
+            map.put("result" , "成功获取数据");
+            map.put("salesPlans" , salesPlan);
+            return map;
+        }
+    }
+
+    @RequestMapping("/findSalePlanByCompany")
+    public Map<String , Object> findByCompany(@RequestParam("number")String company){
+        Map<String , Object> map = new HashMap<>();
+        List<SalesPlan> salesPlanList = salePlanService.findByCompany(company);
+        if(salesPlanList == null || salesPlanList.size() == 0){
+            map.put("result" , "暂无数据");
+            return map;
+        }else{
+            for(int i = 0 ; i < salesPlanList.size() ; i++){
+                String totalStatus = salesPlanList.get(i).getStatus();
+                if(totalStatus == null){
+                    salesPlanList.get(i).setStatus("尚未进行");
+                }else if(totalStatus == "END"){
+                    salesPlanList.get(i).setStatus("已完成");
+                }else{
+                    salesPlanList.get(i).setStatus("进行中");
+                }
+            }
+            map.put("result" , "成功获取数据");
+            map.put("salesPlans" , salesPlanList);
+            return map;
+        }
+    }
+
+    @RequestMapping("/findCompanyBySalePlan")
+    public String findComapny(@RequestParam("salePlanNum")String salePlanNum){
+        SalesPlan salesPlan = salePlanService.findById(salePlanNum);
+        if(salesPlan != null){
+            return salesPlan.getCompany();
+        }else{
+            return "F";
+        }
+    }
+
+//    @RequestMapping("/findAllSalePlan")
+//    public List<SalesPlan> findAll(){
+//        return salePlanService.findAllSalePlan();
+//    }
 }

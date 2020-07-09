@@ -34,12 +34,14 @@
 </script>
 
 <div style="margin-top: 20px;margin-left: 20px;width: 100%">
-    <table class="table" style="width: 800px;margin:0px auto;">
+    <table class="table" style="width: 1000px;margin:0px auto;">
         <tr style="height: 47px;">
-            <td style="text-align: left;vertical-align: inherit;">销售计划编号</td>
-            <td colspan="3" style="vertical-align: inherit;"><input style="width: 100%;height: 100%;border:0px;" placeholder="输入销售计划编号"></td>
-            <td style="text-align: left;vertical-align: inherit;">客户</td>
-            <td style="vertical-align: inherit;"><input style="width: 250px;height: 100%;border: 0px;" readonly placeholder="客户"></td>
+            <td  style="text-align: left;vertical-align: inherit;" >销售计划编号</td>
+            <td  style="vertical-align: inherit;"><input id="salePlanNumber" style="width: 100%;height: 100%;border:0px;" placeholder="输入销售计划编号" onblur="sureCompany()"></td>
+            <td  style="text-align: left;vertical-align: inherit;">客户</td>
+            <td style="vertical-align: inherit;"><input id="company" style="width: 250px;height: 100%;border: 0px;" readonly placeholder="客户"></td>
+            <td  style="text-align: left;vertical-align: inherit;">出差目的</td>
+            <td style="vertical-align: inherit;"><input id="target"  style="width: 250px;height: 100%;border: 0px;" placeholder="填写出差目的"></td>
         </tr>
         <tr>
             <td style="text-align: left;vertical-align: inherit;">选择省份</td>
@@ -56,12 +58,25 @@
             </td>
             <td style="text-align: left;vertical-align: inherit;">具体地址</td>
             <td style="text-align: left;vertical-align: inherit;">
-                <input style="width: 100%;height: 100%;border:0px;" placeholder="输入具体地址">
+                <input id="address" style="width: 100%;height: 100%;border:0px;" placeholder="输入具体地址">
             </td>
+        </tr>
+        <tr>
+            <td>开始时间</td>
+            <td><input id="bdate" style="width: 100%;border: 0px;" placeholder="请选择出差开始时间"></td>
+            <td>结束时间</td>
+            <td><input id="edate" style="width: 100%;border: 0px;" placeholder="请选择出差结束时间"></td>
+            <td></td>
+            <td></td>
         </tr>
         <tr style="height: 47px;">
             <td style="vertical-align: inherit;text-align: left">出差人员</td>
-            <td colspan="5" style="vertical-align: inherit;"><input style="width: 100%;height: 100%;border:0px;" placeholder="填写所有出差人员的工号及姓名（工号：姓名），多人用‘；’隔开"></td>
+            <td colspan="5" style="vertical-align: inherit;"><input id="traveller" style="width: 100%;height: 100%;border:0px;" placeholder="填写所有出差人员的工号，多人用‘；’隔开"></td>
+        </tr>
+        <tr>
+            <td colspan="6" style="text-align: center">
+                <button class="btn btn-primary" onclick="getAllTraveler()">提交</button>
+            </td>
         </tr>
     </table>
 </div>

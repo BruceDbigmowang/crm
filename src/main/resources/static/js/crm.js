@@ -1495,6 +1495,7 @@ function format(inputTime) {
 var salestart = 1;
 var salePages;
 function findAllSalePlan() {
+    salestart = 1;
     $.ajax({
         type:"post",
         data:{"start":salestart},
@@ -1509,7 +1510,7 @@ function findAllSalePlan() {
                 var salePlans = data.salePlans;
                 salePages = data.size;
                 for(var i = 0 ; i < salePlans.length ; i++){
-                    $("#salePlanData").append("<tr>"+"<td>"+salePlans[i].salesPlanNumber+"</td>"+"<td>"+salePlans[i].company+"</td>"+"<td>"+format(salePlans[i].createTime)+"</td>"+"<td>"+salePlans[i].creater+"</td>"+"<td>"+salePlans[i].totalStatus+"</td>")
+                    $("#salePlanData").append("<tr>"+"<td>"+salePlans[i].salesPlanNumber+"</td>"+"<td>"+salePlans[i].company+"</td>"+"<td>"+salePlans[i].costEstimate+"</td>"+"<td>"+salePlans[i].costType+"</td>"+"<td>"+salePlans[i].costCenter+"</td>"+"<td>"+salePlans[i].amount+"</td>"+"<td>"+salePlans[i].appliedAmount+"</td>"+"<td>"+salePlans[i].usedAmount+"</td>"+"<td>"+format(salePlans[i].createTime)+"</td>"+"<td>"+salePlans[i].creater+"</td>"+"<td>"+salePlans[i].totalStatus+"</td>")
                 }
             }
         }
@@ -1534,7 +1535,7 @@ function findAllSalePlanNext() {
                 }else{
                     var salePlans = data.salePlans;
                     for(var i = 0 ; i < salePlans.length ; i++){
-                        $("#salePlanData").append("<tr>"+"<td>"+salePlans[i].salesPlanNumber+"</td>"+"<td>"+salePlans[i].company+"</td>"+"<td>"+format(salePlans[i].createTime)+"</td>"+"<td>"+salePlans[i].creater+"</td>"+"<td>"+salePlans[i].totalStatus+"</td>")
+                        $("#salePlanData").append("<tr>"+"<td>"+salePlans[i].salesPlanNumber+"</td>"+"<td>"+salePlans[i].company+"</td>"+"<td>"+salePlans[i].costEstimate+"</td>"+"<td>"+salePlans[i].costType+"</td>"+"<td>"+salePlans[i].costCenter+"</td>"+"<td>"+salePlans[i].amount+"</td>"+"<td>"+salePlans[i].appliedAmount+"</td>"+"<td>"+salePlans[i].usedAmount+"</td>"+"<td>"+format(salePlans[i].createTime)+"</td>"+"<td>"+salePlans[i].creater+"</td>"+"<td>"+salePlans[i].totalStatus+"</td>")
                     }
                 }
             }
@@ -1560,7 +1561,7 @@ function findAllSalePlanPrevious() {
                 }else{
                     var salePlans = data.salePlans;
                     for(var i = 0 ; i < salePlans.length ; i++){
-                        $("#salePlanData").append("<tr>"+"<td>"+salePlans[i].salesPlanNumber+"</td>"+"<td>"+salePlans[i].company+"</td>"+"<td>"+format(salePlans[i].createTime)+"</td>"+"<td>"+salePlans[i].creater+"</td>"+"<td>"+salePlans[i].totalStatus+"</td>")
+                        $("#salePlanData").append("<tr>"+"<td>"+salePlans[i].salesPlanNumber+"</td>"+"<td>"+salePlans[i].company+"</td>"+"<td>"+salePlans[i].costEstimate+"</td>"+"<td>"+salePlans[i].costType+"</td>"+"<td>"+salePlans[i].costCenter+"</td>"+"<td>"+salePlans[i].amount+"</td>"+"<td>"+salePlans[i].appliedAmount+"</td>"+"<td>"+salePlans[i].usedAmount+"</td>"+"<td>"+format(salePlans[i].createTime)+"</td>"+"<td>"+salePlans[i].creater+"</td>"+"<td>"+salePlans[i].totalStatus+"</td>")
                     }
                 }
             }
@@ -1584,7 +1585,7 @@ function findAllSalePlanFirst() {
                 var salePlans = data.salePlans;
                 salePages = data.size;
                 for(var i = 0 ; i < salePlans.length ; i++){
-                    $("#salePlanData").append("<tr>"+"<td>"+salePlans[i].salesPlanNumber+"</td>"+"<td>"+salePlans[i].company+"</td>"+"<td>"+format(salePlans[i].createTime)+"</td>"+"<td>"+salePlans[i].creater+"</td>"+"<td>"+salePlans[i].totalStatus+"</td>")
+                    $("#salePlanData").append("<tr>"+"<td>"+salePlans[i].salesPlanNumber+"</td>"+"<td>"+salePlans[i].company+"</td>"+"<td>"+salePlans[i].costEstimate+"</td>"+"<td>"+salePlans[i].costType+"</td>"+"<td>"+salePlans[i].costCenter+"</td>"+"<td>"+salePlans[i].amount+"</td>"+"<td>"+salePlans[i].appliedAmount+"</td>"+"<td>"+salePlans[i].usedAmount+"</td>"+"<td>"+format(salePlans[i].createTime)+"</td>"+"<td>"+salePlans[i].creater+"</td>"+"<td>"+salePlans[i].totalStatus+"</td>")
                 }
             }
         }
@@ -1607,9 +1608,395 @@ function findAllSalePlanLast() {
                 var salePlans = data.salePlans;
                 salePages = data.size;
                 for(var i = 0 ; i < salePlans.length ; i++){
-                    $("#salePlanData").append("<tr>"+"<td>"+salePlans[i].salesPlanNumber+"</td>"+"<td>"+salePlans[i].company+"</td>"+"<td>"+format(salePlans[i].createTime)+"</td>"+"<td>"+salePlans[i].creater+"</td>"+"<td>"+salePlans[i].totalStatus+"</td>")
+                    $("#salePlanData").append("<tr>"+"<td>"+salePlans[i].salesPlanNumber+"</td>"+"<td>"+salePlans[i].company+"</td>"+"<td>"+salePlans[i].costEstimate+"</td>"+"<td>"+salePlans[i].costType+"</td>"+"<td>"+salePlans[i].costCenter+"</td>"+"<td>"+salePlans[i].amount+"</td>"+"<td>"+salePlans[i].appliedAmount+"</td>"+"<td>"+salePlans[i].usedAmount+"</td>"+"<td>"+format(salePlans[i].createTime)+"</td>"+"<td>"+salePlans[i].creater+"</td>"+"<td>"+salePlans[i].totalStatus+"</td>")
                 }
             }
         }
     })
+}
+
+function changeSelectWay() {
+    var selectWay = $("#selectWay option:selected").val();
+    if(selectWay == "1"){
+        $("#salePlanNumberSearch").show();
+        $("#saleCreateTimeSearch").hide();
+    }else if(selectWay == "2"){
+        $("#salePlanNumberSearch").hide();
+        $("#saleCreateTimeSearch").show();
+    }
+}
+var writeSaleStart = 1;
+function findAllSalePlanWrite() {
+    writeSaleStart = 1;
+    $.ajax({
+        type:"post",
+        data:{"start":writeSaleStart},
+        url:"getAllSalePlan",
+        async:false,
+        success:function (data) {
+            $("#salePlanWrite").html("");
+            var result = data.result;
+            if(result == "暂无数据"){
+                alert("暂无数据")
+            }else{
+                var salePlans = data.salePlans;
+                salePages = data.size;
+                for(var i = 0 ; i < salePlans.length ; i++){
+                    $("#salePlanWrite").append("<tr>"+"<td>"+salePlans[i].salesPlanNumber+"</td>"+"<td>"+salePlans[i].salesPlanDesc+"</td>"+"<td>"+salePlans[i].company+"</td>"+"<td>"+salePlans[i].totalStatus+"</td>"+"<td>"+salePlans[i].creater+"</td>"+"<td>"+format(salePlans[i].createTime)+"</td>");
+                }
+            }
+        },
+        error:function () {
+            alert("程序出错");
+        }
+    })
+}
+
+function clickGetting() {
+    var contactWay = $("#contactWay").val();
+    if(contactWay == ""){
+        alert("输入的手机号不能为空");
+        return false;
+    }else {
+        if (isNaN(contactWay)) {
+            alert("手机号码填写错误,含有非法字符,手机号只能是数字");
+        } else {
+            sendCode();
+            var btn = $(this);
+            var count = 60;
+            var resend = setInterval(function(){
+                count--;
+                if (count > 0){
+                    btn.val(count+"秒后可重新获取");
+                    document.getElementById("getting").innerText=count+"秒";
+                    $.cookie("captcha", count, {path: '/', expires: (1/86400)*count});
+
+
+                }else {
+                    clearInterval(resend);
+                    $("#getting").attr('disabled',false);
+                    document.getElementById("getting").innerText="获取验证码";
+                }
+            }, 1000);
+            btn.attr('disabled',true).css('cursor','allowed');
+        }
+    }
+}
+
+function sendCode() {
+    var contactWay = $("#contactWay").val();
+
+    $.ajax({
+        type:"post",
+        data:{"contactWay":contactWay},
+        url:"sendVcode",
+        async:false,
+        success:function(data){
+            alert(data);
+        },
+        error:function () {
+            alert("获取验证码失败");
+        }
+    })
+}
+
+function saleWrite() {
+    var number = $("#saleWriteNO").val();
+    var name = $("#saleWriteName").val();
+    var describe = $("#saleWriteDesc").val();
+    var data = {"namber":number , "name":name , "describe":describe};
+    var url = "";
+    $.ajax({
+        type:"post",
+        data:data,
+        url:url,
+        async:false,
+        success:function(data){
+            if(data == "OK"){
+                alert("销售计划创建成功");
+            }else{
+                alert(data);
+            }
+        },
+        error:function(){
+            alert("程序出错");
+        }
+    })
+}
+
+
+function findSalePlanByNO(number) {
+
+    $.ajax({
+        type:"post",
+        data:{"number":number},
+        url:"findSalePlanByNumber",
+        async:false,
+        success:function(data){
+            $("#salePlanWrite").html("");
+            var result = data.result;
+            if(result == "暂无数据"){
+                alert("暂无数据");
+            }else{
+                var salePlans = data.salesPlans;
+                    $("#salePlanWrite").append("<tr>"+"<td>"+salePlans.no+"</td>"+"<td>"+salePlans.describe+"</td>"+"<td>"+salePlans.company+"</td>"+"<td>"+salePlans.status+"</td>"+"<td>"+salePlans.creater+"</td>"+"<td>"+format(salePlans.createTime)+"</td>");
+
+            }
+        }
+    })
+}
+
+function findSalePlanByCompany() {
+    var number = $("#planWriteSearch").val();
+    $.ajax({
+        type:"post",
+        data:{"number":number},
+        url:"findSalePlanByCompany",
+        async:false,
+        success:function(data){
+            $("#salePlanWrite").html("");
+            var result = data.result;
+            if(result == "暂无数据"){
+                findSalePlanByNO(number);
+            }else{
+                var salePlans = data.salesPlans;
+                for(var i = 0 ; i < salePlans.length ; i++){
+                    $("#salePlanWrite").append("<tr>"+"<td>"+salePlans[i].no+"</td>"+"<td>"+salePlans[i].describe+"</td>"+"<td>"+salePlans[i].company+"</td>"+"<td>"+salePlans[i].status+"</td>"+"<td>"+salePlans[i].creater+"</td>"+"<td>"+format(salePlans[i].createTime)+"</td>");
+                }
+            }
+        }
+    })
+}
+
+function showAllCustomer() {
+    $.ajax({
+        type:"post",
+        url:"findAllCustomer",
+        async:true,
+        success:function(data){
+            $("#allCustomer").html("");
+            for(var i = 0 ; i < data.length ; i++){
+                $("#allCustomer").append("<tr>"+"<td>"+'<input id="checklist" type="checkbox" name="chooseOne" value="'+data[i].id+'">'+"</td>"+"<td>"+data[i].companyName+"</td>"+"<td>"+data[i].establishTime+"</td>"+"<td>"+data[i].registerMoney+"</td>"+"<td>"+data[i].contact+"</td>"+"<td>"+data[i].contactWay+"</td>"+"<td>"+'<a href="downloadCustomerByExcel?cid='+data[i].id+'">下载</a>'+"</td>"+"</tr>");
+            }
+        }
+    })
+}
+
+function downloadAll() {
+    window.location.href="downloadAllCustomerByExcel";
+}
+
+function downloadBatch() {
+    var ids = $('input[name=chooseOne]');
+    var arr = [];
+    ids.each(function () {
+        //获取当前元素的勾选状态
+        if ($(this).prop("checked")) {
+            arr.push($(this).val());
+        }
+    });
+    window.location.href="downloadBatchCustomerByExcel?cids="+arr;
+}
+
+function sureCompany() {
+    var salePlanNum = $("#salePlanNumber").val();
+    $.ajax({
+        type:"post",
+        data:{"salePlanNum":salePlanNum},
+        url:"findCompanyBySalePlan",
+        async:false,
+        success:function (data) {
+            if(data == "F"){
+                alert("销售计划编号输入有误");
+            }else{
+                $("#company").val(data);
+            }
+        },
+        error:function(){
+            alert("程序出错");
+        }
+    })
+}
+
+function getAllTraveler() {
+    var str = $("#traveller").val();
+    var traveller = str.match(/\d+/g);
+    var salePlanNum = $("#salePlanNumber").val();
+    var company = $("#company").val();
+    var target = $("#target").val();
+    var province = $("#province").text();
+    var city = $("#city").text();
+    var address = $("#address").val();
+    var bdate = $("#bdate").val();
+    var edate = $("#edate").val();
+    var data = {"salePlanNum":salePlanNum , "company":company , "target":target , "province":province , "city":city ,
+    "address":address , "bdate":bdate , "edate":edate , "traveller":traveller};
+    var url = "saveTravelPlan";
+    $.ajax({
+        type:"post",
+        data:data,
+        url:url,
+        async:false,
+        success:function(data){
+            alert(data);
+        }
+    })
+}
+
+function saveVisit() {
+    var salePlanNum = $("#salePlanNumber").val();
+    var company = $("#company").val();
+    var target = $("#target").val();
+    var bdate = $("#bdate").val();
+    var edate = $("#edate").val();
+    var str = $("#visitor").val();
+    var traveller = str.match(/\d+/g);
+    var data = {"salePlanNum":salePlanNum , "company":company , "target":target , "bdate":bdate , "edate":edate , "visitor":traveller};
+    var url = "createVisitSchedule";
+    $.ajax({
+        type:"post",
+        data:data,
+        url:url,
+        async:false,
+        success:function(data){
+            if(data == "OK"){
+                alert("数据保存成功");
+            }else{
+                alert(data);
+            }
+        },
+        error:function(){
+            alert("程序出错");
+        }
+    })
+}
+
+function createExpense() {
+    var costNum = $("#costNum").val();
+    var costType = $("#costType").val();
+    var employee = $("#employee").val();
+    var dept = $("#dept").val();
+    var costDate = $("#costDate").val();
+    var errorInfo = "";
+    if(costNum == ""){
+        errorInfo = errorInfo + "费用单号  ";
+    }
+    if(costType == 0){
+        errorInfo = errorInfo +"源单类型  "
+    }
+    if(employee == ""){
+        errorInfo = errorInfo +"负责人  ";
+    }
+    if(dept == 0){
+        errorInfo = errorInfo+"负责部门  ";
+    }
+    if(costDate == ""){
+        errorInfo = errorInfo +"费用日期  "
+    }
+    if(errorInfo != ""){
+        alert(errorInfo+"未填写");
+    }else{
+        var data = {"costNum":costNum , "costType":costType , "employee":employee , "dept":dept , "costDate":costDate};
+        var url = "createExpenseHead";
+        $.ajax({
+            type:"post",
+            data:data,
+            url:url,
+            async:false,
+            success:function(data){
+                if(data == "OK"){
+                    alert("数据保存成功");
+                }else{
+                    alert(data);
+                }
+            },
+            error:function () {
+                alert("程序出错");
+            }
+        })
+    }
+}
+
+function passValue(hId){
+    $("#HID").val(hId);
+}
+
+function showAllExpenseHead() {
+    $.ajax({
+        type:"post",
+        url:"getAllExpenseHead",
+        async:true,
+        success:function(data){
+            $("#expenseData").html("");
+            for(var i = 0 ; i < data.length ; i++){
+                var num = i+1;
+                $("#expenseData").append("<tr>"+"<td>"+num+"</td>"+"<td>"+data[i].expenseNum+"</td>"+"<td>"+data[i].leafType+"</td>"+"<td>"+data[i].principal+"</td>"+"<td>"+data[i].dept+"</td>"+"<td>"+format(data[i].expenseDate)+"</td>"+"<td>"+"<a data-toggle=\"modal\" data-target=\"#myModal2\" onclick=\"passValue("+data[i].id+")\">编辑</a>"+"</td>"+"</tr>")
+            }
+        }
+    })
+}
+
+function writeMore() {
+    var hId = $("#HID").val();
+    var spendType = $("#spendType").val();
+    var happenDate = $("#happenDate").val();
+    var person = $("#person").val();
+    var sdept = $("#sdept").val();
+    var customer = $("#customer").val();
+    var samount = $("#samount").val();
+    var appliedAmount = $("#appliedAmount").val();
+    var bamount = $("#bAmount").val();
+    var budgetNum = $("#budgetNum").val();
+    var data = {"hId":hId , "spendType":spendType , "happenDate":happenDate , "person":person , "sdept":sdept , "customer":customer , "samount":samount
+    ,"appliedAmount":appliedAmount , "bamount":bamount , "budget":budgetNum};
+    var url = "writeExpenseDetail";
+    var errorInfo = "";
+    if(spendType == 0){
+        errorInfo = errorInfo+"费用类型  ";
+    }
+    if(happenDate == ""){
+        errorInfo = errorInfo+"发生日期  ";
+    }
+    if(person == ""){
+        errorInfo = errorInfo + "职员  ";
+    }
+    if(sdept == ""){
+        errorInfo = errorInfo + "承担部门  ";
+    }
+    if(customer == ""){
+        errorInfo = errorInfo + "承担客户  ";
+    }
+    if(samount == ""){
+        errorInfo = errorInfo +"金额  ";
+    }
+    if(appliedAmount == ""){
+        errorInfo = errorInfo+"申请金额  ";
+    }
+    if(bamount == ""){
+        errorInfo = errorInfo+"报销金额  ";
+    }
+    if(budgetNum == ""){
+        errorInfo = errorInfo + "预算编号  ";
+    }
+    if(errorInfo != ""){
+        alert(errorInfo +"未填写");
+    }else{
+        $.ajax({
+            type:"post",
+            data:data,
+            url:url,
+            async:false,
+            success:function (data) {
+                if(data == "OK"){
+                    alert("数据保存成功");
+                }else{
+                    alert(data);
+                }
+            },
+            error:function () {
+                alert("程序出错");
+            }
+        })
+    }
+
 }

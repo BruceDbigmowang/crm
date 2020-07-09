@@ -48,8 +48,8 @@ public class CompanyInfoService {
                 if(industryNature == null){
                     return 3;
                 }else{
-                    KnowMore knowMore = knowMoreDAO.findByCid(cid);
-                    if(knowMore == null ){
+                    List<KnowMore> knowMoreList = knowMoreDAO.findByCid(cid);
+                    if(knowMoreList == null || knowMoreList.size()==0){
                         return 4;
                     }else{
                         List<Manufacture> manufactureList = manufactureDAO.findByCid(cid);
@@ -89,6 +89,10 @@ public class CompanyInfoService {
     public int getCid(String company){
         List<CompanyInfo> companyInfoList =companyInfoDAO.findByCompanyName(company);
         return companyInfoList.get(0).getId();
+    }
+
+    public List<CompanyInfo> findAll(){
+        return companyInfoDAO.findAll();
     }
 }
 

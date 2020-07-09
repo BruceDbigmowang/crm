@@ -54,6 +54,9 @@ public class SalesPlan {
     @Column(name = "Forwarder")
     String forwarder;
 
+    String lockStatus;
+    String operator;
+
     public String getNo() {
         return no;
     }
@@ -220,5 +223,21 @@ public class SalesPlan {
 
     public void setForwarder(String forwarder) {
         this.forwarder = forwarder;
+    }
+
+    public String getLockStatus() {
+        return lockStatus;
+    }
+
+    public void setLockStatus(String lockStatus) {
+        this.lockStatus = lockStatus;
+    }
+
+    public String getOperator() {
+        return operator;
+    }
+
+    public void setOperator(String operator) {
+        this.operator = operator;
     }
 }

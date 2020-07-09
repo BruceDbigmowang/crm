@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface KnowMoreDAO extends JpaRepository<KnowMore, Integer> {
 
-    KnowMore findByCid(int cid);
+    List<KnowMore> findByCid(int cid);
 }

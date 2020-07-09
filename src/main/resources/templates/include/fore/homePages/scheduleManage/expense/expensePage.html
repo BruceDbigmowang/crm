@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<script>
+    $(function () {
+        showAllExpenseHead();
+    })
+</script>
+<div style="margin-top: 20px;margin-left: 20px;">
+    <div>
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
+            新增费用
+        </button>
+        <div class="modal fade" id="myModal"  data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button data-dismiss="modal" class="close" type="button"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                        <h4 class="modal-title">新增费用</h4>
+                    </div>
+                    <div class="modal-body">
+
+                        <table class="table">
+                            <tr>
+                                <td>费用单号</td>
+                                <td><input id="costNum" style="border: 0px;" placeholder="请输入费用单号" maxlength="30" type="text"></td>
+                                <td>源单类型</td>
+                                <td><select id="costType" style="border: 0px;"><option value="0">--请选择--</option><option value="1">类型1</option><option value="2">类型2</option></select></td>
+
+                            </tr>
+                            <tr>
+                                <td>负责人</td>
+                                <td><input id="employee" style="border: 0px;" placeholder="请输入负责人工号" maxlength="10"></td>
+                                <td>负责部门</td>
+                                <td>
+                                    <select id="dept" style="border: 0px;">
+                                        <option value="0">--请选择--</option>
+                                        <option value="0001">人事</option>
+                                        <option value="0002">行政</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>费用日期</td>
+                                <td><input id="costDate" style="border: 0px;" placeholder="请选择费用日期"></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        </table>
+
+
+                    </div>
+                    <div class="modal-footer">
+                        <button data-dismiss="modal" class="btn btn-default" type="button">关闭</button>
+                        <button class="btn btn-primary" type="button" onclick="createExpense()">提交</button>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div>
+    </div>
+    <div style="width: 800px;margin:0px auto;">
+        <table class="table">
+            <thead>
+            <tr>
+                <td>序号</td>
+                <td>费用单号</td>
+                <td>源单类型</td>
+                <td>负责人</td>
+                <td>负责部门</td>
+                <td>费用日期</td>
+                <td>操作</td>
+            </tr>
+            </thead>
+            <tbody id="expenseData"></tbody>
+        </table>
+    </div>
+</div>
+
+<!--<a data-toggle="modal" data-target="#myModal2" onclick="passValue()">编辑</a>-->
+<!--维护明细的DIV-->
+<div class="modal fade" id="myModal2"  data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" style="width: 1000px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button data-dismiss="modal" class="close" type="button"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title">费用明细</h4>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="HID">
+                <table class="table">
+                    <tr>
+                        <td>费用类型</td>
+                        <td>
+                            <select id="spendType" style="width: 100%;border: 0px;">
+                                <option value="0">--请选择--</option>
+                                <option value="1">类型1</option>
+                                <option value="2">类型2</option>
+                            </select>
+                        </td>
+                        <td>发生日期</td>
+                        <td><input id="happenDate" style="width: 100%;border: 0px;" placeholder="请选择发生日期"></td>
+                        <td>职员</td>
+                        <td><input id="person" style="with:100%;border: 0px;" placeholder="请输入职员工号"></td>
+                    </tr>
+                    <tr>
+                        <td>承担部门</td>
+                        <td><input id="sdept" style="width: 100%;border:0px;" placeholder="请选择承担部门"></td>
+                        <td>承担客户</td>
+                        <td><input id="customer" style="width: 100%;border:0px;" placeholder="请填写承担客户"></td>
+                        <td>金额</td>
+                        <td><input id="samount" style="width: 100%;border: 0px;" placeholder="请填写金额"></td>
+                    </tr>
+                    <tr>
+                        <td>申请金额</td>
+                        <td><input id="appliedAmount" style="width: 100%;border: 0px;" placeholder="请填写申请金额"></td>
+                        <td>报销金额</td>
+                        <td><input id="bAmount" style="width: 100%;border: 0px;" placeholder="请填写报销金额"></td>
+                        <td>预算单号</td>
+                        <td><input id="budgetNum" style="width: 100%;border: 0px;" placeholder="请填写预算单号"></td>
+                    </tr>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button data-dismiss="modal" class="btn btn-default" type="button">关闭</button>
+                <button class="btn btn-primary" type="button" onclick="writeMore()">提交</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+
+</body>
+</html>

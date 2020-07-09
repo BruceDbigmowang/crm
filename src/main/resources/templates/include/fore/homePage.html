@@ -132,6 +132,27 @@
                                             <div class="same_div" link_url="include/fore/homePages/scheduleManage/doList/eventTrack.html">事件跟踪</div>
                                         </li>
                                     </ul>
+
+                                    <div class="parent_li_head" link_url="include/fore/homePages/scheduleManage/expense/expensePage.html" onclick="secondMenu(this)">
+                                        <a class="secound_menu" style="">
+                                            <span class="icon color1" style="">
+
+                                            </span>
+                                            费用
+
+                                        </a>
+                                    </div>
+
+                                    <div class="parent_li_head" link_url="include/fore/homePages/scheduleManage/income/incomePage.html" onclick="secondMenu(this)">
+                                        <a class="secound_menu" style="">
+                                            <span class="icon color1" style="">
+
+                                            </span>
+                                            收入
+
+                                        </a>
+                                    </div>
+
                                 </li>
                             </ul>
 
@@ -154,7 +175,7 @@
                                     <div class="same_div" link_url="include/fore/homePages/customerManage/customerMaintain/accountMaintain.html" onclick="getUserByPage()">账号维护</div>
                                 </li>
                                 <li>
-                                    <div class="same_div" link_url="include/fore/homePages/customerManage/customerMaintain/customerBase.html">客户维护</div>
+                                    <div class="same_div" link_url="include/fore/homePages/customerManage/customerMaintain/customerBase.html" onclick="showAllCustomer()">客户维护</div>
                                 </li>
                                 <li class="children_li">
                                     <div class="parent_li_head">
@@ -826,6 +847,12 @@
             });
 
         });
+
+        function secondMenu(obj) {
+            var target= $(obj).attr("link_url");
+            // alert(target);
+            if (target) showAtRight(target);
+        }
 
         /**
          * xml指向jsp页面

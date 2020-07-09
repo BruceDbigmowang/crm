@@ -5,6 +5,86 @@
     <title>Title</title>
 </head>
 <body>
+<script>
+    $(function(){
+        changeSelectWay();
+        findAllSalePlanWrite();
+    });
 
+</script>
+<div>
+    <div>
+        <button class="btn btn-primary" data-toggle="modal" data-target="#myModal">新增</button>
+    </div><br>
+    <div id="searchDIV" style="width: 552px;margin:0px auto;">
+        <div style="float: left;width: 200px;">
+            选择查询方式<select id="selectWay" onchange="changeSelectWay()">
+                <option value="1">销售计划编号</option>
+            <option value="2">创建时间</option>
+            </select>
+        </div>
+        <div id="salePlanNumberSearch" style="width:252px;float: left;display: none;">
+            <input id="planWriteSearch" placeholder="请输入销售计划编号/客户名称"><button onclick="findSalePlanByCompany()">搜索</button>
+        </div>
+        <div id="saleCreateTimeSearch" style="width:352px;float: left;display: none;">
+            <input placeholder="开始时间">-<input placeholder="结束时间"><button>搜索</button>
+        </div>
+    </div>
+    <div style="width: 800px;margin:0px auto;margin-top:50px;">
+        <table class="table">
+            <thead>
+            <tr>
+                <td>销售计划编号</td>
+                <td>销售描述</td>
+                <td>客户名称</td>
+                <td>状态</td>
+                <td>创建人</td>
+                <td>创建时间</td>
+            </tr>
+            </thead>
+            <tbody id="salePlanWrite"></tbody>
+        </table>
+    </div>
+</div>
+
+
+<div class="modal fade" id="myModal"  data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button data-dismiss="modal" class="close" type="button"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title">销售计划编制</h4>
+            </div>
+            <div class="modal-body">
+                <table class="table">
+                    <tr>
+                        <td>销售计划编号</td>
+                        <td>
+                            <input id="saleWriteNO" style="width: 100%;border:0px;" placeholder="请输入销售计划编号">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            客户名称
+                        </td>
+                        <td>
+                            <input id="saleWriteName" style="width: 100%;border: 0px;" placeholder="请输入客户名称">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>销售描述</td>
+                        <td>
+                            <textarea id="saleWriteDesc" class="form-control"></textarea>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button data-dismiss="modal" class="btn btn-default" type="button">关闭</button>
+                <button class="btn btn-primary" type="button" onclick="saleWrite()">提交</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
 </body>
 </html>

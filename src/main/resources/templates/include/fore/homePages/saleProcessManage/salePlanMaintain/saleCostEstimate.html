@@ -14,7 +14,7 @@
     <table class="table" style="width: 800px;margin: 0px auto;">
         <tr>
             <td>销售计划编号</td>
-            <td><input id="salePlanNumber" style="width: 100%;border: 0px;" placeholder="请填写销售计划编号"></td>
+            <td><input id="salePlanNumber" style="width: 100%;border: 0px;" placeholder="请填写销售计划编号" onblur="sureCompany()"></td>
 <!--            <td>销售描述</td>-->
 <!--            <td><input id="salesDesc" style="width: 100%;border:0px;" placeholder="请填写销售描述"></td>-->
             <td>销售费用估算</td>
@@ -55,7 +55,7 @@
     <table class="table" style="width: 1000px;margin:0px auto;">
         <thead>
         <tr>
-            <td>销售计划编号</td><td>客户名称</td><td>创建时间</td><td>创建人</td><td>状态</td>
+            <td>销售计划编号</td><td>客户名称</td><td>销售费用</td><td>费用类型</td><td>成本中心</td><td>金额</td><td>申请金额</td><td>使用金额</td><td>创建时间</td><td>创建人</td><td>状态</td>
         </tr>
         </thead>
         <tbody id="salePlanData"></tbody>
