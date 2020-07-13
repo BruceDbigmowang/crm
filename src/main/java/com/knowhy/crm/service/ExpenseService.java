@@ -31,4 +31,25 @@ public class ExpenseService {
     public ExpenseHead getOne(int hId){
         return expenseHeadDAO.getOne(hId);
     }
+
+    public List<ExpenseHead> getAllApprove(){
+        String status = "O";
+        return expenseHeadDAO.findByCheckStatus(status);
+    }
+
+    public List<ExpenseHead> findHeadByAccount(String account){
+        return expenseHeadDAO.findByCreater(account);
+    }
+    public List<ExpenseHead> findHeadByAccountAndStatus(String account , String status){
+        return expenseHeadDAO.findByCreaterAndCheckStatus(account , status);
+    }
+
+    public ExpenseDetail findDetailByHID(int hId){
+        List<ExpenseDetail> expenseDetailList = expenseDetailDAO.findByHeadId(hId);
+        if(expenseDetailList == null || expenseDetailList.size() == 0){
+            return null;
+        }else{
+            return expenseDetailList.get(0);
+        }
+    }
 }

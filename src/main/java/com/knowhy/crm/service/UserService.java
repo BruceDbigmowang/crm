@@ -175,4 +175,24 @@ public class UserService {
             }
         }
     }
+
+    public int getIdentity(String account){
+        List<UserRole> userRoleList = userRoleDAO.findByAccount(account);
+        if(userRoleList == null || userRoleList.size() == 0){
+            return 0;
+        }else {
+            List<String> roleName = new ArrayList<>();
+            for(int i = 0 ; i < userRoleList.size() ; i++){
+                int roleId = userRoleList.get(i).getId();
+                Roles role = rolesDAO.getOne(roleId);
+                roleName.add(role.getRoleName());
+            }
+            if(roleName.contains("销售")){
+                return 1;
+            }else if(roleName.contains("销售经理")){
+                return 2;
+            }
+        }
+        return 0;
+    }
 }

@@ -1476,7 +1476,7 @@ function createSalePlan() {
     })
  }
 //格式化时间显示 yyyy-MM-dd hh:mm:ss
-function format(inputTime) {
+function formatDateTime(inputTime) {
     var date = new Date(inputTime);
     var y = date.getFullYear();
     var m = date.getMonth() + 1;
@@ -1490,6 +1490,23 @@ function format(inputTime) {
     minute = minute < 10 ? ('0' + minute) : minute;
     second = second < 10 ? ('0' + second) : second;
     return y + '-' + m + '-' + d + ' ' + h + ':' + minute + ':' + second;
+}
+
+//格式化时间显示 yyyy-MM-dd hh:mm:ss
+function formatDate(inputTime) {
+    var date = new Date(inputTime);
+    var y = date.getFullYear();
+    var m = date.getMonth() + 1;
+    m = m < 10 ? ('0' + m) : m;
+    var d = date.getDate();
+    d = d < 10 ? ('0' + d) : d;
+    var h = date.getHours();
+    h = h < 10 ? ('0' + h) : h;
+    var minute = date.getMinutes();
+    var second = date.getSeconds();
+    minute = minute < 10 ? ('0' + minute) : minute;
+    second = second < 10 ? ('0' + second) : second;
+    return y + '-' + m + '-' + d ;
 }
 
 var salestart = 1;
@@ -1510,7 +1527,7 @@ function findAllSalePlan() {
                 var salePlans = data.salePlans;
                 salePages = data.size;
                 for(var i = 0 ; i < salePlans.length ; i++){
-                    $("#salePlanData").append("<tr>"+"<td>"+salePlans[i].salesPlanNumber+"</td>"+"<td>"+salePlans[i].company+"</td>"+"<td>"+salePlans[i].costEstimate+"</td>"+"<td>"+salePlans[i].costType+"</td>"+"<td>"+salePlans[i].costCenter+"</td>"+"<td>"+salePlans[i].amount+"</td>"+"<td>"+salePlans[i].appliedAmount+"</td>"+"<td>"+salePlans[i].usedAmount+"</td>"+"<td>"+format(salePlans[i].createTime)+"</td>"+"<td>"+salePlans[i].creater+"</td>"+"<td>"+salePlans[i].totalStatus+"</td>")
+                    $("#salePlanData").append("<tr>"+"<td>"+salePlans[i].salesPlanNumber+"</td>"+"<td>"+salePlans[i].company+"</td>"+"<td>"+salePlans[i].costEstimate+"</td>"+"<td>"+salePlans[i].costType+"</td>"+"<td>"+salePlans[i].costCenter+"</td>"+"<td>"+salePlans[i].amount+"</td>"+"<td>"+salePlans[i].appliedAmount+"</td>"+"<td>"+salePlans[i].usedAmount+"</td>"+"<td>"+formatDateTime(salePlans[i].createTime)+"</td>"+"<td>"+salePlans[i].creater+"</td>"+"<td>"+salePlans[i].totalStatus+"</td>")
                 }
             }
         }
@@ -1535,7 +1552,7 @@ function findAllSalePlanNext() {
                 }else{
                     var salePlans = data.salePlans;
                     for(var i = 0 ; i < salePlans.length ; i++){
-                        $("#salePlanData").append("<tr>"+"<td>"+salePlans[i].salesPlanNumber+"</td>"+"<td>"+salePlans[i].company+"</td>"+"<td>"+salePlans[i].costEstimate+"</td>"+"<td>"+salePlans[i].costType+"</td>"+"<td>"+salePlans[i].costCenter+"</td>"+"<td>"+salePlans[i].amount+"</td>"+"<td>"+salePlans[i].appliedAmount+"</td>"+"<td>"+salePlans[i].usedAmount+"</td>"+"<td>"+format(salePlans[i].createTime)+"</td>"+"<td>"+salePlans[i].creater+"</td>"+"<td>"+salePlans[i].totalStatus+"</td>")
+                        $("#salePlanData").append("<tr>"+"<td>"+salePlans[i].salesPlanNumber+"</td>"+"<td>"+salePlans[i].company+"</td>"+"<td>"+salePlans[i].costEstimate+"</td>"+"<td>"+salePlans[i].costType+"</td>"+"<td>"+salePlans[i].costCenter+"</td>"+"<td>"+salePlans[i].amount+"</td>"+"<td>"+salePlans[i].appliedAmount+"</td>"+"<td>"+salePlans[i].usedAmount+"</td>"+"<td>"+formatDateTime(salePlans[i].createTime)+"</td>"+"<td>"+salePlans[i].creater+"</td>"+"<td>"+salePlans[i].totalStatus+"</td>")
                     }
                 }
             }
@@ -1561,7 +1578,8 @@ function findAllSalePlanPrevious() {
                 }else{
                     var salePlans = data.salePlans;
                     for(var i = 0 ; i < salePlans.length ; i++){
-                        $("#salePlanData").append("<tr>"+"<td>"+salePlans[i].salesPlanNumber+"</td>"+"<td>"+salePlans[i].company+"</td>"+"<td>"+salePlans[i].costEstimate+"</td>"+"<td>"+salePlans[i].costType+"</td>"+"<td>"+salePlans[i].costCenter+"</td>"+"<td>"+salePlans[i].amount+"</td>"+"<td>"+salePlans[i].appliedAmount+"</td>"+"<td>"+salePlans[i].usedAmount+"</td>"+"<td>"+format(salePlans[i].createTime)+"</td>"+"<td>"+salePlans[i].creater+"</td>"+"<td>"+salePlans[i].totalStatus+"</td>")
+                        $("#salePlanData").append("<tr>"+"<td>"+salePlans[i].salesPlanNumber+"</td>"+"<td>"+salePlans[i].company+"</td>"+"<td>"+salePlans[i].costEstimate+"</td>"+"<td>"+salePlans[i].costType+"</td>"+"<td>"+salePlans[i].costCenter+"</td>"+"<td>"+salePlans[i].amount+"</td>"+"<td>"+salePlans[i].appliedAmount+"</td>"+"<td>"+salePlans[i].usedAmount+"</td>"+"<td>"+formatDateTime
+                        (salePlans[i].createTime)+"</td>"+"<td>"+salePlans[i].creater+"</td>"+"<td>"+salePlans[i].totalStatus+"</td>")
                     }
                 }
             }
@@ -1585,7 +1603,7 @@ function findAllSalePlanFirst() {
                 var salePlans = data.salePlans;
                 salePages = data.size;
                 for(var i = 0 ; i < salePlans.length ; i++){
-                    $("#salePlanData").append("<tr>"+"<td>"+salePlans[i].salesPlanNumber+"</td>"+"<td>"+salePlans[i].company+"</td>"+"<td>"+salePlans[i].costEstimate+"</td>"+"<td>"+salePlans[i].costType+"</td>"+"<td>"+salePlans[i].costCenter+"</td>"+"<td>"+salePlans[i].amount+"</td>"+"<td>"+salePlans[i].appliedAmount+"</td>"+"<td>"+salePlans[i].usedAmount+"</td>"+"<td>"+format(salePlans[i].createTime)+"</td>"+"<td>"+salePlans[i].creater+"</td>"+"<td>"+salePlans[i].totalStatus+"</td>")
+                    $("#salePlanData").append("<tr>"+"<td>"+salePlans[i].salesPlanNumber+"</td>"+"<td>"+salePlans[i].company+"</td>"+"<td>"+salePlans[i].costEstimate+"</td>"+"<td>"+salePlans[i].costType+"</td>"+"<td>"+salePlans[i].costCenter+"</td>"+"<td>"+salePlans[i].amount+"</td>"+"<td>"+salePlans[i].appliedAmount+"</td>"+"<td>"+salePlans[i].usedAmount+"</td>"+"<td>"+formatDateTime(salePlans[i].createTime)+"</td>"+"<td>"+salePlans[i].creater+"</td>"+"<td>"+salePlans[i].totalStatus+"</td>")
                 }
             }
         }
@@ -1608,7 +1626,7 @@ function findAllSalePlanLast() {
                 var salePlans = data.salePlans;
                 salePages = data.size;
                 for(var i = 0 ; i < salePlans.length ; i++){
-                    $("#salePlanData").append("<tr>"+"<td>"+salePlans[i].salesPlanNumber+"</td>"+"<td>"+salePlans[i].company+"</td>"+"<td>"+salePlans[i].costEstimate+"</td>"+"<td>"+salePlans[i].costType+"</td>"+"<td>"+salePlans[i].costCenter+"</td>"+"<td>"+salePlans[i].amount+"</td>"+"<td>"+salePlans[i].appliedAmount+"</td>"+"<td>"+salePlans[i].usedAmount+"</td>"+"<td>"+format(salePlans[i].createTime)+"</td>"+"<td>"+salePlans[i].creater+"</td>"+"<td>"+salePlans[i].totalStatus+"</td>")
+                    $("#salePlanData").append("<tr>"+"<td>"+salePlans[i].salesPlanNumber+"</td>"+"<td>"+salePlans[i].company+"</td>"+"<td>"+salePlans[i].costEstimate+"</td>"+"<td>"+salePlans[i].costType+"</td>"+"<td>"+salePlans[i].costCenter+"</td>"+"<td>"+salePlans[i].amount+"</td>"+"<td>"+salePlans[i].appliedAmount+"</td>"+"<td>"+salePlans[i].usedAmount+"</td>"+"<td>"+formatDateTime(salePlans[i].createTime)+"</td>"+"<td>"+salePlans[i].creater+"</td>"+"<td>"+salePlans[i].totalStatus+"</td>")
                 }
             }
         }
@@ -1642,7 +1660,7 @@ function findAllSalePlanWrite() {
                 var salePlans = data.salePlans;
                 salePages = data.size;
                 for(var i = 0 ; i < salePlans.length ; i++){
-                    $("#salePlanWrite").append("<tr>"+"<td>"+salePlans[i].salesPlanNumber+"</td>"+"<td>"+salePlans[i].salesPlanDesc+"</td>"+"<td>"+salePlans[i].company+"</td>"+"<td>"+salePlans[i].totalStatus+"</td>"+"<td>"+salePlans[i].creater+"</td>"+"<td>"+format(salePlans[i].createTime)+"</td>");
+                    $("#salePlanWrite").append("<tr>"+"<td>"+salePlans[i].salesPlanNumber+"</td>"+"<td>"+salePlans[i].salesPlanDesc+"</td>"+"<td>"+salePlans[i].company+"</td>"+"<td>"+salePlans[i].totalStatus+"</td>"+"<td>"+salePlans[i].creater+"</td>"+"<td>"+formatDateTime(salePlans[i].createTime)+"</td>");
                 }
             }
         },
@@ -1739,7 +1757,7 @@ function findSalePlanByNO(number) {
                 alert("暂无数据");
             }else{
                 var salePlans = data.salesPlans;
-                    $("#salePlanWrite").append("<tr>"+"<td>"+salePlans.no+"</td>"+"<td>"+salePlans.describe+"</td>"+"<td>"+salePlans.company+"</td>"+"<td>"+salePlans.status+"</td>"+"<td>"+salePlans.creater+"</td>"+"<td>"+format(salePlans.createTime)+"</td>");
+                    $("#salePlanWrite").append("<tr>"+"<td>"+salePlans.no+"</td>"+"<td>"+salePlans.describe+"</td>"+"<td>"+salePlans.company+"</td>"+"<td>"+salePlans.status+"</td>"+"<td>"+salePlans.creater+"</td>"+"<td>"+formatDateTime(salePlans.createTime)+"</td>");
 
             }
         }
@@ -1761,7 +1779,7 @@ function findSalePlanByCompany() {
             }else{
                 var salePlans = data.salesPlans;
                 for(var i = 0 ; i < salePlans.length ; i++){
-                    $("#salePlanWrite").append("<tr>"+"<td>"+salePlans[i].no+"</td>"+"<td>"+salePlans[i].describe+"</td>"+"<td>"+salePlans[i].company+"</td>"+"<td>"+salePlans[i].status+"</td>"+"<td>"+salePlans[i].creater+"</td>"+"<td>"+format(salePlans[i].createTime)+"</td>");
+                    $("#salePlanWrite").append("<tr>"+"<td>"+salePlans[i].no+"</td>"+"<td>"+salePlans[i].describe+"</td>"+"<td>"+salePlans[i].company+"</td>"+"<td>"+salePlans[i].status+"</td>"+"<td>"+salePlans[i].creater+"</td>"+"<td>"+formatDateTime(salePlans[i].createTime)+"</td>");
                 }
             }
         }
@@ -1930,7 +1948,7 @@ function showAllExpenseHead() {
             $("#expenseData").html("");
             for(var i = 0 ; i < data.length ; i++){
                 var num = i+1;
-                $("#expenseData").append("<tr>"+"<td>"+num+"</td>"+"<td>"+data[i].expenseNum+"</td>"+"<td>"+data[i].leafType+"</td>"+"<td>"+data[i].principal+"</td>"+"<td>"+data[i].dept+"</td>"+"<td>"+format(data[i].expenseDate)+"</td>"+"<td>"+"<a data-toggle=\"modal\" data-target=\"#myModal2\" onclick=\"passValue("+data[i].id+")\">编辑</a>"+"</td>"+"</tr>")
+                $("#expenseData").append("<tr>"+"<td>"+num+"</td>"+"<td>"+data[i].expenseNum+"</td>"+"<td>"+data[i].leafType+"</td>"+"<td>"+data[i].principal+"</td>"+"<td>"+data[i].dept+"</td>"+"<td>"+formatDateTime(data[i].expenseDate)+"</td>"+"<td>"+"<a data-toggle=\"modal\" data-target=\"#myModal2\" onclick=\"passValue("+data[i].id+")\">编辑</a>"+"</td>"+"</tr>")
             }
         }
     })
@@ -1999,4 +2017,368 @@ function writeMore() {
         })
     }
 
+}
+
+
+//费用页面加载后  判断登录者账号信息  看其是何身份
+//若是提流程的  可显示所有与其相关的流程
+//若是审批的  则显示所有需要审批的流程
+//用于费用页面
+function judgeIdentity() {
+    $.ajax({
+        type:"post",
+        url:"sureIdentity",
+        async:false,
+        success:function (data) {
+            if(data == 1){
+                getExpenseList();
+            }else if(data == 2){
+                getAllApprove();
+            }
+        },
+        error:function () {
+            alert("程序出错");
+        }
+    })
+}
+
+function getAllApprove() {
+    $.ajax({
+        type:"post",
+        url:"getAllNeedAppprove",
+        async:false,
+        success:function (data) {
+            if(data =="暂无数据"){
+                $("#expenseData").html("");
+                // alert("暂无数据");
+            }else{
+                $("#expenseData").html("");
+                for(var i = 0 ; i < data.length ; i++){
+                    var num = i+1;
+                    $("#expenseData").append("<tr>"+"<td>"+num+"</td>"+"<td>"+data[i].expenseNum+"</td>"+"<td>"+data[i].leafType+"</td>"+"<td>"+data[i].principal+"</td>"+"<td>"+data[i].dept+"</td>"+"<td>"+formatDateTime(data[i].expenseDate)+"</td>"+"<td>"+"<a data-toggle=\"modal\" data-target=\"#myModal3\" onclick=\"getTotalInfo("+data[i].id+")\">审批</a>"+"</td>"+"</tr>")
+                }
+            }
+        }
+    })
+}
+
+function getExpenseList() {
+    var status = "I";
+    $.ajax({
+        type:"post",
+        data:{"status":status},
+        url:"getAllApproving",
+        async:false,
+        success:function (data) {
+            if(data =="暂无数据"){
+                $("#expenseData").html("");
+                // alert("暂无数据");
+            }else{
+                $("#expenseData").html("");
+                for(var i = 0 ; i < data.length ; i++){
+                    var num = i+1;
+                    $("#expenseData").append("<tr>"+"<td>"+num+"</td>"+"<td>"+data[i].expenseNum+"</td>"+"<td>"+data[i].leafType+"</td>"+"<td>"+data[i].principal+"</td>"+"<td>"+data[i].dept+"</td>"+"<td>"+formatDateTime(data[i].expenseDate)+"</td>"+"<td>"+"<a data-toggle=\"modal\" data-target=\"#myModal2\" onclick=\"passValue("+data[i].id+")\">编辑</a>"+"</td>"+"</tr>")
+                }
+            }
+        }
+    })
+}
+
+
+
+function getTotalInfo(hId) {
+    $.ajax({
+        type:"post",
+        data:{"hId":hId},
+        url:"getExpenseTotal",
+        async:false,
+        success:function (data) {
+            $("#headId").val(hId);
+            var head = data.head;
+            var detail = data.detail;
+            $("#spendNum").val(head.expenseNum);
+            $("#newSpendType").val(detail.expenseType);
+            $("#newLeafType").val(head.leafType);
+            $("#newBudgetNum").val(detail.budgetNum);
+            $("#principal").val(head.principal);
+            $("#newDept").val(head.dept);
+            $("#newEmployee").val(detail.employee);
+            $("#acceptDept").val(detail.dept);
+            $("#acceptCustomer").val(detail.customer);
+            $("#amountOne").val(detail.amount);
+            $("#amountTwo").val(detail.applyAmount);
+            $("#amountThree").val(detail.reimburseAmount);
+            $("#spendDate").val(formatDateTime(head.expenseDate));
+            $("#occurDate").val(formatDateTime(detail.happenDate));
+        }
+    })
+}
+
+function expensePass() {
+    var hId = $("#headId").val();
+    var status = "P";
+    $.ajax({
+        type:"post",
+        data:{"hId":hId ,"status":status},
+        url:"expenseCheck",
+        async:false,
+        success:function (data) {
+            alert(data);
+            getAllApprove();
+        },
+        error:function(){
+            alert("程序出错");
+        }
+    })
+}
+
+function expenseRefuse() {
+    var hId = $("#headId").val();
+    var status = "R";
+    $.ajax({
+        type:"post",
+        data:{"hId":hId ,"status":status},
+        url:"expenseCheck",
+        async:false,
+        success:function (data) {
+            alert(data);
+            getAllApprove();
+        },
+        error:function(){
+            alert("程序出错");
+        }
+    })
+}
+
+
+function writeIncomeHead() {
+    var incomeNum = $("#incomeNum").val();
+    var principal = $("#principal").val();
+    var dept = $("#dept").val();
+    var customer = $("#customer").val();
+    var serverId = $("#serverId").val();
+    var incomeDate = $("#incomeDate").val();
+    var leafType = $("#leafType").val();
+    var leafNum = $("#leafNum").val();
+
+    var data={"incomeNum":incomeNum , "principal":principal , "dept":dept , "customer":customer , "serverId":serverId , "incomeDate":incomeDate ,
+    "leafType":leafType , "leafNum":leafNum};
+
+    var errorInfo = "";
+    if(incomeNum == ""){
+        errorInfo = errorInfo+"收入单号  ";
+    }
+    if(principal == ""){
+        errorInfo = errorInfo+"负责人  ";
+    }
+    if(dept == ""){
+        errorInfo = errorInfo+"负责部门  ";
+    }
+    if(customer == ""){
+        errorInfo = errorInfo+"客户  ";
+    }
+    if(serverId == ""){
+        errorInfo = errorInfo+"服务请求单号  ";
+    }
+    if(incomeDate == ""){
+        errorInfo = errorInfo+"收入日期  ";
+    }
+    if(leafType == ""){
+        errorInfo = errorInfo+"源单类型  ";
+    }
+    if(leafNum == ""){
+        errorInfo = errorInfo+"源单编号  ";
+    }
+    if(errorInfo != ""){
+        alert(errorInfo + "未填写");
+    }else{
+        $.ajax({
+            type:"post",
+            data:data,
+            url:"saveIncomeHead",
+            async:false,
+            success:function (data) {
+                alert(data);
+            },
+            error:function () {
+                alert("程序出错");
+            }
+
+        })
+    }
+}
+//用于收入页面
+function judgeIdentityOnIncome() {
+    $.ajax({
+        type:"post",
+        url:"sureIdentity",
+        async:false,
+        success:function (data) {
+            if(data == 1){
+                loadSimpleIncome();
+            }else if(data == 2){
+                // getAllApprove();
+                loadSimpleApprove();
+            }
+        },
+        error:function () {
+            alert("程序出错");
+        }
+    })
+}
+
+function loadSimpleIncome() {
+    var status = "W";
+    $.ajax({
+        type:"post",
+        data:{"status":status},
+        url:"getAllCanWrite",
+        async:false,
+        success:function (data) {
+            $("#incomeData").html("");
+            var incomes = data.incomes;
+            for(var i = 0 ; i < incomes.length ; i++){
+                $("#incomeData").append("<tr>"+"<td>"+incomes[i].incomeNum+"</td>"+"<td>"+incomes[i].employee+"</td>"+"<td>"+incomes[i].dept+"</td>"+"<td>"+incomes[i].customer+"</td>"+"<td>"+formatDate(incomes[i].incomeDate)+"</td>"+"<td>"+"<a data-toggle=\"modal\" data-target=\"#myModal1\" onclick=\"getIncomeId("+incomes[i].id+")\">编辑</a>"+"</td>"+"</tr>");
+            }
+        }
+    })
+}
+
+function loadSimpleApprove() {
+    var status = "O";
+    $.ajax({
+        type:"post",
+        data:{"status":status},
+        url:"getAllCanWrite",
+        async:false,
+        success:function (data) {
+            $("#incomeData").html("");
+            var incomes = data.incomes;
+            for(var i = 0 ; i < incomes.length ; i++){
+                $("#incomeData").append("<tr>"+"<td>"+incomes[i].incomeNum+"</td>"+"<td>"+incomes[i].employee+"</td>"+"<td>"+incomes[i].dept+"</td>"+"<td>"+incomes[i].customer+"</td>"+"<td>"+formatDate(incomes[i].incomeDate)+"</td>"+"<td>"+"<a data-toggle=\"modal\" data-target=\"#myModal2\" onclick=\"findIncomeTotalInfo("+incomes[i].id+")\">审批</a>"+"</td>"+"</tr>");
+            }
+        }
+    })
+}
+
+function getIncomeId(iId) {
+    $("#incomeHid").val(iId);
+}
+
+function writeIncomeDetail() {
+    var iId = $("#incomeHid").val();
+    var incomeCode = $("#incomeType option:selected").val();
+    var incomeName = $("#incomeType option:selected").text();
+    var employee = $("#incomeEmployee").val();
+    var dept = $("#incomeDept").val();
+    var happenDate = $("#happenDate").val();
+    var amount = $("#incomeAmount").val();
+    var associate = $("#associateAmount").val();
+    var note = $("#note").val();
+
+    var data={"iId":iId , "incomeCode":incomeCode , "incomeName":incomeName , "employee":employee , "dept":dept , "happenDate":happenDate , "amount":amount , "associate":associate , "note":note};
+
+    var errorInfo = "";
+    if(incomeCode == "0"){
+        errorInfo += "收入类型  ";
+    }
+    if(employee ==""){
+        errorInfo += "员工  ";
+    }
+    if(dept == ""){
+        errorInfo += "归属部门  ";
+    }
+    if(happenDate ==""){
+        errorInfo += "发生日期  ";
+    }
+    if(amount == ""){
+        errorInfo += "金额  ";
+    }
+    if(associate == ""){
+        errorInfo += "关联金额  ";
+    }
+    if(errorInfo != ""){
+        alert(errorInfo + "未填写或未选择");
+    }else{
+        $.ajax({
+            type:"post",
+            data:data,
+            url:"saveIncomeDetail",
+            async:false,
+            success:function (data) {
+                alert(data);
+                loadSimpleIncome();
+            },
+            error:function () {
+                alert("程序出错");
+            }
+        })
+    }
+
+}
+
+function findIncomeTotalInfo(hId) {
+    $.ajax({
+        type:"post",
+        data:{"hId":hId},
+        url:"findTotalIncome",
+        async:false,
+        success:function (data) {
+            var head = data.head;
+            var detail = data.detail;
+            $("#headeId").val(head.id);
+            $("#newIncomeNum").val(head.incomeNum);
+            $("#newPrincipal").val(head.employee);
+            $("#newAcceptDept").val(head.dept);
+            $("#newEmployee").val(detail.employee);
+            $("#hadDept").val(detail.dept);
+            $("#newCustomer").val(head.customer);
+            $("#requestNum").val(head.requestNum);
+            $("#newLeafType").val(head.leafType);
+            $("#newLeafNum").val(head.leafNum);
+            $("#newIncomeType").val(detail.incomeName);
+            $("#newAmount").val(detail.amount);
+            $("#associate").val(detail.associateAmount);
+            $("#newNote").val(detail.note);
+            $("#newIncomeDate").val(formatDate(head.incomeDate));
+            $("#newHappenDate").val(formatDate(detail.happenDate));
+
+        }
+    })
+}
+
+function passIncome() {
+    var status = "P";
+    var hId = $("#headeId").val();
+    $.ajax({
+        type:"post",
+        data:{"hId":hId , "status":status},
+        url:"approveIncome",
+        async:false,
+        success:function (data) {
+            alert(data);
+            loadSimpleApprove();
+        },
+        error:function () {
+            alert("程序出错");
+        }
+    })
+}
+
+function refuseIncome() {
+    var status = "R";
+    var hId = $("#headeId").val();
+    $.ajax({
+        type:"post",
+        data:{"hId":hId , "status":status},
+        url:"approveIncome",
+        async:false,
+        success:function (data) {
+            alert(data);
+            loadSimpleApprove();
+        },
+        error:function () {
+            alert("程序出错");
+        }
+    })
 }

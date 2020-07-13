@@ -559,4 +559,12 @@ public class AccountController {
         }
     }
 
+    @RequestMapping("/sureIdentity")
+    @ResponseBody
+    public int getIdentity(HttpSession session){
+        IUser user = (IUser)session.getAttribute("user");
+        String account = user.getAccount();
+        return userService.getIdentity(account);
+    }
+
 }

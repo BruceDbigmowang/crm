@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Date;
 
 @Entity
@@ -15,9 +16,10 @@ public class IncomeDetail {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id;
 
+    int hid;
     String incomeType;
     String incomeName;
-    Date happenDate;
+    LocalDate happenDate;
     String employee;
     String dept;
     BigDecimal amount;
@@ -36,6 +38,14 @@ public class IncomeDetail {
         return incomeType;
     }
 
+    public int getHid() {
+        return hid;
+    }
+
+    public void setHid(int hid) {
+        this.hid = hid;
+    }
+
     public void setIncomeType(String incomeType) {
         this.incomeType = incomeType;
     }
@@ -48,11 +58,11 @@ public class IncomeDetail {
         this.incomeName = incomeName;
     }
 
-    public Date getHappenDate() {
+    public LocalDate getHappenDate() {
         return happenDate;
     }
 
-    public void setHappenDate(Date happenDate) {
+    public void setHappenDate(LocalDate happenDate) {
         this.happenDate = happenDate;
     }
 

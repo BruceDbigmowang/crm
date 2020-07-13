@@ -7,7 +7,7 @@
 <body>
 <script>
     $(function () {
-        showAllExpenseHead();
+        judgeIdentity();
     })
 </script>
 <div style="margin-top: 20px;margin-left: 20px;">
@@ -56,7 +56,7 @@
                     </div>
                     <div class="modal-footer">
                         <button data-dismiss="modal" class="btn btn-default" type="button">关闭</button>
-                        <button class="btn btn-primary" type="button" onclick="createExpense()">提交</button>
+                        <button data-dismiss="modal" class="btn btn-primary" type="button" onclick="createExpense()">提交</button>
                     </div>
                 </div><!-- /.modal-content -->
             </div><!-- /.modal-dialog -->
@@ -126,7 +126,70 @@
             </div>
             <div class="modal-footer">
                 <button data-dismiss="modal" class="btn btn-default" type="button">关闭</button>
-                <button class="btn btn-primary" type="button" onclick="writeMore()">提交</button>
+                <button data-dismiss="modal" class="btn btn-primary" type="button" onclick="writeMore()">提交</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+
+
+<div class="modal fade" id="myModal3"  data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" style="width: 1000px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button data-dismiss="modal" class="close" type="button"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title">审批明细</h4>
+            </div>
+            <div class="modal-body">
+                <input id="headId" type="hidden">
+                <table class="table" style="margin-top:20px;">
+                    <tr>
+                        <td>费用单号</td>
+                        <td><input id="spendNum" style="width: 100%;border: 0px;" readonly></td>
+                        <td>费用类型</td>
+                        <td><input id="newSpendType" style="width: 100%;border: 0px;" readonly></td>
+                        <td>源单类型</td>
+                        <td><input id="newLeafType" style="width: 100%;border: 0px;" readonly></td>
+                    </tr>
+                    <tr>
+                        <td>预算单号</td>
+                        <td><input id="newBudgetNum" style="width: 100%;border: 0px;" readonly></td>
+                        <td>负责人</td>
+                        <td><input id="principal" style="width: 100%;border: 0px;" readonly></td>
+                        <td>负责部门</td>
+                        <td><input id="newDept" style="width: 100%;border: 0px;" readonly></td>
+
+                    </tr>
+                    <tr>
+                        <td>职员</td>
+                        <td><input id="newEmployee" style="width: 100%;border: 0px;" readonly></td>
+                        <td>承担部门</td>
+                        <td><input id="acceptDept" style="width: 100%;border: 0px;" readonly></td>
+                        <td>承担客户</td>
+                        <td><input id="acceptCustomer" style="width: 100%;border: 0px;" readonly></td>
+
+                    </tr>
+                    <tr>
+                        <td>金额</td>
+                        <td><input id="amountOne" style="width: 100%;border: 0px;" readonly></td>
+                        <td>申请金额</td>
+                        <td><input id="amountTwo" style="width: 100%;border: 0px;" readonly></td>
+                        <td>报销金额</td>
+                        <td><input id="amountThree" style="width: 100%;border: 0px;" readonly></td>
+                    </tr>
+                    <tr>
+                        <td>费用日期</td>
+                        <td><input id="spendDate" style="width: 100%;border: 0px;" readonly></td>
+                        <td>发生日期</td>
+                        <td><input id="occurDate" style="width: 100%;border: 0px;" readonly></td>
+                        <td></td><td></td>
+                    </tr>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button data-dismiss="modal" class="btn btn-success" type="button" onclick="expensePass()">通过</button>
+                <button data-dismiss="modal" class="btn btn-danger" type="button" onclick="expenseRefuse()">不通过</button>
+                <button data-dismiss="modal" class="btn btn-default" type="button">关闭</button>
             </div>
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->

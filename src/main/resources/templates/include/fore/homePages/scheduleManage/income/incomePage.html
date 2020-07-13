@@ -6,7 +6,186 @@
 </head>
 <body>
 
-<h3>你好 世界</h3>
+<script>
+    $(function () {
+        judgeIdentityOnIncome();
+    })
+</script>
+
+<div style="margin-top: 20px;margin-left: 20px;">
+    <div>
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">新增</button>
+    </div>
+    <div style="width: 1000px;margin: 0px auto;">
+        <table class="table">
+            <thead>
+            <tr>
+                <td>收入单号</td>
+                <td>负责人</td>
+                <td>负责部门</td>
+                <td>客户</td>
+                <td>收入日期</td>
+                <td>操作</td>
+            </tr>
+            </thead>
+            <tbody id="incomeData"></tbody>
+        </table>
+    </div>
+</div>
+<!--<a data-toggle="modal" data-target="#myModal" onclick="getIncomeId()">编辑</a>-->
+<div class="modal fade" id="myModal"  data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" style="width: 1000px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button data-dismiss="modal" class="close" type="button"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title">新增收入</h4>
+            </div>
+            <div class="modal-body">
+                <table class="table">
+                    <tr>
+                        <td>收入单号</td>
+                        <td><input id="incomeNum" style="width: 100%;border: 0px;" placeholder="请输入收入单号"></td>
+                        <td>负责人</td>
+                        <td><input id="principal" style="width: 100%;border: 0px;" placeholder="请输入负责人工号"></td>
+                        <td>负责部门</td>
+                        <td><input id="dept" style="width: 100%;border: 0px;" placeholder="请输入负责部门"></td>
+                    </tr>
+                    <tr>
+                        <td>客户</td>
+                        <td><input id="customer" style="width: 100%;border:0px;" placeholder="请输入客户名称"></td>
+                        <td>服务请求单号</td>
+                        <td><input id="serverId" style="width: 100%;border:0px;" placeholder="请输入服务请求单号"></td>
+                        <td>收入日期</td>
+                        <td><input id="incomeDate" style="width: 100%;border: 0px;" placeholder="请输入收入日期"></td>
+                    </tr>
+                    <tr>
+                        <td>源单类型</td>
+                        <td><input id="leafType" style="width: 100%;border: 0px;" placeholder="请输入源单类型"></td>
+                        <td>源单编号</td>
+                        <td><input id="leafNum" style="width: 100%;border: 0px;" placeholder="请输入源单编号"></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button data-dismiss="modal" class="btn btn-default" type="button">关闭</button>
+                <button class="btn btn-primary" type="button" onclick="writeIncomeHead()">提交</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+
+<div class="modal fade" id="myModal1"  data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" style="width: 1000px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button data-dismiss="modal" class="close" type="button"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title">编辑收入详细信息</h4>
+            </div>
+            <div class="modal-body">
+                <input id="incomeHid" type="hidden">
+                <table class="table" style="border-top: 0px;">
+                    <tr>
+                        <td style="vertical-align: inherit;">收入类型</td>
+                        <td>
+                            <select id="incomeType" class="form-control" style="width: 80%;border: 0px;">
+                                <option value="0">--请选择--</option>
+                                <option value="0001">类型1</option>
+                                <option value="0002">类型2</option>
+                            </select>
+                        </td>
+                        <td style="vertical-align: inherit;">人员</td>
+                        <td><input id="incomeEmployee" class="form-control" style="width: 100%;border: 0px;" placeholder="请输入员工工号"></td>
+                        <td style="vertical-align: inherit;">归属部门</td>
+                        <td><input id="incomeDept" class="form-control" style="width: 100%;border:0px;" placeholder="请输入归属部门"></td>
+                    </tr>
+                    <tr>
+                        <td style="vertical-align: inherit;">金额</td>
+                        <td><input id="incomeAmount" class="form-control" style="width: 100%;border: 0px;" placeholder="请输入金额"></td>
+                        <td style="vertical-align: inherit;">关联金额</td>
+                        <td><input id="associateAmount" class="form-control" style="width: 100%;border: 0px;" placeholder="请输入关联金额"></td>
+                        <td style="vertical-align: inherit;">发生日期</td>
+                        <td><input id="happenDate" class="form-control" style="width: 100%;border: 0px;" placeholder="请输入发生日期"></td>
+                    </tr>
+                    <tr>
+                        <td style="vertical-align: inherit;">备注</td>
+                        <td colspan="5">
+                            <textarea id="note" class="form-control" style="border: 0px;" placeholder="请备注相关信息"></textarea>
+                        </td>
+
+                    </tr>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button data-dismiss="modal" class="btn btn-default" type="button">关闭</button>
+                <button class="btn btn-primary" type="button" onclick="writeIncomeDetail()">提交</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+
+<div class="modal fade" id="myModal2"  data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" style="width: 1000px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button data-dismiss="modal" class="close" type="button"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title">审批明细</h4>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="headeId">
+                <table class="table">
+                    <tr>
+                        <td>收入单号</td>
+                        <td><input id="newIncomeNum" class="form-control" readonly></td>
+                        <td>负责人</td>
+                        <td><input id="newPrincipal" class="form-control" readonly></td>
+                        <td>负责部门</td>
+                        <td><input id="newAcceptDept" class="form-control" readonly></td>
+                    </tr>
+                    <tr>
+                        <td>人员</td>
+                        <td><input id="newEmployee" class="form-control" readonly></td>
+                        <td>归属部门</td>
+                        <td><input id="hadDept" class="form-control" readonly></td>
+                        <td>客户</td>
+                        <td><input id="newCustomer" class="form-control" readonly></td>
+                    </tr>
+                    <tr>
+                        <td>服务请求单号</td>
+                        <td><input id="requestNum" class="form-control" readonly></td>
+                        <td>源单类型</td>
+                        <td><input id="newLeafType" class="form-control" readonly></td>
+                        <td>源单编号</td>
+                        <td><input id="newLeafNum" class="form-control" readonly></td>
+                    </tr>
+                    <tr>
+                        <td>收入类型</td>
+                        <td><input id="newIncomeType" class="form-control" readonly></td>
+                        <td>金额</td>
+                        <td><input id="newAmount" class="form-control" readonly></td>
+                        <td>关联金额</td>
+                        <td><input id="associate" class="form-control" readonly></td>
+                    </tr>
+                    <tr>
+                        <td>备注</td>
+                        <td><input id="newNote" class="form-control" readonly></td>
+                        <td>收入日期</td>
+                        <td><input id="newIncomeDate" class="form-control" readonly></td>
+                        <td>发生日期</td>
+                        <td><input id="newHappenDate" class="form-control" readonly></td>
+                    </tr>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button data-dismiss="modal" class="btn btn-success" type="button" onclick="passIncome()">通过</button>
+                <button data-dismiss="modal" class="btn btn-danger" type="button" onclick="refuseIncome()">不通过</button>
+                <button data-dismiss="modal" class="btn btn-default" type="button">关闭</button>
+
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
 
 </body>
 </html>

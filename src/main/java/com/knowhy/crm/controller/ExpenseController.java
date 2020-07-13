@@ -16,7 +16,9 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 public class ExpenseController {
@@ -63,9 +65,13 @@ public class ExpenseController {
 
     @RequestMapping("/writeExpenseDetail")
     @Transactional
-    public String writeMoreExpense(int hId , String spendType , String happenDate , String person , String sdept , String customer , String samount , String appliedAmount , String bamount , String budgetNum){
+    public String writeMoreExpense(HttpSession session , int hId , String spendType , String happenDate , String person , String sdept , String customer , String samount , String appliedAmount , String bamount , String budget){
+        IUser user = (IUser)session.getAttribute("user");
+        String account = user.getAccount();
+        Date now = new Date();
         ExpenseDetail expenseDetail = new ExpenseDetail();
         expenseDetail.setHeadId(hId);
+        expenseDetail.setExpenseType(spendType);
         try{
             LocalDate happen = LocalDate.parse(happenDate , fmt);
             expenseDetail.setHappenDate(happen);
@@ -85,12 +91,15 @@ public class ExpenseController {
         }catch (Exception e){
             return e.getMessage();
         }
-        expenseDetail.setBudgetNum(budgetNum);
+        expenseDetail.setBudgetNum(budget);
 
         try{
             expenseService.saveExpenseMore(expenseDetail);
             ExpenseHead expenseHead = expenseService.getOne(hId);
+            //修改费用表头的审批状态  使其可审批
             expenseHead.setCheckStatus("O");
+            expenseHead.setUpdater(account);
+            expenseHead.setUpdateDate(now);
             expenseService.saveExpanse(expenseHead);
         }catch (Exception e){
             return e.getMessage();
@@ -98,4 +107,56 @@ public class ExpenseController {
         return "OK";
 
     }
+
+    @RequestMapping("/getAllNeedAppprove")
+    public Object getAllApprove(){
+        List<ExpenseHead> expenseHeadList = expenseService.getAllApprove();
+        if(expenseHeadList == null || expenseHeadList.size() == 0){
+            return "暂无数据";
+        }else{
+            return expenseHeadList;
+        }
+    }
+
+    @RequestMapping("/getAllApproving")
+    public Object getApproving(HttpSession session , @RequestParam("status")String status){
+        IUser user = (IUser)session.getAttribute("user");
+        String account = user.getAccount();
+        List<ExpenseHead> expenseHeadList = expenseService.findHeadByAccountAndStatus(account , status);
+        if(expenseHeadList == null || expenseHeadList.size() == 0){
+            return "暂无数据";
+        }else{
+            return expenseHeadList;
+        }
+    }
+
+    @RequestMapping("/getExpenseTotal")
+    public Object findExpenseAll(@RequestParam("hId")int hId){
+        ExpenseHead expenseHead = expenseService.getOne(hId);
+        ExpenseDetail expenseDetail = expenseService.findDetailByHID(hId);
+        Map<String , Object> map = new HashMap<>();
+        map.put("head" , expenseHead);
+        map.put("detail" , expenseDetail);
+        return map;
+    }
+
+    @RequestMapping("/expenseCheck")
+    public Object checkExpense(HttpSession session , int hId , String status){
+        IUser user = (IUser)session.getAttribute("user");
+        String account = user.getAccount();
+        Date now = new Date();
+        ExpenseHead head = expenseService.getOne(hId);
+        head.setCheckPerson(account);
+        head.setUpdater(account);
+        head.setCheckDate(now);
+        head.setUpdateDate(now);
+        head.setCheckStatus(status);
+        try{
+            expenseService.saveExpanse(head);
+        }catch (Exception e){
+            return e.getMessage();
+        }
+        return "已审批";
+    }
+
 }
