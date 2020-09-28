@@ -12,4 +12,6 @@ public interface IUserDAO extends JpaRepository<IUser, String> {
     List<IUser> findByAccountAndEmail(String account, String email);
 
     void deleteByAccount(String account);
+
+    List<IUser> findByNote(String note);
 }

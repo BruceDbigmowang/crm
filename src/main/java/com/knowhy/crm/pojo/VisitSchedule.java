@@ -3,6 +3,7 @@ package com.knowhy.crm.pojo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.util.Date;
 
 @Entity
@@ -17,10 +18,10 @@ public class VisitSchedule {
     String number;
     String vname;
     String destination;
-    Date bdate;
+    LocalDate bdate;
     String btime;
-    Date edate;
-    String etime;
+    String creater;
+    Date createDate;
 
     public int getId() {
         return id;
@@ -54,11 +55,11 @@ public class VisitSchedule {
         this.destination = destination;
     }
 
-    public Date getBdate() {
+    public LocalDate getBdate() {
         return bdate;
     }
 
-    public void setBdate(Date bdate) {
+    public void setBdate(LocalDate bdate) {
         this.bdate = bdate;
     }
 
@@ -70,19 +71,19 @@ public class VisitSchedule {
         this.btime = btime;
     }
 
-    public Date getEdate() {
-        return edate;
+    public String getCreater() {
+        return creater;
     }
 
-    public void setEdate(Date edate) {
-        this.edate = edate;
+    public void setCreater(String creater) {
+        this.creater = creater;
     }
 
-    public String getEtime() {
-        return etime;
+    public Date getCreateDate() {
+        return createDate;
     }
 
-    public void setEtime(String etime) {
-        this.etime = etime;
+    public void setCreateDate(Date createDate) {
+        this.createDate = createDate;
     }
 }

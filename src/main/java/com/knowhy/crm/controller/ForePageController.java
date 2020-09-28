@@ -33,7 +33,7 @@ public class ForePageController {
 
     @RequestMapping("/homePage")
     public String home(){
-        return "fore/home";
+        return "fore/newHome";
     }
 
     @RequestMapping("/foreRegister")

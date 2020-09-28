@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<script>
+
+    var chineseCities = new ChineseCities({
+        'province':'province', //省份ID
+        'city':'city', //城市ID
+        'hasSelect': function(data){
+            console.log(data);
+        }//选中后回调函数
+    });
+
+    $(function () {
+        loadCompetitor();
+    })
+</script>
+
+<div>
+
+    <span style="font-size: 16px;">客户管理 / 竞争对手</span>
+    <table style="width: 100%;border: 0px;margin-top: 20px;">
+        <tr>
+            <td style="text-align: left;width: 400px;">
+                <input id="competitorSearch" class="form-control" style="width: 300px;" placeholder="请输入竞争对手名称" autocomplete="off"><button class="btn btn-primary" style="margin-top: -5px;background-color: #FF9502;" onclick="getCompetitorByName()">查询</button>
+            </td>
+            <td style="text-align: right">
+                <button class="btn btn-primary" data-toggle="modal" data-target="#myModal" style="background-color: #FF9502;">+&nbsp;新建</button>
+            </td>
+        </tr>
+    </table>
+
+
+
+    <div style="width: 100%;margin-top: 20px;">
+        <table class="table table-striped table-bordered table-hover  table-condensed" style="width: 1050px;font-size: 14px;">
+            <thead style="background-color: #dde5e5;font-size: 14px;text-align: left;vertical-align: inherit;">
+            <tr>
+                <th>竞争对手名称</th>
+                <th>竞争对手所有人</th>
+                <th>省市</th>
+                <th>地址</th>
+                <th>公司网址</th>
+                <th>威胁程度</th>
+                <th>最近修改人</th>
+            </tr>
+            </thead>
+            <tbody id="competitorData"></tbody>
+        </table>
+        <div id="pageDIV" style=" width:200px;margin: 0px auto;display: none;">
+            <a style="color: #ea9e11;" onclick="findCompetitorByPageFirst()">首 页</a>&nbsp&nbsp
+            <a style="color: #ea9e11;" onclick="findCompetitorByPagePrevious()">上一页</a>&nbsp&nbsp
+            <a style="color: #ea9e11;" onclick="findCompetitorByPageNext()">下一页</a>&nbsp&nbsp
+            <a style="color: #ea9e11;" onclick="findCompetitorByPageLast()">尾 页</a>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="myModal"  data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" >
+        <div class="modal-content">
+            <div class="modal-header">
+                <button data-dismiss="modal" class="close" type="button"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title">新建竞争对手</h4>
+            </div>
+            <div class="modal-body">
+                <table class="table" >
+                    <tr style="height: 47px;">
+                        <td  style="text-align: left;vertical-align: inherit;font-size: 14px;" >竞争对手名称</td>
+                        <td  style="vertical-align: inherit;"><input id="competitorName" class="form-control"  placeholder="输入竞争对手名称" ></td>
+                    </tr>
+                    <tr>
+                        <td  style="text-align: left;vertical-align: inherit;font-size: 14px;">竞争对手所有人</td>
+                        <td style="vertical-align: inherit;"><input id="owner"  class="form-control" placeholder="输入竞争对手所有人"></td>
+                    </tr>
+
+                    <tr>
+                        <td style="text-align: left;vertical-align: inherit;font-size: 14px;">省、市</td>
+                        <td>
+                            <select id="province" class="form-control" style="width: 197px;">
+                                <option value="请选择城市">请选择省份</option>
+                            </select>
+                            <select id="city" class="form-control" style="width: 197px;">
+                                <option value="请选择城市">请选择城市</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: left;vertical-align: inherit;font-size: 14px;">地址</td>
+                        <td style="text-align: left;vertical-align: inherit;">
+                            <input id="address" class="form-control"  placeholder="输入具体地址">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="font-size: 14px;vertical-align: inherit;">公司网址</td>
+                        <td><input id="website" class="form-control"  placeholder="输入公司网址"></td>
+                    </tr>
+                    <tr>
+                        <td style="font-size: 14px;vertical-align: inherit;">威胁程度</td>
+                        <td><input id="manace" class="form-control"  placeholder="输入威胁程度"></td>
+                    </tr>
+                    <tr id="operation1">
+                        <td colspan="2">
+                            <a onclick="showMore()">填写更多信息>>></a>
+                        </td>
+                    </tr>
+                    <tr id="moreInfo1" style="display: none;">
+                        <td style="font-size: 14px;vertical-align: inherit;">主要客户</td>
+                        <td><input id="mainCustomer" class="form-control"  placeholder="输入主要客户"></td>
+                    </tr>
+                    <tr id="moreInfo2" style="display: none;">
+                        <td style="font-size: 14px;vertical-align: inherit;">主要产品</td>
+                        <td><input id="mainProduct" class="form-control"  placeholder="输入主要客户"></td>
+                    </tr>
+                    <tr id="moreInfo3" style="display: none;">
+                        <td style="font-size: 14px;vertical-align: inherit;">优势说明</td>
+                        <td><input id="advantage" class="form-control"  placeholder="输入优势说明"></td>
+                    </tr>
+                    <tr id="operation2" style="display: none;">
+                        <td colspan="2">
+                            <a onclick="hideMore()">收起更多</a>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button data-dismiss="modal" class="btn btn-default" type="button">关闭</button>
+                <button style="background-color: #ff9f20" class="btn btn-primary" type="button" onclick="createCompetitor()">保存</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+
+</body>
+</html>

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<script>
+
+    $("#distpicker").distpicker();
+
+    laydate.render({
+        trigger:'click',
+        theme: '#ff9f20',
+        elem: '#makeDate'
+    });
+</script>
+<div style="margin-top: 20px;margin-left: 20px;">
+    <span style="font-size: 16px;">商机管理 > 商机线索 > 线索新增</span>
+    <div style="width: 1000px;margin: 0px auto;margin-top: 20px;">
+        <table class="table">
+            <tr>
+                <td style="width: 150px;text-align: center;height: 40px;font-size: 14px;vertical-align: inherit;">姓名</td>
+                <td style="width: 350px;"><input id="name" class="form-control" placeholder="请输入..." style="width: 308px;"></td>
+                <td style="width: 150px;text-align: center;height: 40px;font-size: 14px;vertical-align: inherit;">传真</td>
+                <td><input id="fax" class="form-control" placeholder="请输入..."></td>
+            </tr>
+            <tr>
+                <td style="width: 150px;text-align: center;height: 40px;font-size: 14px;vertical-align: inherit;">公司名称</td>
+                <td><input id="companyName" class="form-control" placeholder="请输入..." style="width: 308px;"></td>
+                <td style="width: 150px;text-align: center;height: 40px;font-size: 14px;vertical-align: inherit;">邮箱</td>
+                <td><input id="email" class="form-control" placeholder="请输入..."></td>
+            </tr>
+            <tr>
+                <td style="width: 150px;text-align: center;height: 40px;font-size: 14px;vertical-align: inherit;">线索来源</td>
+                <td><input id="source" class="form-control" placeholder="请输入..." style="width: 308px;"></td>
+                <td style="width: 150px;text-align: center;height: 40px;font-size: 14px;vertical-align: inherit;">负责人</td>
+                <td><input id="principal" class="form-control" placeholder="请输入..."></td>
+            </tr>
+            <tr>
+                <td style="width: 150px;text-align: center;height: 40px;font-size: 14px;vertical-align: inherit;">线索主体</td>
+                <td><input id="body" class="form-control" placeholder="请输入..." style="width: 308px;"></td>
+                <td style="width: 150px;text-align: center;height: 40px;font-size: 14px;vertical-align: inherit;">负责部门</td>
+                <td><input id="dept" class="form-control" placeholder="请输入..."></td>
+            </tr>
+            <tr>
+                <td style="width: 150px;text-align: center;height: 40px;font-size: 14px;vertical-align: inherit;">联系人</td>
+                <td><input id="contract" class="form-control" placeholder="请输入..." style="width: 308px;"></td>
+                <td style="width: 150px;text-align: center;height: 40px;font-size: 14px;vertical-align: inherit;">制单人</td>
+                <td><input id="maker" class="form-control" placeholder="请输入..."></td>
+            </tr>
+            <tr>
+                <td style="width: 150px;text-align: center;height: 40px;font-size: 14px;vertical-align: inherit;">电话</td>
+                <td><input id="phone" class="form-control" placeholder="请输入..." style="width: 308px;"></td>
+                <td style="width: 150px;text-align: center;height: 40px;font-size: 14px;vertical-align: inherit;">制单日期</td>
+                <td><input id="makeDate" class="form-control" placeholder="请输入..." autocomplete="off"></td>
+            </tr>
+            <tr>
+                <td style="width: 150px;text-align: center;height: 40px;font-size: 14px;vertical-align: inherit;">手机</td>
+                <td><input id="mobile" class="form-control" placeholder="请输入..." style="width: 308px;"></td>
+                <td style="width: 150px;text-align: center;height: 40px;font-size: 14px;vertical-align: inherit;">源单类型</td>
+                <td><input id="leafType" class="form-control" placeholder="请输入..."></td>
+            </tr>
+            <tr>
+                <td style="width: 150px;text-align: center;height: 40px;font-size: 14px;vertical-align: inherit;" rowspan="2">地址</td>
+                <td id="distpicker">
+                    <select id="province" class="form-control" style="font-size: 14px;width: 100px;"></select>
+                    <select id="city" class="form-control" style="font-size: 14px;width: 100px;"></select>
+                    <select id="area" class="form-control" style="font-size: 14px;width: 100px;"></select>
+                </td>
+                <td style="width: 150px;text-align: center;height: 40px;font-size: 14px;vertical-align: inherit;" rowspan="2">源单编号</td>
+                <td rowspan="2"style="vertical-align: inherit;"><input id="leafNum" class="form-control" placeholder="请输入..." ></td>
+            </tr>
+            <tr>
+                <td><input id="address" class="form-control" placeholder="详细地址..." style="width: 308px;"></td>
+            </tr>
+            <tr>
+                <td colspan="4" style="text-align: right;vertical-align: inherit;">
+                    <button type="button" class="btn btn-primary" style="background-color: #ff9f20;margin-right: 50px;" onclick="saveOpportunity()">保&nbsp&nbsp&nbsp&nbsp存</button>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+</body>
+</html>

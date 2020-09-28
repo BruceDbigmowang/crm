@@ -13,4 +13,8 @@ public interface RolesDAO extends JpaRepository<Roles, Integer> {
     List<Roles> findByAccount(String account);
 
     List<Roles> findByRoleName(String name);
+
+    List<Roles> findByNote(String note);
+
+    List<Roles> findByNoteIsNull();
 }

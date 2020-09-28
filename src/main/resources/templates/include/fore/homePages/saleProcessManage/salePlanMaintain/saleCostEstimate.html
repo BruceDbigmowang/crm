@@ -6,65 +6,94 @@
 </head>
 <body>
 <script>
-    $(function(){
-        findAllSalePlan();
-    })
+    // $(function(){
+    //     findAllSalePlan();
+    // })
+    window.onload = findAllSalePlan;
 </script>
-<div style="margin-left: 20px;margin-top: 50px;width: 100%">
-    <table class="table" style="width: 800px;margin: 0px auto;">
-        <tr>
-            <td>销售计划编号</td>
-            <td><input id="salePlanNumber" style="width: 100%;border: 0px;" placeholder="请填写销售计划编号" onblur="sureCompany()"></td>
-<!--            <td>销售描述</td>-->
-<!--            <td><input id="salesDesc" style="width: 100%;border:0px;" placeholder="请填写销售描述"></td>-->
-            <td>销售费用估算</td>
-            <td><input id="costEstimate" style="width: 100%;border:0px;" placeholder="请填写销售费用估算"></td>
-            <td>销售费用类型</td>
-            <td>
-                <select id="costType" style="border:0px;">
-                    <option>--请选择费用类型--</option>
-                </select>
-            </td>
-        </tr>
-        <tr>
-
-            <td>成本中心</td>
-            <td><input id="costCenter" style="width: 100%;border:0px;" placeholder="请填写成本中心"></td>
-            <td>客户名称</td>
-            <td><input id="company" style="width: 100%;border:0px;" placeholder="请填写客户名称"></td>
-            <td>金额</td>
-            <td><input id="amount" style="width: 100%;border:0px;" placeholder="请填写金额"></td>
-        </tr>
-        <tr>
-
-            <td>申请金额</td>
-            <td><input id="applied" style="width: 100%;border:0px;" placeholder="请填写申请金额"></td>
-            <td>使用金额</td>
-            <td><input id="used" style="width: 100%;border:0px;" placeholder="请填写使用金额"></td>
-            <td></td><td></td>
-        </tr>
-        <tr>
-            <td colspan="6" style="text-align: center;vertical-align: inherit;">
-                <button class="btn btn-primary" style="width: 100px;" onclick="createSalePlan()">提  交</button>
-            </td>
-        </tr>
-    </table>
+<div style="width: 1050px;margin:0px auto;">
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" style="background-color: #ff9f20;">新增费用预算</button>
 
     <br><br>
-
-    <table class="table" style="width: 1000px;margin:0px auto;">
-        <thead>
+    <div style="width: 1050px;margin:0px auto;overflow: auto;">
+    <table class="table table-striped table-bordered table-hover  table-condensed" style="width: 1800px;">
+        <thead style="background-color: #dde5e5;font-size: 14px;text-align: left;vertical-align: inherit;">
         <tr>
-            <td>销售计划编号</td><td>客户名称</td><td>销售费用</td><td>费用类型</td><td>成本中心</td><td>金额</td><td>申请金额</td><td>使用金额</td><td>创建时间</td><td>创建人</td><td>状态</td>
+            <th style="width: 200px;">销售计划编号</th>
+            <th style="width: 150px;">客户名称</th>
+            <th style="width: 150px;">销售费用</th>
+            <th style="width: 150px;">费用类型</th>
+            <th style="width: 150px;">成本中心</th>
+            <th style="width: 150px;">金额</th>
+            <th style="width: 150px;">申请金额</th>
+            <th style="width: 150px;">使用金额</th>
+            <th style="width: 250px;">创建时间</th>
+            <th style="width: 150px;">创建人</th>
+            <th style="width: 150px;">状态</th>
         </tr>
         </thead>
         <tbody id="salePlanData"></tbody>
     </table>
+    </div>
 
     <div id="salePageDIV" style="width:200px;margin: 0px auto;">
         <a href="#" onclick="findAllSalePlanFirst()">首 页</a>&nbsp&nbsp<a href="#" onclick="findAllSalePlanPrevious()">上一页</a>&nbsp&nbsp<a href="#" onclick="findAllSalePlanNext()">下一页</a>&nbsp&nbsp<a href="#" onclick="findAllSalePlanLast()">尾 页</a>
     </div>
 
+</div>
+
+
+<div class="modal fade" id="myModal"  data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" style="width: 1050px">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button data-dismiss="modal" class="close" type="button"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title">编辑销售费用估算</h4>
+            </div>
+            <div class="modal-body">
+
+                <table class="table" style="width: 980px;margin: 0px auto;">
+                    <tr>
+                        <td style="font-size: 14px;vertical-align: inherit;">销售计划编号</td>
+                        <td><input id="salePlanNumber" class="form-control" style="width: 100%;border: 0px;" placeholder="请填写销售计划编号" onblur="sureCompany()"></td>
+                        <!--            <td>销售描述</td>-->
+                        <!--            <td><input id="salesDesc" style="width: 100%;border:0px;" placeholder="请填写销售描述"></td>-->
+                        <td style="font-size: 14px;vertical-align: inherit;">销售费用估算</td>
+                        <td><input id="costEstimate" class="form-control" style="width: 100%;border:0px;" placeholder="请填写销售费用估算"></td>
+                        <td style="font-size: 14px;vertical-align: inherit;">销售费用类型</td>
+                        <td>
+                            <select id="costType" class="form-control" style="border:0px;">
+                                <option>--请选择费用类型--</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+
+                        <td style="font-size: 14px;vertical-align: inherit;">成本中心</td>
+                        <td><input id="costCenter" class="form-control" style="width: 100%;border:0px;" placeholder="请填写成本中心"></td>
+                        <td style="font-size: 14px;vertical-align: inherit;">客户名称</td>
+                        <td><input id="company" class="form-control" style="width: 100%;border:0px;" placeholder="请填写客户名称"></td>
+                        <td style="font-size: 14px;vertical-align: inherit;">金额</td>
+                        <td><input id="amount" class="form-control" style="width: 100%;border:0px;" placeholder="请填写金额"></td>
+                    </tr>
+                    <tr>
+
+                        <td style="font-size: 14px;vertical-align: inherit;">申请金额</td>
+                        <td><input id="applied" class="form-control" style="width: 100%;border:0px;" placeholder="请填写申请金额"></td>
+                        <td style="font-size: 14px;vertical-align: inherit;">使用金额</td>
+                        <td><input id="used" class="form-control" style="width: 100%;border:0px;" placeholder="请填写使用金额"></td>
+                        <td></td><td></td>
+                    </tr>
+
+                </table>
+
+            </div>
+            <div class="modal-footer">
+                <button data-dismiss="modal" class="btn btn-default" type="button">关闭</button>
+                <button class="btn btn-primary" onclick="createSalePlan()" type="button">提交</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
 </div>
 
 </body>

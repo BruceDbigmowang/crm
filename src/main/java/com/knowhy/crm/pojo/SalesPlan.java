@@ -1,12 +1,14 @@
 package com.knowhy.crm.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.sun.istack.Nullable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Date;
 
 @Entity
@@ -15,62 +17,43 @@ import java.util.Date;
 public class SalesPlan {
     @Id
     @Column(name = "salesPlanNumber")
-    String no;
+    String id;
 
-    @Column(name = "company")
-    String company;
-    @Column(name = "salesPlanDesc")
+    String customerCode;
+    String customerName;
     String describe;
-
-    BigDecimal costEstimate;
-    String costType;
-    String costCenter;
-    BigDecimal amount;
-    BigDecimal appliedAmount;
-    BigDecimal usedAmount;
-
-    @Column(name = "totalStatus")
-    String status;
-    @Column(name = "firstVisitStatus")
-    String fvStatus;
-    @Column(name = "protocalStatus")
-    String pStatus;
-    @Column(name = "inquiryStatus")
-    String iStatus;
-    @Column(name = "reportStatus")
-    String rStatus;
-    @Column(name = "solutionStatus")
-    String sStatus;
-    @Column(name = "contractStatus")
-    String cStatus;
-    @Column(name = "erpStatus")
-    String eStatus;
-    @Column(name = "creater")
+    LocalDate makeDate;
     String creater;
-    @Column(name = "createTime")
-    Date createTime;
-    @Column(name = "ForwardId")
-    int forwardId;
-    @Column(name = "Forwarder")
-    String forwarder;
+    String createrName;
+    String planStatus;
+    String principal;
+    String principalName;
+    String allOperator;
+    @Nullable
+    Integer step;
 
-    String lockStatus;
-    String operator;
-
-    public String getNo() {
-        return no;
+    public String getId() {
+        return id;
     }
 
-    public void setNo(String no) {
-        this.no = no;
+    public void setId(String id) {
+        this.id = id;
     }
 
-    public String getCompany() {
-        return company;
+    public String getCustomerCode() {
+        return customerCode;
     }
 
-    public void setCompany(String company) {
-        this.company = company;
+    public void setCustomerCode(String customerCode) {
+        this.customerCode = customerCode;
+    }
+
+    public String getCustomerName() {
+        return customerName;
+    }
+
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
     }
 
     public String getDescribe() {
@@ -81,116 +64,12 @@ public class SalesPlan {
         this.describe = describe;
     }
 
-    public BigDecimal getCostEstimate() {
-        return costEstimate;
+    public LocalDate getMakeDate() {
+        return makeDate;
     }
 
-    public void setCostEstimate(BigDecimal costEstimate) {
-        this.costEstimate = costEstimate;
-    }
-
-    public String getCostType() {
-        return costType;
-    }
-
-    public void setCostType(String costType) {
-        this.costType = costType;
-    }
-
-    public String getCostCenter() {
-        return costCenter;
-    }
-
-    public void setCostCenter(String costCenter) {
-        this.costCenter = costCenter;
-    }
-
-    public BigDecimal getAmount() {
-        return amount;
-    }
-
-    public void setAmount(BigDecimal amount) {
-        this.amount = amount;
-    }
-
-    public BigDecimal getAppliedAmount() {
-        return appliedAmount;
-    }
-
-    public void setAppliedAmount(BigDecimal appliedAmount) {
-        this.appliedAmount = appliedAmount;
-    }
-
-    public BigDecimal getUsedAmount() {
-        return usedAmount;
-    }
-
-    public void setUsedAmount(BigDecimal usedAmount) {
-        this.usedAmount = usedAmount;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public String getFvStatus() {
-        return fvStatus;
-    }
-
-    public void setFvStatus(String fvStatus) {
-        this.fvStatus = fvStatus;
-    }
-
-    public String getpStatus() {
-        return pStatus;
-    }
-
-    public void setpStatus(String pStatus) {
-        this.pStatus = pStatus;
-    }
-
-    public String getiStatus() {
-        return iStatus;
-    }
-
-    public void setiStatus(String iStatus) {
-        this.iStatus = iStatus;
-    }
-
-    public String getrStatus() {
-        return rStatus;
-    }
-
-    public void setrStatus(String rStatus) {
-        this.rStatus = rStatus;
-    }
-
-    public String getsStatus() {
-        return sStatus;
-    }
-
-    public void setsStatus(String sStatus) {
-        this.sStatus = sStatus;
-    }
-
-    public String getcStatus() {
-        return cStatus;
-    }
-
-    public void setcStatus(String cStatus) {
-        this.cStatus = cStatus;
-    }
-
-    public String geteStatus() {
-        return eStatus;
-    }
-
-    public void seteStatus(String eStatus) {
-        this.eStatus = eStatus;
+    public void setMakeDate(LocalDate makeDate) {
+        this.makeDate = makeDate;
     }
 
     public String getCreater() {
@@ -201,43 +80,51 @@ public class SalesPlan {
         this.creater = creater;
     }
 
-    public Date getCreateTime() {
-        return createTime;
+    public String getCreaterName() {
+        return createrName;
     }
 
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
+    public void setCreaterName(String createrName) {
+        this.createrName = createrName;
     }
 
-    public int getForwardId() {
-        return forwardId;
+    public String getPlanStatus() {
+        return planStatus;
     }
 
-    public void setForwardId(int forwardId) {
-        this.forwardId = forwardId;
+    public void setPlanStatus(String planStatus) {
+        this.planStatus = planStatus;
     }
 
-    public String getForwarder() {
-        return forwarder;
+    public String getPrincipal() {
+        return principal;
     }
 
-    public void setForwarder(String forwarder) {
-        this.forwarder = forwarder;
+    public void setPrincipal(String principal) {
+        this.principal = principal;
     }
 
-    public String getLockStatus() {
-        return lockStatus;
+    public String getPrincipalName() {
+        return principalName;
     }
 
-    public void setLockStatus(String lockStatus) {
-        this.lockStatus = lockStatus;
+    public void setPrincipalName(String principalName) {
+        this.principalName = principalName;
     }
 
-    public String getOperator() {
-        return operator;
+    public String getAllOperator() {
+        return allOperator;
     }
 
-    public void setOperator(String operator) {
-        this.operator = operator;
+    public void setAllOperator(String allOperator) {
+        this.allOperator = allOperator;
+    }
+
+    public Integer getStep() {
+        return step;
+    }
+
+    public void setStep(Integer step) {
+        this.step = step;
     }
 }

@@ -6,7 +6,7 @@ import javax.persistence.*;
 import java.math.BigDecimal;
 
 @Entity
-@Table(name = "DataDetail")
+@Table(name = "CRM_DataDetail")
 @JsonIgnoreProperties({"handler" , "hibernateLazyInitializer"})
 public class DataDetail {
 

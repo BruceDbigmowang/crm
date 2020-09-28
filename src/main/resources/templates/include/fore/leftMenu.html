@@ -1,0 +1,79 @@
+<div id="leftMenu" class="sidebar clearfix" style="height: 716px;overflow: auto;" th:fragment="html">
+
+    <ul class="sidebar-panel nav">
+        <li><a href="homePage"><span class="icon color5"><i class="fa fa-home"></i></span>控制台</a></li>
+        <li><a><span class="icon color8"><i class="fa fa-calendar-o"></i></span>日程管理<span class="caret"></span></a>
+            <ul>
+                <li><a link_url="include/fore/homePages/scheduleManage/doList/travelPlan.html" onclick="showAtRight(this)">出差计划</a></li>
+                <li><a link_url="include/fore/homePages/scheduleManage/doList/visitRecord.html" onclick="showAtRight(this)">拜访记录</a></li>
+                <li><a link_url="include/fore/homePages/scheduleManage/doList/eventTrack.html" onclick="showAtRight(this)">跟踪</a></li>
+            </ul>
+        </li>
+        <li><a><span class="icon color14"><i class="fa fa-paper-plane-o"></i></span>客户管理<span class="caret"></span></a>
+            <ul>
+                <li><a href="forePool">公海池</a></li>
+                <li><a link_url="include/fore/homePages/customerManage/customerMaintain/accountMaintain.html" onclick="showAtRight(this)">账号维护</a></li>
+                <li><a href="foreCustomerManage">客户</a></li>
+                <li><a link_url="include/fore/homePages/customerManage/competitorMaintain/allCompetitor.html" onclick="showAtRight(this)">竞争对手</a></li>
+            </ul>
+        </li>
+        <li><a ><span class="icon color11"><i class="fa fa-diamond"></i></span>商机管理<span class="caret"></span></a>
+            <ul class="sidebar-panel-3 ull">
+                <li><a>商机/线索<span class="caret"></span></a>
+                    <ul  style="width: 270px;">
+                        <li><a link_url="include/fore/homePages/businessManage/marketOpportunities/addOpportunities.html" onclick="showAtRight(this)">新增线索</a></li>
+                        <li><a link_url="include/fore/homePages/businessManage/marketOpportunities/opportunitiesBase.html" onclick="showAtRight(this)">我的商机、线索</a></li>
+                    </ul>
+                </li>
+                <li><a link_url="include/fore/homePages/businessManage/marketClassify/spend.html" onclick="showAtRight(this)">营销费用</a></li>
+
+            </ul>
+        </li>
+        <li><a><span class="icon color15"><i class="fa fa-columns"></i></span>销售过程<span class="caret"></span></a>
+            <ul>
+                <li><a href="foreIntroduce">介绍交流</a></li>
+                <li><a href="foreSecret">保密协议签订</a></li>
+                <li><a href="foreSurveyOnline">线上尽调</a></li>
+                <li><a href="foreSurveyOffline">现场尽调</a></li>
+                <li><a href="foreScheme">方案交流</a></li>
+                <li><a href="foreContractPrevious">合同交流</a></li>
+                <li><a href="foreContractLater">合同签订</a></li>
+                <li><a>运营导入</a></li>
+            </ul>
+        </li>
+
+
+
+        <li><a><span class="icon color8"><i class="fa fa-bar-chart"></i></span>报表管理<span class="caret"></span></a>
+            <ul class="sidebar-panel-3 ull">
+                <li><a>销售报表 <span class="caret"></span></a>
+                    <ul style="width:270px;">
+                        <li><a>销售完成分析</a></li>
+                        <li><a>竞争对手分析</a></li>
+                    </ul>
+                </li>
+                <li><a>服务追踪 <span class="caret"></span></a>
+                    <ul style="width:270px;">
+                        <li><a>服务收入</a></li>
+                        <li><a>外派员工</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </li>
+
+        <li><a><span class="icon color12"><i class="fa fa-file-text-o"></i></span>系统配置<span class="caret"></span></a>
+            <ul>
+                <li><a href="foreAccountInner">账号新增</a></li>
+                <li><a>账号角色维护</a></li>
+                <li><a>部门用户管理</a></li>
+                <li><a>职能管理</a></li>
+                <li><a>货币设置</a></li>
+                <li><a>档案设置</a></li>
+                <li><a>表单编码规则</a></li>
+            </ul>
+        </li>
+
+    </ul>
+
+
+</div>

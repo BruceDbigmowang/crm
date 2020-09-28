@@ -12,10 +12,10 @@ import com.knowhy.crm.controller.BaseController;
  * </p>
  *
  * @author Bruce
- * @since 2020-07-02
+ * @since 2020-09-07
  */
 @RestController
-@RequestMapping("/crm-salesplan")
-public class CrmSalesplanController extends BaseController {
+@RequestMapping("/crm-customer")
+public class CrmCustomerController extends BaseController {
 
 }

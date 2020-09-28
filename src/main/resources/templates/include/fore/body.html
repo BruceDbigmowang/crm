@@ -1,0 +1,462 @@
+<div id="allContent" class="content" th:fragment="html">
+
+
+    <!-- START CONTAINER -->
+    <div id="mainContent" class="container-widget" style="height: 665px;">
+        <div class="row">
+            <div style="text-align: center;">
+                <button class="btn btn-warning" onclick="findAllMyFlow()">我的申请</button>
+                <button class="btn btn-warning" onclick="findAllMyApprove()">待办事项</button>
+            </div>
+        </div>
+
+        <div class="row" style="margin-top: 10px;">
+            <table id="allApprove" style="width:100%;" class="table table-striped table-bordered table-hover  table-condensed">
+                <thead style="background-color: #dde5e5;font-size: 14px;text-align: left;vertical-align: inherit;">
+                <tr>
+                    <th>流程编号</th>
+                    <th>申请人</th>
+                    <th>类型</th>
+                    <th>描述</th>
+                    <th>申请时间</th>
+                    <th>状态</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <tbody id="allRequest"></tbody>
+            </table>
+
+        </div>
+
+        <div class="row">
+            <div id="requestPage" style="width:1050px;display: none;text-align: center">
+                <a style="color: #ff6d0a;" onclick="findAllMyFlow()">首页</a>&nbsp&nbsp&nbsp<a style="color: #ff6d0a;" onclick="findAllMyFlowPrevoius()">上一页</a>&nbsp&nbsp&nbsp<a style="color: #ff6d0a;" onclick="findAllMyFlowlater()">下一页</a>&nbsp&nbsp&nbsp<a style="color: #ff6d0a;" onclick="findAllMyFlowLast()">末页</a>
+            </div>
+        </div>
+
+<!--        <div class="row"></div>-->
+
+<!--        <div class="row"></div>-->
+
+    </div>
+
+    <div class="modal fade" id="myModal"  data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button data-dismiss="modal" class="close" type="button"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title">流程明细</h4>
+                </div>
+                <div class="modal-body">
+                    <table class="table">
+                        <tr>
+                            <td>流程编号</td>
+                            <td><input id="reqNum" class="form-control" readonly></td>
+                        </tr>
+                        <tr>
+                            <td>客户</td>
+                            <td>
+                                <input id="customer" class="form-control" readonly>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>申请人</td>
+                            <td>
+                                <input id="applyer" class="form-control" readonly>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>销售阶段</td>
+                            <td>
+                                <input id="processName" class="form-control" readonly>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>出差日期</td>
+                            <td><input id="travelDate" class="form-control" readonly></td>
+                        </tr>
+                        <tr>
+                            <td>出差目的</td>
+                            <td><input id="travelTarget" class="form-control" readonly></td>
+                        </tr>
+                        <tr>
+                            <td>支持人员</td>
+                            <td ><input id="supportPerson" class="form-control" readonly></td>
+
+                        </tr>
+                        <tr>
+                            <td>预估费用</td>
+                            <td><input id="spend" class="form-control" readonly></td>
+                        </tr>
+                        <tr>
+                            <td>费用类型</td>
+                            <td>
+                                <input id="costType" class="form-control" readonly>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>成本中心</td>
+                            <td><input id="costCenter" class="form-control" readonly></td>
+                        </tr>
+                        <tr>
+                            <td>其它</td>
+                            <td>
+                                <textarea id="other" class="form-control" readonly></textarea>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button id="btnBT1" class="btn btn-success" type="button" onclick="passTravelReq()">通过</button>
+                    <button id="btnBT2" class="btn btn-danger" type="button" onclick="refuseTravelReq()">不通过</button>
+                    <button data-dismiss="modal" class="btn btn-default" type="button">关闭</button>
+
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div>
+
+    <div class="modal fade" id="myModal2"  data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button data-dismiss="modal" class="close" type="button"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title">报销明细</h4>
+                </div>
+                <div class="modal-body">
+                    <table class="table">
+                        <tr>
+                            <td>流程编号</td>
+                            <td><input id="reqReimburse" class="form-control" readonly></td>
+                        </tr>
+                        <tr>
+                            <td>出差申请单号</td>
+                            <td>
+                                <input id="travelID" class="form-control" onclick="getModel3Show()" readonly>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>差旅费</td>
+                            <td>
+                                <input id="travelCost" class="form-control" readonly>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>餐补</td>
+                            <td>
+                                <input id="eattingCost" class="form-control" readonly>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>招待费</td>
+                            <td><input id="serverCost" class="form-control" readonly></td>
+                        </tr>
+                        <tr>
+                            <td>其它费用</td>
+                            <td><input id="otherCost" class="form-control" readonly></td>
+                        </tr>
+                        <tr>
+                            <td>申请人</td>
+                            <td>
+                                <input id="apply" class="form-control" readonly>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>附件</td>
+                            <td id="reimbursePic" style="text-align: center;" ></td>
+                        </tr>
+
+
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button id="btnBT3" class="btn btn-success" type="button" onclick="passReimburseReq()">通过</button>
+                    <button id="btnBT4" class="btn btn-danger" type="button" onclick="refuseReimburseReq()">不通过</button>
+                    <button data-dismiss="modal" class="btn btn-default" type="button">关闭</button>
+
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div>
+
+    <div class="modal fade" id="myModal4"  data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button data-dismiss="modal" class="close" type="button"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title">初步方案</h4>
+                </div>
+                <div class="modal-body">
+                    <table class="table">
+                        <tr>
+                            <td>流程编号</td>
+                            <td><input id="reqSchemeF" class="form-control" readonly></td>
+                        </tr>
+                        <tr>
+                            <td>客户</td>
+                            <td><input id="customerSF" class="form-control" readonly></td>
+                        </tr>
+                        <tr>
+                            <td>方案</td>
+                            <td id="schemeF"></td>
+                        </tr>
+                        <tr>
+                            <td>申请人</td>
+                            <td><input id="applySF" class="form-control" readonly></td>
+                        </tr>
+                        <tr>
+                            <td>申请时间</td>
+                            <td><input id="applyDateSF" class="form-control" readonly></td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button id="btnBT5" class="btn btn-success" type="button" onclick="passSchemeF()">通过</button>
+                    <button id="btnBT6" class="btn btn-danger" type="button" onclick="refuseSchemeF()">不通过</button>
+                    <button data-dismiss="modal" class="btn btn-default" type="button">关闭</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div>
+
+    <div class="modal fade" id="myModal5"  data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button data-dismiss="modal" class="close" type="button"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title">最终方案</h4>
+                </div>
+                <div class="modal-body">
+                    <table class="table">
+                        <tr>
+                            <td>流程编号</td>
+                            <td><input id="reqSchemeS" class="form-control" readonly></td>
+                        </tr>
+                        <tr>
+                            <td>客户</td>
+                            <td><input id="customerSS" class="form-control" readonly></td>
+                        </tr>
+                        <tr>
+                            <td>最终方案</td>
+                            <td id="secondScheme">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>人员改动</td>
+                            <td><input id="personChange" class="form-control" readonly></td>
+                        </tr>
+                        <tr>
+                            <td>设备改动</td>
+                            <td><input id="assetChange" class="form-control" readonly></td>
+                        </tr>
+                        <tr>
+                            <td>降本改动</td>
+                            <td><input id="reduceChange" class="form-control" readonly></td>
+                        </tr>
+                        <tr>
+                            <td>申请人</td>
+                            <td><input id="applySS" class="form-control" readonly></td>
+                        </tr>
+                        <tr>
+                            <td>申请时间</td>
+                            <td><input id="applyDateSS" class="form-control" readonly></td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button id="btnBT7" class="btn btn-success" type="button" onclick="passSchemeS()">通过</button>
+                    <button id="btnBT8" class="btn btn-danger" type="button" onclick="refuseSchemeS()">不通过</button>
+                    <button data-dismiss="modal" class="btn btn-default" type="button">关闭</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div>
+    <!-- END CONTAINER -->
+
+    <div class="modal fade" id="myModal3"  data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button data-dismiss="modal" class="close" type="button"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title">出差明细</h4>
+                </div>
+                <div class="modal-body">
+                    <table class="table">
+                        <tr>
+                            <td>客户</td>
+                            <td>
+                                <input id="customerD" class="form-control" readonly>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>申请人</td>
+                            <td>
+                                <input id="applyerD" class="form-control" readonly>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>销售阶段</td>
+                            <td><input id="processName2" class="form-control" readonly></td>
+                        </tr>
+                        <tr>
+                            <td>出差日期</td>
+                            <td><input id="travelDateD" class="form-control" readonly></td>
+                        </tr>
+                        <tr>
+                            <td>出差目的</td>
+                            <td><input id="travelTargetD" class="form-control" readonly></td>
+                        </tr>
+                        <tr>
+                            <td>支持人员</td>
+                            <td ><input id="supportPersonD" class="form-control" readonly></td>
+
+                        </tr>
+                        <tr>
+                            <td>预估费用</td>
+                            <td><input id="spendD" class="form-control" readonly></td>
+                        </tr>
+                        <tr>
+                            <td>费用类型</td>
+                            <td>
+                                <input id="costTypeD" class="form-control" readonly>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>成本中心</td>
+                            <td><input id="costCenterD" class="form-control" readonly></td>
+                        </tr>
+                        <tr>
+                            <td>其它</td>
+                            <td>
+                                <textarea id="otherD" class="form-control" readonly></textarea>
+                            </td>
+                        </tr>
+                        <tr style="height: 47px;">
+                            <td  style="text-align: left;vertical-align: inherit;font-size: 14px;width: 110px;" >出差小结</td>
+                            <td  style="vertical-align: inherit;"><textarea id="travelSum" class="form-control" readonly></textarea></td>
+                        </tr>
+                        <tr style="height: 47px;">
+                            <td  style="text-align: left;vertical-align: inherit;font-size: 14px;width: 110px;" >所需支持</td>
+                            <td  style="vertical-align: inherit;"><textarea id="needSupport" class="form-control" readonly></textarea></td>
+                        </tr>
+                        <tr style="height: 47px;">
+                            <td  style="text-align: left;vertical-align: inherit;font-size: 14px;width: 110px;" >遇到障碍</td>
+                            <td  style="vertical-align: inherit;"><textarea id="trouble" class="form-control" readonly></textarea></td>
+                        </tr>
+                        <tr style="height: 47px;">
+                            <td  style="text-align: left;vertical-align: inherit;font-size: 14px;width: 110px;" >反对意见</td>
+                            <td  style="vertical-align: inherit;"><textarea id="oppose" class="form-control" readonly></textarea></td>
+                        </tr>
+                        <tr style="height: 47px;">
+                            <td  style="text-align: left;vertical-align: inherit;font-size: 14px;width: 110px;" ><span style="color: red;">*</span>下次计划</td>
+                            <td  style="vertical-align: inherit;"><textarea id="nextPlan" class="form-control" readonly></textarea></td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button data-dismiss="modal" class="btn btn-default" type="button">关闭</button>
+                    <button data-dismiss="modal" class="btn btn-primary" type="button">确定</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div>
+
+    <div class="modal fade" id="myModal6"  data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button data-dismiss="modal" class="close" type="button"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title">初步合同</h4>
+                </div>
+                <div class="modal-body">
+                    <table class="table">
+                        <tr>
+                            <td>流程编号</td>
+                            <td><input id="reqContractF" class="form-control" readonly></td>
+                        </tr>
+                        <tr>
+                            <td>客户</td>
+                            <td><input id="customerCF" class="form-control" readonly></td>
+                        </tr>
+                        <tr>
+                            <td>方案</td>
+                            <td id="contractF"></td>
+                        </tr>
+                        <tr>
+                            <td>申请人</td>
+                            <td><input id="applyCF" class="form-control" readonly></td>
+                        </tr>
+                        <tr>
+                            <td>申请时间</td>
+                            <td><input id="applyDateCF" class="form-control" readonly></td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button id="btnBT9" class="btn btn-success" type="button" onclick="passContractF()">通过</button>
+                    <button id="btnBT10" class="btn btn-danger" type="button" onclick="refuseContractF()">不通过</button>
+                    <button data-dismiss="modal" class="btn btn-default" type="button">关闭</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div>
+
+    <div class="modal fade" id="myModal7"  data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button data-dismiss="modal" class="close" type="button"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title">最终合同</h4>
+                </div>
+                <div class="modal-body">
+                    <table class="table">
+                        <tr>
+                            <td>流程编号</td>
+                            <td><input id="reqContractS" class="form-control" readonly></td>
+                        </tr>
+                        <tr>
+                            <td>客户</td>
+                            <td><input id="customerCS" class="form-control" readonly></td>
+                        </tr>
+                        <tr>
+                            <td>最终方案</td>
+                            <td id="secondContract">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>备注</td>
+                            <td><input id="note" class="form-control" readonly></td>
+                        </tr>
+                        <tr>
+                            <td>申请人</td>
+                            <td><input id="applyCS" class="form-control" readonly></td>
+                        </tr>
+                        <tr>
+                            <td>申请时间</td>
+                            <td><input id="applyDateCS" class="form-control" readonly></td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button id="btnBT11" class="btn btn-success" type="button" onclick="passContractS()">通过</button>
+                    <button id="btnBT12" class="btn btn-danger" type="button" onclick="refuseContractS()">不通过</button>
+                    <button data-dismiss="modal" class="btn btn-default" type="button">关闭</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div>
+    <!-- //////////////////////////////////////////////////////////////////////////// -->
+
+    <!-- Start Footer -->
+    <div class="row footer">
+        <div class="col-md-6 text-left">
+            &nbsp;&nbsp;&nbsp;&nbsp;
+        </div>
+        <div class="col-md-6 text-right">
+            &nbsp;&nbsp;&nbsp;&nbsp;
+        </div>
+    </div>
+    <!-- End Footer -->
+
+
+</div>

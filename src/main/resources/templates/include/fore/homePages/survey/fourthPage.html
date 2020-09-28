@@ -11,67 +11,67 @@
         <tr>
             <td style="font-size: 14px;"><span style="color: red" y>*</span>您是通过何种途径了解诺而为</td>
             <td style="font-size: 14px;">
-                <input name="way" type="radio" value="同行推荐" style="width: 15px;">同行推荐
-                <input name="way" type="radio" value="微信平台" style="width: 15px;margin-left: 5%;">微信平台<br>
-                <input name="way" type="radio" value="官网搜索" style="width: 15px;">官网搜索
-                <input name="way" type="radio" value="抖音/西瓜视频" style="width: 15px;">抖音/西瓜视频<br>
-                <input name="way" type="radio" value="其他途径" style="width: 15px;">其他途径
+                <input name="way" type="radio" value="同行推荐" style="width: 15px;vertical-align:middle; margin-top:0;">同行推荐
+                <input name="way" type="radio" value="微信平台" style="width: 15px;margin-left: 5%;vertical-align:middle; margin-top:0;">微信平台<br>
+                <input name="way" type="radio" value="官网搜索" style="width: 15px;vertical-align:middle; margin-top:0;">官网搜索
+                <input name="way" type="radio" value="抖音/西瓜视频" style="width: 15px;vertical-align:middle; margin-top:0;">抖音/西瓜视频<br>
+                <input name="way" type="radio" value="其他途径" style="width: 15px;vertical-align:middle; margin-top:0;">其他途径
             </td>
         </tr>
         <tr>
             <td style="font-size: 14px;"><span style="color: red" y>*</span>您公司之前有做过刀具外包管理吗？</td>
             <td style="font-size: 14px;">
-                <input name="manage" type="radio" value="有" style="width: 15px;" onclick="servicShow()">有
-                <input name="manage" type="radio" value="无" style="width: 15px;margin-left: 5%;" onclick="serviceHide()">无
+                <input name="manage" type="radio" value="有" style="width: 15px;vertical-align:middle; margin-top:0;" onclick="servicShow()">有
+                <input name="manage" type="radio" value="无" style="width: 15px;margin-left: 5%;vertical-align:middle; margin-top:0;" onclick="serviceHide()">无
             </td>
         </tr>
         <tr id="hidden1" style="display: none">
             <td style="font-size: 14px;"><span style="color: red" y>*</span>服务商名称</td>
             <td>
-                <input id="facilitatorName" type="text" placeholder="请输入服务商名称" maxlength="30" style="width: 100%;border: 0px;font-size: 14px;">
+                <input id="facilitatorName" class="form-control" type="text" placeholder="请输入服务商名称" maxlength="30" style="width: 100%;border: 0px;font-size: 14px;">
             </td>
         </tr>
         <tr id="hidden2" style="display: none;">
             <td style="font-size: 14px;"><span style="color: red" y>*</span>您之前的服务主要碰到的问题是</td>
             <td >
-                <input id="problem"  type="text" placeholder="请输入遇到的问题" style="width: 100%;border: 0px;font-size: 14px;" maxlength="200">
+                <input id="problem" class="form-control" type="text" placeholder="请输入遇到的问题" style="width: 100%;border: 0px;font-size: 14px;" maxlength="200">
             </td>
         </tr>
         <tr>
             <td style="font-size: 14px;"><span style="color: red" y>*</span>您公司的刀具总消耗为（万元/年）</td>
             <td style="font-size: 14px;">
-                <input name="expend" type="radio" style="width: 15px;" value="<200"><200
-                <input name="expend" type="radio" style="width: 15px;margin-left: 5%;" value="200-500">200-500<br>
-                <input name="expend" type="radio" style="width: 15px;" value="500-1000">500-1000<br>
-                <input name="expend" type="radio" style="width: 15px;" value="1000-2000">1000-2000<br>
-                <input name="expend" type="radio" style="width: 15px;" value="2000以上">2000以上
+                <input name="expend" type="radio" style="width: 15px;vertical-align:middle; margin-top:0;" value="<200"><200
+                <input name="expend" type="radio" style="width: 15px;margin-left: 5%;vertical-align:middle; margin-top:0;" value="200-500">200-500<br>
+                <input name="expend" type="radio" style="width: 15px;vertical-align:middle; margin-top:0;" value="500-1000">500-1000<br>
+                <input name="expend" type="radio" style="width: 15px;vertical-align:middle; margin-top:0;" value="1000-2000">1000-2000<br>
+                <input name="expend" type="radio" style="width: 15px;vertical-align:middle; margin-top:0;" value="2000以上">2000以上
             </td>
         </tr>
         <tr>
             <td style="font-size: 14px;width: 140px;"><span style="color: red" y>*</span>目前负责该项目的联系人</td>
             <td style="font-size: 14px;">
-                <input id="principal" style="font-size: 14px;width: 100%;border: 0px;" type="text" placeholder="请输入项目负责人姓名" maxlength="30">
+                <input id="principal" class="form-control" style="font-size: 14px;width: 100%;border: 0px;" type="text" placeholder="请输入项目负责人姓名" maxlength="30">
             </td>
         </tr>
         <tr>
             <td style="font-size: 14px;"><span style="color: red" y>*</span>手机号码</td>
             <td style="font-size: 14px;">
-                <input id="mobile" type="text" placeholder="请输入项目负责人手机号" style="width: 100%;border: 0px;font-size: 14px;" maxlength="11">
+                <input id="mobile" class="form-control" type="text" placeholder="请输入项目负责人手机号" style="width: 100%;border: 0px;font-size: 14px;" maxlength="11">
             </td>
         </tr>
         <tr>
             <td style="font-size: 14px;">邮箱</td>
             <td>
-                <input id="email" style="font-size: 14px;width: 100%;border: 0px;" type="text" placeholder="请输入项目负责人邮箱" maxlength="30">
+                <input id="email" style="font-size: 14px;width: 100%;border: 0px;" class="form-control" type="text" placeholder="请输入项目负责人邮箱" maxlength="30">
             </td>
         </tr>
         <tr>
             <td style="font-size: 14px;"><span style="color: red" y>*</span>您对该项目的进展要求</td>
             <td style="font-size: 14px;">
-                <input name="ask" type="radio" style="width: 15px;" value="紧急">紧急
-                <input name="ask" type="radio" style="width: 15px;margin-left: 5%;" value="2个月内">2个月内<br>
-                <input name="ask" type="radio" style="width: 15px;" value="2-5个月内">2-5个月内
-                <input name="ask" type="radio" style="width: 15px;margin-left: 5%;" value="半年后">半年后
+                <input name="ask" type="radio" style="width: 15px;vertical-align:middle; margin-top:0;" value="紧急">紧急
+                <input name="ask" type="radio" style="width: 15px;margin-left: 5%;vertical-align:middle; margin-top:0;" value="2个月内">2个月内<br>
+                <input name="ask" type="radio" style="width: 15px;vertical-align:middle; margin-top:0;" value="2-5个月内">2-5个月内
+                <input name="ask" type="radio" style="width: 15px;margin-left: 5%;vertical-align:middle; margin-top:0;" value="半年后">半年后
             </td>
         </tr>
         <tr>

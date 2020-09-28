@@ -1,0 +1,1942 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<title>销售过程——现场尽调</title>
+<head th:include="include/fore/newHeader::html" ></head>
+<body>
+<div id="workingArea">
+    <div th:replace="include/fore/top::html" ></div>
+    <div th:replace="include/fore/leftMenu::html" ></div>
+    <div th:replace="include/fore/homePages/saleProcessManage/survey/surveyOffline::html" ></div>
+</div>
+<script>
+    $(function () {
+        loadFirstPlan();
+        getAllSaleMan();
+    });
+
+    laydate.render({
+        elem: '#travelDate' //指定元素
+    });
+
+    function loadFirstPlan() {
+        var status = "fourth";
+        $.ajax({
+            type:"post",
+            data:{"status":status},
+            url:"findCanOperate",
+            async:false,
+            success:function (data) {
+                $("#allFirst").html("");
+                for(var i = 0 ; i < data.length ; i++){
+                    $("#allFirst").append("<tr>"+
+                        "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+data[i].id+"</td>"+
+                        "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+data[i].customerName+"</td>"+
+                        "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+data[i].describe+"</td>"+
+                        "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+data[i].principalName+"</td>"+
+                        "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<button class='btn btn-warning' data-toggle=\"modal\" data-target=\"#myModal2\" onclick=\"getRowId(this)\">现场尽调</button>"+"</td>"
+                        +"</tr>");
+                    $("#customer").append('<option value="'+data[i].customerCode+'">'+data[i].customerName+"</option>");
+                    $("#customer2").append('<option value="'+data[i].customerCode+'">'+data[i].customerName+"</option>");
+                }
+            }
+        })
+    }
+
+    function getRowId(obj) {
+        var i = obj.parentNode.parentNode.rowIndex;
+        var tab = document.getElementById("firstData");
+        var orderID = tab.rows[i].cells[0].innerHTML;
+        $("#customerID").val(orderID);
+        $.ajax({
+            type:"post",
+            data:{"salePlanID":orderID},
+            url:"loadSurveyDetail",
+            async:false,
+            success:function (data) {
+                switch (data) {
+                    case 1:
+                        loadAssetList();
+                        break;
+                    case 2:
+                        loadEmployeeList();
+                        break;
+                    case 3:
+                        loadStockTime();
+                        break;
+                    case 4:
+                        loadPayCycle();
+                        break;
+                    case 5:
+                        loadProduction();
+                        break;
+                    case 6:
+                        loadSaleList();
+                        break;
+
+                }
+            }
+            })
+    }
+
+    function loadAssetList() {
+        $("#mainData").html("");
+        $("#footPart").html("");
+        $("#mainData").append("<h4>固定资产清单</h4>\n" +
+            "<table id=\"survey\" class=\"table\" style=\"width: 3300px;\">\n" +
+            "                        <thead>\n" +
+            "                        <tr>\n" +
+            "                            <th>资产类别</th>\n" +
+            "                            <th>资产编号</th>\n" +
+            "                            <th>资产名称</th>\n" +
+            "                            <th>规格型号</th>\n" +
+            "                            <th>品牌</th>\n" +
+            "                            <th>供应商</th>\n" +
+            "                            <th>资产位置</th>\n" +
+            "                            <th>数量</th>\n" +
+            "                            <th>预计残值</th>\n" +
+            "                            <th>状态</th>\n" +
+            "                            <th>刀柄接口</th>\n" +
+            "                            <th>冷却方式</th>\n" +
+            "                            <th>备注</th>\n" +
+            "                            <th>操作</th>\n" +
+            "                        </tr>\n" +
+            "                        </thead>\n" +
+            "                        <tbody id=\"surveyBody\">\n" +
+            "                        <tr>\n" +
+            "                            <td>\n" +
+            "                                <select name=\"assetType\" class=\"form-control\" style=\"border: 0px;\">\n" +
+            "                                    <option value=\"机器设备\">机器设备</option>\n" +
+            "                                    <option value=\"电子设备\">电子设备</option>\n" +
+            "                                    <option value=\"工装夹具\">工装夹具</option>\n" +
+            "                                    <option value=\"其它设备\">其它设备</option>\n" +
+            "                                </select>\n" +
+            "                            </td>\n" +
+            "                            <td>\n" +
+            "                                <input name=\"assetNum\" class=\"form-control\" placeholder=\"请输入资产编号\" style=\"border: 0px;\">\n" +
+            "                            </td>\n" +
+            "                            <td>\n" +
+            "                                <input name=\"assetName\" class=\"form-control\" placeholder=\"请输入资产名称\" style=\"border: 0px;\">\n" +
+            "                            </td>\n" +
+            "                            <td>\n" +
+            "                                <input name=\"model\" class=\"form-control\" placeholder=\"请输入规格型号\" style=\"border: 0px;\">\n" +
+            "                            </td>\n" +
+            "                            <td>\n" +
+            "                                <input name=\"brand\" class=\"form-control\" placeholder=\"请输入品牌\" style=\"border: 0px;\">\n" +
+            "                            </td>\n" +
+            "                            <td>\n" +
+            "                                <input name=\"supplier\" class=\"form-control\" placeholder=\"请输入供应商\" style=\"border: 0px;\">\n" +
+            "                            </td>\n" +
+            "                            <td>\n" +
+            "                                <input name=\"position\" class=\"form-control\" placeholder=\"请输入资产位置\" style=\"border: 0px;\">\n" +
+            "                            </td>\n" +
+            "                            <td>\n" +
+            "                                <input name=\"amount\" class=\"form-control\" placeholder=\"请输入数量\" style=\"border: 0px;\">\n" +
+            "                            </td>\n" +
+            "                            <td>\n" +
+            "                                <input name=\"residual\" class=\"form-control\" placeholder=\"请输入预计残值\" style=\"border: 0px;\">\n" +
+            "                            </td>\n" +
+            "                            <td>\n" +
+            "                                <input name=\"status\" class=\"form-control\" placeholder=\"请输入状态\" style=\"border: 0px;\">\n" +
+            "                            </td>\n" +
+            "                            <td>\n" +
+            "                                <input name=\"port\" class=\"form-control\" placeholder=\"请输入刀柄接口\" style=\"border: 0px;\">\n" +
+            "                            </td>\n" +
+            "                            <td>\n" +
+            "                                <input name=\"coolWay\" class=\"form-control\" placeholder=\"请输入冷却方式\" style=\"border: 0px;\">\n" +
+            "                            </td>\n" +
+            "                            <td>\n" +
+            "                                <input name=\"note\" class=\"form-control\" placeholder=\"请输入备注\" style=\"border: 0px;\">\n" +
+            "                            </td>\n" +
+            "                            <td></td>\n" +
+            "                        </tr>\n" +
+            "                        </tbody>\n" +
+            "                    </table>\n" +
+            "                    <table class=\"table\" style=\"width: 1700px;\">\n" +
+            "                        <tr>\n" +
+            "                            <td>\n" +
+            "                                <button onclick=\"addAssetTr()\" style=\"background: #FFFFFF;border-radius: 2px;border: 1px solid #FF9502;color: orange;outline: none;\">新增一行</button>\n" +
+            "                            </td>\n" +
+            "                        </tr>\n" +
+            "                    </table>");
+        $("#footPart").append("<button data-dismiss=\"modal\" class=\"btn btn-default\" type=\"button\">关闭</button>\n" +
+            "                    <button class=\"btn btn-primary\" type=\"button\" onclick=\"saveAssetList()\">下一页</button>");
+    }
+
+    function addAssetTr() {
+        //var trid=0;
+        var tab = document.getElementById("surveyBody");
+        //添加行
+        var newTR = tab.insertRow(tab.rows.length);
+        //trid++;
+        var xuhao = newTR.rowIndex.toString();
+        newTR.id = "tr" + xuhao;
+        //获取序号=行索引
+        var type = '<select name="assetType" class="form-control" style="border: 0px;">\n' +
+            '                                    <option value="机器设备">机器设备</option>\n' +
+            '                                    <option value="电子设备">电子设备</option>\n' +
+            '                                    <option value="工装夹具">工装夹具</option>\n' +
+            '                                    <option value="其它设备">其它设备</option>\n' +
+            '                                </select>';
+        //第一列是设备
+        var tdone = newTR.insertCell(0);
+        tdone.innerHTML = type;
+        //第二列是费用类型
+        var tdtwo = newTR.insertCell(1);
+        tdtwo.innerHTML = '<input name="assetNum" class="form-control" placeholder="请输入资产编号" style="border: 0px;">';
+        //第三列是费用金额
+        var tdthree = newTR.insertCell(2);
+        tdthree.innerHTML = '<input name="assetName" class="form-control" placeholder="请输入资产名称" style="border: 0px;">';
+
+        //第四列是费用说明
+        var tdfour = newTR.insertCell(3);
+        tdfour.innerHTML = '<input name="model" class="form-control" placeholder="请输入规格型号" style="border: 0px;">';
+
+        var tdfive = newTR.insertCell(4);
+        tdfive.innerHTML ='<input name="brand" class="form-control" placeholder="请输入品牌" style="border: 0px;">';
+
+        var tdsix = newTR.insertCell(5);
+        tdsix.innerHTML ='<input name="supplier" class="form-control" placeholder="请输入供应商" style="border: 0px;">';
+
+        var tdseven = newTR.insertCell(6);
+        tdseven.innerHTML ='<input name="position" class="form-control" placeholder="请输入资产位置" style="border: 0px;">';
+
+        var tdeight = newTR.insertCell(7);
+        tdeight.innerHTML ='<input name="amount" class="form-control" placeholder="请输入数量" style="border: 0px;">';
+
+        var tdnine = newTR.insertCell(8);
+        tdnine.innerHTML ='<input name="residual" class="form-control" placeholder="请输入预计残值" style="border: 0px;">';
+
+        var tdten = newTR.insertCell(9);
+        tdten.innerHTML ='<input name="status" class="form-control" placeholder="请输入状态" style="border: 0px;">';
+
+        var tdeleven = newTR.insertCell(10);
+        tdeleven.innerHTML ='<input name="port" class="form-control" placeholder="请输入刀柄接口" style="border: 0px;">';
+
+        var tdtwelve = newTR.insertCell(11);
+        tdtwelve.innerHTML ='<input name="coolWay" class="form-control" placeholder="请输入冷却方式" style="border: 0px;">';
+
+        var tdthirteen = newTR.insertCell(12);
+        tdthirteen.innerHTML ='<input name="note" class="form-control" placeholder="请输入备注" style="border: 0px;">';
+
+        //第5列是操作 - 删除行
+        var tdfourteen = newTR.insertCell(13);
+        tdfourteen.innerHTML = "<a href='javascript:;' onclick=\"delAssetTr('tr" + xuhao + "')\">删除</a>";
+
+    }
+
+    function delAssetTr(trid) { //alert(trid);
+        var tab = document.getElementById("survey");
+        var row = document.getElementById(trid);
+        var index = row.rowIndex; //rowIndex属性为tr的索引值，从0开始
+        tab.deleteRow(index); //从table中删除
+    }
+
+    function saveAssetList() {
+        var assetTypes =new Array();
+        $('select[name="assetType"] option:selected').each(function(){
+            assetTypes.push($(this).val());
+        });
+        var assetNums = new Array();
+        $('input[name="assetNum"]').each(function () {
+            assetNums.push($(this).val());
+        });
+        var assetNames = new Array();
+        $('input[name="assetName"]').each(function () {
+            assetNames.push($(this).val());
+        });
+        var models = new Array();
+        $('input[name="model"]').each(function () {
+            models.push($(this).val());
+        });
+        var brands = new Array();
+        $('input[name="brand"]').each(function () {
+            brands.push($(this).val());
+        });
+        var suppliers = new Array();
+        $('input[name="supplier"]').each(function () {
+            suppliers.push($(this).val());
+        });
+        var positions = new Array();
+        $('input[name="position"]').each(function () {
+            positions.push($(this).val());
+        });
+        var amounts = new Array();
+        $('input[name="amount"]').each(function () {
+            amounts.push($(this).val());
+        });
+        var residuals = new Array();
+        $('input[name="residual"]').each(function () {
+            residuals.push($(this).val());
+        });
+        var statusList = new Array();
+        $('input[name="status"]').each(function () {
+            statusList.push($(this).val());
+        });
+        var ports = new Array();
+        $('input[name="port"]').each(function () {
+            ports.push($(this).val());
+        });
+        var coolWays = new Array();
+        $('input[name="coolWay"]').each(function () {
+            coolWays.push($(this).val());
+        });
+        var notes = new Array();
+        $('input[name="note"]').each(function () {
+            notes.push($(this).val());
+        })
+        var salePlanID = $("#customerID").val();
+        $.ajax({
+            type:"post",
+            data:{"salePlanID":salePlanID,"assetTypes":assetTypes , "assetNums":assetNums , "assetNames":assetNames , "models":models , "brands":brands , "suppliers":suppliers , "positions":positions , "amounts":amounts , "residuals":residuals , "status":statusList , "ports":ports , "coolWays":coolWays , "notes":notes},
+            url:"saveAssetList",
+            async:false,
+            traditional: true,
+            success:function (data) {
+                if(data == "OK"){
+                    loadEmployeeList();
+                }else{
+                    $.message({
+                        message:data,
+                        type:'error'
+                    })
+                }
+            }
+        })
+
+    }
+
+    function loadEmployeeList() {
+        $("#mainData").html("");
+        $("#footPart").html("");
+        $("#mainData").append("<h4>员工花名册</h4>\n" +
+            "<table id=\"survey\" class=\"table\" style=\"width: 3300px;\">\n" +
+            "                        <thead>\n" +
+            "                        <tr>\n" +
+            "                            <th>员工工号</th>\n" +
+            "                            <th>员工姓名</th>\n" +
+            "                            <th>身份证号</th>\n" +
+            "                            <th>学历</th>\n" +
+            "                            <th>专业</th>\n" +
+            "                            <th>入职时间</th>\n" +
+            "                            <th>性别</th>\n" +
+            "                            <th>所属部门</th>\n" +
+            "                            <th>职务</th>\n" +
+            "                            <th>联系方式</th>\n" +
+            "                            <th>关联固定资产</th>\n" +
+            "                            <th>关联零件号</th>\n" +
+            "                            <th>其他说明</th>\n" +
+            "                            <th>操作</th>\n" +
+            "                        </tr>\n" +
+            "                        </thead>\n" +
+            "                        <tbody id=\"surveyBody\">\n" +
+            "                        <tr>\n" +
+            "                            <td>\n" +
+            "                                <input name=\"account\" class=\"form-control\" placeholder=\"请输入员工工号\" style=\"border: 0px;\">\n" +
+            "                            </td>\n" +
+            "                            <td>\n" +
+            "                                <input name=\"EmployeeName\" class=\"form-control\" placeholder=\"请输入员工姓名\" style=\"border: 0px;\">\n" +
+            "                            </td>\n" +
+            "                            <td>\n" +
+            "                                <input name=\"identityID\" class=\"form-control\" placeholder=\"请输入身份证号\" style=\"border: 0px;\">\n" +
+            "                            </td>\n" +
+            "                            <td>\n" +
+            "                                <input name=\"education\" class=\"form-control\" placeholder=\"请输入学历\" style=\"border: 0px;\">\n" +
+            "                            </td>\n" +
+            "                            <td>\n" +
+            "                                <input name=\"major\" class=\"form-control\" placeholder=\"请输入专业\" style=\"border: 0px;\">\n" +
+            "                            </td>\n" +
+            "                            <td>\n" +
+            "                                <input name=\"enter\" class=\"form-control\" placeholder=\"请输入入职时间\" style=\"border: 0px;\">\n" +
+            "                            </td>\n" +
+            "                            <td>\n" +
+            "                                <input name=\"sex\" class=\"form-control\" placeholder=\"请输入性别\" style=\"border: 0px;\">\n" +
+            "                            </td>\n" +
+            "                            <td>\n" +
+            "                                <input name=\"dept\" class=\"form-control\" placeholder=\"请输入所属部门\" style=\"border: 0px;\">\n" +
+            "                            </td>\n" +
+            "                            <td>\n" +
+            "                                <input name=\"duty\" class=\"form-control\" placeholder=\"请输入职务\" style=\"border: 0px;\">\n" +
+            "                            </td>\n" +
+            "                            <td>\n" +
+            "                                <input name=\"contact\" class=\"form-control\" placeholder=\"请输入联系方式\" style=\"border: 0px;\">\n" +
+            "                            </td>\n" +
+            "                            <td>\n" +
+            "                                <input name=\"relevanceAsset\" class=\"form-control\" placeholder=\"请输入关联固定资产\" style=\"border: 0px;\">\n" +
+            "                            </td>\n" +
+            "                            <td>\n" +
+            "                                <input name=\"relevancePart\" class=\"form-control\" placeholder=\"请输入关联零件号\" style=\"border: 0px;\">\n" +
+            "                            </td>\n" +
+            "                            <td>\n" +
+            "                                <input name=\"note\" class=\"form-control\" placeholder=\"请输入相关说明\" style=\"border: 0px;\">\n" +
+            "                            </td>\n" +
+            "                            <td></td>\n" +
+            "                        </tr>\n" +
+            "                        </tbody>\n" +
+            "                    </table>\n" +
+            "                    <table class=\"table\" style=\"width: 1700px;\">\n" +
+            "                        <tr>\n" +
+            "                            <td>\n" +
+            "                                <button onclick=\"addEmployeeTr()\" style=\"background: #FFFFFF;border-radius: 2px;border: 1px solid #FF9502;color: orange;outline: none;\">新增一行</button>\n" +
+            "                            </td>\n" +
+            "                        </tr>\n" +
+            "                    </table>");
+        $("#footPart").append("<button data-dismiss=\"modal\" class=\"btn btn-default\" type=\"button\">关闭</button>\n" +
+            "                    <button class=\"btn btn-primary\" type=\"button\" onclick=\"saveEmployeeList()\">下一页</button>");
+    }
+
+    function addEmployeeTr() {
+        //var trid=0;
+        var tab = document.getElementById("surveyBody");
+        //添加行
+        var newTR = tab.insertRow(tab.rows.length);
+        //trid++;
+        var xuhao = newTR.rowIndex.toString();
+        newTR.id = "tr" + xuhao;
+        //获取序号=行索引
+        //第一列是设备
+        var tdone = newTR.insertCell(0);
+        tdone.innerHTML = '<input name="account" class="form-control" placeholder="请输入员工工号" style="border: 0px;">';
+        //第二列是费用类型
+        var tdtwo = newTR.insertCell(1);
+        tdtwo.innerHTML = '<input name="EmployeeName" class="form-control" placeholder="请输入员工姓名" style="border: 0px;">';
+        //第三列是费用金额
+        var tdthree = newTR.insertCell(2);
+        tdthree.innerHTML = '<input name="identityID" class="form-control" placeholder="请输入身份证号" style="border: 0px;">';
+
+        //第四列是费用说明
+        var tdfour = newTR.insertCell(3);
+        tdfour.innerHTML = '<input name="education" class="form-control" placeholder="请输入学历" style="border: 0px;">';
+
+        var tdfive = newTR.insertCell(4);
+        tdfive.innerHTML ='<input name="major" class="form-control" placeholder="请输入专业" style="border: 0px;">';
+
+        var tdsix = newTR.insertCell(5);
+        tdsix.innerHTML ='<input name="enter" class="form-control" placeholder="请输入入职时间" style="border: 0px;">';
+
+        var tdseven = newTR.insertCell(6);
+        tdseven.innerHTML ='<input name="sex" class="form-control" placeholder="请输入性别" style="border: 0px;">';
+
+        var tdeight = newTR.insertCell(7);
+        tdeight.innerHTML ='<input name="dept" class="form-control" placeholder="请输入所属部门" style="border: 0px;">';
+
+        var tdnine = newTR.insertCell(8);
+        tdnine.innerHTML ='<input name="duty" class="form-control" placeholder="请输入职务" style="border: 0px;">';
+
+        var tdten = newTR.insertCell(9);
+        tdten.innerHTML ='<input name="contact" class="form-control" placeholder="请输入联系方式" style="border: 0px;">';
+
+        var tdeleven = newTR.insertCell(10);
+        tdeleven.innerHTML ='<input name="relevanceAsset" class="form-control" placeholder="请输入关联固定资产" style="border: 0px;">';
+
+        var tdtwelve = newTR.insertCell(11);
+        tdtwelve.innerHTML ='<input name="relevancePart" class="form-control" placeholder="请输入关联零件号" style="border: 0px;">';
+
+        var tdthirteen = newTR.insertCell(12);
+        tdthirteen.innerHTML ='<input name="note" class="form-control" placeholder="请输入相关说明" style="border: 0px;">';
+
+        //第5列是操作 - 删除行
+        var tdfourteen = newTR.insertCell(13);
+        tdfourteen.innerHTML = "<a href='javascript:;' onclick=\"delAssetTr('tr" + xuhao + "')\">删除</a>";
+
+    }
+
+    function saveEmployeeList() {
+        var accounts = new Array();
+        $('input[name="account"]').each(function () {
+            accounts.push($(this).val());
+        });
+        var EmployeeNames = new Array();
+        $('input[name="EmployeeName"]').each(function () {
+            EmployeeNames.push($(this).val());
+        });
+        var identityIDs = new Array();
+        $('input[name="identityID"]').each(function () {
+            identityIDs.push($(this).val());
+        });
+        var educations = new Array();
+        $('input[name="education"]').each(function () {
+            educations.push($(this).val());
+        });
+        var majors = new Array();
+        $('input[name="major"]').each(function () {
+            majors.push($(this).val());
+        });
+        var enters = new Array();
+        $('input[name="enter"]').each(function () {
+            enters.push($(this).val());
+        });
+        var sexs = new Array();
+        $('input[name="sex"]').each(function () {
+            sexs.push($(this).val());
+        });
+        var depts = new Array();
+        $('input[name="dept"]').each(function () {
+            depts.push($(this).val());
+        });
+        var dutys = new Array();
+        $('input[name="duty"]').each(function () {
+            dutys.push($(this).val());
+        });
+        var contacts = new Array();
+        $('input[name="contact"]').each(function () {
+            contacts.push($(this).val());
+        });
+        var relevanceAssets = new Array();
+        $('input[name="relevanceAsset"]').each(function () {
+            relevanceAssets.push($(this).val());
+        })
+        var relevanceParts = new Array();
+        $('input[name="relevancePart"]').each(function () {
+            relevanceParts.push($(this).val());
+        });
+        var notes = new Array();
+        $('input[name="note"]').each(function () {
+            notes.push($(this).val());
+        });
+        var salePlanID = $("#customerID").val();
+        var data = {"salePlanID":salePlanID , "accounts":accounts , "employeeNames":EmployeeNames , "identityIDs":identityIDs , "educations":educations , "majors":majors , "enters":enters,
+        "sexs":sexs , "depts":depts , "contacts":contacts , "relevanceAssets":relevanceAssets , "relevanceParts":relevanceParts , "notes":notes};
+        $.ajax({
+            type:"post",
+            data:data,
+            url:"saveEmployeeList",
+            async:false,
+            traditional:true,
+            success:function (data) {
+                if(data == "OK"){
+                    loadStockTime();
+                }else{
+                    $.message({
+                        message:data,
+                        type:'error'
+                    })
+                }
+            }
+            
+        })
+        
+    }
+
+    function loadStockTime() {
+        $("#mainData").html("");
+        $("#footPart").html("");
+        $("#mainData").append("<h4>刀具即时库龄</h4>\n" +
+            "<table id=\"survey\" class=\"table\" style='width: 1200px;'>\n" +
+            "                        <tr>\n" +
+            "                            <td>库龄期间</td><td>0 < D ≤ 30天</td><td>31 ≤ D ≤ 120天</td><td>121 ≤ D ≤ 360天</td><td>361 ≤ D ≤ 720天</td><td>D > 720天</td>\n" +
+            "                        </tr>\n" +
+            "                        <tr>\n" +
+            "                            <td>工装模具配件</td><td><input id=\"frockone\" style=\"border: 0px;\" placeholder=\"请输入\"></td><td><input id=\"frocktwo\" style=\"border: 0px;\" placeholder=\"请输入\"></td><td><input id=\"frockthree\" style=\"border: 0px;\" placeholder=\"请输入\"></td><td><input id=\"frockfour\" style=\"border: 0px;\" placeholder=\"请输入\"></td><td><input id=\"frockfive\" style=\"border: 0px;\" placeholder=\"请输入\"></td>\n" +
+            "                        </tr>\n" +
+            "                        <tr>\n" +
+            "                            <td>备品备件</td><td><input id=\"spareone\" style=\"border: 0px;\" placeholder=\"请输入\"></td><td><input id=\"sparetwo\" style=\"border: 0px;\" placeholder=\"请输入\"></td><td><input id=\"sparethree\" style=\"border: 0px;\" placeholder=\"请输入\"></td><td><input id=\"sparefour\" style=\"border: 0px;\" placeholder=\"请输入\"></td><td><input id=\"sparefive\" style=\"border: 0px;\" placeholder=\"请输入\"></td>\n" +
+            "                        </tr>\n" +
+            "                        <tr>\n" +
+            "                            <td>化学品</td><td><input id=\"chemicalone\" style=\"border: 0px;\" placeholder=\"请输入\"></td><td><input id=\"chemicaltwo\" style=\"border: 0px;\" placeholder=\"请输入\"></td><td><input id=\"chemicalthree\" style=\"border: 0px;\" placeholder=\"请输入\"></td><td><input id=\"chemicalfour\" style=\"border: 0px;\" placeholder=\"请输入\"></td><td><input id=\"chemicalfive\" style=\"border: 0px;\" placeholder=\"请输入\"></td>\n" +
+            "                        </tr>\n" +
+            "                        <tr>\n" +
+            "                            <td>辅料</td><td><input id=\"trimone\" style=\"border: 0px;\" placeholder=\"请输入\"></td><td><input id=\"trimtwo\" style=\"border: 0px;\" placeholder=\"请输入\"></td><td><input id=\"trimthree\" style=\"border: 0px;\" placeholder=\"请输入\"></td><td><input id=\"trimfour\" style=\"border: 0px;\" placeholder=\"请输入\"></td><td><input id=\"trimfive\" style=\"border: 0px;\" placeholder=\"请输入\"></td>\n" +
+            "                        </tr>\n" +
+            "                    </table>");
+        $("#footPart").append("<button data-dismiss=\"modal\" class=\"btn btn-default\" type=\"button\">关闭</button>\n" +
+            "                    <button class=\"btn btn-primary\" type=\"button\" onclick=\"saveStock()\">下一页</button>");
+    }
+
+    function saveStock() {
+        var frock = new Array();
+        var frockone = $("#frockone").val();
+        frock.push(frockone);
+        var frocktwo = $("#frocktwo").val();
+        frock.push(frocktwo);
+        var frockthree = $("#frockthree").val();
+        frock.push(frockthree);
+        var frockfour = $("#frockfour").val();
+        frock.push(frockfour);
+        var frockfive = $("#frockfive").val();
+        frock.push(frockfive);
+
+        var spare = new Array();
+        var spareone = $("#spareone").val();
+        spare.push(spareone);
+        var sparetwo = $("#sparetwo").val();
+        spare.push(sparetwo);
+        var sparethree = $("#sparethree").val();
+        spare.push(sparethree);
+        var sparefour = $("#sparefour").val();
+        spare.push(sparefour);
+        var sparefive = $("#sparefive").val();
+        spare.push(sparefive);
+
+        var chemical = new Array();
+        var chemicalone = $("#chemicalone").val();
+        chemical.push(chemicalone);
+        var chemicaltwo = $("#chemicaltwo").val();
+        chemical.push(chemicaltwo);
+        var chemicalthree = $("#chemicalthree").val();
+        chemical.push(chemicalthree);
+        var chemicalfour = $("#chemicalfour").val();
+        chemical.push(chemicalfour);
+        var chemicalfive = $("#chemicalfive").val();
+        chemical.push(chemicalfive);
+        
+        var other = new Array();
+        var trimone = $("#trimone").val();
+        other.push(trimone);
+        var trimtwo = $("#trimtwo").val();
+        other.push(trimtwo);
+        var trimthree = $("#trimthree").val();
+        other.push(trimthree);
+        var trimfour = $("#trimfour").val();
+        other.push(trimfour);
+        var trimfive = $("#trimfive").val();
+        other.push(trimfive);
+        
+        var salePlanID = $("#customerID").val();
+        
+        $.ajax({
+            type:"post",
+            data:{"salePlanID":salePlanID , "frock":frock , "spare":spare , "chemical":chemical , "other":other},
+            url:"saveStockList",
+            async:false,
+            traditional:true,
+            success:function (data) {
+                if(data == "OK"){
+                    loadPayCycle();
+                }else{
+                    $.message({
+                        message:data,
+                        type:'error'
+                    })
+                }
+            }
+        })
+
+    }
+
+    function loadPayCycle() {
+        $("#mainData").html("");
+        $("#footPart").html("");
+        $("#mainData").append("<h4>付款账期</h4>\n" +
+            "<table id=\"survey\" class=\"table\" style=\"width: 600px;margin:0px auto;\">\n" +
+            "                        <thead>\n" +
+            "                        <tr>\n" +
+            "                            <th>付款周期</th><th>付款金额</th>\n" +
+            "                        </tr>\n" +
+            "                        </thead>\n" +
+            "                        <tbody>\n" +
+            "                        <tr>\n" +
+            "                            <td>预付款</td><td><input id=\"payone\" class=\"form-control\" placeholder=\"请输入\"></td>\n" +
+            "                        </tr>\n" +
+            "                        <tr>\n" +
+            "                            <td>30天</td><td><input id=\"paytwo\" class=\"form-control\" placeholder=\"请输入\"></td>\n" +
+            "                        </tr>\n" +
+            "                        <tr>\n" +
+            "                            <td>60天</td><td><input id=\"paythree\" class=\"form-control\" placeholder=\"请输入\"></td>\n" +
+            "                        </tr>\n" +
+            "                        <tr>\n" +
+            "                            <td>90天</td><td><input id=\"payfour\" class=\"form-control\" placeholder=\"请输入\"></td>\n" +
+            "                        </tr>\n" +
+            "                        </tbody>\n" +
+            "                    </table>");
+        $("#footPart").append("<button data-dismiss=\"modal\" class=\"btn btn-default\" type=\"button\">关闭</button>\n" +
+            "                    <button class=\"btn btn-primary\" type=\"button\" onclick=\"savePayCycle()\">下一页</button>");
+    }
+    
+    function savePayCycle() {
+        var payone = $("#payone").val();
+        var paytwo = $("#paytwo").val();
+        var paythree = $("#paythree").val();
+        var payfour = $("#payfour").val();
+        var salePlanID = $("#customerID").val();
+        $.ajax({
+            type:"post",
+            data:{"payone":payone , "paytwo":paytwo , "paythree":paythree , "payfour":payfour , "salePlanID":salePlanID},
+            url:"savePayCycle",
+            async:false,
+            success:function (data) {
+                if(data == "OK"){
+                    loadProduction();
+                }else{
+                    $.message({
+                        message:data,
+                        type:'error'
+                    })
+                }
+            }
+        })
+    }
+
+    function loadProduction() {
+        $("#mainData").html("");
+        $("#footPart").html("");
+        $("#mainData").append("<h4>生产产量报表</h4>\n" +
+            '<table id="survey" class="table" style="width: 1500px;">\n' +
+            '                        <thead>\n' +
+            '                        <tr>\n' +
+            '                            <th>投产日期</th><th>零件编号</th><th>零件名称</th><th>投产数量</th><th>合格数量</th><th>让步接收数量</th><th>报废数量</th><th>备注</th><th style="width: 50px;">操作</th>\n' +
+            '                        </tr>\n' +
+            '                        </thead>\n' +
+            '                        <tbody id="surveyBody">\n' +
+            '                            <tr>\n' +
+            '                                <td><input name="productDate" class="form-control" style="border: 0px;" placeholder="请输入投产日期"></td>\n' +
+            '                                <td><input name="partNum" class="form-control" style="border: 0px;" placeholder="请输入零件编号"></td>\n' +
+            '                                <td><input name="partName" class="form-control" style="border: 0px;" placeholder="请输入零件名称"></td>\n' +
+            '                                <td><input name="allAmount" class="form-control" style="border: 0px;" placeholder="请输入投产数量"></td>\n' +
+            '                                <td><input name="amountOne" class="form-control" style="border: 0px;" placeholder="请输入合格数量"></td>\n' +
+            '                                <td><input name="amountTwo" class="form-control" style="border: 0px;" placeholder="请输入让步接收数量"></td>\n' +
+            '                                <td><input name="amountThree" class="form-control" style="border: 0px;" placeholder="请输入报废数量"></td>\n' +
+            '                                <td><input name="note" class="form-control" style="border: 0px;" placeholder="请输入备注"></td>\n' +
+            '                                <td></td>\n' +
+            '                            </tr>\n' +
+            '                        </tbody>\n' +
+            '                    </table>\n' +
+            '                    <table class="table" style="width: 1500px;">\n' +
+            '                        <tr>\n' +
+            '                            <td>\n' +
+            '                                <button onclick="addProduction()" style="background: #FFFFFF;border-radius: 2px;border: 1px solid #FF9502;color: orange;outline: none;">新增一行</button>\n' +
+            '                            </td>\n' +
+            '                        </tr>\n' +
+            '                    </table>');
+        $("#footPart").append('<button data-dismiss="modal" class="btn btn-default" type="button">关闭</button>\n' +
+            '                    <button class="btn btn-primary" type="button" onclick="saveProduction()">下一页</button>');
+    }
+
+    function addProduction() {
+        //var trid=0;
+        var tab = document.getElementById("surveyBody");
+        //添加行
+        var newTR = tab.insertRow(tab.rows.length);
+        //trid++;
+        var xuhao = newTR.rowIndex.toString();
+        newTR.id = "tr" + xuhao;
+        //获取序号=行索引
+        //第一列是设备
+        var tdone = newTR.insertCell(0);
+        tdone.innerHTML = '<input name="productDate" class="form-control" style="border: 0px;" placeholder="请输入投产日期">';
+        //第二列是费用类型
+        var tdtwo = newTR.insertCell(1);
+        tdtwo.innerHTML = '<input name="partNum"class="form-control" style="border: 0px;" placeholder="请输入零件编号">';
+        //第三列是费用金额
+        var tdthree = newTR.insertCell(2);
+        tdthree.innerHTML = '<input name="partName" class="form-control" style="border: 0px;" placeholder="请输入零件名称">';
+
+        //第四列是费用说明
+        var tdfour = newTR.insertCell(3);
+        tdfour.innerHTML = '<input name="allAmount" class="form-control" style="border: 0px;" placeholder="请输入投产数量">';
+
+        var tdfive = newTR.insertCell(4);
+        tdfive.innerHTML ='<input name="amountOne" class="form-control" style="border: 0px;" placeholder="请输入合格数量">';
+
+        var tdsix = newTR.insertCell(5);
+        tdsix.innerHTML ='<input name="amountTwo" class="form-control" style="border: 0px;" placeholder="请输入让步接收数量">';
+
+        var tdseven = newTR.insertCell(6);
+        tdseven.innerHTML ='<input name="amountThree" class="form-control" style="border: 0px;" placeholder="请输入报废数量">';
+
+        var tdeight = newTR.insertCell(7);
+        tdeight.innerHTML ='<input name="note" class="form-control" style="border: 0px;" placeholder="请输入备注">';
+
+        var tdnine = newTR.insertCell(8);
+        tdnine.innerHTML = "<a href='javascript:;' onclick=\"delAssetTr('tr" + xuhao + "')\">删除</a>";
+    }
+
+    function saveProduction() {
+        var productDates = new Array();
+        $('input[name="productDate"]').each(function () {
+            productDates.push($(this).val());
+        });
+        var partNums = new Array();
+        $('input[name="partNum"]').each(function () {
+            partNums.push($(this).val());
+        });
+        var partNames = new Array();
+        $('input[name="partName"]').each(function () {
+            partNames.push($(this).val());
+        });
+        var allAmounts = new Array();
+        $('input[name="allAmount"]').each(function () {
+            allAmounts.push($(this).val());
+        });
+        var amountOnes = new Array();
+        $('input[name="amountOne"]').each(function () {
+            amountOnes.push($(this).val());
+        });
+        var amountTwos = new Array();
+        $('input[name="amountTwo"]').each(function () {
+            amountTwos.push($(this).val());
+        });
+        var amountThrees = new Array();
+        $('input[name="amountThree"]').each(function(){
+            amountThrees.push($(this).val());
+        });
+        var notes = new Array();
+        $('input[name="note"]').each(function () {
+            notes.push($(this).val());
+        });
+        var salePlanID = $("#customerID").val();
+        var data = {"productDates":productDates , "partNums":partNums , "partNames":partNames , "allAmounts":allAmounts , "amountOnes":amountOnes , "amountTwos":amountTwos , "amountThrees":amountThrees , "notes":notes , "salePlanID":salePlanID};
+        $.ajax({
+            type:"post",
+            data:data,
+            url:"saveProduction",
+            async:false,
+            traditional:true,
+            success:function (data) {
+                if(data == "OK"){
+                    loadSaleList();
+                }else{
+                    $.message({
+                        message:data,
+                        type:'error'
+                    })
+                }
+            }
+        })
+
+    }
+
+    function loadSaleList() {
+        $("#mainData").html("");
+        $("#footPart").html("");
+        $("#mainData").append("<h4>销售额数据</h4>\n" +
+            "<table id=\"survey\" class=\"table\" style=\"width: 600px;margin:0px auto;\">\n" +
+            "                        <thead>\n" +
+            "                        <tr>\n" +
+            "                            <th>年份</th><th>销售收入（未税）</th><th>备注</th><th style=\"width: 50px;\">操作</th>\n" +
+            "                        </tr>\n" +
+            "                        </thead>\n" +
+            "                        <tbody id=\"surveyBody\">\n" +
+            "                            <tr>\n" +
+            "                                <td><input name=\"year\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入年份\"></td>\n" +
+            "                                <td><input name=\"saleMoney\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入销售输入\"></td>\n" +
+            "                                <td><input name=\"note\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入备注\"></td>\n" +
+            "                                <td></td>\n" +
+            "                            </tr>\n" +
+            "                        </tbody>\n" +
+            "                    </table>\n" +
+            "                    <table class=\"table\" style=\"width: 600px;margin:0px auto;\">\n" +
+            "                        <tr>\n" +
+            "                            <td>\n" +
+            "                                <button onclick=\"addSaleList()\" style=\"background: #FFFFFF;border-radius: 2px;border: 1px solid #FF9502;color: orange;outline: none;\">新增一行</button>\n" +
+            "                            </td>\n" +
+            "                        </tr>\n" +
+            "                    </table>");
+        $("#footPart").append("<button data-dismiss=\"modal\" class=\"btn btn-default\" type=\"button\">关闭</button>\n" +
+            "                    <button class=\"btn btn-primary\" type=\"button\" onclick=\"saveSaleList()\">下一页</button>");
+    }
+
+    function addSaleList() {
+        //var trid=0;
+        var tab = document.getElementById("surveyBody");
+        //添加行
+        var newTR = tab.insertRow(tab.rows.length);
+        //trid++;
+        var xuhao = newTR.rowIndex.toString();
+        newTR.id = "tr" + xuhao;
+        //获取序号=行索引
+        //第一列是设备
+        var tdone = newTR.insertCell(0);
+        tdone.innerHTML = '<input name="year" class="form-control" style="border: 0px;" placeholder="请输入年份">';
+        //第二列是费用类型
+        var tdtwo = newTR.insertCell(1);
+        tdtwo.innerHTML = '<input name="saleMoney" class="form-control" style="border: 0px;" placeholder="请输入销售输入">';
+        //第三列是费用金额
+        var tdthree = newTR.insertCell(2);
+        tdthree.innerHTML = '<input name="note" class="form-control" style="border: 0px;" placeholder="请输入备注">';
+
+        var tdnine = newTR.insertCell(3);
+        tdnine.innerHTML = "<a href='javascript:;' onclick=\"delAssetTr('tr" + xuhao + "')\">删除</a>";
+    }
+
+    function saveSaleList() {
+        var years = new Array();
+        $('input[name="year"]').each(function () {
+            years.push($(this).val());
+        });
+        var saleMoneys = new Array();
+        $('input[name="saleMoney"]').each(function () {
+            saleMoneys.push($(this).val());
+        });
+        var notes = new Array();
+        $('input[name="note"]').each(function () {
+            notes.push($(this).val());
+        });
+        var salePlanID = $("#customerID").val();
+        $.ajax({
+            type:"post",
+            data:{"years":years , "saleMoneys":saleMoneys , "notes":notes , "salePlanID":salePlanID},
+            url:"saveSaleMoney",
+            async:false,
+            traditional:true,
+            success:function (data) {
+                if(data == "OK"){
+                    var msg = "继续填写选填项目？";
+                    if (confirm(msg)==true){
+                        loadPartList();
+                    }else{
+                        $.message({
+                            message:'数据已保存',
+                            type:'success'
+                        });
+                        $("#myModal2").modal('hide');
+                        loadFirstPlan();
+                    }
+                    loadFirstPlan();
+                }else{
+                    $.message({
+                        message:data,
+                        type:'error'
+                    })
+                }
+            }
+        })
+    }
+
+    function loadPartList() {
+        $("#mainData").html("");
+        $("#footPart").html("");
+        $("#mainData").append("<h4>零件清单</h4>\n" +
+            "<table id=\"survey\" class=\"table\" style=\"width: 3000px;\">\n" +
+            "                        <thead>\n" +
+            "                        <tr>\n" +
+            "                            <th>零件号</th><th>零件名称</th><th>零件类型</th>\n" +
+            "                            <th>零件材料</th><th>材料硬度</th><th>材料产地</th>\n" +
+            "                            <th>月产量</th><th>测试标准</th><th>报废率</th>\n" +
+            "                            <th>图纸编号</th><th>图纸审核时间</th><th>标准工时</th><th style=\"width: 50px;\">操作</th>\n" +
+            "                        </tr>\n" +
+            "                        </thead>\n" +
+            "                        <tbody id=\"surveyBody\">\n" +
+            "                            <tr>\n" +
+            "                                <td><input name=\"partNum\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入零件编号\"></td>\n" +
+            "                                <td><input name=\"partName\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入零件名称\"></td>\n" +
+            "                                <td><input name=\"partType\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入零件类型\"></td>\n" +
+            "                                <td><input name=\"material\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入零件材料\"></td>\n" +
+            "                                <td><input name=\"hardness\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入材料硬度\"></td>\n" +
+            "                                <td><input name=\"origin\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入材料产地\"></td>\n" +
+            "                                <td><input name=\"yield\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入月产量\"></td>\n" +
+            "                                <td><input name=\"standard\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入测试标准\"></td>\n" +
+            "                                <td><input name=\"scrap\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入报废率\"></td>\n" +
+            "                                <td><input name=\"pageNum\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入图纸编号\"></td>\n" +
+            "                                <td><input name=\"approveDate\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入图纸审核时间\"></td>\n" +
+            "                                <td><input name=\"spendTime\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入标准工时\"></td>\n" +
+            "                                <td></td>\n" +
+            "                            </tr>\n" +
+            "                        </tbody>\n" +
+            "                    </table>\n" +
+            "                    <table class=\"table\" style=\"width: 600px;\">\n" +
+            "                        <tr>\n" +
+            "                            <td>\n" +
+            "                                <button onclick=\"addPartList()\" style=\"background: #FFFFFF;border-radius: 2px;border: 1px solid #FF9502;color: orange;outline: none;\">新增一行</button>\n" +
+            "                            </td>\n" +
+            "                        </tr>\n" +
+            "                    </table>");
+        $("#footPart").append("<button data-dismiss=\"modal\" class=\"btn btn-default\" type=\"button\">关闭</button>\n" +
+            "                    <button class=\"btn btn-primary\" type=\"button\" onclick=\"savePartList()\">下一页</button>");
+    }
+
+    function addPartList() {
+        //var trid=0;
+        var tab = document.getElementById("surveyBody");
+        //添加行
+        var newTR = tab.insertRow(tab.rows.length);
+        //trid++;
+        var xuhao = newTR.rowIndex.toString();
+        newTR.id = "tr" + xuhao;
+        //获取序号=行索引
+        //第一列是设备
+        var tdone = newTR.insertCell(0);
+        tdone.innerHTML = '<input name="partNum" class="form-control" style="border: 0px;" placeholder="请输入零件编号">';
+        //第二列是费用类型
+        var tdtwo = newTR.insertCell(1);
+        tdtwo.innerHTML = '<input name="partName" class="form-control" style="border: 0px;" placeholder="请输入零件名称">';
+        //第三列是费用金额
+        var tdthree = newTR.insertCell(2);
+        tdthree.innerHTML = '<input name="partType" class="form-control" style="border: 0px;" placeholder="请输入零件类型">';
+
+        //第四列是费用说明
+        var tdfour = newTR.insertCell(3);
+        tdfour.innerHTML = '<input name="material" class="form-control" style="border: 0px;" placeholder="请输入零件材料">';
+
+        var tdfive = newTR.insertCell(4);
+        tdfive.innerHTML ='<input name="hardness" class="form-control" style="border: 0px;" placeholder="请输入材料硬度">';
+
+        var tdsix = newTR.insertCell(5);
+        tdsix.innerHTML ='<input name="origin" class="form-control" style="border: 0px;" placeholder="请输入材料产地">';
+
+        var tdseven = newTR.insertCell(6);
+        tdseven.innerHTML ='<input name="yield" class="form-control" style="border: 0px;" placeholder="请输入月产量">';
+
+        var tdeight = newTR.insertCell(7);
+        tdeight.innerHTML ='<input name="standard" class="form-control" style="border: 0px;" placeholder="请输入测试标准">';
+
+        var tdnine = newTR.insertCell(8);
+        tdnine.innerHTML ='<input name="scrap" class="form-control" style="border: 0px;" placeholder="请输入报废率">';
+
+        var tdten = newTR.insertCell(9);
+        tdten.innerHTML ='<input name="pageNum" class="form-control" style="border: 0px;" placeholder="请输入图纸编号">';
+
+        var tdeleven = newTR.insertCell(10);
+        tdeleven.innerHTML ='<input name="approveDate" class="form-control" style="border: 0px;" placeholder="请输入图纸审核时间">';
+
+        var tdtwelve = newTR.insertCell(11);
+        tdtwelve.innerHTML ='<input name="spendTime" class="form-control" style="border: 0px;" placeholder="请输入标准工时">';
+
+
+        //第5列是操作 - 删除行
+        var tdfourteen = newTR.insertCell(12);
+        tdfourteen.innerHTML = "<a href='javascript:;' onclick=\"delAssetTr('tr" + xuhao + "')\">删除</a>";
+    }
+
+    function savePartList() {
+        var partNums = new Array();
+        $('input[name="partNum"]').each(function () {
+            partNums.push($(this).val());
+        });
+        var partNames = new Array();
+        $('input[name="partName"]').each(function () {
+            partNames.push($(this).val());
+        });
+        var partTypes = new Array();
+        $('input[name="partType"]').each(function () {
+            partTypes.push($(this).val());
+        });
+        var materials = new Array();
+        $('input[name="material"]').each(function () {
+            materials.push($(this).val());
+        });
+        var hardnesses = new Array();
+        $('input[name="hardness"]').each(function () {
+            hardnesses.push($(this).val());
+        });
+        var origins = new Array();
+        $('input[name="origin"]').each(function () {
+            origins.push($(this).val());
+        });
+        var yields = new Array();
+        $('input[name="yield"]').each(function () {
+            yields.push($(this).val());
+        });
+        var standards = new Array();
+        $('input[name="standard"]').each(function () {
+            standards.push($(this).val());
+        });
+        var scraps = new Array();
+        $('input[name="scrap"]').each(function () {
+            scraps.push($(this).val());
+        });
+        var pageNums = new Array();
+        $('input[name="pageNum"]').each(function () {
+            pageNums.push($(this).val());
+        });
+        var approveDates = new Array();
+        $('input[name="approveDate"]').each(function () {
+            approveDates.push($(this).val());
+        });
+        var spendTimes = new Array();
+        $('input[name="spendTime"]').each(function () {
+            spendTimes.push($(this).val());
+        });
+        var salePlanID = $("#customerID").val();
+        var data = {"salePlanID":salePlanID , "partNums":partNums  , "partNames":partNames , "partTypes":partTypes , "materials":materials , "hardnesses":hardnesses , "origins":origins , "yields":yields , "standards":standards , "scraps":scraps ,
+        "pageNums":pageNums , "approveDates":approveDates , "spendTimes":spendTimes};
+        $.ajax({
+            type:"post",
+            data:data,
+            url:"savePartList",
+            async:false,
+            traditional:true,
+            success:function (data) {
+                if(data == "OK"){
+                    loadKnifeList();
+                }else{
+                    $.message({
+                        message:data,
+                        type:'error'
+                    })
+                }
+            }
+        })
+    }
+
+    function loadKnifeList() {
+        $("#mainData").html("");
+        $("#footPart").html("");
+        $("#mainData").append("<h4>刀具BOM清单</h4>\n" +
+            "<table id=\"survey\" class=\"table\" style=\"width: 3600px;\">\n" +
+            "                        <thead>\n" +
+            "                        <tr>\n" +
+            "                            <th>工件</th><th>工序号</th><th>工序名</th>\n" +
+            "                            <th>刀具物料代码</th><th>品牌</th><th>种类</th>\n" +
+            "                            <th>规格</th><th>刃数</th><th>装刀数</th>\n" +
+            "                            <th>夹具编号</th><th>夹具品牌</th><th>冷却方式</th>\n" +
+            "                            <th>转速</th><th>给进</th><th>单刃加工数</th>\n" +
+            "                            <th>刀具寿命</th><th>设备</th><th style=\"width: 50px;\">操作</th>\n" +
+            "                        </tr>\n" +
+            "                        </thead>\n" +
+            "                        <tbody id=\"surveyBody\">\n" +
+            "                            <tr>\n" +
+            "                                <td><input name=\"workpiece\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入工件\"></td>\n" +
+            "                                <td><input name=\"processCode\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入工序号\"></td>\n" +
+            "                                <td><input name=\"processName\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入工序名\"></td>\n" +
+            "                                <td><input name=\"materialCode\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入刀具物料代码\"></td>\n" +
+            "                                <td><input name=\"brand\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入品牌\"></td>\n" +
+            "                                <td><input name=\"type\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入种类\"></td>\n" +
+            "                                <td><input name=\"model\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入规格\"></td>\n" +
+            "                                <td><input name=\"bladeNum\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入刃数\"></td>\n" +
+            "                                <td><input name=\"knifeNum\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入装刀数\"></td>\n" +
+            "                                <td><input name=\"fixtureCode\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入夹具编号\"></td>\n" +
+            "                                <td><input name=\"fixtureBrand\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入夹具品牌\"></td>\n" +
+            "                                <td><input name=\"coolWay\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入冷却方式\"></td>\n" +
+            "                                <td><input name=\"rotateSpeed\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入转速\"></td>\n" +
+            "                                <td><input name=\"aoligei\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入给进\"></td>\n" +
+            "                                <td><input name=\"machineNum\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入单刃加工数\"></td>\n" +
+            "                                <td><input name=\"life\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入刀具寿命\"></td>\n" +
+            "                                <td><input name=\"asset\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入设备\"></td>\n" +
+            "                                <td></td>\n" +
+            "                            </tr>\n" +
+            "                        </tbody>\n" +
+            "                    </table>\n" +
+            "                    <table class=\"table\" style=\"width: 600px;\">\n" +
+            "                        <tr>\n" +
+            "                            <td>\n" +
+            "                                <button onclick=\"addKnifeList()\" style=\"background: #FFFFFF;border-radius: 2px;border: 1px solid #FF9502;color: orange;outline: none;\">新增一行</button>\n" +
+            "                            </td>\n" +
+            "                        </tr>\n" +
+            "                    </table>");
+        $("#footPart").append("<button data-dismiss=\"modal\" class=\"btn btn-default\" type=\"button\">关闭</button>\n" +
+            "                    <button class=\"btn btn-primary\" type=\"button\" onclick=\"saveKnifList()\">下一页</button>");
+    }
+
+    function addKnifeList() {
+        //var trid=0;
+        var tab = document.getElementById("surveyBody");
+        //添加行
+        var newTR = tab.insertRow(tab.rows.length);
+        //trid++;
+        var xuhao = newTR.rowIndex.toString();
+        newTR.id = "tr" + xuhao;
+        //获取序号=行索引
+        //第一列是设备
+        var tdone = newTR.insertCell(0);
+        tdone.innerHTML = '<input name="workpiece" class="form-control" style="border: 0px;" placeholder="请输入工件">';
+        //第二列是费用类型
+        var tdtwo = newTR.insertCell(1);
+        tdtwo.innerHTML = '<input name="processCode" class="form-control" style="border: 0px;" placeholder="请输入工序号">';
+        //第三列是费用金额
+        var tdthree = newTR.insertCell(2);
+        tdthree.innerHTML = '<input name="processName" class="form-control" style="border: 0px;" placeholder="请输入工序名">';
+
+        //第四列是费用说明
+        var tdfour = newTR.insertCell(3);
+        tdfour.innerHTML = '<input name="materialCode" class="form-control" style="border: 0px;" placeholder="请输入刀具物料代码">';
+
+        var tdfive = newTR.insertCell(4);
+        tdfive.innerHTML ='<input name="brand" class="form-control" style="border: 0px;" placeholder="请输入品牌">';
+
+        var tdsix = newTR.insertCell(5);
+        tdsix.innerHTML ='<input name="type" class="form-control" style="border: 0px;" placeholder="请输入种类">';
+
+        var tdseven = newTR.insertCell(6);
+        tdseven.innerHTML ='<input name="model" class="form-control" style="border: 0px;" placeholder="请输入规格">';
+
+        var tdeight = newTR.insertCell(7);
+        tdeight.innerHTML ='<input name="bladeNum" class="form-control" style="border: 0px;" placeholder="请输入刃数">';
+
+        var tdnine = newTR.insertCell(8);
+        tdnine.innerHTML ='<input name="knifeNum" class="form-control" style="border: 0px;" placeholder="请输入装刀数">';
+
+        var tdten = newTR.insertCell(9);
+        tdten.innerHTML ='<input name="fixtureCode" class="form-control" style="border: 0px;" placeholder="请输入夹具编号">';
+
+        var tdeleven = newTR.insertCell(10);
+        tdeleven.innerHTML ='<input name="fixtureBrand" class="form-control" style="border: 0px;" placeholder="请输入夹具品牌">';
+
+        var tdtwelve = newTR.insertCell(11);
+        tdtwelve.innerHTML ='<input name="coolWay" class="form-control" style="border: 0px;" placeholder="请输入冷却方式">';
+
+        var tdtwelve = newTR.insertCell(12);
+        tdtwelve.innerHTML ='<input name="rotateSpeed" class="form-control" style="border: 0px;" placeholder="请输入转速">';
+
+        var tdthirteen = newTR.insertCell(13);
+        tdthirteen.innerHTML ='<input name="aoligei" class="form-control" style="border: 0px;" placeholder="请输入给进">';
+
+        var tdfourteen = newTR.insertCell(14);
+        tdfourteen.innerHTML ='<input name="machineNum" class="form-control" style="border: 0px;" placeholder="请输入单刃加工数">';
+
+        var tdfifteen = newTR.insertCell(15);
+        tdfifteen.innerHTML ='<input name="life" class="form-control" style="border: 0px;" placeholder="请输入刀具寿命">';
+
+        var tdsixteen = newTR.insertCell(16);
+        tdsixteen.innerHTML ='<input name="asset" class="form-control" style="border: 0px;" placeholder="请输入设备">';
+
+
+        //第5列是操作 - 删除行
+        var tdseventeen = newTR.insertCell(17);
+        tdseventeen.innerHTML = "<a href='javascript:;' onclick=\"delAssetTr('tr" + xuhao + "')\">删除</a>";
+    }
+
+    function saveKnifList() {
+        var workpieces = new Array();
+        $('input[name="workpiece"]').each(function () {
+            workpieces.push($(this).val());
+        });
+        var processCodes = new Array();
+        $('input[name="processCode"]').each(function () {
+            processCodes.push($(this).val());
+        });
+        var processNames = new Array();
+        $('input[name="processName"]').each(function () {
+            processNames.push($(this).val());
+        });
+        var materialCodes = new Array();
+        $('input[name="materialCode"]').each(function () {
+            materialCodes.push($(this).val());
+        });
+        var brands = new Array();
+        $('input[name="brand"]').each(function () {
+            brands.push($(this).val());
+        });
+        var types = new Array();
+        $('input[name="type"]').each(function () {
+            types.push($(this).val());
+        });
+        var models = new Array();
+        $('input[name="model"]').each(function () {
+            models.push($(this).val());
+        });
+        var bladeNums = new Array();
+        $('input[name="bladeNum"]').each(function () {
+            bladeNums.push($(this).val());
+        });
+        var knifeNums = new Array();
+        $('input[name="knifeNum"]').each(function () {
+            knifeNums.push($(this).val());
+        });
+        var fixtureCodes = new Array();
+        $('input[name="fixtureCode"]').each(function () {
+            fixtureCodes.push($(this).val());
+        });
+        var fixtureBrands = new Array();
+        $('input[name="fixtureBrand"]').each(function () {
+            fixtureBrands.push($(this).val());
+        });
+        var coolWays = new Array();
+        $('input[name="coolWay"]').each(function () {
+            coolWays.push($(this).val());
+        });
+        var rotateSpeeds = new Array();
+        $('input[name="rotateSpeed"]').each(function () {
+            rotateSpeeds.push($(this).val());
+        });
+        var aoligeis = new Array();
+        $('input[name="aoligei"]').each(function () {
+            aoligeis.push($(this).val());
+        });
+        var machineNums = new Array();
+        $('input[name="machineNum"]').each(function () {
+            machineNums.push($(this).val());
+        });
+        var lifes = new Array();
+        $('input[name="life"]').each(function () {
+            lifes.push($(this).val());
+        });
+        var assets = new Array();
+        $('input[name="asset"]').each(function () {
+            assets.push($(this).val());
+        });
+        var salePlanID = $("#customerID").val();
+        var data = {"salePlanID":salePlanID , "workpieces":workpieces , "processCodes":processCodes , "processNames":processNames , "materialCodes":materialCodes , "brands":brands , "types":types , "models":models ,
+        "bladeNums":bladeNums , "knifeNums":knifeNums , "fixtureCodes":fixtureCodes , "fixtureBrands":fixtureBrands , "coolWays":coolWays , "rotateSpeeds":rotateSpeeds , "aoligeis":aoligeis , "machineNums":machineNums ,
+        "lifes":lifes , "assets":assets};
+        $.ajax({
+            type:"post",
+            data:data,
+            url:"saveKnifeList",
+            async:false,
+            traditional:true,
+            success:function (data) {
+                if(data == "OK"){
+                    loadSupplierList();
+                }else{
+                    $.message({
+                        message:data,
+                        type:'error'
+                    })
+                }
+            }
+        })
+    }
+    
+    function loadSupplierList() {
+        $("#mainData").html("");
+        $("#footPart").html("");
+        $("#mainData").append("<h4>刀具供应商名录</h4>\n" +
+            "<table id=\"survey\" class=\"table\" style=\"width: 3600px;\">\n" +
+            "                        <thead>\n" +
+            "                        <tr>\n" +
+            "                            <th>供应商代码</th>\n" +
+            "                            <th>供应商名称</th>\n" +
+            "                            <th>所在地区</th>\n" +
+            "                            <th>邮政编码</th>\n" +
+            "                            <th>通讯地址</th>\n" +
+            "                            <th>公司网址</th>\n" +
+            "                            <th>所属行业</th>\n" +
+            "                            <th>供应商性质</th>\n" +
+            "                            <th>代理品牌</th>\n" +
+            "                            <th>付款方式</th>\n" +
+            "                            <th>付款条件</th>\n" +
+            "                            <th>主要联系人</th>\n" +
+            "                            <th>电话</th>\n" +
+            "                            <th>供应商类别</th>\n" +
+            "                            <th>供应商等级</th>\n" +
+            "                            <th>对接负责人</th>\n" +
+            "                            <th>前年采购金额</th>\n" +
+            "                            <th>去年采购金额</th>\n" +
+            "                            <th style=\"width: 50px;\">操作</th>\n" +
+            "                        </tr>\n" +
+            "                        </thead>\n" +
+            "                        <tbody id=\"surveyBody\">\n" +
+            "                            <tr>\n" +
+            "                                <td><input name=\"supplierCode\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入供应商编码\"></td>\n" +
+            "                                <td><input name=\"supplierName\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入供应商名称\"></td>\n" +
+            "                                <td><input name=\"area\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入所在地区\"></td>\n" +
+            "                                <td><input name=\"postal\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入邮政编码\"></td>\n" +
+            "                                <td><input name=\"address\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入通讯地址\"></td>\n" +
+            "                                <td><input name=\"website\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入公司网址\"></td>\n" +
+            "                                <td><input name=\"industry\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入所属行业\"></td>\n" +
+            "                                <td><input name=\"nature\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入供应商性质\"></td>\n" +
+            "                                <td><input name=\"brand\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入代理品牌\"></td>\n" +
+            "                                <td><input name=\"payWay\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入付款方式\"></td>\n" +
+            "                                <td><input name=\"payCondition\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入付款条件\"></td>\n" +
+            "                                <td><input name=\"contract\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入主要联系人\"></td>\n" +
+            "                                <td><input name=\"phone\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入电话\"></td>\n" +
+            "                                <td><input name=\"supplierType\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入供应商类别\"></td>\n" +
+            "                                <td><input name=\"supplierLevel\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入供应商等级\"></td>\n" +
+            "                                <td><input name=\"principal\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入对接负责人\"></td>\n" +
+            "                                <td><input name=\"buymoneyOne\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入去年的采购金额\"></td>\n" +
+            "                                <td><input name=\"buymoneyTwo\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入前年的采购金额\"></td>\n" +
+            "                                <td></td>\n" +
+            "                            </tr>\n" +
+            "                        </tbody>\n" +
+            "                    </table>\n" +
+            "                    <table class=\"table\" style=\"width: 600px;\">\n" +
+            "                        <tr>\n" +
+            "                            <td>\n" +
+            "                                <button onclick=\"addSupplierList()\" style=\"background: #FFFFFF;border-radius: 2px;border: 1px solid #FF9502;color: orange;outline: none;\">新增一行</button>\n" +
+            "                            </td>\n" +
+            "                        </tr>\n" +
+            "                    </table>");
+        $("#footPart").append("<button data-dismiss=\"modal\" class=\"btn btn-default\" type=\"button\">关闭</button>\n" +
+            "                    <button class=\"btn btn-primary\" type=\"button\" onclick=\"saveSupplierList()\">下一页</button>");
+    }
+
+    function addSupplierList() {
+        //var trid=0;
+        var tab = document.getElementById("surveyBody");
+        //添加行
+        var newTR = tab.insertRow(tab.rows.length);
+        //trid++;
+        var xuhao = newTR.rowIndex.toString();
+        newTR.id = "tr" + xuhao;
+        //获取序号=行索引
+        //第一列是设备
+        var tdone = newTR.insertCell(0);
+        tdone.innerHTML = '<input name="supplierCode" class="form-control" style="border: 0px;" placeholder="请输入供应商编码">';
+        //第二列是费用类型
+        var tdtwo = newTR.insertCell(1);
+        tdtwo.innerHTML = '<input name="supplierName" class="form-control" style="border: 0px;" placeholder="请输入供应商名称">';
+        //第三列是费用金额
+        var tdthree = newTR.insertCell(2);
+        tdthree.innerHTML = '<input name="area" class="form-control" style="border: 0px;" placeholder="请输入所在地区">';
+
+        //第四列是费用说明
+        var tdfour = newTR.insertCell(3);
+        tdfour.innerHTML = '<input name="postal" class="form-control" style="border: 0px;" placeholder="请输入邮政编码">';
+
+        var tdfive = newTR.insertCell(4);
+        tdfive.innerHTML ='<input name="address" class="form-control" style="border: 0px;" placeholder="请输入通讯地址">';
+
+        var tdsix = newTR.insertCell(5);
+        tdsix.innerHTML ='<input name="website" class="form-control" style="border: 0px;" placeholder="请输入公司网址">';
+
+        var tdseven = newTR.insertCell(6);
+        tdseven.innerHTML ='<input name="industry" class="form-control" style="border: 0px;" placeholder="请输入所属行业">';
+
+        var tdeight = newTR.insertCell(7);
+        tdeight.innerHTML ='<input name="nature" class="form-control" style="border: 0px;" placeholder="请输入供应商性质">';
+
+        var tdnine = newTR.insertCell(8);
+        tdnine.innerHTML ='<input name="brand" class="form-control" style="border: 0px;" placeholder="请输入代理品牌">';
+
+        var tdten = newTR.insertCell(9);
+        tdten.innerHTML ='<input name="payWay" class="form-control" style="border: 0px;" placeholder="请输入付款方式">';
+
+        var tdeleven = newTR.insertCell(10);
+        tdeleven.innerHTML ='<input name="payCondition" class="form-control" style="border: 0px;" placeholder="请输入付款条件">';
+
+        var tdtwelve = newTR.insertCell(11);
+        tdtwelve.innerHTML ='<input name="contract" class="form-control" style="border: 0px;" placeholder="请输入主要联系人">';
+
+        var tdtwelve = newTR.insertCell(12);
+        tdtwelve.innerHTML ='<input name="phone" class="form-control" style="border: 0px;" placeholder="请输入电话">';
+
+        var tdthirteen = newTR.insertCell(13);
+        tdthirteen.innerHTML ='<input name="supplierType" class="form-control" style="border: 0px;" placeholder="请输入供应商类别">';
+
+        var tdfourteen = newTR.insertCell(14);
+        tdfourteen.innerHTML ='<input name="supplierLevel" class="form-control" style="border: 0px;" placeholder="请输入供应商等级">';
+
+        var tdfifteen = newTR.insertCell(15);
+        tdfifteen.innerHTML ='<input name="principal" class="form-control" style="border: 0px;" placeholder="请输入对接负责人">';
+
+        var tdsixteen = newTR.insertCell(16);
+        tdsixteen.innerHTML ='<input name="buymoneyOne" class="form-control" style="border: 0px;" placeholder="请输入去年的采购金额">';
+
+        var tdseventeen = newTR.insertCell(17);
+        tdseventeen.innerHTML = '<input name="buymoneyTwo" class="form-control" style="border: 0px;" placeholder="请输入前年的采购金额">';
+
+        //第5列是操作 - 删除行
+        var tdeighteen = newTR.insertCell(18);
+        tdeighteen.innerHTML = "<a href='javascript:;' onclick=\"delAssetTr('tr" + xuhao + "')\">删除</a>";
+    }
+
+    function saveSupplierList() {
+        var salePlanID = $("#customerID").val();
+        var supplierCodes = new Array();
+        $('input[name="supplierCode"]').each(function () {
+            supplierCodes.push($(this).val());
+        });
+        var supplierNames = new Array();
+        $('input[name="supplierName"]').each(function () {
+            supplierNames.push($(this).val());
+        });
+        var areas = new Array();
+        $('input[name="area"]').each(function () {
+            areas.push($(this).val());
+        });
+        var postals = new Array();
+        $('input[name="postal"]').each(function () {
+            postals.push($(this).val());
+        });
+        var addresses = new Array();
+        $('input[name="address"]').each(function () {
+            addresses.push($(this).val());
+        });
+        var websites = new Array();
+        $('input[name="website"]').each(function () {
+            websites.push($(this).val());
+        });
+        var industrys = new Array();
+        $('input[name="industry"]').each(function () {
+            industrys.push($(this).val());
+        });
+        var natures = new Array();
+        $('input[name="nature"]').each(function () {
+            natures.push($(this).val());
+        });
+        var brands = new Array();
+        $('input[name="brand"]').each(function(){
+            brands.push($(this).val());
+        });
+        var payWays = new Array();
+        $('input[name="payWay"]').each(function () {
+            payWays.push($(this).val())
+        });
+        var payConditions = new Array();
+        $('input[name="payCondition"]').each(function () {
+            payConditions.push($(this).val());
+        });
+        var contracts = new Array();
+        $('input[name="contract"]').each(function () {
+            contracts.push($(this).val());
+        });
+        var phones = new Array();
+        $('input[name="phone"]').each(function () {
+            phones.push($(this).val());
+        });
+        var supplierTypes = new Array();
+        $('input[name="supplierType"]').each(function () {
+            supplierTypes.push($(this).val());
+        });
+        var supplierLevels = new Array();
+        $('input[name="supplierLevel"]').each(function () {
+            supplierLevels.push($(this).val());
+        });
+        var principals = new Array();
+        $('input[name="principal"]').each(function () {
+            principals.push($(this).val());
+        });
+        var buymoneyOnes = new Array();
+        $('input[name="buymoneyOne"]').each(function () {
+            buymoneyOnes.push($(this).val());
+        });
+        var buymoneyTwos = new Array();
+        $('input[name="buymoneyTwo"]').each(function () {
+            buymoneyTwos.push($(this).val());
+        });
+        var data = {"salePlanID":salePlanID , "supplierCodes":supplierCodes , "supplierNames":supplierNames , "areas":areas , "postals":postals , "addresses":addresses , "websites":websites , "industrys":industrys , "natures":natures , "brands":brands , "payWays":payWays ,
+        "payConditions":payConditions , "contracts":contracts , "phones":phones , "supplierTypes":supplierTypes , "supplierLevels":supplierLevels , "principals":principals , "buymoneyOnes":buymoneyOnes , "buymoneyTwos":buymoneyTwos};
+        $.ajax({
+            type:"post",
+            data:data,
+            url:"saveSupplierList",
+            async:false,
+            traditional:true,
+            success:function (data) {
+                if(data == "OK"){
+                    loadBuyList();
+                }else{
+                    $.message({
+                        message:data,
+                        type:'error'
+                    })
+                }
+            }
+        })
+
+    }
+
+    function loadBuyList() {
+        $("#mainData").html("");
+        $("#footPart").html("");
+        $("#mainData").append("<h4>刀具采购清单</h4>\n" +
+            "<table id=\"survey\" class=\"table\" style=\"width: 3000px;\">\n" +
+            "                        <thead>\n" +
+            "                        <tr>\n" +
+            "                            <th>固定资产编号</th>\n" +
+            "                            <th>零件编号</th>\n" +
+            "                            <th>刀具物料号</th>\n" +
+            "                            <th>刀具名称</th>\n" +
+            "                            <th>刀具品类</th>\n" +
+            "                            <th>规格型号</th>\n" +
+            "                            <th>刀具品牌</th>\n" +
+            "                            <th>刀具寿命</th>\n" +
+            "                            <th>年领用数量</th>\n" +
+            "                            <th>最近领用日期</th>\n" +
+            "                            <th>备注</th>\n" +
+            "                            <th style=\"width: 50px;\">操作</th>\n" +
+            "                        </tr>\n" +
+            "                        </thead>\n" +
+            "                        <tbody id=\"surveyBody\">\n" +
+            "                            <tr>\n" +
+            "                                <td><input name=\"assetCode\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入固定资产编号\"></td>\n" +
+            "                                <td><input name=\"partCode\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入零件编号\"></td>\n" +
+            "                                <td><input name=\"materialCode\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入刀具物料号\"></td>\n" +
+            "                                <td><input name=\"knifeName\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入刀具名称\"></td>\n" +
+            "                                <td><input name=\"type\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入刀具品类\"></td>\n" +
+            "                                <td><input name=\"model\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入规格型号\"></td>\n" +
+            "                                <td><input name=\"brand\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入刀具品牌\"></td>\n" +
+            "                                <td><input name=\"life\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入刀具寿命\"></td>\n" +
+            "                                <td><input name=\"receiveAmount\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入年领用数量\"></td>\n" +
+            "                                <td><input name=\"receiveDate\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入最近领用日期\"></td>\n" +
+            "                                <td><input name=\"note\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入备注\"></td>\n" +
+            "                                <td></td>\n" +
+            "                            </tr>\n" +
+            "                        </tbody>\n" +
+            "                    </table>\n" +
+            "                    <table class=\"table\" style=\"width: 600px;\">\n" +
+            "                        <tr>\n" +
+            "                            <td>\n" +
+            "                                <button onclick=\"addBuyList()\" style=\"background: #FFFFFF;border-radius: 2px;border: 1px solid #FF9502;color: orange;outline: none;\">新增一行</button>\n" +
+            "                            </td>\n" +
+            "                        </tr>\n" +
+            "                    </table>");
+        $("#footPart").append("<button data-dismiss=\"modal\" class=\"btn btn-default\" type=\"button\">关闭</button>\n" +
+            "                    <button class=\"btn btn-primary\" type=\"button\" onclick=\"saveBuyList()\">下一页</button>");
+    }
+
+    function addBuyList() {
+        var tab = document.getElementById("surveyBody");
+        //添加行
+        var newTR = tab.insertRow(tab.rows.length);
+        //trid++;
+        var xuhao = newTR.rowIndex.toString();
+        newTR.id = "tr" + xuhao;
+        //获取序号=行索引
+        //第一列是设备
+        var tdone = newTR.insertCell(0);
+        tdone.innerHTML = '<input name="assetCode" class="form-control" style="border: 0px;" placeholder="请输入固定资产编号">';
+        //第二列是费用类型
+        var tdtwo = newTR.insertCell(1);
+        tdtwo.innerHTML = '<input name="partCode" class="form-control" style="border: 0px;" placeholder="请输入零件编号">';
+        //第三列是费用金额
+        var tdthree = newTR.insertCell(2);
+        tdthree.innerHTML = '<input name="materialCode" class="form-control" style="border: 0px;" placeholder="请输入刀具物料号">';
+
+        //第四列是费用说明
+        var tdfour = newTR.insertCell(3);
+        tdfour.innerHTML = '<input name="knifeName" class="form-control" style="border: 0px;" placeholder="请输入刀具名称">';
+
+        var tdfive = newTR.insertCell(4);
+        tdfive.innerHTML ='<input name="type" class="form-control" style="border: 0px;" placeholder="请输入刀具品类">';
+
+        var tdsix = newTR.insertCell(5);
+        tdsix.innerHTML ='<input name="model" class="form-control" style="border: 0px;" placeholder="请输入规格型号">';
+
+        var tdseven = newTR.insertCell(6);
+        tdseven.innerHTML ='<input name="brand" class="form-control" style="border: 0px;" placeholder="请输入刀具品牌">';
+
+        var tdeight = newTR.insertCell(7);
+        tdeight.innerHTML ='<input name="life" class="form-control" style="border: 0px;" placeholder="请输入刀具寿命">';
+
+        var tdnine = newTR.insertCell(8);
+        tdnine.innerHTML ='<input name="receiveAmount" class="form-control" style="border: 0px;" placeholder="请输入年领用数量">';
+
+        var tdten = newTR.insertCell(9);
+        tdten.innerHTML ='<input name="receiveDate" class="form-control" style="border: 0px;" placeholder="请输入最近领用日期">';
+
+        var tdeleven = newTR.insertCell(10);
+        tdeleven.innerHTML ='<input name="note" class="form-control" style="border: 0px;" placeholder="请输入备注">';
+
+        //第5列是操作 - 删除行
+        var tdeighteen = newTR.insertCell(11);
+        tdeighteen.innerHTML = "<a href='javascript:;' onclick=\"delAssetTr('tr" + xuhao + "')\">删除</a>";
+    }
+
+    function saveBuyList() {
+        var salePlanID = $("#customerID").val();
+        var assetCodes = new Array();
+        $('input[name="assetCode"]').each(function () {
+            assetCodes.push($(this).val());
+        });
+        var partCodes = new Array();
+        $('input[name="partCode"]').each(function () {
+            partCodes.push($(this).val());
+        });
+        var materialCodes = new Array();
+        $('input[name="materialCode"]').each(function () {
+            materialCodes.push($(this).val());
+        });
+        var knifeNames = new Array();
+        $('input[name = "knifeName"]').each(function () {
+            knifeNames.push($(this).val());
+        });
+        var types = new Array();
+        $('input[name="type"]').each(function () {
+            types.push($(this).val());
+        });
+        var models = new Array();
+        $('input[name="model"]').each(function () {
+            models.push($(this).val());
+        });
+        var brands = new Array();
+        $('input[name="brand"]').each(function () {
+            brands.push($(this).val());
+        });
+        var lifes = new Array();
+        $('input[name="life"]').each(function () {
+            lifes.push($(this).val());
+        });
+        var receiveAmounts = new Array();
+        $('input[name="receiveAmount"]').each(function () {
+            receiveAmounts.push($(this).val());
+        });
+        var receiveDates = new Array();
+        $('input[name = "receiveDate"]').each(function () {
+            receiveDates.push($(this).val());
+        });
+        var notes = new Array();
+        $('input[name="note"]').each(function () {
+            notes.push($(this).val());
+        });
+        var data = {"salePlanID":salePlanID , "assetCodes":assetCodes , "partCodes":partCodes , "materialCodes":materialCodes , "knifeNames":knifeNames , "types":types , "models":models , "brands":brands , "lifes":lifes , "receiveAmounts":receiveAmounts , "receiveDates":receiveDates , "notes":notes};
+
+        $.ajax({
+            type:"post",
+            data:data,
+            url:"saveBuyList",
+            async:false,
+            traditional:true,
+            success:function (data) {
+                if(data == "OK"){
+                    loadReceiveList();
+                }else{
+                    $.message({
+                        message:data,
+                        type:'error'
+                    })
+                }
+            }
+        })
+    }
+
+    function loadReceiveList() {
+        $("#mainData").html("");
+        $("#footPart").html("");
+        $("#mainData").append("<h4>刀具领用清单</h4>\n" +
+            "                    <table id=\"survey\" class=\"table\" style=\"width: 3000px;\">\n" +
+            "                        <thead>\n" +
+            "                        <tr>\n" +
+            "                            <th>物料编号</th>\n" +
+            "                            <th>物料名称</th>\n" +
+            "                            <th>规格型号</th>\n" +
+            "                            <th>品类名称</th>\n" +
+            "                            <th>领用数量</th>\n" +
+            "                            <th>领用单价</th>\n" +
+            "                            <th>领用金额</th>\n" +
+            "                            <th>领用部门</th>\n" +
+            "                            <th>最后一次领用时间</th>\n" +
+            "                            <th>备注</th>\n" +
+            "                            <th style=\"width: 50px;\">操作</th>\n" +
+            "                        </tr>\n" +
+            "                        </thead>\n" +
+            "                        <tbody id=\"surveyBody\">\n" +
+            "                            <tr>\n" +
+            "                                <td><input name=\"materialCode\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入物料编号\"></td>\n" +
+            "                                <td><input name=\"materialName\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入物料名称\"></td>\n" +
+            "                                <td><input name=\"model\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入规格型号\"></td>\n" +
+            "                                <td><input name=\"type\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入品类名称\"></td>\n" +
+            "                                <td><input name=\"receiveAmount\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入领用数量\"></td>\n" +
+            "                                <td><input name=\"receivePrice\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入领用单价\"></td>\n" +
+            "                                <td><input name=\"receiveMoney\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入领用金额\"></td>\n" +
+            "                                <td><input name=\"receiveDept\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入领用部门\"></td>\n" +
+            "                                <td><input name=\"receiveDate\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入最后一次领用时间\"></td>\n" +
+            "                                <td><input name=\"note\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入备注\"></td>\n" +
+            "                                <td></td>\n" +
+            "                            </tr>\n" +
+            "                        </tbody>\n" +
+            "                    </table>\n" +
+            "                    <table class=\"table\" style=\"width: 600px;\">\n" +
+            "                        <tr>\n" +
+            "                            <td>\n" +
+            "                                <button onclick=\"addReceiveList()\" style=\"background: #FFFFFF;border-radius: 2px;border: 1px solid #FF9502;color: orange;outline: none;\">新增一行</button>\n" +
+            "                            </td>\n" +
+            "                        </tr>\n" +
+            "                    </table>");
+        $("#footPart").append("<button data-dismiss=\"modal\" class=\"btn btn-default\" type=\"button\">关闭</button>\n" +
+            "                    <button class=\"btn btn-primary\" type=\"button\" onclick=\"saveReceiveList()\">下一页</button>");
+    }
+
+    function addReceiveList() {
+        var tab = document.getElementById("surveyBody");
+        //添加行
+        var newTR = tab.insertRow(tab.rows.length);
+        //trid++;
+        var xuhao = newTR.rowIndex.toString();
+        newTR.id = "tr" + xuhao;
+        //获取序号=行索引
+        //第一列是设备
+        var tdone = newTR.insertCell(0);
+        tdone.innerHTML = '<input name="materialCode" class="form-control" style="border: 0px;" placeholder="请输入物料编号">';
+        //第二列是费用类型
+        var tdtwo = newTR.insertCell(1);
+        tdtwo.innerHTML = '<input name="materialName" class="form-control" style="border: 0px;" placeholder="请输入物料名称">';
+        //第三列是费用金额
+        var tdthree = newTR.insertCell(2);
+        tdthree.innerHTML = '<input name="model" class="form-control" style="border: 0px;" placeholder="请输入规格型号">';
+
+        //第四列是费用说明
+        var tdfour = newTR.insertCell(3);
+        tdfour.innerHTML = '<input name="type" class="form-control" style="border: 0px;" placeholder="请输入品类名称">';
+
+        var tdfive = newTR.insertCell(4);
+        tdfive.innerHTML ='<input name="receiveAmount" class="form-control" style="border: 0px;" placeholder="请输入领用数量">';
+
+        var tdsix = newTR.insertCell(5);
+        tdsix.innerHTML ='<input name="receivePrice" class="form-control" style="border: 0px;" placeholder="请输入领用单价">';
+
+        var tdseven = newTR.insertCell(6);
+        tdseven.innerHTML ='<input name="receiveMoney" class="form-control" style="border: 0px;" placeholder="请输入领用金额">';
+
+        var tdeight = newTR.insertCell(7);
+        tdeight.innerHTML ='<input name="receiveDept" class="form-control" style="border: 0px;" placeholder="请输入领用部门">';
+
+        var tdnine = newTR.insertCell(8);
+        tdnine.innerHTML ='<input name="receiveDate" class="form-control" style="border: 0px;" placeholder="请输入最后一次领用时间">';
+
+        var tdeleven = newTR.insertCell(9);
+        tdeleven.innerHTML ='<input name="note" class="form-control" style="border: 0px;" placeholder="请输入备注">';
+
+        //第5列是操作 - 删除行
+        var tdeighteen = newTR.insertCell(10);
+        tdeighteen.innerHTML = "<a href='javascript:;' onclick=\"delAssetTr('tr" + xuhao + "')\">删除</a>";
+    }
+
+    function saveReceiveList() {
+        var salePlanID = $("#customerID").val();
+        var materialCodes = new Array();
+        $('input[name="materialCode"]').each(function () {
+            materialCodes.push($(this).val());
+        });
+        var materialNames = new Array();
+        $('input[name="materialName"]').each(function () {
+            materialNames.push($(this).val());
+        });
+        var models = new Array();
+        $('input[name="model"]').each(function () {
+            models.push($(this).val());
+        });
+        var types = new Array();
+        $('input[name="type"]').each(function () {
+            types.push($(this).val());
+        });
+        var receiveAmounts = new Array();
+        $('input[name="receiveAmount"]').each(function () {
+            receiveAmounts.push($(this).val());
+        });
+        var receivePrices = new Array();
+        $('input[name="receivePrice"]').each(function () {
+            receivePrices.push($(this).val());
+        });
+        var receiveMoneys = new Array();
+        $('input[name="receiveMoney"]').each(function () {
+            receiveMoneys.push($(this).val());
+        });
+        var receiveDepts = new Array();
+        $('input[name="receiveDept"]').each(function () {
+            receiveDepts.push($(this).val());
+        });
+        var receiveDates = new Array();
+        $('input[name="receiveDate"]').each(function () {
+            receiveDates.push($(this).val());
+        });
+        var notes = new Array();
+        $('input[name="note"]').each(function () {
+            notes.push($(this).val());
+        });
+        var data = {"salePlanID":salePlanID , "materialCodes":materialCodes , "materialNames":materialNames , "models":models , "types":types , "receiveAmounts":receiveAmounts , "receivePrices":receivePrices , "receiveMoneys":receiveMoneys , "receiveDepts":receiveDepts , "receiveDates":receiveDates , "notes":notes};
+
+        $.ajax({
+            type:"post",
+            data:data,
+            url:"saveReceiveList",
+            async:false,
+            traditional:true,
+            success:function (data) {
+                if(data == "OK"){
+                    $("#myModal2").modal('hide');
+                    $.message({
+                        message:'数据已保存',
+                        type:'success'
+                    })
+                }else{
+                    $.message({
+                        message:data,
+                        type:'error'
+                    })
+                }
+            }
+        })
+    }
+
+    function saveTravel() {
+        var customerCode = $("#customer option:selected").val();
+        var customerName = $("#customer option:selected").text();
+        var applyAccount = $("#applyer option:selected").val();
+        var applyName = $("#applyer option:selected").text();
+        var travelDate = $("#travelDate").val();
+        var travelTarget = $("#travelTarget").val();
+        var supportPerson = $("#supportPerson").val();
+        var spend = $("#spend").val();
+        var costType = $("#costType option:selected").val();
+        var costCenter = $("#costCenter").val();
+        var other = $("#other").val();
+        var processCode = "PC0004";
+        var processName = "现场尽调";
+        var data = {"customerCode":customerCode , "customerName":customerName , "applyAccount":applyAccount , "applyName":applyName , "travelDate":travelDate , "travelTarget":travelTarget , "supportPerson":supportPerson , "spend":spend , "costType":costType , "costCenter":costCenter , "other":other , "processCode":processCode , "processName":processName};
+        $.ajax({
+            type:"post",
+            data:data,
+            url:"createTravel",
+            async:false,
+            success:function (data) {
+                if(data == "OK"){
+                    $.message({
+                        message:"出差申请已提交",
+                        type:'success'
+                    })
+                }else{
+                    $.message({
+                        message:data,
+                        type:'error'
+                    })
+                }
+            },
+        })
+    }
+
+    function saveTravelSum() {
+        var customer = $("#customer2 option:selected").val();
+        var travelSum = $("#travelSum").val();
+        var needSupport = $("#needSupport").val();
+        var trouble = $("#trouble").val();
+        var oppose = $("#oppose").val();
+        var nextPlan = $("#nextPlan").val();
+        var travel = $("#travelCost").val();
+        var eatting = $("#eattingCost").val();
+        var server = $("#serverCost").val();
+        var other = $("#otherCost").val();
+
+        var name = $("#voucher").val();
+        var picNames = name.split("\\");
+        var le = picNames.length - 1;
+        var targetFile = picNames[le];
+
+        var processCode = "PC0004";
+
+        var data = {"customer":customer , "travelSum":travelSum , "needSupport":needSupport , "trouble":trouble , "oppose":oppose , "nextPlan":nextPlan , "travelSpend":travel , "eatting":eatting , "server":server , "other":other , "fileName":targetFile , "processCode":processCode };
+        $.ajax({
+            type:"post",
+            data:data,
+            url:"saveTravelSum",
+            async:false,
+            success:function (data) {
+                if(data == "OK"){
+                    $.message({
+                        message:'已提交',
+                        type:'success'
+                    })
+                }else{
+                    $.message({
+                        message:data,
+                        type:'error'
+                    })
+                }
+            }
+        })
+    }
+
+    function saveImage() {
+        $.ajaxFileUpload({
+            type:"post",
+            fileElementId:"voucher",
+            url:"saveVoucher",
+            async:false,
+            dataType:'text',
+            success:function(data){
+                if(data == "文件上传成功"){
+                    $.message({
+                        message:'文件上传成功',
+                        type:'success'
+                    });
+                }else{
+                    $.message({
+                        message:data,
+                        type:'error'
+                    });
+                }
+            },
+            error:function(){
+                alert("设备类型文件上传出错");
+            }
+        })
+    }
+
+    function getAllSaleMan() {
+        $.ajax({
+            type:"post",
+            url:"loadAllSaleMan",
+            async:false,
+            success:function (data) {
+                $("#applyer").html("");
+                $("#applyer").append("<option value='0'>"+"--请选择--"+"</option>");
+                for(var i = 0 ; i < data.length ; i++){
+                    $("#applyer").append('<option value="'+data[i].account+'">'+data[i].name+"</option>");
+                }
+            }
+        })
+    }
+
+</script>
+</body>
+</html>

@@ -32,6 +32,16 @@ public class ShiroConfig {
         Map<String , String> perms = new HashMap<String , String>();
         perms.put("/foreLogin" , "anon");
         perms.put("/homePage" , "authc");
+        perms.put("/foreCustomerManage" , "authc");
+        perms.put("/forePool" , "authc");
+        perms.put("/foreIntroduce" , "authc");
+        perms.put("/foreSecret" , "authc");
+        perms.put("/foreSurveyOnline" , "authc");
+        perms.put("/foreAccountInner" , "authc");
+        perms.put("/foreScheme" , "authc");
+        perms.put("/foreContractPrevious" , "authc");
+        perms.put("/foreContractLater" , "authc");
+        perms.put("/foreSurveyOffline" , "authc");
 
         shiroFilterFactoryBean.setLoginUrl("loginPage");
         shiroFilterFactoryBean.setUnauthorizedUrl("loginPage");

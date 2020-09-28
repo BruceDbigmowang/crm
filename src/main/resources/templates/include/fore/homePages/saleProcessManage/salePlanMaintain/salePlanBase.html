@@ -6,40 +6,49 @@
 </head>
 <body>
 <script>
-    $(function(){
-        changeSelectWay();
-        findAllSalePlanWrite();
+    window.onload= changeSelectWay();
+    window.onload = findAllSalePlanWrite();
+
+    laydate.render({
+        trigger:'click',
+        theme: '#ff9f20',
+        elem: '#startDate'
+    });
+    laydate.render({
+        trigger:'click',
+        theme: '#ff9f20',
+        elem: '#endDate'
     });
 
 </script>
-<div>
+<div style="width: 1050px;margin:0px auto;">
     <div>
-        <button class="btn btn-primary" data-toggle="modal" data-target="#myModal">新增</button>
+        <button class="btn btn-primary" data-toggle="modal" data-target="#myModal" style="background-color: #ff9f20;" onclick="generateNum()">新增</button>
     </div><br>
-    <div id="searchDIV" style="width: 552px;margin:0px auto;">
-        <div style="float: left;width: 200px;">
-            选择查询方式<select id="selectWay" onchange="changeSelectWay()">
+    <div id="searchDIV" style="width: 675px;margin:0px auto;">
+        <div style="float: left;width: 300px;">
+            <span style="font-size: 14px;display: contents;">查询方式</span><select id="selectWay" style="width: 190px;" onchange="changeSelectWay()" class="form-control">
                 <option value="1">销售计划编号</option>
             <option value="2">创建时间</option>
             </select>
         </div>
-        <div id="salePlanNumberSearch" style="width:252px;float: left;display: none;">
-            <input id="planWriteSearch" placeholder="请输入销售计划编号/客户名称"><button onclick="findSalePlanByCompany()">搜索</button>
+        <div id="salePlanNumberSearch" style="width:372px;float: left;display: none;">
+            <input id="planWriteSearch" style="width:304px;" class="form-control" placeholder="请输入销售计划编号/客户名称"><button class="btn btn-primary" style="margin-top: -3px;background-color: #ff9f20;" onclick="findSalePlanByCompany()">搜索</button>
         </div>
-        <div id="saleCreateTimeSearch" style="width:352px;float: left;display: none;">
-            <input placeholder="开始时间">-<input placeholder="结束时间"><button>搜索</button>
+        <div id="saleCreateTimeSearch" style="width:373px;float: left;display: none;">
+            <input id="startDate" class="form-control" style="width: 150px;" placeholder="开始时间">-<input id="endDate" style="width: 150px;" class="form-control" placeholder="结束时间"><button style="margin-top: -5px;background-color: #ff9f20;" class="btn btn-primary" >搜索</button>
         </div>
     </div>
     <div style="width: 800px;margin:0px auto;margin-top:50px;">
-        <table class="table">
-            <thead>
+        <table class="table table-striped table-bordered table-hover  table-condensed">
+            <thead style="background-color: #dde5e5;font-size: 14px;text-align: left;vertical-align: inherit;">
             <tr>
-                <td>销售计划编号</td>
-                <td>销售描述</td>
-                <td>客户名称</td>
-                <td>状态</td>
-                <td>创建人</td>
-                <td>创建时间</td>
+                <th style="font-size: 14px;vertical-align: inherit;">销售计划编号</th>
+                <th style="font-size: 14px;vertical-align: inherit;">销售描述</th>
+                <th style="font-size: 14px;vertical-align: inherit;">客户名称</th>
+                <th style="font-size: 14px;vertical-align: inherit;">状态</th>
+                <th style="font-size: 14px;vertical-align: inherit;">创建人</th>
+                <th style="font-size: 14px;vertical-align: inherit;">创建时间</th>
             </tr>
             </thead>
             <tbody id="salePlanWrite"></tbody>
@@ -56,23 +65,23 @@
                 <h4 class="modal-title">销售计划编制</h4>
             </div>
             <div class="modal-body">
-                <table class="table">
+                <table class="table" style="width: 400px;margin:0px auto;">
                     <tr>
-                        <td>销售计划编号</td>
+                        <td style="font-size: 14px;">销售计划编号</td>
                         <td>
-                            <input id="saleWriteNO" style="width: 100%;border:0px;" placeholder="请输入销售计划编号">
+                            <input id="saleWriteNO" class="form-control" style="width: 100%;border:0px;" placeholder="请输入销售计划编号" readonly>
                         </td>
                     </tr>
                     <tr>
-                        <td>
+                        <td style="font-size: 14px;">
                             客户名称
                         </td>
                         <td>
-                            <input id="saleWriteName" style="width: 100%;border: 0px;" placeholder="请输入客户名称">
+                            <input id="saleWriteName" class="form-control" style="width: 100%;border: 0px;" placeholder="请输入客户名称">
                         </td>
                     </tr>
                     <tr>
-                        <td>销售描述</td>
+                        <td style="font-size: 14px;">销售描述</td>
                         <td>
                             <textarea id="saleWriteDesc" class="form-control"></textarea>
                         </td>
@@ -81,7 +90,7 @@
             </div>
             <div class="modal-footer">
                 <button data-dismiss="modal" class="btn btn-default" type="button">关闭</button>
-                <button class="btn btn-primary" type="button" onclick="saleWrite()">提交</button>
+                <button class="btn btn-success" type="button" onclick="saleWrite()">保存</button>
             </div>
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->

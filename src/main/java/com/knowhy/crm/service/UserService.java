@@ -195,4 +195,18 @@ public class UserService {
         }
         return 0;
     }
+
+    public String getUserName(String account){
+        boolean exist = iUserDAO.existsById(account);
+        if(exist){
+            return iUserDAO.getOne(account).getName();
+        }else{
+            return null;
+        }
+    }
+
+    public List<IUser> getInnerUser(){
+        String note = "inner";
+        return iUserDAO.findByNote(note);
+    }
 }

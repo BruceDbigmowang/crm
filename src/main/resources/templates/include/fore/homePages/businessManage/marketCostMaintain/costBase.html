@@ -5,6 +5,40 @@
     <title>Title</title>
 </head>
 <body>
-
+<script>
+    laydate.render({
+        trigger:'click',
+        theme: '#ff9f20',
+        elem: '#happenDate'
+    });
+</script>
+<div style="width: 100%; margin-top: 20px;margin-left: 20px;">
+    <span style="font-size: 16px;">商机管理 > 销售费用 > 费用新增</span>
+    <table class="table" style="width: 800px;margin: 0px auto;margin-top: 30px">
+        <tr>
+            <td style="width: 150px;text-align: center;height: 40px;font-size: 14px;vertical-align: inherit;">费用类型</td>
+            <td><input id="costType" class="form-control" placeholder="请输入..."></td>
+            <td style="width: 150px;text-align: center;height: 40px;font-size: 14px;vertical-align: inherit;">发生时间</td>
+            <td><input id="happenDate" class="form-control" placeholder="请输入..." autocomplete="off"></td>
+        </tr>
+        <tr>
+            <td style="width: 150px;text-align: center;height: 40px;font-size: 14px;vertical-align: inherit;">费用描述</td>
+            <td><input id="describe" class="form-control" placeholder="请输入..."></td>
+            <td style="width: 150px;text-align: center;height: 40px;font-size: 14px;vertical-align: inherit;">联系人</td>
+            <td><input id="contract" class="form-control" placeholder="请输入..."></td>
+        </tr>
+        <tr>
+            <td style="width: 150px;text-align: center;height: 40px;font-size: 14px;vertical-align: inherit;">费用金额</td>
+            <td><input id="costAmount" class="form-control" placeholder="请输入..."></td>
+            <td style="width: 150px;text-align: center;height: 40px;font-size: 14px;vertical-align: inherit;">负责人</td>
+            <td><input id="costPrincipal" class="form-control" placeholder="请输入..."></td>
+        </tr>
+        <tr>
+            <td colspan="4" style="text-align: right;">
+                <button class="btn btn-primary" style="background-color: #ff9f20;margin-right: 50px;" onclick="createNewSaleCost()">保&nbsp&nbsp&nbsp&nbsp存</button>
+            </td>
+        </tr>
+    </table>
+</div>
 </body>
 </html>

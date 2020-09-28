@@ -111,7 +111,7 @@
   color: #399bff;
 }
 body {
-  background: #3d464d;
+  background: #303341;
   color: #58666e;
   margin: 0;
   line-height: 1.7em;
@@ -281,7 +281,7 @@ Top
 ================================================================================= */
 #top {
   height: 60px;
-  background: #399bff;
+  background: #303342;
   color: #fff;
   width: 100%;
   position: fixed;
@@ -294,10 +294,10 @@ App Logo
 .applogo {
   width: 250px;
   height: 60px;
-  background: rgba(0, 0, 0, 0.14);
+  background: rgb(255 157 10 / 95%));
   color: #fff;
   position: relative;
-  padding: 19px 0 0 0px;
+  padding: 10px 0 0 0px;
   float: left;
   text-align: center;
 }
@@ -496,7 +496,7 @@ Sidebar
   top: 60px;
   left: 0;
   font-family: 'Montserrat', sans-serif;
-  background: #3d464d;
+  background: #303341;
   z-index: 0;
   font-size: 13px;
   font-weight: normal;
@@ -577,6 +577,15 @@ Sidebar
   color: rgba(255, 255, 255, 0.6);
   padding: 9px 20px 9px 54px;
 }
+
+/** 3级菜单**/
+
+.sidebar-panel-3 li ul li a {
+  margin: 0px;
+  color: rgba(255, 255, 255, 0.6);
+  padding: 9px 20px 9px 94px;
+}
+
 .sidebar-panel li ul li a:hover {
   background: rgba(0, 0, 0, 0.08);
 }
@@ -2280,8 +2289,8 @@ fieldset[disabled] .btn {
 }
 /* Button Default */
 .btn-default {
-  background-color: #399bff;
-  color: #fff;
+  background-color: rgba(65,56,60,0.11);
+  color: black;
 }
 .btn-default:hover,
 .btn-default:focus,
@@ -2289,19 +2298,19 @@ fieldset[disabled] .btn {
 .btn-default:active,
 .btn-default.active,
 .open > .dropdown-toggle.btn-default {
-  background-color: #4da5ff;
-  color: #fff;
+  background-color: rgba(65,56,60,0.11);
+  color: black;
 }
 .btn-default:active,
 .btn-default.active,
 .open > .dropdown-toggle.btn-default {
-  background: #208eff;
+  background: rgba(65,56,60,0.11);
   box-shadow: none;
-  color: #fff;
+  color: black;
 }
 .btn-default .badge {
-  color: #399bff;
-  background-color: #fff;
+  color: white;
+  background-color: red;
 }
 /* Button Primary */
 .btn-primary {
@@ -2754,7 +2763,7 @@ select {
   font-size: 14px;
   background: #fff;
   border: 1px solid #BDC4C9;
-  display: block;
+  display: initial;
   box-shadow: inset 0px 1px 0px #F1F0F1;
 }
 .form-control:focus {
@@ -3647,7 +3656,7 @@ table td {
 .table > thead > tr > td,
 .table > tbody > tr > td,
 .table > tfoot > tr > td {
-  padding: 15px;
+  padding: 10px;
   line-height: 1.7;
 }
 .doc-grid {

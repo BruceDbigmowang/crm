@@ -36,7 +36,8 @@ public class RoleService {
     }
 
     public List<Roles> findAll(){
-        return rolesDAO.findAll();
+        String note = "C";
+        return rolesDAO.findByNote(note);
     }
 
     public List<String> findRolesByAccount(String account){
@@ -85,5 +86,9 @@ public class RoleService {
         }else{
             return false;
         }
+    }
+
+    public List<Roles> getInner(){
+        return rolesDAO.findByNoteIsNull();
     }
 }

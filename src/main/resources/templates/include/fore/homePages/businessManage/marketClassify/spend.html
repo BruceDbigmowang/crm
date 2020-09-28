@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<script>
+    $(function () {
+        loadSaleSpend();
+    })
+</script>
+
+<div>
+
+    <span style="font-size: 16px;">商机管理 / 营销费用</span>
+    <table style="width: 100%;border: 0px;margin-top: 20px;">
+        <tr>
+            <td style="text-align: left;width: 200px;">
+                <select id="spendType" class="form-control">
+                    <option value="0">--选择费用类型--</option>
+                    <option value="广告营销">广告营销</option>
+                    <option value="邮件营销">邮件营销</option>
+                </select>
+            </td>
+            <td style="text-align: left;width: 200px;">
+                <input id="principalName" class="form-control" style="width: 200px;" placeholder="负责人" autocomplete="off">
+            </td>
+            <td style="text-align: left;width: 50px;">
+                <button class="btn btn-primary" style="margin-top: -2px;background-color: #FF9502;" onclick="findSpendByTypeAndPrincipal()">查询</button>
+            </td>
+            <td style="text-align: right">
+                <button class="btn btn-primary" data-toggle="modal" data-target="#myModal" style="background-color: #FF9502;">+&nbsp;新建</button>
+            </td>
+        </tr>
+    </table>
+
+    <div style="width: 100%;margin-top: 20px;">
+        <table class="table table-striped table-bordered table-hover  table-condensed" style="width: 1050px;font-size: 14px;">
+            <thead style="background-color: #dde5e5;font-size: 14px;text-align: left;vertical-align: inherit;">
+            <tr>
+                <th>费用类型</th>
+                <th>费用描述</th>
+                <th>金额</th>
+                <th>发生时间</th>
+                <th>联系人</th>
+                <th>负责人</th>
+                <th>创建时间</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody id="spendData"></tbody>
+        </table>
+        <div id="saleSpendPageDIV" style=" width:200px;margin: 0px auto;display: none;">
+            <a style="color: #ea9e11;" onclick="getSaleSpendFirst()">首 页</a>&nbsp&nbsp
+            <a style="color: #ea9e11;" onclick="getSaleSpendPrevious()">上一页</a>&nbsp&nbsp
+            <a style="color: #ea9e11;" onclick="getSaleSpendNext()">下一页</a>&nbsp&nbsp
+            <a style="color: #ea9e11;" onclick="getSaleSpendLast()">尾 页</a>
+        </div>
+    </div>
+</div>
+
+
+</div>
+
+<div class="modal fade" id="myModal"  data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" >
+        <div class="modal-content">
+            <div class="modal-header">
+                <button data-dismiss="modal" class="close" type="button"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title">新建费用</h4>
+            </div>
+            <div class="modal-body">
+                <table class="table" >
+                    <tr style="height: 47px;">
+                        <td  style="text-align: left;vertical-align: inherit;font-size: 14px;" >费用类型</td>
+                        <td  style="vertical-align: inherit;"><input id="costType" class="form-control"  placeholder="请输入" ></td>
+                    </tr>
+                    <tr>
+                        <td  style="text-align: left;vertical-align: inherit;font-size: 14px;">费用描述</td>
+                        <td style="vertical-align: inherit;"><input id="describe"  class="form-control" placeholder="请输入"></td>
+                    </tr>
+                    <tr>
+                        <td style="font-size: 14px;vertical-align: inherit;">金额</td>
+                        <td><input id="amount" class="form-control"  placeholder="请输入"></td>
+                    </tr>
+                    <tr>
+                        <td style="font-size: 14px;vertical-align: inherit;">发生时间</td>
+                        <td><input id="happenDate" class="form-control"  placeholder="请输入"></td>
+                    </tr>
+                    <tr>
+                        <td style="font-size: 14px;vertical-align: inherit;">联系人</td>
+                        <td><input id="contract" class="form-control"  placeholder="请输入"></td>
+                    </tr>
+                    <tr>
+                        <td style="font-size: 14px;vertical-align: inherit;">负责人</td>
+                        <td><input id="principal" class="form-control"  placeholder="请输入"></td>
+                    </tr>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button data-dismiss="modal" class="btn btn-default" type="button">关闭</button>
+                <button style="background-color: #ff9f20" class="btn btn-primary" type="button" onclick="createNewSaleSpend()">保存</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+
+</body>
+</html>

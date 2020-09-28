@@ -1,13 +1,14 @@
 package com.knowhy.crm.controller;
 
-import com.knowhy.crm.service.CompanyInfoService;
-import com.knowhy.crm.service.RoleService;
-import com.knowhy.crm.service.UserService;
+import com.knowhy.crm.dao.CustomerDAO;
+import com.knowhy.crm.dao.SalesPlanDAO;
+import com.knowhy.crm.pojo.Customer;
+import com.knowhy.crm.pojo.SalesPlan;
+import com.knowhy.crm.service.*;
 import com.knowhy.crm.util.MD5Utils;
 import com.knowhy.crm.util.Result;
 import com.knowhy.crm.pojo.IUser;
 import com.knowhy.crm.pojo.Path;
-import com.knowhy.crm.service.PathService;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
@@ -15,15 +16,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
+import org.springframework.util.ClassUtils;
+import org.springframework.util.ResourceUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -37,10 +46,15 @@ public class AccountController {
     RoleService roleService;
     @Autowired
     PathService pathService;
+    @Autowired
+    CustomerDAO customerDAO;
+    @Autowired
+    SalePlanService salePlanService;
 
 
 
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+    SimpleDateFormat sdf2 = new SimpleDateFormat("yyyyMMdd");
 
     //登录
     @RequestMapping("/doLogin")
@@ -62,11 +76,8 @@ public class AccountController {
                     boolean flag = subject.isAuthenticated();
                     if(flag){
                         System.out.println("登录成功！");
-                        //获取当前用对象，放入到session中
                         IUser user = (IUser)subject.getPrincipal();
                         subject.getSession().setAttribute("user",user);
-//                        IUser person = (IUser)session.getAttribute("user");
-//                        System.out.println(person.getAccount());
                         String operator = user.getAccount()+"("+user.getName()+")";
                         String action = "登录系统";
                         Date now = new Date();
@@ -123,19 +134,6 @@ public class AccountController {
                         /**
                          * 生成账号
                          */
-//                        int total = userService.getAll()+1;
-//                        String target = String.valueOf(total);
-//                        String account = "";
-//                        if(target.length() < 6){
-//                            int num = 6 - target.length();
-//
-//                            for(int i = 0 ; i < num ; i++){
-//                                account = account + "0";
-//                            }
-//                            account = account + target;
-//                        }else{
-//                            account = target;
-//                        }
                         IUser user = new IUser();
                         user.setAccount(account);
 
@@ -295,7 +293,6 @@ public class AccountController {
     @RequestMapping("/restPassword")
     @ResponseBody
     public Object rest(@RequestBody Map<String,String> resetPasswordData, Model model){
-
         String account = resetPasswordData.get("name");
         String password = resetPasswordData.get("password");
         String email = resetPasswordData.get("email");
@@ -333,6 +330,9 @@ public class AccountController {
     public String outSys(){
         Subject subject = SecurityUtils.getSubject();
         IUser iUser = (IUser)subject.getSession().getAttribute("user");
+        if(iUser == null){
+            return "redirect:loginPage";
+        }
         String operator = iUser.getAccount()+"("+iUser.getName()+")";
         String action = "退出系统";
         Date now = new Date();
@@ -343,6 +343,7 @@ public class AccountController {
         path.setRecord(record);
         path.setCreateTime(now);
         pathService.writeRecord(path);
+
         if(subject.isAuthenticated())
             subject.logout();
         return "redirect:loginPage";
@@ -353,16 +354,17 @@ public class AccountController {
     public Object loadInfo(HttpSession session){
 
         IUser iUser = (IUser)session.getAttribute("user");
-        System.out.println(iUser.getAccount());
+        String account = iUser.getAccount();
+        IUser user = userService.findUserByAccount(account);
         Map<String , Object>map = new HashMap<>();
-        map.put("user" , iUser);
+        map.put("user" , user);
         return map;
     }
 
     @RequestMapping("/savePersonInfo")
     @ResponseBody
-    public String saveInfo(@RequestParam("account")String account , @RequestParam("name")String name , @RequestParam("company")String company ,
-                        @RequestParam("phone")String phone , @RequestParam("email")String email , @RequestParam("password")String password){
+    public String saveInfo(@RequestParam("account")String account , @RequestParam("name")String name , @RequestParam("company")String company ,@RequestParam("wechatNum")String wechatNum,
+                        @RequestParam("email")String email , @RequestParam("dept")String dept , @RequestParam("job")String job , @RequestParam("qqNum")String qqNumber , @RequestParam("sex")String sex){
         IUser iUser = userService.findUserByAccount(account);
         if(!name.isEmpty()){
             iUser.setName(name);
@@ -370,26 +372,29 @@ public class AccountController {
         if(!company.isEmpty() && !iUser.getCompany().equals(company)){
             iUser.setCompany(company);
         }
-        System.out.println(iUser.getPhone().trim());
-        System.out.println(phone.trim());
-        if(!phone.isEmpty() && !iUser.getPhone().trim().equals(phone.trim())){
-            if(userService.phoneUsed(phone)){
-                return "该手机号已被注册";
-            }else {
-                iUser.setPhone(phone);
-            }
+
+        if(sex != null && !"".equals(sex)){
+            iUser.setSex(sex.trim());
         }
+
         if(!email.isEmpty() && !iUser.getEmail().trim().equals(email.trim())){
             if(userService.emailUsed(email)){
                 return "该邮箱已被注册";
             }else{
                 iUser.setEmail(email);
             }
-//            iUser.setEmail(email);
         }
-        System.out.println(password);
-        if (!password.isEmpty()){
-            iUser.setPassword(MD5Utils.addMD5(password).toString());
+        if(dept != null && !"".equals(dept)){
+            iUser.setDept(dept);
+        }
+        if(job != null && !"".equals(job)){
+            iUser.setJob(job);
+        }
+        if(qqNumber != null && !"".equals(qqNumber)){
+            iUser.setQqNum(qqNumber);
+        }
+        if(wechatNum != null && !"".equals(wechatNum)){
+            iUser.setWechatNum(wechatNum);
         }
 
         try{
@@ -408,7 +413,7 @@ public class AccountController {
         }catch (Exception e){
             return e.getMessage();
         }
-        return "数据保存成功";
+        return "OK";
     }
 
     @RequestMapping("/addAccount")
@@ -502,6 +507,41 @@ public class AccountController {
 
                                userService.createAccount(user);
                                userService.setRole(account , identity);
+
+                               Customer customer = new Customer();
+                               String customerID = "knowhy"+sdf2.format(new Date());
+                               List<Customer> customerList = customerDAO.findByCreateDate(LocalDate.now());
+                               int customerLength = customerList.size() + 1;
+                               String customers = String.valueOf(customerLength);
+                               for(int i = customers.length() ; i < 4 ; i++){
+                                   customers = "0"+customers;
+                               }
+                               customerID = customerID + customers;
+
+                               customer.setId(customerID);
+                               customer.setName(company);
+                               customer.setPrincipal(account);
+                               customer.setPhone(phone);
+                               customer.setEmail(email);
+                               customer.setCreater(account);
+                               customer.setCreaterName("客户"+account);
+                               customer.setCreateDate(LocalDate.now());
+                               customer.setFollowStatus("O");
+                               customerDAO.save(customer);
+
+                               //创建销售计划
+
+                               SalesPlan salesPlan= new SalesPlan();
+                               String salePlanId = salePlanService.generateNumber();
+                               salesPlan.setId(salePlanId);
+                               salesPlan.setCustomerCode(customerID);
+                               salesPlan.setCustomerName(company);
+                               salesPlan.setCreater(account);
+                               salesPlan.setCreaterName("客户"+account);
+                               salesPlan.setDescribe("客户"+account+"创建该订单");
+                               salesPlan.setPlanStatus("first");
+                               salePlanService.createSalePlan(salesPlan);
+
                            }catch (Exception e){
                                return e.getMessage();
                            }
@@ -519,7 +559,6 @@ public class AccountController {
                            user.setPassword(password);
                            user.setSalt("abc");
                            user.setPhone(phone);
-//                       user.setCompany(company);
                            user.setCreateTime(new Date());
                            user.setStatus("O");
                            user.setEmail(email);
@@ -567,4 +606,99 @@ public class AccountController {
         return userService.getIdentity(account);
     }
 
+    @RequestMapping("/onlyChangePhone")
+    @ResponseBody
+    public String changephone(HttpSession session , String phone){
+        IUser user = (IUser)session.getAttribute("user");
+        String account = user.getAccount();
+        if(userService.phoneUsed(phone)){
+            return "该手机号已被使用";
+        }
+        try{
+            IUser person = userService.findUserByAccount(account);
+            person.setPhone(phone);
+            userService.updatePassword(person);
+        }catch (Exception e){
+            return e.getMessage();
+        }
+        return "OK";
+    }
+
+    @RequestMapping("/onlyChangePassword")
+    @ResponseBody
+    public String changePassword(HttpSession session , String password){
+        IUser user = (IUser)session.getAttribute("user");
+        String account = user.getAccount();
+        try{
+            IUser person = userService.findUserByAccount(account);
+            password = MD5Utils.addMD5(password).toString();
+            person.setPassword(password);
+            userService.updatePassword(person);
+        }catch (Exception e){
+            return e.getMessage();
+        }
+        return "OK";
+    }
+
+    @RequestMapping("/getHeadPic")
+    @ResponseBody
+    public String getPicName(HttpSession session){
+        IUser user = (IUser)session.getAttribute("user");
+        String account = user.getAccount();
+        IUser person = userService.findUserByAccount(account);
+        String headPic = person.getHeadPic();
+        if(headPic == null || "".equals(headPic)){
+            return "NO";
+        }else{
+            if("".equals(headPic.trim())){
+                return "NO";
+            }else{
+                return headPic;
+            }
+        }
+    }
+
+    @RequestMapping("/headPicExist")
+    @ResponseBody
+    public String picExist(HttpServletRequest request , String picName){
+        String staticPath = ClassUtils.getDefaultClassLoader().getResource("static").getPath();
+        String url_path = "image" + File.separator +"headPic";
+        String path = staticPath + File.separator + url_path;
+        File file = new File(path, picName);
+        if (!file.getParentFile().exists()) {
+            return "NO";
+        }else{
+            return "have";
+        }
+    }
+
+    @RequestMapping("/uploadHeadPic")
+    @ResponseBody
+    public String saveUploadPic(@RequestParam("demo") MultipartFile file , HttpServletRequest request , HttpSession session) throws IOException {
+        String filename ;
+        if (!file.isEmpty()) {
+            filename = file.getOriginalFilename();
+
+            String staticPath = ClassUtils.getDefaultClassLoader().getResource("static").getPath();
+            String url_path = "image" + File.separator +"headPic";
+            String path = staticPath + File.separator + url_path;
+            System.out.println("路径："+path);
+
+            File filepath = new File(path, filename);
+            if (!filepath.getParentFile().exists()) {
+                filepath.getParentFile().mkdirs();
+            }
+            file.transferTo(new File(path + File.separator + filename));
+            try{
+                IUser user = (IUser)session.getAttribute("user");
+                String account = user.getAccount();
+                IUser person = userService.findUserByAccount(account);
+                person.setHeadPic(filename);
+                userService.updatePassword(person);
+            }catch (Exception e){
+                return e.getMessage();
+            }
+        }
+        return "OK";
+    }
 }

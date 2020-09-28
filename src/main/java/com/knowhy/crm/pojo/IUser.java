@@ -39,6 +39,12 @@ public class IUser{
     Date createTime;
     @Column(name = "lastUpdateTime")
     Date updateTime;
+    String dept;
+    String job;
+    String sex;
+    String qqNum;
+    String wechatNum;
+    String headPic;
 
 
 
@@ -128,5 +134,53 @@ public class IUser{
 
     public void setCompany(String company) {
         this.company = company;
+    }
+
+    public String getSex() {
+        return sex;
+    }
+
+    public void setSex(String sex) {
+        this.sex = sex;
+    }
+
+    public String getQqNum() {
+        return qqNum;
+    }
+
+    public void setQqNum(String qqNum) {
+        this.qqNum = qqNum;
+    }
+
+    public String getWechatNum() {
+        return wechatNum;
+    }
+
+    public void setWechatNum(String wechatNum) {
+        this.wechatNum = wechatNum;
+    }
+
+    public String getHeadPic() {
+        return headPic;
+    }
+
+    public void setHeadPic(String headPic) {
+        this.headPic = headPic;
+    }
+
+    public String getDept() {
+        return dept;
+    }
+
+    public void setDept(String dept) {
+        this.dept = dept;
+    }
+
+    public String getJob() {
+        return job;
+    }
+
+    public void setJob(String job) {
+        this.job = job;
     }
 }

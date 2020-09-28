@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<title>公海池</title>
+<head th:include="include/fore/newHeader::html" ></head>
+<body>
+<div id="workingArea">
+    <div th:replace="include/fore/top::html" ></div>
+    <div th:replace="include/fore/leftMenu::html" ></div>
+    <div th:replace="include/fore/homePages/customerManage/customerMaintain/poolPage::html" ></div>
+</div>
+
+<script>
+
+    var customerStartPool = 1;
+    var customerPagesPool = 0;
+
+    $(function () {
+        loadAllCustomerPool();
+        getAllSaleMan();
+    })
+    function loadAllCustomerPool() {
+        customerStartPool = 1;
+        $.ajax({
+            type:"post",
+            data:{"start":customerStartPool},
+            url:"selectCustomerByPageAndCondition",
+            async:false,
+            success:function (data) {
+                $("#customerPool").html("");
+                customerPagesPool = data.pages;
+                var customers = data.customers;
+                for(var i = 0 ; i < customers.length ; i++){
+                    $("#customerPool").append("<tr>"+
+                        "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+'<input name="choose" type="checkbox" value="'+i+'">'+"</td>"+
+                        "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].id+"</td>"+
+                        "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].name+"</td>"+
+                        "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].customerType+"</td>"+
+                        "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].area+"</td>"+
+                        "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].principal+"</td>"+
+                        "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].phone+"</td>"+
+                        "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].followName+"</td>"+
+                        "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<button class='btn btn-warning'>跟进</button>"+"</td>"+"</tr>");
+                }
+                $("#poolPage").show();
+            },
+            error:function () {
+                $.message({
+                    message:'程序出错',
+                    type:'error'
+                })
+            }
+        })
+    }
+
+    function loadAllCustomerPoolByName() {
+        var customerName = $("#poolSearch").val();
+        $.ajax({
+            type:"post",
+            data:{"customerName":customerName},
+            url:"findByCistomerName",
+            async:false,
+            success:function (data) {
+                $("#customerPool").html("");
+                for(var i = 0 ; i < data.length ; i++){
+                    $("#customerPool").append("<tr>"+
+                        "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+'<input name="choose" type="checkbox" value="'+i+'">'+"</td>"+
+                        "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+data[i].id+"</td>"+
+                        "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+data[i].name+"</td>"+
+                        "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+data[i].customerType+"</td>"+
+                        "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+data[i].area+"</td>"+
+                        "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+data[i].principal+"</td>"+
+                        "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+data[i].phone+"</td>"+
+                        "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+data[i].followName+"</td>"+
+                        "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<button class='btn btn-warning'>跟进</button>"+"</td>"+"</tr>");
+                }
+                $("#poolPage").hide();
+            },
+            error:function () {
+                $.message({
+                    message:'程序出错',
+                    type:'error'
+                })
+            }
+        })
+    }
+
+    function getAllSaleMan() {
+        $.ajax({
+            type:"post",
+            url:"loadAllSaleMan",
+            async:false,
+            success:function (data) {
+                $("#saleMen").html("");
+                $("#saleMen").append("<option value='0'>"+"--请选择--"+"</option>");
+                for(var i = 0 ; i < data.length ; i++){
+                    $("#saleMen").append('<option value="'+data[i].account+'">'+data[i].name+"</option>");
+                }
+            }
+        })
+    }
+
+    $(function() {
+        $("#chooseAll").click(function() {
+            $(":checkbox[name='choose']").prop("checked", this.checked); // this指代的你当前选择的这个元素的JS对象
+        });
+    });
+
+    function chooseCustomer() {
+        var account = $("#saleMen option:selected").val();
+        var obj = document.getElementsByName("choose");
+        var check_val = [];
+        for (k in obj) {
+            if (obj[k].checked)
+                check_val.push(obj[k].value);
+        }
+        if(check_val.length == 0){
+            alert("请选择客户");
+        }else{
+            var IDs = "";
+            for(var i = 0 ; i < check_val.length ; i++){
+                var target = parseInt(check_val[i]);
+                var customerID = document .getElementById ("customerPool").rows [target].cells[1].innerHTML;
+                if(i == 0){
+                    IDs = IDs+customerID;
+                }else{
+                    IDs = IDs+","+customerID;
+                }
+            }
+
+            $.ajax({
+                type:"post",
+                data:{"ids":IDs , "account":account},
+                url:"arrangeCustomer",
+                async:false,
+                success:function (data) {
+                    if(data == "分配成功"){
+                        $.message({
+                            message:"客户分配成功",
+                            type:'success'
+                        })
+                    }else{
+                        $.message({
+                            message:data,
+                            type:'error'
+                        })
+                    }
+                    loadAllCustomerPool();
+                }
+            })
+        }
+    }
+</script>
+</body>
+</html>

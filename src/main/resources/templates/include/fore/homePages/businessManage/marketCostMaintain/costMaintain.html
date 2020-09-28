@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div style="width: 100%; margin-top: 20px;margin-left: 20px;">
+    <span style="font-size: 16px;">商机管理 > 销售费用 > 费用维护</span>
+    <div style="margin-top: 20px;">
+        <input id="costType" class="form-control" style="width: 200px;" placeholder="费用类型">&nbsp&nbsp
+        <input id="costPrincipal" class="form-control" style="width: 200px;" placeholder="负责人">&nbsp&nbsp
+        <button class="btn btn-primary" style="background-color: #ff9f20;margin-right: 50px;" onclick="findByParams()">查&nbsp&nbsp询</button>
+    </div>
+    <div style="margin-top: 20px;">
+        <table class="table">
+            <thead style="background-color: #dde5e5;font-size: 14px;text-align: left;vertical-align: inherit;">
+            <tr>
+                <th>费用类型</th>
+                <th>费用描述</th>
+                <th>金额</th>
+                <th>发生时间</th>
+                <th>联系人</th>
+                <th>负责人</th>
+                <th>创建时间</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody id="allSaleCost"></tbody>
+        </table>
+    </div>
+</div>
+
+</body>
+</html>

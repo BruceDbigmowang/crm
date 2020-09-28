@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<title>账号新增</title>
+<head th:include="include/fore/newHeader::html" ></head>
+<body>
+<div id="workingArea">
+    <div th:replace="include/fore/top::html" ></div>
+    <div th:replace="include/fore/leftMenu::html" ></div>
+    <div th:replace="include/fore/homePages/systemConfigManage/accountRoleMaintain/accountAddPages::html" ></div>
+</div>
+<script>
+    $(function () {
+        showInnerRole();
+        showInnerUser();
+    })
+
+    function showInnerRole() {
+        $.ajax({
+            type:"post",
+            url:"getInnerRole",
+            async:false,
+            success:function (data) {
+                $("#role").html("");
+                $("#role").append('<option value="0">'+"--请选择--"+"</option>");
+                for(var i = 0 ; i < data.length ; i++){
+                    $("#role").append('<option value="'+data[i].id+'">'+data[i].roleName+"</option>");
+                }
+            }
+        })
+    }
+
+    function showInnerUser() {
+        $.ajax({
+            type:"post",
+            url:"getInnerUser",
+            async:false,
+            success:function (data) {
+                $("#allSaleMan").html("");
+                for(var i = 0 ; i < data.length ; i++){
+                    $("#allSaleMan").append("<tr>"
+                        +"<td>"+data[i].account+"</td>"
+                        +"<td>"+data[i].name+"</td>"
+                        +"<td>"+data[i].phone+"</td>"
+                        +"<td>"+data[i].email+"</td>"
+                        +"<td>"+data[i].job+"</td>"
+                        +"</tr>")
+                }
+            }
+        })
+    }
+
+    function createInnerUser() {
+        var account = $("#account").val();
+        var name = $("#name").val();
+        var phone = $("#phone").val();
+        var email = $("#email").val();
+        var wechat = $("#wechat").val();
+        var roleId = $("#role option:selected").val();
+        var data = {"account":account , "name":name , "phone":phone , "email":email , "wechatNum":wechat , "roleId":roleId};
+        $.ajax({
+            type:"post",
+            data:data,
+            url:"saveInnerUser",
+            async:false,
+            success:function (data) {
+                if(data == "OK"){
+                    $.message({
+                        message:'账号创建成功，默认密码：123456',
+                        type:'success'
+                    });
+                    showInnerUser();
+                }else{
+                    $.message({
+                        message:data,
+                        type:'error'
+                    })
+                }
+            }
+        })
+    }
+</script>
+</body>
+</html>

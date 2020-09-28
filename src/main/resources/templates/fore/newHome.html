@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:include="include/fore/newHeader::html" ></head>
+<body>
+<div id="workingArea">
+    <div th:replace="include/fore/top::html" ></div>
+    <div th:replace="include/fore/leftMenu::html" ></div>
+    <div th:replace="include/fore/body::html" ></div>
+</div>
+<script>
+    $(function() {
+
+        $(".sidebar-panel nav > li > a").click(function(){
+            var target= $(this).attr("link_url");
+            if (target != null) {
+                showAtRight(target);
+            }
+        });
+        $(".sidebar-panel ull > li > a").click(function(){
+            var target= $(this).attr("link_url");
+            if (target != null) {
+                showAtRight(target);
+            }
+        });
+
+
+    });
+
+    /**
+     * xml指向jsp页面
+     * @param url
+     * @returns
+     */
+    function showAtRight(obj) {
+        var target= $(obj).attr("link_url");
+        var xmlHttp;
+        if (window.XMLHttpRequest) {
+            xmlHttp=new XMLHttpRequest();
+        }
+        else {
+            xmlHttp=new ActiveXObject("Microsoft.XMLHTTP");
+        }
+        xmlHttp.onreadystatechange=function() {
+            if (xmlHttp.readyState == 4) {
+                //xmlHttp.readyState == 4    ����    finished downloading response
+                if (xmlHttp.status == 200) {
+                    document.getElementById("mainContent").innerHTML=xmlHttp.responseText;
+                    executeScript(xmlHttp.responseText);
+                }
+                else if (xmlHttp.status == 404){
+                    alert("出错了  （错误代码：404 Not Found），……！");
+                    return;
+                }
+                else if (xmlHttp.status == 403) {
+                    alert("出错了   （错误代码：403 Forbidden），……");
+                    return;
+                }
+                else {
+                    alert("出错了   （错误代码：" + request.status + "），……");
+                    return;
+                }
+            }
+        }
+        xmlHttp.open("GET", target, true);
+        xmlHttp.send();
+    }
+    function executeScript(html){
+        var reg = /<script[^>]*>([^\x00]+)$/i;
+        //������HTMLƬ�ΰ�<\/script>���
+        var htmlBlock = html.split("<\/script>");
+        for (var i in htmlBlock)
+        {
+            var blocks;
+            if (blocks = htmlBlock[i].match(reg))
+            {
+                var code = blocks[1].replace(/<!--/, '');
+                try
+                {
+                    eval(code)
+                }
+                catch (e)
+                {
+                }
+            }
+        }
+    }
+
+    $(function(){
+        changeHeight();
+        getHeadPic();
+        findAllMyFlow();
+    })
+
+    //第三页：上传图片 保存内容
+    function uploadImages(){
+        $.ajaxFileUpload({
+            type:"post",
+            fileElementId:"images",
+            url:"updatePic",
+            async:false,
+            dataType:'text',
+            success:function(data){
+                alert(data);
+            },
+            error:function(){
+                alert("设备类型文件上传出错");
+            }
+        })
+    }
+
+    function showContent(url) {
+        var xmlHttp;
+        if (window.XMLHttpRequest) {
+            xmlHttp=new XMLHttpRequest();
+        }
+        else {
+            xmlHttp=new ActiveXObject("Microsoft.XMLHTTP");
+        }
+        xmlHttp.onreadystatechange=function() {
+            if (xmlHttp.readyState == 4) {
+                //xmlHttp.readyState == 4    ����    finished downloading response
+                if (xmlHttp.status == 200) {
+                    document.getElementById("mainContent").innerHTML=xmlHttp.responseText;
+                    executeScript(xmlHttp.responseText);
+                }
+                else if (xmlHttp.status == 404){
+                    alert("出错了  （错误代码：404 Not Found），……！");
+                    return;
+                }
+                else if (xmlHttp.status == 403) {
+                    alert("出错了   （错误代码：403 Forbidden），……");
+                    return;
+                }
+                else {
+                    alert("出错了   （错误代码：" + request.status + "），……");
+                    return;
+                }
+            }
+        }
+        xmlHttp.open("GET", url, true);
+        xmlHttp.send();
+    }
+
+    function changeHeight() {
+        var totalHeight = document.documentElement.clientHeight;
+        if(totalHeight > 776){
+            var height = totalHeight -60;
+            $("#allContent").css('height' , totalHeight);
+            $("#leftMenu").css('height' , height)
+        }
+    }
+
+    var present = 1;
+    var pages = 0;
+    
+    function findAllMyFlow() {
+        present = 1;
+        $.ajax({
+            type:"post",
+            data:{"start":present},
+            url:"getMyAll",
+            async:false,
+            success:function (data) {
+                $("#allRequest").html("");
+                var info = data.info;
+                if(info == "no"){
+                    $("#allRequest").append("<tr>"+'<td colspan="7" style="text-align: center;">'+"暂无数据"+"</td>"+"</tr>");
+                }else{
+                    var reqs = data.reqs;
+                    for(var i = 0 ; i < reqs.length ; i++){
+                        if(reqs[i].type == "travel"){
+                            $("#allRequest").append("<tr>"
+                                +"<td>"+reqs[i].reqNum+"</td>"
+                                +"<td>"+reqs[i].name+"</td>"
+                                +"<td>"+reqs[i].typeName+"</td>"
+                                +"<td>"+reqs[i].reason+"</td>"
+                                +"<td>"+reqs[i].makeDate+"</td>"
+                                +"<td>"+reqs[i].statusName+"</td>"
+                                +"<td>"+'<button class="btn btn-warning" data-toggle="modal" data-target="#myModal" onclick="getTravelDetail(this)">查看</button>'+"</td>"
+                                +"</tr>");
+                        }else if(reqs[i].type == "reimburse" ){
+                            $("#allRequest").append("<tr>"
+                                +"<td>"+reqs[i].reqNum+"</td>"
+                                +"<td>"+reqs[i].name+"</td>"
+                                +"<td>"+reqs[i].typeName+"</td>"
+                                +"<td>"+reqs[i].reason+"</td>"
+                                +"<td>"+reqs[i].makeDate+"</td>"
+                                +"<td>"+reqs[i].statusName+"</td>"
+                                +"<td>"+'<button class="btn btn-warning" data-toggle="modal" data-target="#myModal2" onclick="getReimburseDetail(this)">查看</button>'+"</td>"
+                                +"</tr>");
+                        }else if(reqs[i].type == "schemeF"){
+                            $("#allRequest").append("<tr>"
+                                +"<td>"+reqs[i].reqNum+"</td>"
+                                +"<td>"+reqs[i].name+"</td>"
+                                +"<td>"+reqs[i].typeName+"</td>"
+                                +"<td>"+reqs[i].reason+"</td>"
+                                +"<td>"+reqs[i].makeDate+"</td>"
+                                +"<td>"+reqs[i].statusName+"</td>"
+                                +"<td>"+'<button class="btn btn-warning" data-toggle="modal" data-target="#myModal4" onclick="getSchemeFDetail(this)">查看</button>'+"</td>"
+                                +"</tr>");
+                        }else if(reqs[i].type == "schemeS"){
+                            $("#allRequest").append("<tr>"
+                                +"<td>"+reqs[i].reqNum+"</td>"
+                                +"<td>"+reqs[i].name+"</td>"
+                                +"<td>"+reqs[i].typeName+"</td>"
+                                +"<td>"+reqs[i].reason+"</td>"
+                                +"<td>"+reqs[i].makeDate+"</td>"
+                                +"<td>"+reqs[i].statusName+"</td>"
+                                +"<td>"+'<button class="btn btn-warning" data-toggle="modal" data-target="#myModal5" onclick="getSchemeSDetail(this)">查看</button>'+"</td>"
+                                +"</tr>");
+                        }else if(reqs[i].type == "contractF"){
+                            $("#allRequest").append("<tr>"
+                                +"<td>"+reqs[i].reqNum+"</td>"
+                                +"<td>"+reqs[i].name+"</td>"
+                                +"<td>"+reqs[i].typeName+"</td>"
+                                +"<td>"+reqs[i].reason+"</td>"
+                                +"<td>"+reqs[i].makeDate+"</td>"
+                                +"<td>"+reqs[i].statusName+"</td>"
+                                +"<td>"+'<button class="btn btn-warning" data-toggle="modal" data-target="#myModal6" onclick="getContractFDetail(this)">查看</button>'+"</td>"
+                                +"</tr>");
+                        }else if(reqs[i].type == "contractS"){
+                            $("#allRequest").append("<tr>"
+                                +"<td>"+reqs[i].reqNum+"</td>"
+                                +"<td>"+reqs[i].name+"</td>"
+                                +"<td>"+reqs[i].typeName+"</td>"
+                                +"<td>"+reqs[i].reason+"</td>"
+                                +"<td>"+reqs[i].makeDate+"</td>"
+                                +"<td>"+reqs[i].statusName+"</td>"
+                                +"<td>"+'<button class="btn btn-warning" data-toggle="modal" data-target="#myModal7" onclick="getContractSDetail(this)">查看</button>'+"</td>"
+                                +"</tr>");
+                        }
+                    }
+                }
+                $('#btnBT1').attr('disabled',"true");
+                $('#btnBT2').attr('disabled',"true");
+                $('#btnBT3').attr('disabled',"true");
+                $('#btnBT4').attr('disabled',"true");
+                $('#btnBT5').attr('disabled',"true");
+                $('#btnBT6').attr('disabled',"true");
+                $('#btnBT7').attr('disabled',"true");
+                $('#btnBT8').attr('disabled',"true");
+                $('#btnBT9').attr('disabled',"true");
+                $('#btnBT10').attr('disabled',"true");
+                $('#btnBT11').attr('disabled',"true");
+                $('#btnBT12').attr('disabled',"true");
+                pages = data.pages;
+                $("#requestPage").show();
+            }
+        })
+    }
+
+    function findAllMyFlowPrevoius() {
+        if(present > 1){
+            present = present - 1;
+            $.ajax({
+                type:"post",
+                data:{"start":present},
+                url:"getMyAll",
+                async:false,
+                success:function (data) {
+                    $("#allRequest").html("");
+                    var info = data.info;
+                    if(info == "no"){
+                        $("#allRequest").append("<tr>"+'<td colspan="7" style="text-align: center;">'+"暂无数据"+"</td>"+"</tr>");
+                    }else{
+                        var reqs = data.reqs;
+                        for(var i = 0 ; i < reqs.length ; i++){
+                            if(reqs[i].type == "travel"){
+                                $("#allRequest").append("<tr>"
+                                    +"<td>"+reqs[i].reqNum+"</td>"
+                                    +"<td>"+reqs[i].name+"</td>"
+                                    +"<td>"+reqs[i].typeName+"</td>"
+                                    +"<td>"+reqs[i].reason+"</td>"
+                                    +"<td>"+reqs[i].makeDate+"</td>"
+                                    +"<td>"+reqs[i].statusName+"</td>"
+                                    +"<td>"+'<button class="btn btn-warning" data-toggle="modal" data-target="#myModal" onclick="getTravelDetail(this)">查看</button>'+"</td>"
+                                    +"</tr>");
+                            }else if(reqs[i].type == "reimburse" ){
+                                $("#allRequest").append("<tr>"
+                                    +"<td>"+reqs[i].reqNum+"</td>"
+                                    +"<td>"+reqs[i].name+"</td>"
+                                    +"<td>"+reqs[i].typeName+"</td>"
+                                    +"<td>"+reqs[i].reason+"</td>"
+                                    +"<td>"+reqs[i].makeDate+"</td>"
+                                    +"<td>"+reqs[i].statusName+"</td>"
+                                    +"<td>"+'<button class="btn btn-warning" data-toggle="modal" data-target="#myModal2" onclick="getReimburseDetail(this)">查看</button>'+"</td>"
+                                    +"</tr>");
+                            }else if(reqs[i].type == "schemeF"){
+                                $("#allRequest").append("<tr>"
+                                    +"<td>"+reqs[i].reqNum+"</td>"
+                                    +"<td>"+reqs[i].name+"</td>"
+                                    +"<td>"+reqs[i].typeName+"</td>"
+                                    +"<td>"+reqs[i].reason+"</td>"
+                                    +"<td>"+reqs[i].makeDate+"</td>"
+                                    +"<td>"+reqs[i].statusName+"</td>"
+                                    +"<td>"+'<button class="btn btn-warning" data-toggle="modal" data-target="#myModal4" onclick="getSchemeFDetail(this)">查看</button>'+"</td>"
+                                    +"</tr>");
+                            }else if(reqs[i].type == "schemeS"){
+                                $("#allRequest").append("<tr>"
+                                    +"<td>"+reqs[i].reqNum+"</td>"
+                                    +"<td>"+reqs[i].name+"</td>"
+                                    +"<td>"+reqs[i].typeName+"</td>"
+                                    +"<td>"+reqs[i].reason+"</td>"
+                                    +"<td>"+reqs[i].makeDate+"</td>"
+                                    +"<td>"+reqs[i].statusName+"</td>"
+                                    +"<td>"+'<button class="btn btn-warning" data-toggle="modal" data-target="#myModal5" onclick="getSchemeSDetail(this)">查看</button>'+"</td>"
+                                    +"</tr>");
+                            }else if(reqs[i].type == "contractF"){
+                                $("#allRequest").append("<tr>"
+                                    +"<td>"+reqs[i].reqNum+"</td>"
+                                    +"<td>"+reqs[i].name+"</td>"
+                                    +"<td>"+reqs[i].typeName+"</td>"
+                                    +"<td>"+reqs[i].reason+"</td>"
+                                    +"<td>"+reqs[i].makeDate+"</td>"
+                                    +"<td>"+reqs[i].statusName+"</td>"
+                                    +"<td>"+'<button class="btn btn-warning" data-toggle="modal" data-target="#myModal6" onclick="getContractFDetail(this)">查看</button>'+"</td>"
+                                    +"</tr>");
+                            }else if(reqs[i].type == "contractS"){
+                                $("#allRequest").append("<tr>"
+                                    +"<td>"+reqs[i].reqNum+"</td>"
+                                    +"<td>"+reqs[i].name+"</td>"
+                                    +"<td>"+reqs[i].typeName+"</td>"
+                                    +"<td>"+reqs[i].reason+"</td>"
+                                    +"<td>"+reqs[i].makeDate+"</td>"
+                                    +"<td>"+reqs[i].statusName+"</td>"
+                                    +"<td>"+'<button class="btn btn-warning" data-toggle="modal" data-target="#myModal7" onclick="getContractSDetail(this)">查看</button>'+"</td>"
+                                    +"</tr>");
+                            }
+                        }
+                    }
+                    $('#btnBT1').attr('disabled',"true");
+                    $('#btnBT2').attr('disabled',"true");
+                    $('#btnBT3').attr('disabled',"true");
+                    $('#btnBT4').attr('disabled',"true");
+                    $('#btnBT5').attr('disabled',"true");
+                    $('#btnBT6').attr('disabled',"true");
+                    $('#btnBT7').attr('disabled',"true");
+                    $('#btnBT8').attr('disabled',"true");
+                    $('#btnBT9').attr('disabled',"true");
+                    $('#btnBT10').attr('disabled',"true");
+                    $('#btnBT11').attr('disabled',"true");
+                    $('#btnBT12').attr('disabled',"true");
+                    $("#requestPage").show();
+                }
+            })
+        }
+    }
+
+    function findAllMyFlowlater() {
+        if(present < pages){
+            present = present + 1;
+            $.ajax({
+                type:"post",
+                data:{"start":present},
+                url:"getMyAll",
+                async:false,
+                success:function (data) {
+                    $("#allRequest").html("");
+                    var info = data.info;
+                    if(info == "no"){
+                        $("#allRequest").append("<tr>"+'<td colspan="7" style="text-align: center;">'+"暂无数据"+"</td>"+"</tr>");
+                    }else{
+                        var reqs = data.reqs;
+                        for(var i = 0 ; i < reqs.length ; i++){
+                            if(reqs[i].type == "travel"){
+                                $("#allRequest").append("<tr>"
+                                    +"<td>"+reqs[i].reqNum+"</td>"
+                                    +"<td>"+reqs[i].name+"</td>"
+                                    +"<td>"+reqs[i].typeName+"</td>"
+                                    +"<td>"+reqs[i].reason+"</td>"
+                                    +"<td>"+reqs[i].makeDate+"</td>"
+                                    +"<td>"+reqs[i].statusName+"</td>"
+                                    +"<td>"+'<button class="btn btn-warning" data-toggle="modal" data-target="#myModal" onclick="getTravelDetail(this)">查看</button>'+"</td>"
+                                    +"</tr>");
+                            }else if(reqs[i].type == "reimburse" ){
+                                $("#allRequest").append("<tr>"
+                                    +"<td>"+reqs[i].reqNum+"</td>"
+                                    +"<td>"+reqs[i].name+"</td>"
+                                    +"<td>"+reqs[i].typeName+"</td>"
+                                    +"<td>"+reqs[i].reason+"</td>"
+                                    +"<td>"+reqs[i].makeDate+"</td>"
+                                    +"<td>"+reqs[i].statusName+"</td>"
+                                    +"<td>"+'<button class="btn btn-warning" data-toggle="modal" data-target="#myModal2" onclick="getReimburseDetail(this)">查看</button>'+"</td>"
+                                    +"</tr>");
+                            }else if(reqs[i].type == "schemeF"){
+                                $("#allRequest").append("<tr>"
+                                    +"<td>"+reqs[i].reqNum+"</td>"
+                                    +"<td>"+reqs[i].name+"</td>"
+                                    +"<td>"+reqs[i].typeName+"</td>"
+                                    +"<td>"+reqs[i].reason+"</td>"
+                                    +"<td>"+reqs[i].makeDate+"</td>"
+                                    +"<td>"+reqs[i].statusName+"</td>"
+                                    +"<td>"+'<button class="btn btn-warning" data-toggle="modal" data-target="#myModal4" onclick="getSchemeFDetail(this)">查看</button>'+"</td>"
+                                    +"</tr>");
+                            }else if(reqs[i].type == "schemeS"){
+                                $("#allRequest").append("<tr>"
+                                    +"<td>"+reqs[i].reqNum+"</td>"
+                                    +"<td>"+reqs[i].name+"</td>"
+                                    +"<td>"+reqs[i].typeName+"</td>"
+                                    +"<td>"+reqs[i].reason+"</td>"
+                                    +"<td>"+reqs[i].makeDate+"</td>"
+                                    +"<td>"+reqs[i].statusName+"</td>"
+                                    +"<td>"+'<button class="btn btn-warning" data-toggle="modal" data-target="#myModal5" onclick="getSchemeSDetail(this)">查看</button>'+"</td>"
+                                    +"</tr>");
+                            }else if(reqs[i].type == "contractF"){
+                                $("#allRequest").append("<tr>"
+                                    +"<td>"+reqs[i].reqNum+"</td>"
+                                    +"<td>"+reqs[i].name+"</td>"
+                                    +"<td>"+reqs[i].typeName+"</td>"
+                                    +"<td>"+reqs[i].reason+"</td>"
+                                    +"<td>"+reqs[i].makeDate+"</td>"
+                                    +"<td>"+reqs[i].statusName+"</td>"
+                                    +"<td>"+'<button class="btn btn-warning" data-toggle="modal" data-target="#myModal6" onclick="getContractFDetail(this)">查看</button>'+"</td>"
+                                    +"</tr>");
+                            }else if(reqs[i].type == "contractS"){
+                                $("#allRequest").append("<tr>"
+                                    +"<td>"+reqs[i].reqNum+"</td>"
+                                    +"<td>"+reqs[i].name+"</td>"
+                                    +"<td>"+reqs[i].typeName+"</td>"
+                                    +"<td>"+reqs[i].reason+"</td>"
+                                    +"<td>"+reqs[i].makeDate+"</td>"
+                                    +"<td>"+reqs[i].statusName+"</td>"
+                                    +"<td>"+'<button class="btn btn-warning" data-toggle="modal" data-target="#myModal7" onclick="getContractSDetail(this)">查看</button>'+"</td>"
+                                    +"</tr>");
+                            }
+                        }
+                    }
+                    $('#btnBT1').attr('disabled',"true");
+                    $('#btnBT2').attr('disabled',"true");
+                    $('#btnBT3').attr('disabled',"true");
+                    $('#btnBT4').attr('disabled',"true");
+                    $('#btnBT5').attr('disabled',"true");
+                    $('#btnBT6').attr('disabled',"true");
+                    $('#btnBT7').attr('disabled',"true");
+                    $('#btnBT8').attr('disabled',"true");
+                    $('#btnBT9').attr('disabled',"true");
+                    $('#btnBT10').attr('disabled',"true");
+                    $('#btnBT11').attr('disabled',"true");
+                    $('#btnBT12').attr('disabled',"true");
+                    $("#requestPage").show();
+                }
+            })
+        }
+    }
+
+    function findAllMyFlowLast() {
+        present = pages;
+        $.ajax({
+            type:"post",
+            data:{"start":present},
+            url:"getMyAll",
+            async:false,
+            success:function (data) {
+                $("#allRequest").html("");
+                var info = data.info;
+                if(info == "no"){
+                    $("#allRequest").append("<tr>"+'<td colspan="7" style="text-align: center;">'+"暂无数据"+"</td>"+"</tr>");
+                }else{
+                    var reqs = data.reqs;
+                    for(var i = 0 ; i < reqs.length ; i++){
+                        if(reqs[i].type == "travel"){
+                            $("#allRequest").append("<tr>"
+                                +"<td>"+reqs[i].reqNum+"</td>"
+                                +"<td>"+reqs[i].name+"</td>"
+                                +"<td>"+reqs[i].typeName+"</td>"
+                                +"<td>"+reqs[i].reason+"</td>"
+                                +"<td>"+reqs[i].makeDate+"</td>"
+                                +"<td>"+reqs[i].statusName+"</td>"
+                                +"<td>"+'<button class="btn btn-warning" data-toggle="modal" data-target="#myModal" onclick="getTravelDetail(this)">查看</button>'+"</td>"
+                                +"</tr>");
+                        }else if(reqs[i].type == "reimburse" ){
+                            $("#allRequest").append("<tr>"
+                                +"<td>"+reqs[i].reqNum+"</td>"
+                                +"<td>"+reqs[i].name+"</td>"
+                                +"<td>"+reqs[i].typeName+"</td>"
+                                +"<td>"+reqs[i].reason+"</td>"
+                                +"<td>"+reqs[i].makeDate+"</td>"
+                                +"<td>"+reqs[i].statusName+"</td>"
+                                +"<td>"+'<button class="btn btn-warning" data-toggle="modal" data-target="#myModal2" onclick="getReimburseDetail(this)">查看</button>'+"</td>"
+                                +"</tr>");
+                        }else if(reqs[i].type == "schemeF"){
+                            $("#allRequest").append("<tr>"
+                                +"<td>"+reqs[i].reqNum+"</td>"
+                                +"<td>"+reqs[i].name+"</td>"
+                                +"<td>"+reqs[i].typeName+"</td>"
+                                +"<td>"+reqs[i].reason+"</td>"
+                                +"<td>"+reqs[i].makeDate+"</td>"
+                                +"<td>"+reqs[i].statusName+"</td>"
+                                +"<td>"+'<button class="btn btn-warning" data-toggle="modal" data-target="#myModal4" onclick="getSchemeFDetail(this)">查看</button>'+"</td>"
+                                +"</tr>");
+                        }else if(reqs[i].type == "schemeS"){
+                            $("#allRequest").append("<tr>"
+                                +"<td>"+reqs[i].reqNum+"</td>"
+                                +"<td>"+reqs[i].name+"</td>"
+                                +"<td>"+reqs[i].typeName+"</td>"
+                                +"<td>"+reqs[i].reason+"</td>"
+                                +"<td>"+reqs[i].makeDate+"</td>"
+                                +"<td>"+reqs[i].statusName+"</td>"
+                                +"<td>"+'<button class="btn btn-warning" data-toggle="modal" data-target="#myModal5" onclick="getSchemeSDetail(this)">查看</button>'+"</td>"
+                                +"</tr>");
+                        }else if(reqs[i].type == "contractF"){
+                            $("#allRequest").append("<tr>"
+                                +"<td>"+reqs[i].reqNum+"</td>"
+                                +"<td>"+reqs[i].name+"</td>"
+                                +"<td>"+reqs[i].typeName+"</td>"
+                                +"<td>"+reqs[i].reason+"</td>"
+                                +"<td>"+reqs[i].makeDate+"</td>"
+                                +"<td>"+reqs[i].statusName+"</td>"
+                                +"<td>"+'<button class="btn btn-warning" data-toggle="modal" data-target="#myModal6" onclick="getContractFDetail(this)">查看</button>'+"</td>"
+                                +"</tr>");
+                        }else if(reqs[i].type == "contractS"){
+                            $("#allRequest").append("<tr>"
+                                +"<td>"+reqs[i].reqNum+"</td>"
+                                +"<td>"+reqs[i].name+"</td>"
+                                +"<td>"+reqs[i].typeName+"</td>"
+                                +"<td>"+reqs[i].reason+"</td>"
+                                +"<td>"+reqs[i].makeDate+"</td>"
+                                +"<td>"+reqs[i].statusName+"</td>"
+                                +"<td>"+'<button class="btn btn-warning" data-toggle="modal" data-target="#myModal7" onclick="getContractSDetail(this)">查看</button>'+"</td>"
+                                +"</tr>");
+                        }
+                    }
+                }
+                $('#btnBT1').attr('disabled',"true");
+                $('#btnBT2').attr('disabled',"true");
+                $('#btnBT3').attr('disabled',"true");
+                $('#btnBT4').attr('disabled',"true");
+                $('#btnBT5').attr('disabled',"true");
+                $('#btnBT6').attr('disabled',"true");
+                $('#btnBT7').attr('disabled',"true");
+                $('#btnBT8').attr('disabled',"true");
+                $('#btnBT9').attr('disabled',"true");
+                $('#btnBT10').attr('disabled',"true");
+                $('#btnBT11').attr('disabled',"true");
+                $('#btnBT12').attr('disabled',"true");
+                $("#requestPage").show();
+            }
+        })
+    }
+
+    function findAllMyApprove() {
+        $.ajax({
+            type:"post",
+            url:"getMyAllApprove",
+            async:false,
+            success:function (data) {
+                $("#allRequest").html("");
+                var info = data.info;
+                if(info == "no"){
+                    $("#allRequest").append("<tr>"+'<td colspan="7" style="text-align: center;">'+"暂无数据"+"</td>"+"</tr>");
+                }else{
+                    var reqs = data.reqs;
+                    for(var i = 0 ; i < reqs.length ; i++){
+                        if(reqs[i].type == "travel"){
+                            $("#allRequest").append("<tr>"
+                                +"<td>"+reqs[i].reqNum+"</td>"
+                                +"<td>"+reqs[i].name+"</td>"
+                                +"<td>"+reqs[i].typeName+"</td>"
+                                +"<td>"+reqs[i].reason+"</td>"
+                                +"<td>"+reqs[i].makeDate+"</td>"
+                                +"<td>"+reqs[i].statusName+"</td>"
+                                +"<td>"+'<button class="btn btn-warning" data-toggle="modal" data-target="#myModal" onclick="getTravelDetail(this)">查看</button>'+"</td>"
+                                +"</tr>");
+                        }else if(reqs[i].type == "reimburse" ){
+                            $("#allRequest").append("<tr>"
+                                +"<td>"+reqs[i].reqNum+"</td>"
+                                +"<td>"+reqs[i].name+"</td>"
+                                +"<td>"+reqs[i].typeName+"</td>"
+                                +"<td>"+reqs[i].reason+"</td>"
+                                +"<td>"+reqs[i].makeDate+"</td>"
+                                +"<td>"+reqs[i].statusName+"</td>"
+                                +"<td>"+'<button class="btn btn-warning" data-toggle="modal" data-target="#myModal2" onclick="getReimburseDetail(this)">查看</button>'+"</td>"
+                                +"</tr>");
+                        }else if(reqs[i].type == "schemeF"){
+                            $("#allRequest").append("<tr>"
+                                +"<td>"+reqs[i].reqNum+"</td>"
+                                +"<td>"+reqs[i].name+"</td>"
+                                +"<td>"+reqs[i].typeName+"</td>"
+                                +"<td>"+reqs[i].reason+"</td>"
+                                +"<td>"+reqs[i].makeDate+"</td>"
+                                +"<td>"+reqs[i].statusName+"</td>"
+                                +"<td>"+'<button class="btn btn-warning" data-toggle="modal" data-target="#myModal4" onclick="getSchemeFDetail(this)">查看</button>'+"</td>"
+                                +"</tr>");
+                        }else if(reqs[i].type == "schemeS"){
+                            $("#allRequest").append("<tr>"
+                                +"<td>"+reqs[i].reqNum+"</td>"
+                                +"<td>"+reqs[i].name+"</td>"
+                                +"<td>"+reqs[i].typeName+"</td>"
+                                +"<td>"+reqs[i].reason+"</td>"
+                                +"<td>"+reqs[i].makeDate+"</td>"
+                                +"<td>"+reqs[i].statusName+"</td>"
+                                +"<td>"+'<button class="btn btn-warning" data-toggle="modal" data-target="#myModal5" onclick="getSchemeSDetail(this)">查看</button>'+"</td>"
+                                +"</tr>");
+                        }else if(reqs[i].type == "contractF"){
+                            $("#allRequest").append("<tr>"
+                                +"<td>"+reqs[i].reqNum+"</td>"
+                                +"<td>"+reqs[i].name+"</td>"
+                                +"<td>"+reqs[i].typeName+"</td>"
+                                +"<td>"+reqs[i].reason+"</td>"
+                                +"<td>"+reqs[i].makeDate+"</td>"
+                                +"<td>"+reqs[i].statusName+"</td>"
+                                +"<td>"+'<button class="btn btn-warning" data-toggle="modal" data-target="#myModal6" onclick="getContractFDetail(this)">查看</button>'+"</td>"
+                                +"</tr>");
+                        }else if(reqs[i].type == "contractS"){
+                            $("#allRequest").append("<tr>"
+                                +"<td>"+reqs[i].reqNum+"</td>"
+                                +"<td>"+reqs[i].name+"</td>"
+                                +"<td>"+reqs[i].typeName+"</td>"
+                                +"<td>"+reqs[i].reason+"</td>"
+                                +"<td>"+reqs[i].makeDate+"</td>"
+                                +"<td>"+reqs[i].statusName+"</td>"
+                                +"<td>"+'<button class="btn btn-warning" data-toggle="modal" data-target="#myModal7" onclick="getContractSDetail(this)">查看</button>'+"</td>"
+                                +"</tr>");
+                        }
+                    }
+                }
+                $('#btnBT1').removeAttr("disabled");
+                $('#btnBT2').removeAttr("disabled");
+                $('#btnBT3').removeAttr("disabled");
+                $('#btnBT4').removeAttr("disabled");
+                $('#btnBT5').removeAttr("disabled");
+                $('#btnBT6').removeAttr("disabled");
+                $('#btnBT7').removeAttr("disabled");
+                $('#btnBT8').removeAttr("disabled");
+                $('#btnBT9').removeAttr("disabled");
+                $('#btnBT10').removeAttr("disabled");
+                $('#btnBT11').removeAttr("disabled");
+                $('#btnBT12').removeAttr("disabled");
+            }
+        })
+    }
+
+    function getTravelDetail(obj) {
+        var i = obj.parentNode.parentNode.rowIndex;
+        var tab = document.getElementById("allApprove");
+        var orderID = tab.rows[i].cells[0].innerHTML;
+        $.ajax({
+            type:"post",
+            data:{"reqNum":orderID},
+            url:"getReqDetail",
+            async:false,
+            success:function (data) {
+                $("#reqNum").val(orderID);
+                $("#customer").val(data.customerName);
+                $("#processName").val(data.processName);
+                $("#applyer").val(data.applyAccount);
+                $("#travelDate").val(data.travelDate);
+                $("#travelTarget").val(data.travelTarget);
+                $("#supportPerson").val(data.supportPerson);
+                $("#spend").val(data.costAmount);
+                $("#costType").val(data.costType);
+                $("#costCenter").val(data.costCenter);
+                $("#other").val(data.other);
+            }
+        })
+    }
+
+    function getReimburseDetail(obj) {
+        var i = obj.parentNode.parentNode.rowIndex;
+        var tab = document.getElementById("allApprove");
+        var orderID = tab.rows[i].cells[0].innerHTML;
+        $.ajax({
+            type:"post",
+            data:{"reqNum":orderID},
+            url:"getReqDetail",
+            async:false,
+            success:function (data) {
+                $("#reqReimburse").val(orderID);
+                $("#travelID").val(data.travelID);
+                $("#travelCost").val(data.travelCost);
+                $("#eattingCost").val(data.eattingCost);
+                $("#serverCost").val(data.serverCost);
+                $("#otherCost").val(data.otherCost);
+               $("#apply").val(data.makerName);
+                $("#reimbursePic").html("");
+                $("#reimbursePic").append('<img style="width: 360px;height: 360px;" src="img/filePic/'+data.fileName+'">');
+                if(data.fileName == null){
+                    $("#reimbursePic").hide();
+                }
+            }
+        })
+    }
+
+    function getSchemeFDetail(obj) {
+        var i = obj.parentNode.parentNode.rowIndex;
+        var tab = document.getElementById("allApprove");
+        var orderID = tab.rows[i].cells[0].innerHTML;
+        $.ajax({
+            type:"post",
+            data:{"reqNum":orderID},
+            url:"getReqDetail",
+            async:false,
+            success:function (data) {
+                $("#reqSchemeF").val(orderID);
+                $("#customerSF").val(data.customerName);
+                $("#schemeF").append("<a href='downLoadSchemeF?filename="+data.fileName+"'>"+data.fileName+"</a>");
+                $("#applySF").val(data.makerName);
+                $("#applyDateSF").val(data.makeDate);
+            }
+        })
+    }
+
+    function getSchemeSDetail(obj) {
+        var i = obj.parentNode.parentNode.rowIndex;
+        var tab = document.getElementById("allApprove");
+        var orderID = tab.rows[i].cells[0].innerHTML;
+        $.ajax({
+            type:"post",
+            data:{"reqNum":orderID},
+            url:"getReqDetail",
+            async:false,
+            success:function (data) {
+                $("#reqSchemeS").val(orderID);
+                $("#customerSS").val(data.customerName);
+                $("#secondScheme").append("<a href='downLoadSchemeS?filename="+data.fileName+"'>"+data.fileName+"</a>");
+                var note = data.note;
+                $("#personChange").val(data.note);
+                $("#assetChange").val(data.note2);
+                $("#reduceChange").val(data.note3);
+                $("#applySS").val(data.makerName);
+                $("#applyDateSS").val(data.makeDate);
+            }
+        })
+    }
+
+    function getContractFDetail(obj) {
+        var i = obj.parentNode.parentNode.rowIndex;
+        var tab = document.getElementById("allApprove");
+        var orderID = tab.rows[i].cells[0].innerHTML;
+        $.ajax({
+            type:"post",
+            data:{"reqNum":orderID},
+            url:"getReqDetail",
+            async:false,
+            success:function (data) {
+                $("#reqContractF").val(orderID);
+                $("#customerCF").val(data.customerName);
+                $("#contractF").append("<a href='downLoadContractF?filename="+data.fileName+"'>"+data.fileName+"</a>");
+                $("#applyCF").val(data.makerName);
+                $("#applyDateCF").val(data.makeDate);
+            }
+        })
+    }
+
+    function getContractSDetail(obj) {
+        var i = obj.parentNode.parentNode.rowIndex;
+        var tab = document.getElementById("allApprove");
+        var orderID = tab.rows[i].cells[0].innerHTML;
+        $.ajax({
+            type:"post",
+            data:{"reqNum":orderID},
+            url:"getReqDetail",
+            async:false,
+            success:function (data) {
+                $("#reqContractS").val(orderID);
+                $("#customerCS").val(data.customerName);
+                $("#secondContract").append("<a href='downLoadContractS?filename="+data.fileName+"'>"+data.fileName+"</a>");
+                $("#note").val(data.note);
+                $("#applyCS").val(data.makerName);
+                $("#applyDateCS").val(data.makeDate);
+            }
+        })
+    }
+
+    function passTravelReq() {
+        var reqNum = $("#reqNum").val();
+        $.ajax({
+            type:"post",
+            data:{"reqNum":reqNum},
+            url:"setTravelPass",
+            async:false,
+            success:function (data) {
+                if(data == "OK"){
+                    $.message({
+                        message:'流程已审批通过',
+                        type:'success'
+                    })
+                }else{
+                    $.message({
+                        message:data,
+                        type:'error'
+                    })
+                }
+                findAllMyApprove();
+            }
+        })
+    }
+
+    function refuseTravelReq() {
+        var reqNum = $("#reqNum").val();
+        $.ajax({
+            type:"post",
+            data:{"reqNum":reqNum},
+            url:"setTravelRefuse",
+            async:false,
+            success:function (data) {
+                if(data == "OK"){
+                    $.message({
+                        message:'流程已退回',
+                        type:'success'
+                    })
+                }else{
+                    $.message({
+                        message:data,
+                        type:'error'
+                    })
+                }
+                findAllMyApprove();
+            }
+        })
+    }
+
+    function passReimburseReq() {
+        var reqNum = $("#reqReimburse").val();
+        $.ajax({
+            type:"post",
+            data:{"reqNum":reqNum},
+            url:"setReimbursePass",
+            async:false,
+            success:function (data) {
+                if(data == "OK"){
+                    $.message({
+                        message:'流程已审批通过',
+                        type:'success'
+                    })
+                }else{
+                    $.message({
+                        message:data,
+                        type:'error'
+                    })
+                }
+                findAllMyApprove();
+            }
+        })
+    }
+
+    function refuseReimburseReq() {
+        var reqNum = $("#reqReimburse").val();
+        $.ajax({
+            type:"post",
+            data:{"reqNum":reqNum},
+            url:"setReimbursePass",
+            async:false,
+            success:function (data) {
+                if(data == "OK"){
+                    $.message({
+                        message:'流程已退回',
+                        type:'success'
+                    })
+                }else{
+                    $.message({
+                        message:data,
+                        type:'error'
+                    })
+                }
+                findAllMyApprove();
+            }
+        })
+    }
+
+    function passSchemeF() {
+        var reqNum = $("#reqSchemeF").val();
+        $.ajax({
+            type:"post",
+            data:{"reqNum":reqNum},
+            url:"setSchemeFirstPass",
+            async:false,
+            success:function (data) {
+                if(data == "OK"){
+                    $.message({
+                        message:'流程已审批通过',
+                        type:'success'
+                    })
+                }else{
+                    $.message({
+                        message:data,
+                        type:'error'
+                    })
+                }
+                findAllMyApprove();
+            }
+        })
+    }
+
+    function refuseSchemeF() {
+        var reqNum = $("#reqSchemeF").val();
+        $.ajax({
+            type:"post",
+            data:{"reqNum":reqNum},
+            url:"setSchemeFirstRefuse",
+            async:false,
+            success:function (data) {
+                if(data == "OK"){
+                    $.message({
+                        message:'流程已退回',
+                        type:'success'
+                    })
+                }else{
+                    $.message({
+                        message:data,
+                        type:'error'
+                    })
+                }
+                findAllMyApprove();
+            }
+        })
+    }
+
+    function passSchemeS() {
+        var reqNum = $("#reqSchemeS").val();
+        $.ajax({
+            type:"post",
+            data:{"reqNum":reqNum},
+            url:"setSchemeSecondPass",
+            async:false,
+            success:function (data) {
+                if(data == "OK"){
+                    $.message({
+                        message:'流程已审批通过',
+                        type:'success'
+                    })
+                }else{
+                    $.message({
+                        message:data,
+                        type:'error'
+                    })
+                }
+                findAllMyApprove();
+            }
+        })
+    }
+
+    function refuseSchemeS() {
+        var reqNum = $("#reqSchemeS").val();
+        $.ajax({
+            type:"post",
+            data:{"reqNum":reqNum},
+            url:"setSchemeSecondRefuse",
+            async:false,
+            success:function (data) {
+                if(data == "OK"){
+                    $.message({
+                        message:'流程已退回',
+                        type:'success'
+                    })
+                }else{
+                    $.message({
+                        message:data,
+                        type:'error'
+                    })
+                }
+                findAllMyApprove();
+            }
+        })
+    }
+
+
+    function passContractF() {
+        var reqNum = $("#reqContractF").val();
+        $.ajax({
+            type:"post",
+            data:{"reqNum":reqNum},
+            url:"setContractFirstPass",
+            async:false,
+            success:function (data) {
+                if(data == "OK"){
+                    $.message({
+                        message:'流程已审批通过',
+                        type:'success'
+                    })
+                }else{
+                    $.message({
+                        message:data,
+                        type:'error'
+                    })
+                }
+                findAllMyApprove();
+            }
+        })
+    }
+
+    function refuseContractF() {
+        var reqNum = $("#reqContractF").val();
+        $.ajax({
+            type:"post",
+            data:{"reqNum":reqNum},
+            url:"setContractFirstPass",
+            async:false,
+            success:function (data) {
+                if(data == "OK"){
+                    $.message({
+                        message:'流程已退回',
+                        type:'success'
+                    })
+                }else{
+                    $.message({
+                        message:data,
+                        type:'error'
+                    })
+                }
+                findAllMyApprove();
+            }
+        })
+    }
+
+    function passContractS() {
+        var reqNum = $("#reqContractS").val();
+        $.ajax({
+            type:"post",
+            data:{"reqNum":reqNum},
+            url:"setContractSecondPass",
+            async:false,
+            success:function (data) {
+                if(data == "OK"){
+                    $.message({
+                        message:'流程已审批通过',
+                        type:'success'
+                    })
+                }else{
+                    $.message({
+                        message:data,
+                        type:'error'
+                    })
+                }
+                findAllMyApprove();
+            }
+        })
+    }
+
+    function refuseContractS() {
+        var reqNum = $("#reqContractS").val();
+        $.ajax({
+            type:"post",
+            data:{"reqNum":reqNum},
+            url:"setContractSecondRefuse",
+            async:false,
+            success:function (data) {
+                if(data == "OK"){
+                    $.message({
+                        message:'流程已退回',
+                        type:'success'
+                    })
+                }else{
+                    $.message({
+                        message:data,
+                        type:'error'
+                    })
+                }
+                findAllMyApprove();
+            }
+        })
+    }
+
+
+    function getModel3Show() {
+        var orderID = $("#reqReimburse").val();
+        var travelID = $("#travelID").val();
+        $.ajax({
+            type:"post",
+            data:{"travelID":travelID , "orderID":orderID},
+            url:"getTotalTravel",
+            async:false,
+            success:function (data) {
+                var travel = data.travel;
+                var sum = data.sum;
+                if(travel != null){
+                    $("#customerD").val(travel.customerName);
+                    $("#applyerD").val(travel.applyName);
+                    $("#travelDateD").val(travel.travelDate);
+                    $("#processName2").val(travel.processName);
+                    $("#travelTargetD").val(travel.travelTarget);
+                    $("#supportPersonD").val(travel.supportPerson);
+                    $("#spendD").val(travel.costAmount);
+                    $("#costTypeD").val(travel.costType);
+                    $("#costCenterD").val(travel.costCenter);
+                    $("#otherD").val(travel.other);
+                }
+                if(sum != null){
+                    $("#travelSum").val(sum.travelSum);
+                    $("#needSupport").val(sum.needSupport);
+                    $("#trouble").val(sum.trouble);
+                    $("#oppose").val(sum.oppose);
+                    $("#nextPlan").val(sum.nextPlan);
+                }
+                $("#myModal3").modal('show');
+            }
+        })
+    }
+</script>
+</body>
+</html>

@@ -43,6 +43,7 @@ public class ExpenseController {
         expenseHead.setCreater(userAccount);
         expenseHead.setUpdater(userAccount);
         expenseHead.setUpdateDate(now);
+        expenseHead.setCheckStatus("I");
         try{
             Date expenseDate = sdf.parse(costDate);
             expenseHead.setExpenseDate(expenseDate);

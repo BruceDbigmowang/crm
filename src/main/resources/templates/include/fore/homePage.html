@@ -175,7 +175,10 @@
                                     <div class="same_div" link_url="include/fore/homePages/customerManage/customerMaintain/accountMaintain.html" onclick="getUserByPage()">账号维护</div>
                                 </li>
                                 <li>
-                                    <div class="same_div" link_url="include/fore/homePages/customerManage/customerMaintain/customerBase.html" onclick="showAllCustomer()">客户维护</div>
+                                    <div class="same_div" link_url="include/fore/homePages/customerManage/customerMaintain/addCustomer.html">客户新增</div>
+                                </li>
+                                <li>
+                                    <div class="same_div" link_url="include/fore/homePages/customerManage/customerMaintain/customerBase.html">客户维护</div>
                                 </li>
                                 <li class="children_li">
                                     <div class="parent_li_head">
@@ -204,7 +207,7 @@
                                             <span class="icon color1" style="">
 
                                             </span>
-                                            竞争对手维护
+                                            竞争对手
                                             <span class="closed" style="">
                                                 <i class="glyphicon glyphicon-chevron-down" ></i>
                                             </span>
@@ -215,10 +218,7 @@
                                             <div class="same_div" link_url="include/fore/homePages/customerManage/competitorMaintain/competitorBase.html">竞争对手新增</div>
                                         </li>
                                         <li>
-                                            <div class="same_div" link_url="include/fore/homePages/customerManage/competitorMaintain/marketWorth.html">潜在市场价值</div>
-                                        </li>
-                                        <li>
-                                            <div class="same_div" link_url="include/fore/homePages/customerManage/competitorMaintain/serviceDirection.html">业务风向</div>
+                                            <div class="same_div" link_url="include/fore/homePages/customerManage/competitorMaintain/allCompetitor.html">全部竞争对手</div>
                                         </li>
                                     </ul>
                                 </li>
@@ -226,7 +226,7 @@
                         </li>
                         <li class="parent_li">
                             <div class="parent_li_head">
-                                <a href="#" class="first_menu" style="">
+                                <a class="first_menu" style="">
                                     <span class="icon color1" style="">
                                         <i class="	glyphicon glyphicon-wrench"></i>
                                     </span>
@@ -252,6 +252,9 @@
                                     <ul class="hide_ul">
                                         <li>
                                             <div class="same_div" link_url="include/fore/homePages/businessManage/marketCostMaintain/costBase.html">费用新增</div>
+                                        </li>
+                                        <li>
+                                            <div class="same_div" link_url="include/fore/homePages/businessManage/marketCostMaintain/costMaintain.html">费用维护</div>
                                         </li>
                                     </ul>
                                 </li>
@@ -317,7 +320,7 @@
                                 </li>
                                 <li class="children_li">
                                     <div class="parent_li_head">
-                                        <a href="#" class="secound_menu" style="">
+                                        <a class="secound_menu" style="">
                                             <span class="icon color1" style="">
 
                                             </span>
@@ -328,6 +331,9 @@
                                         </a>
                                     </div>
                                     <ul class="hide_ul">
+                                        <li>
+                                            <div class="same_div" link_url="include/fore/homePages/businessManage/marketOpportunities/addOpportunities.html">新增线索</div>
+                                        </li>
                                         <li>
                                             <div class="same_div" link_url="include/fore/homePages/businessManage/marketOpportunities/opportunitiesBase.html">商机/线索维护</div>
                                         </li>
@@ -862,42 +868,33 @@
         function showAtRight(url) {
             var xmlHttp;
             if (window.XMLHttpRequest) {
-                // code for IE7+, Firefox, Chrome, Opera, Safari
-                xmlHttp=new XMLHttpRequest();    //���� XMLHttpRequest����
+                xmlHttp=new XMLHttpRequest();
             }
             else {
-                // code for IE6, IE5
                 xmlHttp=new ActiveXObject("Microsoft.XMLHTTP");
             }
             xmlHttp.onreadystatechange=function() {
-                //onreadystatechange �� ��readystate�仯ʱ���ú���ķ���
                 if (xmlHttp.readyState == 4) {
                     //xmlHttp.readyState == 4    ����    finished downloading response
                     if (xmlHttp.status == 200) {
-                        //xmlHttp.status == 200        ����    ��������������
-                        document.getElementById("right_container").innerHTML=xmlHttp.responseText;    //����ҳ����id="content"��div�������
-                        executeScript(xmlHttp.responseText);    //ִ�дӷ��������ص�ҳ�������������JavaScript����
+                        document.getElementById("right_container").innerHTML=xmlHttp.responseText;
+                        executeScript(xmlHttp.responseText);
                     }
-                    //����״̬����
                     else if (xmlHttp.status == 404){
                         alert("出错了  （错误代码：404 Not Found），……！");
-                        /* ��404�Ĵ��� */
                         return;
                     }
                     else if (xmlHttp.status == 403) {
                         alert("出错了   （错误代码：403 Forbidden），……");
-                        /* ��403�Ĵ���  */
                         return;
                     }
                     else {
                         alert("出错了   （错误代码：" + request.status + "），……");
-                        /* �Գ������������������ʾ����Ĵ���   */
                         return;
                     }
                 }
             }
-            //�������͵��������ϵ�ָ���ļ���urlָ����ļ������д���
-            xmlHttp.open("GET", url, true);        //true��ʾ�첽����
+            xmlHttp.open("GET", url, true);
             xmlHttp.send();
         }
         function executeScript(html){
@@ -906,14 +903,13 @@
             var htmlBlock = html.split("<\/script>");
             for (var i in htmlBlock)
             {
-                var blocks;//ƥ��������ʽ���������飬blocks[1]����������һ�νű����ݣ���Ϊǰ��reg���������������Ž����˲������
+                var blocks;
                 if (blocks = htmlBlock[i].match(reg))
                 {
-                    //������ܴ��ڵ�ע�ͱ�ǣ�����ע�ͽ�β-->���Ժ��Դ���evalһ������������
                     var code = blocks[1].replace(/<!--/, '');
                     try
                     {
-                        eval(code) //ִ�нű�
+                        eval(code)
                     }
                     catch (e)
                     {

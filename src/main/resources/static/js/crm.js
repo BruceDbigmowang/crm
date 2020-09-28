@@ -1,9 +1,191 @@
+function changeHeadPic() {
+    $("#headPic").attr("src" , "./image/defaultUser.jpg")
+}
+
+function getHeadPic() {
+    $.ajax({
+        type:"post",
+        url:"getHeadPic",
+        async:false,
+        success:function (data) {
+            if(data != "NO"){
+                var picName = data;
+                getPic(picName);
+            }else{
+                changeHeadPic();
+            }
+        }
+    })
+}
+
+function getPic(picName) {
+    $.ajax({
+        type:"post",
+        data:{"picName":picName},
+        url:"headPicExist",
+        async:false,
+        success:function (data) {
+            if(data == "NO"){
+                changeHeadPic();
+            }else{
+                var path = "image/headPic/"+picName;
+                $("#headPic").attr("src" , path);
+                $("#tabPic").attr("src" , path);
+            }
+        }
+    })
+}
+
+function changePhone() {
+    var phone = $("#newPhone").val();
+    if(phone == ""){
+        $.message({
+            message:"手机号不能为空",
+            type:'error'
+        })
+    }else{
+        $.ajax({
+            type:"post",
+            data:{"phone":phone},
+            url:"onlyChangePhone",
+            async:false,
+            success:function (data) {
+                if(data == "OK"){
+                    $.message({
+                        message:"修改成功",
+                        type:'success'
+                    })
+                    getPersonalInfo();
+                }else{
+                    $.message({
+                        message:data,
+                        type:'error'
+                    })
+                }
+
+            },
+            error:function () {
+                $.message({
+                    message:'程序出错',
+                    type:'error'
+                })
+            }
+        })
+    }
+}
+
+function uploadHeadPic() {
+    $.ajaxFileUpload({
+        type:"post",
+        fileElementId:"demo",
+        url:"uploadHeadPic",
+        async:false,
+        dataType:'text',
+        success:function(data){
+            if(data == "OK"){
+                $.message({
+                    message:"头像上传成功",
+                    type:'success'
+                })
+                getHeadPic();
+            }else{
+                $.message({
+                    message:data,
+                    type:'error'
+                })
+            }
+        },
+        error:function(){
+            $.message({
+                message:"设备类型文件上传出错",
+                type:'error'
+            })
+        }
+    })
+}
+
+function uploadImages(){
+    $.ajaxFileUpload({
+        type:"post",
+        fileElementId:"images",
+        url:"updatePic",
+        async:false,
+        dataType:'text',
+        success:function(data){
+            alert(data);
+            if(data == "文件上传成功"){
+                $.message({
+                    message:'文件上传成功',
+                    type:'success'
+                })
+            }else{
+                $.message({
+                    message:data,
+                    type:'error'
+                })
+            }
+        },
+        error:function(){
+            $.message({
+                message:'程序出错',
+                type:'error'
+            })
+        }
+    })
+}
+
+function changePassword() {
+    var password = $("#passone").val();
+    var password2 = $("#passtwo").val();
+    if(password == "" || password2 ==""){
+        $.message({
+            message:"请输入两次新密码",
+            type:'error'
+        })
+    }else{
+        if(password != password2){
+            $.message({
+                message:"输入的两次密码不一致",
+                type:'error'
+            })
+        }else{
+            $.ajax({
+                type:"post",
+                data:{"password":password},
+                url:"onlyChangePassword",
+                async:false,
+                success:function (data) {
+                    if(data == "OK"){
+                        $.message({
+                            message:"修改成功",
+                            type:'success'
+                        })
+                        getPersonalInfo();
+                    }else{
+                        $.message({
+                            message:data,
+                            type:'error'
+                        })
+                    }
+
+                },
+                error:function () {
+                    $.message({
+                        message:"程序出错",
+                        type:'error'
+                    })
+                }
+            })
+        }
+    }
+}
+
 //个人中心的两个功能：1、查询个人数据  2、保存修改个人数据
 function getPersonalInfo(){
     $.ajax({
         url:"getPersonInfo",
         type:"post",
-        async:false,
+        async:true,
         success: function(data){
             var user = data.user;
             $("#userAccount").val(user.account);
@@ -11,10 +193,27 @@ function getPersonalInfo(){
             $("#userCompany").val(user.company);
             $("#userEmail").val(user.email);
             $("#userPhone").val(user.phone);
-            // alert("数据获取成功");
+            $("#userDept").val(user.dept);
+            $("#userJob").val(user.job);
+            $("#qqNum").val(user.qqNum);
+            $("#wechatNum").val(user.wechatNum);
+            $("#password1").val(user.password);
+            if(user.sex != null){
+                if(user.sex.replace(/\s*/g,"") == "男"){
+                    $("#isMale").attr("checked","checked");
+                    $("#isFemale").removeAttr("checked");
+                }else{
+                    $("#isFemale").attr("checked","checked");
+                    $("#isMale").removeAttr("checked");
+                }
+            };
+            getHeadPic();
         },
         error: function(data){
-            alert("数据获取失败");
+            $.message({
+                message:'数据获取失败',
+                type:'error'
+            })
         }
     });
 }
@@ -24,43 +223,40 @@ function savePersonalInfo() {
     var name = $("#userName").val();
     var company = $("#userCompany").val();
     var email = $("#userEmail").val();
-    var phone = $("#userPhone").val();
-    var password1 = $("#password1").val();
-    var password2 = $("#password2").val();
+    var dept = $("#userDept").val();
+    var job = $("#userJob").val();
+    var qqNum = $("#qqNum").val();
+    var wechatNum = $("#wechatNum").val();
+    var sex = $("input[name='sex']:checked").val();
     var url = "savePersonInfo";
-    if(password1 !== "" || password2 !== ""){
-        if(password1 != password2){
-            alert("两次输入的密码不一致");
-        }else{
-            var data = {"account":account , "name":name , "company":company , "phone":phone , "email":email , "password":password1};
-            $.ajax({
-                type:"post",
-                data:data,
-                url:url,
-                async:false,
-                success:function (data) {
-                    alert(data);
-                },
-                error:function () {
-                    alert("程序出错");
-                }
+    var data = {"account":account ,"sex":sex , "name":name , "company":company  , "email":email , "dept":dept , "job":job , "qqNum":qqNum , "wechatNum":wechatNum};
+    $.ajax({
+        type:"post",
+        data:data,
+        url:url,
+        async:false,
+        success:function (data) {
+            if(data == "OK"){
+                $.message({
+                    message:'数据保存成功',
+                    type:'success'
+                })
+                getPersonalInfo();
+            }else{
+                $.message({
+                    message:data,
+                    type:'error'
+                })
+            }
+
+        },
+        error:function () {
+            $.message({
+                message:'程序出错',
+                type:'error'
             })
         }
-    }else{
-        var data = {"account":account , "name":name , "company":company , "phone":phone , "email":email , "password":""};
-        $.ajax({
-            type:"post",
-            data:data,
-            url:url,
-            async:false,
-            success:function (data) {
-                alert(data);
-            },
-            error:function () {
-                alert("程序出错");
-            }
-        })
-    }
+    })
 }
 
 //账号维护
@@ -89,7 +285,7 @@ function getUserByPage() {
             $("#pageDIV").html("");
             var user = data.user;
             for(var i = 0 ; i < user.length ; i++){
-                $("#allUser").append("<tr>"+"<td>"+user[i].account+"</td>"+"<td>"+user[i].name+"</td>"+"<td>"+user[i].company+"</td>"+"<td>"+user[i].phone+"</td>"+"<td>"+user[i].email+"</td>"+"<td>"+user[i].role+"</td>"+"<td>"+'<a data-toggle="modal" data-target="#myModal" onclick="showAllRoles('+user[i].account+')">修改角色</a>'+"&nbsp&nbsp" +'<a onclick="deleteUser( '+user[i].account+')">删除账号</a>'+"</td>"+"</tr>");
+                $("#allUser").append("<tr>"+"<td style=\"font-size:14px;text-align: left;vertical-align: inherit;\">"+user[i].account+"</td>"+"<td style=\"font-size:14px;text-align: left;vertical-align: inherit;\">"+user[i].name+"</td>"+"<td style=\"font-size:14px;text-align: left;vertical-align: inherit;\">"+user[i].company+"</td>"+"<td style=\"font-size:14px;text-align: left;vertical-align: inherit;\">"+user[i].phone+"</td>"+"<td style=\"font-size:14px;text-align: left;vertical-align: inherit;\">"+user[i].email+"</td>"+"<td style=\"font-size:14px;text-align: left;vertical-align: inherit;\">"+user[i].role+"</td>"+"<td style=\"font-size:14px;text-align: left;vertical-align: inherit;\">"+'<a data-toggle="modal" data-target="#myModal" onclick="showAllRoles(this)">修改角色</a>'+"&nbsp&nbsp" +'<a onclick="deleteUser(this)">删除账号</a>'+"</td>"+"</tr>");
             }
             pages = data.size;
 
@@ -100,7 +296,10 @@ function getUserByPage() {
 
 function getNextUserByPage() {
     if(start == pages){
-        alert("此页为最后一页");
+        $.message({
+            message:'此页为最后一页',
+            type:'warning'
+        })
     }else{
         start = start+1;
         var data = {"start":start};
@@ -113,7 +312,7 @@ function getNextUserByPage() {
                 $("#allUser").html("");
                 var user = data.user;
                 for(var i = 0 ; i < user.length ; i++){
-                    $("#allUser").append("<tr>"+"<td>"+user[i].account+"</td>"+"<td>"+user[i].name+"</td>"+"<td>"+user[i].company+"</td>"+"<td>"+user[i].phone+"</td>"+"<td>"+user[i].email+"</td>"+"<td>"+user[i].role+"</td>"+"<td>"+'<a data-toggle="modal" data-target="#myModal" onclick="showAllRoles('+user[i].account+')">修改角色</a>'+"&nbsp&nbsp" +'<a onclick="deleteUser( '+user[i].account+')">删除账号</a>'+"</td>"+"</tr>");
+                    $("#allUser").append("<tr>"+"<td style=\"font-size:14px;text-align: left;vertical-align: inherit;\">"+user[i].account+"</td>"+"<td style=\"font-size:14px;text-align: left;vertical-align: inherit;\">"+user[i].name+"</td>"+"<td style=\"font-size:14px;text-align: left;vertical-align: inherit;\">"+user[i].company+"</td>"+"<td style=\"font-size:14px;text-align: left;vertical-align: inherit;\">"+user[i].phone+"</td>"+"<td style=\"font-size:14px;text-align: left;vertical-align: inherit;\">"+user[i].email+"</td>"+"<td style=\"font-size:14px;text-align: left;vertical-align: inherit;\">"+user[i].role+"</td>"+"<td style=\"font-size:14px;text-align: left;vertical-align: inherit;\">"+'<a data-toggle="modal" data-target="#myModal" onclick="showAllRoles(this)">修改角色</a>'+"&nbsp&nbsp" +'<a onclick="deleteUser(this)">删除账号</a>'+"</td>"+"</tr>");
                 }
             }
         });
@@ -122,7 +321,10 @@ function getNextUserByPage() {
 
 function getPreviousUserByPage() {
     if(start == 1){
-        alert("此页为第一页");
+        $.message({
+            message:'此页已是第一页',
+            type:'warning'
+        })
     }else{
         start = start-1;
         var data = {"start":start};
@@ -135,7 +337,7 @@ function getPreviousUserByPage() {
                 $("#allUser").html("");
                 var user = data.user;
                 for(var i = 0 ; i < user.length ; i++){
-                    $("#allUser").append("<tr>"+"<td>"+user[i].account+"</td>"+"<td>"+user[i].name+"</td>"+"<td>"+user[i].company+"</td>"+"<td>"+user[i].phone+"</td>"+"<td>"+user[i].email+"</td>"+"<td>"+user[i].role+"</td>"+"<td>"+'<a data-toggle="modal" data-target="#myModal" onclick="showAllRoles('+user[i].account+')">修改角色</a>'+"&nbsp&nbsp" +'<a onclick="deleteUser( '+user[i].account+')">删除账号</a>'+"</td>"+"</tr>");
+                    $("#allUser").append("<tr>"+"<td style=\"font-size:14px;text-align: left;vertical-align: inherit;\">"+user[i].account+"</td>"+"<td style=\"font-size:14px;text-align: left;vertical-align: inherit;\">"+user[i].name+"</td>"+"<td style=\"font-size:14px;text-align: left;vertical-align: inherit;\">"+user[i].company+"</td>"+"<td style=\"font-size:14px;text-align: left;vertical-align: inherit;\">"+user[i].phone+"</td>"+"<td style=\"font-size:14px;text-align: left;vertical-align: inherit;\">"+user[i].email+"</td>"+"<td style=\"font-size:14px;text-align: left;vertical-align: inherit;\">"+user[i].role+"</td>"+"<td style=\"font-size:14px;text-align: left;vertical-align: inherit;\">"+'<a data-toggle="modal" data-target="#myModal" onclick="showAllRoles(this)">修改角色</a>'+"&nbsp&nbsp" +'<a onclick="deleteUser(this)">删除账号</a>'+"</td>"+"</tr>");
                 }
             }
         });
@@ -154,7 +356,7 @@ function getFirstUserByPage() {
             $("#allUser").html("");
             var user = data.user;
             for(var i = 0 ; i < user.length ; i++){
-                $("#allUser").append("<tr>"+"<td>"+user[i].account+"</td>"+"<td>"+user[i].name+"</td>"+"<td>"+user[i].company+"</td>"+"<td>"+user[i].phone+"</td>"+"<td>"+user[i].email+"</td>"+"<td>"+user[i].role+"</td>"+"<td>"+'<a data-toggle="modal" data-target="#myModal" onclick="showAllRoles('+user[i].account+')">修改角色</a>'+"&nbsp&nbsp" +'<a onclick="deleteUser('+user[i].account+')">删除账号</a>'+"</td>"+"</tr>");
+                $("#allUser").append("<tr>"+"<td style=\"font-size:14px;text-align: left;vertical-align: inherit;\">"+user[i].account+"</td>"+"<td style=\"font-size:14px;text-align: left;vertical-align: inherit;\">"+user[i].name+"</td>"+"<td style=\"font-size:14px;text-align: left;vertical-align: inherit;\">"+user[i].company+"</td>"+"<td style=\"font-size:14px;text-align: left;vertical-align: inherit;\">"+user[i].phone+"</td>"+"<td style=\"font-size:14px;text-align: left;vertical-align: inherit;\">"+user[i].email+"</td>"+"<td style=\"font-size:14px;text-align: left;vertical-align: inherit;\">"+user[i].role+"</td>"+"<td style=\"font-size:14px;text-align: left;vertical-align: inherit;\">"+'<a data-toggle="modal" data-target="#myModal" onclick="showAllRoles(this)">修改角色</a>'+"&nbsp&nbsp" +'<a onclick="deleteUser(this)">删除账号</a>'+"</td>"+"</tr>");
             }
         }
     });
@@ -172,7 +374,7 @@ function getLastUserByPage() {
             $("#allUser").html("");
             var user = data.user;
             for(var i = 0 ; i < user.length ; i++){
-                $("#allUser").append("<tr>"+"<td>"+user[i].account+"</td>"+"<td>"+user[i].name+"</td>"+"<td>"+user[i].company+"</td>"+"<td>"+user[i].phone+"</td>"+"<td>"+user[i].email+"</td>"+"<td>"+user[i].role+"</td>"+"<td>"+'<a data-toggle="modal" data-target="#myModal" onclick="showAllRoles('+user[i].account+')">修改角色</a>'+"&nbsp&nbsp" +'<a onclick="deleteUser( '+user[i].account+')">删除账号</a>'+"</td>"+"</tr>");
+                $("#allUser").append("<tr>"+"<td style=\"font-size:14px;text-align: left;vertical-align: inherit;\">"+user[i].account+"</td>"+"<td style=\"font-size:14px;text-align: left;vertical-align: inherit;\">"+user[i].name+"</td>"+"<td style=\"font-size:14px;text-align: left;vertical-align: inherit;\">"+user[i].company+"</td>"+"<td style=\"font-size:14px;text-align: left;vertical-align: inherit;\">"+user[i].phone+"</td>"+"<td style=\"font-size:14px;text-align: left;vertical-align: inherit;\">"+user[i].email+"</td>"+"<td style=\"font-size:14px;text-align: left;vertical-align: inherit;\">"+user[i].role+"</td>"+"<td style=\"font-size:14px;text-align: left;vertical-align: inherit;\">"+'<a data-toggle="modal" data-target="#myModal" onclick="showAllRoles(this)">修改角色</a>'+"&nbsp&nbsp" +'<a onclick="deleteUser(this)">删除账号</a>'+"</td>"+"</tr>");
             }
         }
     });
@@ -196,7 +398,7 @@ function selectByConditionFirstPage() {
             $("#allUser").html("");
             var user = data.user;
             for(var i = 0 ; i < user.length ; i++){
-                $("#allUser").append("<tr>"+"<td>"+user[i].account+"</td>"+"<td>"+user[i].name+"</td>"+"<td>"+user[i].company+"</td>"+"<td>"+user[i].phone+"</td>"+"<td>"+user[i].email+"</td>"+"<td>"+user[i].role+"</td>"+"<td>"+'<a data-toggle="modal" data-target="#myModal" onclick="showAllRoles('+user[i].account+')">修改角色</a>'+"&nbsp&nbsp" +'<a onclick="deleteUser( '+user[i].account+')">删除账号</a>'+"</td>"+"</tr>");
+                $("#allUser").append("<tr>"+"<td style=\"font-size:14px;text-align: left;vertical-align: inherit;\">"+user[i].account+"</td>"+"<td style=\"font-size:14px;text-align: left;vertical-align: inherit;\">"+user[i].name+"</td>"+"<td style=\"font-size:14px;text-align: left;vertical-align: inherit;\">"+user[i].company+"</td>"+"<td style=\"font-size:14px;text-align: left;vertical-align: inherit;\">"+user[i].phone+"</td>"+"<td style=\"font-size:14px;text-align: left;vertical-align: inherit;\">"+user[i].email+"</td>"+"<td style=\"font-size:14px;text-align: left;vertical-align: inherit;\">"+user[i].role+"</td>"+"<td style=\"font-size:14px;text-align: left;vertical-align: inherit;\">"+'<a data-toggle="modal" data-target="#myModal" onclick="showAllRoles(this)">修改角色</a>'+"&nbsp&nbsp" +'<a onclick="deleteUser(this)">删除账号</a>'+"</td>"+"</tr>");
             }
             pages = data.size;
             $("#pageDIV").append("<a href=\"#\" onclick=\"getFirstUserByPageAndCondition()\">首 页</a>&nbsp&nbsp<a href=\"#\" onclick=\"getPreviousUserByPageAndCondition()\">上一页</a>&nbsp&nbsp<a href=\"#\" onclick=\"getNextUserByPageAndCondition()\">下一页</a>&nbsp&nbsp<a href=\"#\" onclick=\"getLastUserByPageAndCondition()\">尾 页</a>");
@@ -208,7 +410,10 @@ function selectByConditionFirstPage() {
 
 function getNextUserByPageAndCondition() {
     if(start == pages){
-        alert("此页为最后一页");
+        $.message({
+            message:'此页已是最后一页',
+            type:'warning'
+        })
     }else{
         start = start+1;
         var account = $("#maintainAccount").val();
@@ -224,7 +429,7 @@ function getNextUserByPageAndCondition() {
                 $("#allUser").html("");
                 var user = data.user;
                 for(var i = 0 ; i < user.length ; i++){
-                    $("#allUser").append("<tr>"+"<td>"+user[i].account+"</td>"+"<td>"+user[i].name+"</td>"+"<td>"+user[i].company+"</td>"+"<td>"+user[i].phone+"</td>"+"<td>"+user[i].email+"</td>"+"<td>"+user[i].role+"</td>"+"<td>"+'<a data-toggle="modal" data-target="#myModal" onclick="showAllRoles('+user[i].account+')">修改角色</a>'+"&nbsp&nbsp" +'<a onclick="deleteUser( '+user[i].account+'">删除账号</a>'+"</td>"+"</tr>");
+                    $("#allUser").append("<tr>"+"<td style=\"font-size:14px;text-align: left;vertical-align: inherit;\">"+user[i].account+"</td>"+"<td style=\"font-size:14px;text-align: left;vertical-align: inherit;\">"+user[i].name+"</td>"+"<td style=\"font-size:14px;text-align: left;vertical-align: inherit;\">"+user[i].company+"</td>"+"<td style=\"font-size:14px;text-align: left;vertical-align: inherit;\">"+user[i].phone+"</td>"+"<td style=\"font-size:14px;text-align: left;vertical-align: inherit;\">"+user[i].email+"</td>"+"<td style=\"font-size:14px;text-align: left;vertical-align: inherit;\">"+user[i].role+"</td>"+"<td style=\"font-size:14px;text-align: left;vertical-align: inherit;\">"+'<a data-toggle="modal" data-target="#myModal" onclick="showAllRoles(this)">修改角色</a>'+"&nbsp&nbsp" +'<a onclick="deleteUser(this)">删除账号</a>'+"</td>"+"</tr>");
                 }
             }
         });
@@ -233,7 +438,10 @@ function getNextUserByPageAndCondition() {
 
 function getPreviousUserByPageAndCondition() {
     if(start == 1){
-        alert("此页为第一页");
+        $.message({
+            message:'此页已是第一页',
+            type:'warning'
+        })
     }else{
         start = start-1;
         var account = $("#maintainAccount").val();
@@ -249,7 +457,7 @@ function getPreviousUserByPageAndCondition() {
                 $("#allUser").html("");
                 var user = data.user;
                 for(var i = 0 ; i < user.length ; i++){
-                    $("#allUser").append("<tr>"+"<td>"+user[i].account+"</td>"+"<td>"+user[i].name+"</td>"+"<td>"+user[i].company+"</td>"+"<td>"+user[i].phone+"</td>"+"<td>"+user[i].email+"</td>"+"<td>"+user[i].role+"</td>"+"<td>"+'<a data-toggle="modal" data-target="#myModal" onclick="showAllRoles('+user[i].account+')">修改角色</a>'+"&nbsp&nbsp" +'<a onclick="deleteUser( '+user[i].account+'">删除账号</a>'+"</td>"+"</tr>");
+                    $("#allUser").append("<tr>"+"<td style=\"font-size:14px;text-align: left;vertical-align: inherit;\">"+user[i].account+"</td>"+"<td style=\"font-size:14px;text-align: left;vertical-align: inherit;\">"+user[i].name+"</td>"+"<td style=\"font-size:14px;text-align: left;vertical-align: inherit;\">"+user[i].company+"</td>"+"<td style=\"font-size:14px;text-align: left;vertical-align: inherit;\">"+user[i].phone+"</td>"+"<td style=\"font-size:14px;text-align: left;vertical-align: inherit;\">"+user[i].email+"</td>"+"<td style=\"font-size:14px;text-align: left;vertical-align: inherit;\">"+user[i].role+"</td>"+"<td style=\"font-size:14px;text-align: left;vertical-align: inherit;\">"+'<a data-toggle="modal" data-target="#myModal" onclick="showAllRoles(this)">修改角色</a>'+"&nbsp&nbsp" +'<a onclick="deleteUser(this)">删除账号</a>'+"</td>"+"</tr>");
                 }
             }
         });
@@ -271,7 +479,7 @@ function getFirstUserByPageAndCondition() {
             $("#allUser").html("");
             var user = data.user;
             for(var i = 0 ; i < user.length ; i++){
-                $("#allUser").append("<tr>"+"<td>"+user[i].account+"</td>"+"<td>"+user[i].name+"</td>"+"<td>"+user[i].company+"</td>"+"<td>"+user[i].phone+"</td>"+"<td>"+user[i].email+"</td>"+"<td>"+user[i].role+"</td>"+"<td>"+'<a data-toggle="modal" data-target="#myModal" onclick="showAllRoles('+user[i].account+')">修改角色</a>'+"&nbsp&nbsp" +'<a onclick="deleteUser( '+user[i].account+'">删除账号</a>'+"</td>"+"</tr>");
+                $("#allUser").append("<tr>"+"<td style=\"font-size:14px;text-align: left;vertical-align: inherit;\">"+user[i].account+"</td>"+"<td style=\"font-size:14px;text-align: left;vertical-align: inherit;\">"+user[i].name+"</td>"+"<td style=\"font-size:14px;text-align: left;vertical-align: inherit;\">"+user[i].company+"</td>"+"<td style=\"font-size:14px;text-align: left;vertical-align: inherit;\">"+user[i].phone+"</td>"+"<td style=\"font-size:14px;text-align: left;vertical-align: inherit;\">"+user[i].email+"</td>"+"<td style=\"font-size:14px;text-align: left;vertical-align: inherit;\">"+user[i].role+"</td>"+"<td style=\"font-size:14px;text-align: left;vertical-align: inherit;\">"+'<a data-toggle="modal" data-target="#myModal" onclick="showAllRoles(this)">修改角色</a>'+"&nbsp&nbsp" +'<a onclick="deleteUser(this)">删除账号</a>'+"</td>"+"</tr>");
             }
         }
     });
@@ -292,14 +500,16 @@ function getLastUserByPageAndCondition() {
             $("#allUser").html("");
             var user = data.user;
             for(var i = 0 ; i < user.length ; i++){
-                $("#allUser").append("<tr>"+"<td>"+user[i].account+"</td>"+"<td>"+user[i].name+"</td>"+"<td>"+user[i].company+"</td>"+"<td>"+user[i].phone+"</td>"+"<td>"+user[i].email+"</td>"+"<td>"+user[i].role+"</td>"+"<td>"+'<a data-toggle="modal" data-target="#myModal" onclick="showAllRoles('+user[i].account+')">修改角色</a>'+"&nbsp&nbsp" +'<a onclick="deleteUser( '+user[i].account+'">删除账号</a>'+"</td>"+"</tr>");
+                $("#allUser").append("<tr>"+"<td style=\"font-size:14px;text-align: left;vertical-align: inherit;\">"+user[i].account+"</td>"+"<td style=\"font-size:14px;text-align: left;vertical-align: inherit;\">"+user[i].name+"</td>"+"<td style=\"font-size:14px;text-align: left;vertical-align: inherit;\">"+user[i].company+"</td>"+"<td style=\"font-size:14px;text-align: left;vertical-align: inherit;\">"+user[i].phone+"</td>"+"<td style=\"font-size:14px;text-align: left;vertical-align: inherit;\">"+user[i].email+"</td>"+"<td style=\"font-size:14px;text-align: left;vertical-align: inherit;\">"+user[i].role+"</td>"+"<td style=\"font-size:14px;text-align: left;vertical-align: inherit;\">"+'<a data-toggle="modal" data-target="#myModal" onclick="showAllRoles(this)">修改角色</a>'+"&nbsp&nbsp" +'<a onclick="deleteUser(this)">删除账号</a>'+"</td>"+"</tr>");
             }
         }
     });
 }
 
 //在模态框中显示所有角色
-function showAllRoles(account) {
+function showAllRoles(obj) {
+    var x = $(obj).parent().parent().find("td");
+    var account = x.eq(0).text();
     $("#RoleAccount").val(account);
     $.ajax({
         type:"post",
@@ -335,12 +545,23 @@ function changeRoles() {
         async:false,
         success:function (data) {
             if(data.includes("成功")){
-                alert(data);
+                $.message({
+                    message:data,
+                    type:'success'
+                })
                 getUserByPage();
+            }else{
+                $.message({
+                    message:data,
+                    type:'error'
+                })
             }
         },
         error:function () {
-            alert("程序出错");
+            $.message({
+                message:'程序出错',
+                type:'error'
+            })
         }
     })
 }
@@ -355,7 +576,7 @@ function getRoleCheckbox() {
             var roles = data.roles;
             $("#userRole").html("");
             for(var i = 0 ; i < roles.length ; i++){
-                $("#userRole").append('<input type="checkbox" name="userRoleCheck" value="'+roles[i].id+'">'+roles[i].roleName+"<br>");
+                $("#userRole").append('<input type="checkbox" name="userRoleCheck" value="'+roles[i].id+'">'+'<p style="margin-top: -35px;margin-left: 20px;">'+roles[i].roleName+"</p>"+"<br>");
             }
         }
     })
@@ -390,7 +611,10 @@ function insertNewAccount() {
     }
     if(errorInfo == ""){
         if(!/^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/.test(email)){
-            alert("邮箱输入的格式不正确");
+            $.message({
+                message:'邮箱输入的格式不正确',
+                type:'error'
+            })
         }else{
             $.ajax({
                 type:"post",
@@ -398,33 +622,75 @@ function insertNewAccount() {
                 url:"addAccount",
                 async:false,
                 success:function(data){
-                    alert(data);
-                    getUserByPage();
+                    if(data == "注册成功"){
+                        $.message({
+                            message:'注册成功',
+                            type:'success'
+                        })
+                        getUserByPage();
+                    }else{
+                        $.message({
+                            message:data,
+                            type:'error'
+                        })
+                    }
+
                 },
                 error:function () {
-                    alert("程序出错");
+                    $.message({
+                        message:'程序出错',
+                        type:'error'
+                    })
                 }
             })
         }
     }else{
-        alert(errorInfo+"是必填项或必选项");
+        $.message({
+            message:errorInfo+"是必填项或必选项",
+            type:'error'
+        })
     }
 }
 
-function deleteUser(account) {
-    $.ajax({
-        type:"post",
-        data:{"account":account},
-        url:"deleteUser",
-        async:false,
-        success:function (data) {
-            alert(data);
-            getUserByPage();
-        },
-        error:function(){
-            alert("程序出错");
-        }
-    })
+function deleteUser(obj) {
+    var x = $(obj).parent().parent().find("td");
+    var account = x.eq(0).text();
+    if(confirm('确定要删除账号:'+account+'吗')==true){
+
+        $.ajax({
+            type:"post",
+            data:{"account":account},
+            url:"deleteUser",
+            async:false,
+            success:function (data) {
+                if(data == "账号删除成功"){
+                    $.message({
+                        message:data,
+                        type:'success'
+                    })
+                    getUserByPage();
+                }else{
+                    $.message({
+                        message:data,
+                        type:'error'
+                    })
+                }
+
+            },
+            error:function(){
+                $.message({
+                    message:'程序出错',
+                    type:'error'
+                })
+            }
+        })
+
+    }else{
+
+        return false;
+
+    }
+
 }
 
 
@@ -440,21 +706,21 @@ function chooseNO() {
 function chooseCar() {
     $("#bussiness").html("");
     $("#products").html("");
-    $("#bussiness").append("<td  style=\"font-size: 14px;\">"+"<span style=\"color: red\" y>*</span>"+"您公司是"+"</td>"+"<td>"+'<input name="bussinessNature" type="radio" value="主机厂" style="width: 15px;">'+"主机厂"
-        +'<input name="bussinessNature" type="radio" value="零部件一级供应商" style="width: 15px;margin-left: 5%;">'+"零部件一级供应商"+"<br>"
-        +'<input name="bussinessNature" type="radio" value="零部件二级供应商" style="width: 15px;">'+"零部件二级供应商"+"<br>"
-        +'<input name="bussinessNature" type="radio" value="汽车后市场供应商" style="width: 15px;">'+"汽车后市场供应商"+"<br>"
-        +'<input name="bussinessNature" type="radio" value="其它" style="width: 15px;">'+"其它"+"</td>");
-    $("#products").append("<td  style=\"font-size: 14px;\">"+"<span style=\"color: red\" y>*</span>"+"您公司主要经营的产品"+"</td>"+"<td>"+'<input name="product" type="checkbox" style="width: 15px;" value="发动机">'+"发动机"
-        +'<input name="product" type="checkbox" style="width: 15px;margin-left: 5%;" value="轮毂">'+"轮毂"
-        +'<input name="product" type="checkbox" style="width: 15px;margin-left: 5%;" value="曲轴">'+"曲轴"+"<br>"
-        +'<input name="product" type="checkbox" style="width: 15px;" value="连杆">'+"连杆"
-        +'<input name="product" type="checkbox" style="width: 15px;margin-left: 5%;" value="涡轮">'+"涡轮"
-        +'<input name="product" type="checkbox" style="width: 15px;margin-left: 5%;" value="缸体/缺盖">'+"缸体/缺盖"+"<br>"
-        +'<input name="product" type="checkbox" style="width: 15px;" value="转向节">'+"转向节"
-        +'<input name="product" type="checkbox" style="width: 15px;margin-left: 5%;" value="齿轮">'+"齿轮"
-        +'<input name="product" type="checkbox" style="width: 15px;margin-left: 5%;" value="门铰链">'+"门铰链"+"<br>"
-        +'<input name="product" type="checkbox" style="width: 15px;" value="其它">'+"其它"+"</td>");
+    $("#bussiness").append("<td  style=\"font-size: 14px;\">"+"<span style=\"color: red\" y>*</span>"+"您公司是"+"</td>"+"<td>"+'<input name="bussinessNature" type="radio" value="主机厂" style="width: 15px;vertical-align:middle; margin-top:0;">'+"主机厂"
+        +'<input name="bussinessNature" type="radio" value="零部件一级供应商" style="width: 15px;margin-left: 5%;vertical-align:middle; margin-top:0;">'+"零部件一级供应商"+"<br>"
+        +'<input name="bussinessNature" type="radio" value="零部件二级供应商" style="width: 15px;vertical-align:middle; margin-top:0;">'+"零部件二级供应商"+"<br>"
+        +'<input name="bussinessNature" type="radio" value="汽车后市场供应商" style="width: 15px;vertical-align:middle; margin-top:0;">'+"汽车后市场供应商"+"<br>"
+        +'<input name="bussinessNature" type="radio" value="其它" style="width: 15px;vertical-align:middle; margin-top:0;">'+"其它"+"</td>");
+    $("#products").append("<td  style=\"font-size: 14px;\">"+"<span style=\"color: red\" y>*</span>"+"您公司主要经营的产品"+"</td>"+"<td>"+'<input name="product" type="checkbox" style="width: 15px;vertical-align:middle; margin-top:0;" value="发动机">'+"发动机"
+        +'<input name="product" type="checkbox" style="width: 15px;margin-left: 5%;vertical-align:middle; margin-top:0;" value="轮毂">'+"轮毂"
+        +'<input name="product" type="checkbox" style="width: 15px;margin-left: 5%;vertical-align:middle; margin-top:0;" value="曲轴">'+"曲轴"+"<br>"
+        +'<input name="product" type="checkbox" style="width: 15px;vertical-align:middle; margin-top:0;" value="连杆">'+"连杆"
+        +'<input name="product" type="checkbox" style="width: 15px;margin-left: 5%;vertical-align:middle; margin-top:0;" value="涡轮">'+"涡轮"
+        +'<input name="product" type="checkbox" style="width: 15px;margin-left: 5%;vertical-align:middle; margin-top:0;" value="缸体/缺盖">'+"缸体/缺盖"+"<br>"
+        +'<input name="product" type="checkbox" style="width: 15px;vertical-align:middle; margin-top:0;" value="转向节">'+"转向节"
+        +'<input name="product" type="checkbox" style="width: 15px;margin-left: 5%;vertical-align:middle; margin-top:0;" value="齿轮">'+"齿轮"
+        +'<input name="product" type="checkbox" style="width: 15px;margin-left: 5%;vertical-align:middle; margin-top:0;" value="门铰链">'+"门铰链"+"<br>"
+        +'<input name="product" type="checkbox" style="width: 15px;vertical-align:middle; margin-top:0;" value="其它">'+"其它"+"</td>");
 
     var file = document.getElementById("images");
     // for IE, Opera, Safari, Chrome
@@ -470,16 +736,16 @@ function chooseCar() {
 function chooseAir() {
     $("#bussiness").html("");
     $("#products").html("");
-    $("#bussiness").append("<td  style=\"font-size: 14px;\">"+"<span style=\"color: red\" y>*</span>"+"您公司是"+"</td>"+"<td>"+'<input name="bussinessNature" type="radio" value="主机厂" style="width: 15px;">'+"主机厂"
-        +'<input name="bussinessNature" type="radio" value="零部件一级供应商" style="width: 15px;margin-left: 5%;">'+"零部件一级供应商"+"<br>"
-        +'<input name="bussinessNature" type="radio" value="零部件二级供应商" style="width: 15px;">'+"零部件二级供应商"
-        +'<input name="bussinessNature" type="radio" value="其它" style="width: 15px;margin-left: 5%;">'+"其它"+"</td>");
-    $("#products").append("<td  style=\"font-size: 14px;\">"+"<span style=\"color: red\" y>*</span>"+"您公司主要经营的产品"+"</td>"+"<td>"+'<input name="product" type="checkbox" style="width: 15px;" value="蒙皮">'+"蒙皮"
-        +'<input name="product" type="checkbox" style="width: 15px;margin-left: 5%;" value="起落架">'+"起落架"
-        +'<input name="product" type="checkbox" style="width: 15px;margin-left: 5%;" value="叶轮">'+"叶轮"+"<br>"
-        +'<input name="product" type="checkbox" style="width: 15px;" value="叶片">'+"叶片"
-        +'<input name="product" type="checkbox" style="width: 15px;margin-left: 5%;" value="发动机">'+"发动机"
-        +'<input name="product" type="checkbox" style="width: 15px;margin-left: 5%;" value="其它">'+"其它"+"</td>");
+    $("#bussiness").append("<td  style=\"font-size: 14px;\">"+"<span style=\"color: red\" y>*</span>"+"您公司是"+"</td>"+"<td>"+'<input name="bussinessNature" type="radio" value="主机厂" style="width: 15px;vertical-align:middle; margin-top:0;">'+"主机厂"
+        +'<input name="bussinessNature" type="radio" value="零部件一级供应商" style="width: 15px;margin-left: 5%;vertical-align:middle; margin-top:0;">'+"零部件一级供应商"+"<br>"
+        +'<input name="bussinessNature" type="radio" value="零部件二级供应商" style="width: 15px;vertical-align:middle; margin-top:0;">'+"零部件二级供应商"
+        +'<input name="bussinessNature" type="radio" value="其它" style="width: 15px;margin-left: 5%;vertical-align:middle; margin-top:0;">'+"其它"+"</td>");
+    $("#products").append("<td  style=\"font-size: 14px;\">"+"<span style=\"color: red\" y>*</span>"+"您公司主要经营的产品"+"</td>"+"<td>"+'<input name="product" type="checkbox" style="width: 15px;vertical-align:middle; margin-top:0;" value="蒙皮">'+"蒙皮"
+        +'<input name="product" type="checkbox" style="width: 15px;margin-left: 5%;vertical-align:middle; margin-top:0;" value="起落架">'+"起落架"
+        +'<input name="product" type="checkbox" style="width: 15px;margin-left: 5%;vertical-align:middle; margin-top:0;" value="叶轮">'+"叶轮"+"<br>"
+        +'<input name="product" type="checkbox" style="width: 15px;vertical-align:middle; margin-top:0;" value="叶片">'+"叶片"
+        +'<input name="product" type="checkbox" style="width: 15px;margin-left: 5%;vertical-align:middle; margin-top:0;" value="发动机">'+"发动机"
+        +'<input name="product" type="checkbox" style="width: 15px;margin-left: 5%;vertical-align:middle; margin-top:0;" value="其它">'+"其它"+"</td>");
 
     var file = document.getElementById("images");
     // for IE, Opera, Safari, Chrome
@@ -495,13 +761,13 @@ function chooseAir() {
 function chooseMedical() {
     $("#bussiness").html("");
     $("#products").html("");
-    $("#bussiness").append("<td  style=\"font-size: 14px;\">"+"<span style=\"color: red\" y>*</span>"+"您公司是"+"</td>"+"<td>"+'<input name="bussinessNature" type="radio" value="自有品牌商" style="width: 15px;">'+"自有品牌商"
-        +'<input name="bussinessNature" type="radio" value="代加工厂家" style="width: 15px;margin-left: 5%;">'+"代加工厂家"+"<br>"
-        +'<input name="bussinessNature" type="radio" value="其它" style="width: 15px;">'+"其它"+"</td>");
-    $("#products").append("<td  style=\"font-size: 14px;\">"+"<span style=\"color: red\" y>*</span>"+"您公司主要经营的产品"+"</td>"+"<td>"+'<input name="product" type="checkbox" style="width: 15px;" value="骨科类工具">'+"骨科类工具"
-        +'<input name="product" type="checkbox" style="width: 15px;margin-left: 5%;" value="植入件">'+"植入件"+"<br>"
-        +'<input name="product" type="checkbox" style="width: 15px;" value="牙科类工具">'+"牙科类工具"
-        +'<input name="product" type="checkbox" style="width: 15px;margin-left: 5%;" value="其它">'+"其它"+"</td>");
+    $("#bussiness").append("<td  style=\"font-size: 14px;\">"+"<span style=\"color: red\" y>*</span>"+"您公司是"+"</td>"+"<td>"+'<input name="bussinessNature" type="radio" value="自有品牌商" style="width: 15px;vertical-align:middle; margin-top:0;">'+"自有品牌商"
+        +'<input name="bussinessNature" type="radio" value="代加工厂家" style="width: 15px;margin-left: 5%;vertical-align:middle; margin-top:0;">'+"代加工厂家"+"<br>"
+        +'<input name="bussinessNature" type="radio" value="其它" style="width: 15px;vertical-align:middle; margin-top:0;">'+"其它"+"</td>");
+    $("#products").append("<td  style=\"font-size: 14px;\">"+"<span style=\"color: red\" y>*</span>"+"您公司主要经营的产品"+"</td>"+"<td>"+'<input name="product" type="checkbox" style="width: 15px;vertical-align:middle; margin-top:0;" value="骨科类工具">'+"骨科类工具"
+        +'<input name="product" type="checkbox" style="width: 15px;margin-left: 5%;vertical-align:middle; margin-top:0;" value="植入件">'+"植入件"+"<br>"
+        +'<input name="product" type="checkbox" style="width: 15px;vertical-align:middle; margin-top:0;" value="牙科类工具">'+"牙科类工具"
+        +'<input name="product" type="checkbox" style="width: 15px;margin-left: 5%;vertical-align:middle; margin-top:0;" value="其它">'+"其它"+"</td>");
 
     var file = document.getElementById("images");
     // for IE, Opera, Safari, Chrome
@@ -517,16 +783,16 @@ function chooseMedical() {
 function chooseIndustry() {
     $("#bussiness").html("");
     $("#products").html("");
-    $("#bussiness").append("<td  style=\"font-size: 14px;\">"+"<span style=\"color: red\" y>*</span>"+"您公司是"+"</td>"+"<td>"+'<input name="bussinessNature" type="radio" value="主机厂" style="width: 15px;">'+"主机厂"
-        +'<input name="bussinessNature" type="radio" value="零部件一级供应商" style="width: 15px;margin-left: 5%;">'+"零部件一级供应商"+"<br>"
-        +'<input name="bussinessNature" type="radio" value="零部件二级供应商" style="width: 15px;">'+"零部件二级供应商"
-        +'<input name="bussinessNature" type="radio" value="其它" style="width: 15px;margin-left: 5%;">'+"其它"+"</td>");
-    $("#products").append("<td  style=\"font-size: 14px;\">"+"<span style=\"color: red\" y>*</span>"+"您公司主要经营的产品"+"</td>"+"<td>"+'<input name="product" type="checkbox" style="width: 15px;" value="推土机">'+"推土机"
-        +'<input name="product" type="checkbox" style="width: 15px;margin-left: 5%;" value="挖掘机">'+"挖掘机"
-        +'<input name="product" type="checkbox" style="width: 15px;margin-left: 5%;" value="装载机">'+"装载机"+"<br>"
-        +'<input name="product" type="checkbox" style="width: 15px;" value="履带">'+"履带"
-        +'<input name="product" type="checkbox" style="width: 15px;margin-left: 5%;" value="底盘">'+"底盘"
-        +'<input name="product" type="checkbox" style="width: 15px;margin-left: 5%;" value="其它">'+"其它"+"</td>");
+    $("#bussiness").append("<td  style=\"font-size: 14px;\">"+"<span style=\"color: red\" y>*</span>"+"您公司是"+"</td>"+"<td>"+'<input name="bussinessNature" type="radio" value="主机厂" style="width: 15px;vertical-align:middle; margin-top:0;">'+"主机厂"
+        +'<input name="bussinessNature" type="radio" value="零部件一级供应商" style="width: 15px;margin-left: 5%;vertical-align:middle; margin-top:0;">'+"零部件一级供应商"+"<br>"
+        +'<input name="bussinessNature" type="radio" value="零部件二级供应商" style="width: 15px;vertical-align:middle; margin-top:0;">'+"零部件二级供应商"
+        +'<input name="bussinessNature" type="radio" value="其它" style="width: 15px;margin-left: 5%;vertical-align:middle; margin-top:0;">'+"其它"+"</td>");
+    $("#products").append("<td  style=\"font-size: 14px;\">"+"<span style=\"color: red\" y>*</span>"+"您公司主要经营的产品"+"</td>"+"<td>"+'<input name="product" type="checkbox" style="width: 15px;vertical-align:middle; margin-top:0;" value="推土机">'+"推土机"
+        +'<input name="product" type="checkbox" style="width: 15px;margin-left: 5%;vertical-align:middle; margin-top:0;" value="挖掘机">'+"挖掘机"
+        +'<input name="product" type="checkbox" style="width: 15px;margin-left: 5%;vertical-align:middle; margin-top:0;" value="装载机">'+"装载机"+"<br>"
+        +'<input name="product" type="checkbox" style="width: 15px;vertical-align:middle; margin-top:0;" value="履带">'+"履带"
+        +'<input name="product" type="checkbox" style="width: 15px;margin-left: 5%;vertical-align:middle; margin-top:0;" value="底盘">'+"底盘"
+        +'<input name="product" type="checkbox" style="width: 15px;margin-left: 5%;vertical-align:middle; margin-top:0;" value="其它">'+"其它"+"</td>");
 
     var file = document.getElementById("images");
     // for IE, Opera, Safari, Chrome
@@ -542,15 +808,15 @@ function chooseIndustry() {
 function chooseMouldl() {
     $("#bussiness").html("");
     $("#products").html("");
-    $("#bussiness").append("<td  style=\"font-size: 14px;\">"+"<span style=\"color: red\" y>*</span>"+"您公司是"+"</td>"+"<td>"+'<input name="bussinessNature" type="radio" value="自有品牌商" style="width: 15px;">'+"自有品牌商"
-        +'<input name="bussinessNature" type="radio" value="代加工厂家" style="width: 15px;margin-left: 5%;">'+"代加工厂家"+"<br>"
-        +'<input name="bussinessNature" type="radio" value="其它" style="width: 15px;">'+"其它"+"</td>");
-    $("#products").append("<td  style=\"font-size: 14px;\">"+"<span style=\"color: red\" y>*</span>"+"您公司主要经营的产品"+"</td>"+"<td>"+'<input name="product" type="checkbox" style="width: 15px;" value="注塑模具">'+"注塑模具"
-        +'<input name="product" type="checkbox" style="width: 15px;margin-left: 5%;" value="冲压模具">'+"冲压模具"+"<br>"
-        +'<input name="product" type="checkbox" style="width: 15px;" value="锻造模具">'+"锻造模具"
-        +'<input name="product" type="checkbox" style="width: 15px;margin-left: 5%;" value="压铸模具">'+"压铸模具"+"<br>"
-        +'<input name="product" type="checkbox" style="width: 15px;" value="挤压模具">'+"挤压模具"
-        +'<input name="product" type="checkbox" style="width: 15px;margin-left: 5%;" value="其它">'+"其它"+"</td>");
+    $("#bussiness").append("<td  style=\"font-size: 14px;\">"+"<span style=\"color: red\" y>*</span>"+"您公司是"+"</td>"+"<td>"+'<input name="bussinessNature" type="radio" value="自有品牌商" style="width: 15px;vertical-align:middle; margin-top:0;">'+"自有品牌商"
+        +'<input name="bussinessNature" type="radio" value="代加工厂家" style="width: 15px;margin-left: 5%;vertical-align:middle; margin-top:0;">'+"代加工厂家"+"<br>"
+        +'<input name="bussinessNature" type="radio" value="其它" style="width: 15px;vertical-align:middle; margin-top:0;">'+"其它"+"</td>");
+    $("#products").append("<td  style=\"font-size: 14px;\">"+"<span style=\"color: red\" y>*</span>"+"您公司主要经营的产品"+"</td>"+"<td>"+'<input name="product" type="checkbox" style="width: 15px;vertical-align:middle; margin-top:0;" value="注塑模具">'+"注塑模具"
+        +'<input name="product" type="checkbox" style="width: 15px;margin-left: 5%;vertical-align:middle; margin-top:0;" value="冲压模具">'+"冲压模具"+"<br>"
+        +'<input name="product" type="checkbox" style="width: 15px;vertical-align:middle; margin-top:0;" value="锻造模具">'+"锻造模具"
+        +'<input name="product" type="checkbox" style="width: 15px;margin-left: 5%;vertical-align:middle; margin-top:0;" value="压铸模具">'+"压铸模具"+"<br>"
+        +'<input name="product" type="checkbox" style="width: 15px;vertical-align:middle; margin-top:0;" value="挤压模具">'+"挤压模具"
+        +'<input name="product" type="checkbox" style="width: 15px;margin-left: 5%;vertical-align:middle; margin-top:0;" value="其它">'+"其它"+"</td>");
 
     var file = document.getElementById("images");
     // for IE, Opera, Safari, Chrome
@@ -566,15 +832,15 @@ function chooseMouldl() {
 function choose3C() {
     $("#bussiness").html("");
     $("#products").html("");
-    $("#bussiness").append("<td  style=\"font-size: 14px;\">"+"<span style=\"color: red\" y>*</span>"+"您公司是"+"</td>"+"<td>"+'<input name="bussinessNature" type="radio" value="自有品牌商" style="width: 15px;">'+"自有品牌商"
-        +'<input name="bussinessNature" type="radio" value="零部代加工厂家" style="width: 15px;margin-left: 5%;">'+"零部代加工厂家"+"<br>"
-        +'<input name="bussinessNature" type="radio" value="其它" style="width: 15px;">'+"其它"+"</td>");
-    $("#products").append("<td  style=\"font-size: 14px;\">"+"<span style=\"color: red\" y>*</span>"+"您公司主要经营的产品"+"</td>"+"<td>"+'<input name="product" type="checkbox" style="width: 15px;" value="苹果">'+"苹果"
-        +'<input name="product" type="checkbox" style="width: 15px;margin-left: 5%;" value="华为">'+"华为"
-        +'<input name="product" type="checkbox" style="width: 15px;margin-left: 5%;" value="三星">'+"三星"+"<br>"
-        +'<input name="product" type="checkbox" style="width: 15px;" value="小米">'+"小米"
-        +'<input name="product" type="checkbox" style="width: 15px;margin-left: 5%;" value="OPPO">'+"OPPO"
-        +'<input name="product" type="checkbox" style="width: 15px;margin-left: 5%;" value="其它">'+"其它"+"</td>");
+    $("#bussiness").append("<td  style=\"font-size: 14px;\">"+"<span style=\"color: red\" y>*</span>"+"您公司是"+"</td>"+"<td>"+'<input name="bussinessNature" type="radio" value="自有品牌商" style="width: 15px;vertical-align:middle; margin-top:0;">'+"自有品牌商"
+        +'<input name="bussinessNature" type="radio" value="零部代加工厂家" style="width: 15px;margin-left: 5%;vertical-align:middle; margin-top:0;">'+"零部代加工厂家"+"<br>"
+        +'<input name="bussinessNature" type="radio" value="其它" style="width: 15px;vertical-align:middle; margin-top:0;">'+"其它"+"</td>");
+    $("#products").append("<td  style=\"font-size: 14px;\">"+"<span style=\"color: red\" y>*</span>"+"您公司主要经营的产品"+"</td>"+"<td>"+'<input name="product" type="checkbox" style="width: 15px;vertical-align:middle; margin-top:0;" value="苹果">'+"苹果"
+        +'<input name="product" type="checkbox" style="width: 15px;margin-left: 5%;vertical-align:middle; margin-top:0;" value="华为">'+"华为"
+        +'<input name="product" type="checkbox" style="width: 15px;margin-left: 5%;vertical-align:middle; margin-top:0;" value="三星">'+"三星"+"<br>"
+        +'<input name="product" type="checkbox" style="width: 15px;vertical-align:middle; margin-top:0;" value="小米">'+"小米"
+        +'<input name="product" type="checkbox" style="width: 15px;margin-left: 5%;vertical-align:middle; margin-top:0;" value="OPPO">'+"OPPO"
+        +'<input name="product" type="checkbox" style="width: 15px;margin-left: 5%;vertical-align:middle; margin-top:0;" value="其它">'+"其它"+"</td>");
 
     var file = document.getElementById("images");
     // for IE, Opera, Safari, Chrome
@@ -590,9 +856,9 @@ function choose3C() {
 function chooseOther() {
     $("#bussiness").html("");
     $("#products").html("");
-    $("#bussiness").append("<td  style=\"font-size: 14px;\">"+"<span style=\"color: red\" y>*</span>"+"您公司是"+"</td>"+"<td>"+'<input name="bussinessNature" type="radio" value="自有品牌商" style="width: 15px;">'+"自有品牌商"
-        +'<input name="bussinessNature" type="radio" value="代加工厂家" style="width: 15px;margin-left: 5%;">'+"代加工厂家"+"<br>"
-        +'<input name="bussinessNature" type="radio" value="其它" style="width: 15px;">'+"其它"+"</td>");
+    $("#bussiness").append("<td style=\"font-size: 14px;\">"+"<span style=\"color: red\" y>*</span>"+"您公司是"+"</td>"+"<td>"+'<input name="bussinessNature" type="radio" value="自有品牌商" style="width: 15px;vertical-align:middle; margin-top:0;">'+"自有品牌商"
+        +'<input name="bussinessNature" type="radio" value="代加工厂家" style="width: 15px;margin-left: 5%;vertical-align:middle; margin-top:0;">'+"代加工厂家"+"<br>"
+        +'<input name="bussinessNature" type="radio" value="其它" style="width: 15px;vertical-align:middle; margin-top:0;">'+"其它"+"</td>");
     $("#products").append("<td  style=\"font-size: 14px;\">"+"<span style=\"color: red\" y>*</span>"+"您公司主要经营的产品"+"</td>"+"<td>"+'<input id="maked" name="product" type="text" style="width: 100%;border: 0px;" placeholder="请输入您公司的产品">'+"</td>");
 
     var file = document.getElementById("images");
@@ -712,11 +978,18 @@ function sureBeforeSbmit() {
             if(vcode != ""){
                 if(vcode == data){
                     saveCompanyInfoPart();
+                    loadSecond();
                 }else{
-                    alert("验证码不正确");
+                    $.message({
+                        message:'验证码不正确',
+                        type:'error'
+                    })
                 }
             }else{
-                alert("请输入验证码");
+                $.message({
+                    message:'请输入验证码',
+                    type:'error'
+                })
             }
         }
     })
@@ -732,8 +1005,9 @@ function saveCompanyInfoPart() {
     }else{
         wechatNum = $("#contactWay").val();
     }
+    var salePlanID = $("#customerID").val();
 
-    var data = {"companyName":companyName , "contact":contact , "contactWay":contactWay , "wechatNum":wechatNum};
+    var data = {"salePlanID":salePlanID,"companyName":companyName , "contact":contact , "contactWay":contactWay , "wechatNum":wechatNum};
     var url = "saveCompanyInfo";
     if(isNaN(companyName)){
         if(isNaN(contact)){
@@ -746,18 +1020,30 @@ function saveCompanyInfoPart() {
                     if(data == "OK"){
                         foreSecond();
                     }else{
-                        alert(data);
+                        $.message({
+                            message:data,
+                            type:'error'
+                        })
                     }
                 },
                 error:function () {
-                    alert("程序出错");
+                    $.message({
+                        message:'程序出错',
+                        type:'error'
+                    })
                 }
             })
         }else{
-            alert("联系人填写错误，不能是数字");
+            $.message({
+                message:'联系人填写错误，不能是数字',
+                type:'error'
+            })
         }
     }else{
-        alert("公司名称填写错误，不能是数字");
+        $.message({
+            message:'公司名称填写错误，不能是数字',
+            type:'error'
+        })
     }
 }
 
@@ -766,17 +1052,24 @@ function saveSecondPart() {
     var registerMoney = $("#registerMoney").val();
     var establishTime = $("#establishTime").val();
     var bussniessNature = $("#bussinessNature option:selected").text();
-    var sonCompanyNum = $("input[name='son']:checked").val();
-    var employeeNum = $("input[name='employee']:checked").val();
-    var data = {"registerMoney":registerMoney , "establishTime":establishTime , "bussinessNature":bussniessNature , "sonCompanyNum":sonCompanyNum , "employeeNum":employeeNum};
+    var sonCompanyNum = $("#son option:selected").text();
+    var employeeNum = $("#employee option:selected").text();
+    var salePlanID = $("#customerID").val();
+    var data = {"salePlanID":salePlanID,"registerMoney":registerMoney , "establishTime":establishTime , "bussinessNature":bussniessNature , "sonCompanyNum":sonCompanyNum , "employeeNum":employeeNum};
     var url = "updateCompanyInfoFirst";
     if(registerMoney != ""){
         if(isNaN(registerMoney)){
-            alert("注册资金填写错误，只能填写数字");
+            $.message({
+                message:'注册资金填写错误，只能填写数字',
+                type:'error'
+            })
         }else{
             if(establishTime != ""){
                 if(isNaN(establishTime)){
-                    alert("公司成立时间填写错误,只能填数字");
+                    $.message({
+                        message:'公司成立时间填写错误,只能填数字',
+                        type:'error'
+                    })
                 }else{
                     $.ajax({
                         type:"post",
@@ -785,13 +1078,19 @@ function saveSecondPart() {
                         async:false,
                         success:function(data){
                             if(data == "OK"){
-                                foreThird();
+                                loadThird();
                             }else{
-                                alert(data);
+                                $.message({
+                                    message:data,
+                                    type:'error'
+                                })
                             }
                         },
                         error:function(){
-                            alert("程序出错");
+                            $.message({
+                                message:'程序出错',
+                                type:'error'
+                            })
                         }
                     })
                 }
@@ -803,13 +1102,19 @@ function saveSecondPart() {
                     async:false,
                     success:function(data){
                         if(data == "OK"){
-                            toNext();
+                            loadThird();
                         }else{
-                            alert(data);
+                            $.message({
+                                message:data,
+                                type:'error'
+                            })
                         }
                     },
                     error:function(){
-                        alert("程序出错");
+                        $.message({
+                            message:'程序出错',
+                            type:'error'
+                        })
                     }
                 })
             }
@@ -817,7 +1122,10 @@ function saveSecondPart() {
     }else{
         if(establishTime != ""){
             if(isNaN(establishTime)){
-                alert("公司成立时间填写错误,只能填数字");
+                $.message({
+                    message:'公司成立时间填写错误,只能填数字',
+                    type:'error'
+                })
             }else{
                 $.ajax({
                     type:"post",
@@ -826,13 +1134,19 @@ function saveSecondPart() {
                     async:false,
                     success:function(data){
                         if(data == "OK"){
-                            toNext();
+                            loadThird();
                         }else{
-                            alert(data);
+                            $.message({
+                                message:data,
+                                type:'error'
+                            })
                         }
                     },
                     error:function(){
-                        alert("程序出错");
+                        $.message({
+                            message:'程序出错',
+                            type:'error'
+                        })
                     }
                 })
             }
@@ -844,13 +1158,19 @@ function saveSecondPart() {
                 async:false,
                 success:function(data){
                     if(data == "OK"){
-                        toNext();
+                        loadThird();
                     }else{
-                        alert(data);
+                        $.message({
+                            message:data,
+                            type:'error'
+                        })
                     }
                 },
                 error:function(){
-                    alert("程序出错");
+                    $.message({
+                        message:'程序出错',
+                        type:'error'
+                    })
                 }
             })
         }
@@ -877,7 +1197,8 @@ function saveFourthPage(){
             picName = picName+ files[i].name+",";
         }
     };
-    var data = {"industry":industry , "industryNature":industryNature , "product":product , "picture":picName};
+    var salePlanID = $("#customerID").val();
+    var data = {"salePlanID":salePlanID,"industry":industry , "industryNature":industryNature , "product":product , "picture":picName};
     var url="updateCompanyInfoSecond";
     $.ajax({
         type:"post",
@@ -886,13 +1207,19 @@ function saveFourthPage(){
         async:false,
         success:function(data){
             if(data == "OK"){
-                foreFourth();
+                loadfourth();
             }else{
-                alert(data);
+                $.message({
+                    message:data,
+                    type:error
+                })
             }
         },
         error:function () {
-            alert("程序出错");
+            $.message({
+                message:'程序出错',
+                type:'error'
+            })
         }
     })
 }
@@ -907,14 +1234,18 @@ function saveFifthPage(){
     var mobile = $("#mobile").val();
     var email = $("#email").val();
     var ask = $("input[name='ask']:checked").val();
-    var data = {"means":means , "toolManage":toolManage , "facilitatorName":facilitatorName , "problem":problem , "consume":consume , "principal":principal ,
+    var salePlanID = $("#customerID").val();
+    var data = {"salePlanID":salePlanID,"means":means , "toolManage":toolManage , "facilitatorName":facilitatorName , "problem":problem , "consume":consume , "principal":principal ,
         "mobile":mobile , "email":email , "ask":ask};
     var url = "saveKnowMorePage";
     if(toolManage == "有"){
         if(isNaN(facilitatorName)){
             if(isNaN(problem)){
                 if(isNaN(mobile)){
-                    alert("手机号填写错误，手机号只能是数字");
+                    $.message({
+                        message:'手机号填写错误，手机号只能是数字',
+                        type:'error'
+                    })
                 }else{
                     if(email != ""){
                         if(email.search(/^\w+((-\w+)|(\.\w+))*\@[A-Za-z0-9]+((\.|-)[A-Za-z0-9]+)*\.[A-Za-z0-9]+$/) != -1){
@@ -925,17 +1256,26 @@ function saveFifthPage(){
                                 async:false,
                                 success:function(data){
                                     if(data == "OK"){
-                                        toNext();
+                                        loadfifth();
                                     }else{
-                                        alert(data);
+                                        $.message({
+                                            message:data,
+                                            type:'error'
+                                        })
                                     }
                                 },
                                 error:function () {
-                                    alert("程序出错");
+                                    $.message({
+                                        message:'程序出错',
+                                        type:'error'
+                                    })
                                 }
                             })
                         }else{
-                            alert("错误的邮件格式");
+                            $.messgae({
+                                message:'错误的邮件格式',
+                                type:'error'
+                            })
                         }
                     }else{
                         $.ajax({
@@ -945,26 +1285,41 @@ function saveFifthPage(){
                             async:false,
                             success:function(data){
                                 if(data == "OK"){
-                                    foreFifth();
+                                    loadfifth();
                                 }else{
-                                    alert(data);
+                                    $.message({
+                                        message:data,
+                                        type:'error'
+                                    })
                                 }
                             },
                             error:function () {
-                                alert("程序出错");
+                                $.message({
+                                    message:'程序出错',
+                                    type:'error'
+                                })
                             }
                         })
                     }
                 }
             }else{
-                alert("您之前碰到的主要问题不能填数字");
+                $.message({
+                    message:'您之前碰到的主要问题不能填数字',
+                    type:'error'
+                })
             }
         }else{
-            alert("服务商名称不能填数字");
+            $.message({
+                message:'服务商名称不能填数字',
+                type:'error'
+            })
         }
     }else{
         if(isNaN(mobile)){
-            alert("手机号填写错误，手机号只能是数字");
+            $.message({
+                message:'手机号填写错误，手机号只能是数字',
+                type:'error'
+            })
         }else{
             if(email != ""){
                 if(email.search(/^\w+((-\w+)|(\.\w+))*\@[A-Za-z0-9]+((\.|-)[A-Za-z0-9]+)*\.[A-Za-z0-9]+$/) != -1){
@@ -975,17 +1330,26 @@ function saveFifthPage(){
                         async:false,
                         success:function(data){
                             if(data == "OK"){
-                                foreFifth();
+                                loadfifth();
                             }else{
-                                alert(data);
+                                $.message({
+                                    message:data,
+                                    type:'error'
+                                })
                             }
                         },
                         error:function () {
-                            alert("程序出错");
+                            $.message({
+                                message:'程序出错',
+                                type:'error'
+                            })
                         }
                     })
                 }else{
-                    alert("错误的邮件格式");
+                    $.message({
+                        message:'错误的邮件格式',
+                        type:'error'
+                    })
                 }
             }else{
                 $.ajax({
@@ -995,13 +1359,19 @@ function saveFifthPage(){
                     async:false,
                     success:function(data){
                         if(data == "OK"){
-                            foreFifth();
+                            loadfifth();
                         }else{
-                            alert(data);
+                            $.message({
+                                message:data,
+                                type:'error'
+                            })
                         }
                     },
                     error:function () {
-                        alert("程序出错");
+                        $.message({
+                            message:'程序出错',
+                            type:'error'
+                        })
                     }
                 })
             }
@@ -1015,7 +1385,8 @@ function saveSevenPage() {
     var market = $("input[name='market']:checked").val();
     var competitor = $("#competitor").val();
     var project = $("input[name='plan']:checked").val();
-    var data = {"production":production , "market":market , "competitor":competitor , "project":project};
+    var salePlanID = $("#customerID").val();
+    var data = {"salePlanID":salePlanID,"production":production , "market":market , "competitor":competitor , "project":project};
     var url = "saveManufactureOne";
     if(competitor != ""){
         if(isNaN(competitor)){
@@ -1026,17 +1397,26 @@ function saveSevenPage() {
                 async:false,
                 success:function (data) {
                     if(data == "OK"){
-                        foreSixth();
+                        loadsixth();
                     }else{
-                        alert(data);
+                        $.message({
+                            message:data,
+                            type:'error'
+                        })
                     }
                 },
                 error:function () {
-                    alert("程序出错");
+                    $.message({
+                        message:'程序出错',
+                        type:'error'
+                    })
                 }
             })
         }else{
-            alert("您公司的主要竞争对手,不能填写数字");
+            $.message({
+                message:'您公司的主要竞争对手,不能填写数字',
+                type:'error'
+            })
         }
     }else{
         $.ajax({
@@ -1046,13 +1426,19 @@ function saveSevenPage() {
             async:false,
             success:function (data) {
                 if(data == "OK"){
-                    foreSixth();
+                    loadsixth();
                 }else{
-                    alert(data);
+                    $.message({
+                        message:data,
+                        type:'error'
+                    })
                 }
             },
             error:function () {
-                alert("程序出错");
+                $.message({
+                    message:'程序出错',
+                    type:'error'
+                })
             }
         })
     }
@@ -1089,7 +1475,8 @@ function saveEightPage(){
     var assetNum = $("input[name='assetNum']:checked").val();
     var life = $("input[name='life']:checked").val();
     var form = $("input[name='format']:checked").val();
-    var data = {"assetType":assetType , "assetSource":assetSource , "brand":brand , "assetNum":assetNum , "life":life , "form":form };
+    var salePlanID = $("#customerID").val();
+    var data = {"salePlanID":salePlanID,"assetType":assetType , "assetSource":assetSource , "brand":brand , "assetNum":assetNum , "life":life , "form":form };
     var url="saveManufactureTwo";
     if(brand != ""){
         if(isNaN(brand)){
@@ -1100,17 +1487,26 @@ function saveEightPage(){
                 async:false,
                 success:function(data){
                     if(data == "OK"){
-                        foreSeventh();
+                        loadseventh();
                     }else{
-                        alert(data);
+                        $.message({
+                            message:data,
+                            type:'error'
+                        })
                     }
                 },
                 error:function () {
-                    alert("程序出错");
+                    $.message({
+                        message:'程序出错',
+                        type:'error'
+                    })
                 }
             })
         }else{
-            alert("设备品牌填写有误,不能填写数字");
+            $.message({
+                message:'设备品牌填写有误,不能填写数字',
+                type:'error'
+            })
         }
     }else{
         $.ajax({
@@ -1120,13 +1516,19 @@ function saveEightPage(){
             async:false,
             success:function(data){
                 if(data == "OK"){
-                    foreSeventh();
+                    loadseventh();
                 }else{
-                    alert(data);
+                    $.message({
+                        message:data,
+                        type:'error'
+                    })
                 }
             },
             error:function () {
-                alert("程序出错");
+                $.message({
+                    message:'程序出错',
+                    type:'error'
+                })
             }
         })
     }
@@ -1186,7 +1588,8 @@ function saveNinthPage() {
             manageModel = manageModel+manageModel_value[i]+",";
         }
     }
-    var data = {"buyMoney":buyMoney , "buySource":buySource , "buyBrand":buyBrand , "buyModel":buyModel , "manageModel":manageModel};
+    var salePlanID = $("#customerID").val();
+    var data = {"salePlanID":salePlanID,"buyMoney":buyMoney , "buySource":buySource , "buyBrand":buyBrand , "buyModel":buyModel , "manageModel":manageModel};
     var url = "saveManufactureThree";
     $.ajax({
         type:"post",
@@ -1195,13 +1598,19 @@ function saveNinthPage() {
         async:false,
         success:function (data) {
             if(data == "OK"){
-                foreEight();
+                loadeighth();
             }else{
-                alert(data);
+                $.message({
+                    message:data,
+                    type:'error'
+                })
             }
         },
         error:function () {
-            alert("程序出错");
+            $.message({
+                message:'程序出错',
+                type:'error'
+            })
         }
     })
 
@@ -1235,7 +1644,8 @@ function saveTenthPage() {
             gsgBrand = gsgBrand+gsgBrand_value[i]+",";
         }
     }
-    var data = {"ztzb":ztzb , "xdzb":xdzb , "szzb":szzb , "qtOne":qtOne , "cdpzb":cdpzb , "xdpzb":xdpzb , "tdpzb":tdpzb , "qtTwo":qtTwo , "cbn":cbn , "pcd":pcd , "hjzb":hjzb ,
+    var salePlanID = $("#customerID").val();
+    var data = {"salePlanID":salePlanID,"ztzb":ztzb , "xdzb":xdzb , "szzb":szzb , "qtOne":qtOne , "cdpzb":cdpzb , "xdpzb":xdpzb , "tdpzb":tdpzb , "qtTwo":qtTwo , "cbn":cbn , "pcd":pcd , "hjzb":hjzb ,
         "hasGSG":hasGSG , "gsgBrand":gsgBrand };
     var url = "saveDataOne";
     $.ajax({
@@ -1245,13 +1655,19 @@ function saveTenthPage() {
         async:false,
         success:function(data){
             if(data == "OK"){
-                foreNinth();
+                loadnineth();
             }else{
-                alert(data);
+                $.message({
+                    message:data,
+                    type:'error'
+                })
             }
         },
         error:function(){
-            alert("程序出错");
+            $.message({
+                message:'程序出错',
+                type:'error'
+            })
         }
     })
 }
@@ -1267,7 +1683,8 @@ function saveEleventhPage() {
     var stockFour = $("#stockFour").val();
     var normTool = $("#normTool").val();
     var unnormTool = $("#unnormTool").val();
-    var data = {"stockMoney":stockMoney , "stockOne":stockOne , "stockTwo":stockTwo , "stockThree":stockThree , "stockFour":stockFour , "normTool":normTool , "unnormTool":unnormTool };
+    var salePlanID = $("#customerID").val();
+    var data = {"salePlanID":salePlanID,"stockMoney":stockMoney , "stockOne":stockOne , "stockTwo":stockTwo , "stockThree":stockThree , "stockFour":stockFour , "normTool":normTool , "unnormTool":unnormTool };
     var url = "saveDataTwo";
     $.ajax({
         type:"post",
@@ -1275,13 +1692,19 @@ function saveEleventhPage() {
         url:url,
         success:function (data) {
             if(data == "OK"){
-                foreTenth();
+                loadtenth();
             }else{
-                alert(data);
+                $.message({
+                    message:data,
+                    type:'error'
+                })
             }
         },
         error:function(){
-            alert("程序出错");
+            $.message({
+                message:'程序出错',
+                type:'error'
+            })
         }
     })
 }
@@ -1295,7 +1718,8 @@ function saveTwelfthPage() {
     var shiftManage = $("input[name='arrange']:checked").val();
     var productRest = $("input[name='rest']:checked").val();
     var productNum = $("#productNum").val();
-    var data = {"hasERP":hasERP , "erpBrand":erpBrand , "hasMES":hasMES , "mesBrand":mesBrand , "shiftManage":shiftManage , "productRest":productRest , "productNum":productNum };
+    var salePlanID = $("#customerID").val();
+    var data = {"salePlanID":salePlanID,"hasERP":hasERP , "erpBrand":erpBrand , "hasMES":hasMES , "mesBrand":mesBrand , "shiftManage":shiftManage , "productRest":productRest , "productNum":productNum };
     var url = "saveDataThree";
     if(hasERP == "是"){
         if(isNaN(erpBrand)){
@@ -1308,17 +1732,26 @@ function saveTwelfthPage() {
                         async:false,
                         success:function(data){
                             if(data == "OK"){
-                                foreEleventh();
+                                loadeleventh();
                             }else{
-                                alert(data);
+                                $.message({
+                                    message:data,
+                                    type:'error'
+                                })
                             }
                         },
                         error:function () {
-                            alert("程序出错");
+                            $.message({
+                                message:'程序出错',
+                                type:'error'
+                            })
                         }
                     })
                 }else{
-                    alert("MES品牌不能填数字");
+                    $.message({
+                        message:'MES品牌不能填数字',
+                        type:'error'
+                    })
                 }
             }else{
                 $.ajax({
@@ -1328,18 +1761,27 @@ function saveTwelfthPage() {
                     async:false,
                     success:function(data){
                         if(data == "OK"){
-                            foreEleventh();
+                            loadeleventh();
                         }else{
-                            alert(data);
+                            $.message({
+                                message:data,
+                                type:'error'
+                            })
                         }
                     },
                     error:function () {
-                        alert("程序出错");
+                        $.message({
+                            message:'程序出错',
+                            type:'error'
+                        })
                     }
                 })
             }
         }else{
-            alert("ERP品牌不能填写数字");
+            $.message({
+                message:'ERP品牌不能填写数字',
+                type:'error'
+            })
         }
     }else{
         if(hasMES == "是"){
@@ -1351,17 +1793,26 @@ function saveTwelfthPage() {
                     async:false,
                     success:function(data){
                         if(data == "OK"){
-                            foreEleventh();
+                            loadeleventh();
                         }else{
-                            alert(data);
+                            $.message({
+                                message:data,
+                                type:'error'
+                            })
                         }
                     },
                     error:function () {
-                        alert("程序出错");
+                        $.message({
+                            message:'程序出错',
+                            type:'error'
+                        })
                     }
                 })
             }else{
-                alert("MES品牌不能填数字");
+                $.message({
+                    message:'MES品牌不能填数字',
+                    type:'error'
+                })
             }
         }else{
             $.ajax({
@@ -1371,13 +1822,19 @@ function saveTwelfthPage() {
                 async:false,
                 success:function(data){
                     if(data == "OK"){
-                        foreEleventh();
+                        loadeleventh();
                     }else{
-                        alert(data);
+                        $.message({
+                            message:'data',
+                            type:'error'
+                        })
                     }
                 },
                 error:function () {
-                    alert("程序出错");
+                    $.message({
+                        message:'程序出错',
+                        type:'error'
+                    })
                 }
             })
         }
@@ -1393,7 +1850,8 @@ function saveThirteenPage() {
     var returnWay = $("input[name='recycleWay']:checked").val();
     var payCycle = $("input[name='payCycle']:checked").val();
     var payWay = $("input[name='payWay']:checked").val();
-    var data = {"stockPerson":stockPerson , "grantPerson":grantPerson ,"grantWay":grantWay , "returnWay":returnWay , "payCycle":payCycle , "payWay":payWay };
+    var salePlanID = $("#customerID").val();
+    var data = {"salePlanID":salePlanID,"stockPerson":stockPerson , "grantPerson":grantPerson ,"grantWay":grantWay , "returnWay":returnWay , "payCycle":payCycle , "payWay":payWay };
     var url = "saveDataFour";
     $.ajax({
         type:"post",
@@ -1402,13 +1860,19 @@ function saveThirteenPage() {
         async:false,
         success:function (data) {
             if(data == "OK"){
-                foreTwelfth();
+                loadtwelfth();
             }else{
-                alert(data);
+                $.message({
+                    message:data,
+                    type:'error'
+                })
             }
         },
         error:function () {
-            alert("程序出错");
+            $.message({
+                message:'程序出错',
+                type:'error'
+            })
         }
     })
 }
@@ -1430,7 +1894,8 @@ function saveFourteenthPage() {
             appeal = appeal+appeal_value[i]+",";
         }
     }
-    var data = {"repair":repair , "repairSpend":repairSpend , "optimize":optimize , "appeal":appeal};
+    var salePlanID = $("#customerID").val();
+    var data = {"salePlanID":salePlanID,"repair":repair , "repairSpend":repairSpend , "optimize":optimize , "appeal":appeal};
     var url="saveDataFive";
     $.ajax({
         type:"post",
@@ -1439,17 +1904,28 @@ function saveFourteenthPage() {
         async:false,
         success:function(data){
             if(data == "OK"){
-                alert("数据保存成功");
-                window.location.href="homePage";
+                $.message({
+                    message:'数据保存成功',
+                    type:'success'
+                });
+                loadFirstPlan();
             }else{
-                alert(data);
+                $.message({
+                    message:data,
+                    type:'error'
+                })
             }
         },
         error:function () {
-            alert("程序出错");
+            $.message({
+                message:'程序出错',
+                type:'error'
+            })
         }
     })
 }
+
+
 
 function createSalePlan() {
     var salePlanNumber = $("#salePlanNumber").val();
@@ -1468,10 +1944,23 @@ function createSalePlan() {
         url:url,
         async:false,
         success:function (data) {
-            alert(data);
+            if(data == "OK"){
+                $.message({
+                    message:'数据保存成功',
+                    type:'success'
+                })
+            }else{
+                $.message({
+                    message:data,
+                    type:'error'
+                })
+            }
         },
         error:function () {
-            alert("程序出错");
+            $.message({
+                message:'程序出错',
+                type:'error'
+            })
         }
     })
  }
@@ -1522,12 +2011,22 @@ function findAllSalePlan() {
             $("#salePlanData").html("");
             var result = data.result;
             if(result == "暂无数据"){
-                alert("暂无数据")
             }else{
                 var salePlans = data.salePlans;
                 salePages = data.size;
                 for(var i = 0 ; i < salePlans.length ; i++){
-                    $("#salePlanData").append("<tr>"+"<td>"+salePlans[i].salesPlanNumber+"</td>"+"<td>"+salePlans[i].company+"</td>"+"<td>"+salePlans[i].costEstimate+"</td>"+"<td>"+salePlans[i].costType+"</td>"+"<td>"+salePlans[i].costCenter+"</td>"+"<td>"+salePlans[i].amount+"</td>"+"<td>"+salePlans[i].appliedAmount+"</td>"+"<td>"+salePlans[i].usedAmount+"</td>"+"<td>"+formatDateTime(salePlans[i].createTime)+"</td>"+"<td>"+salePlans[i].creater+"</td>"+"<td>"+salePlans[i].totalStatus+"</td>")
+                    $("#salePlanData").append("<tr>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+salePlans[i].salesPlanNumber+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+salePlans[i].company+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+salePlans[i].costEstimate+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+salePlans[i].costType+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+salePlans[i].costCenter+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+salePlans[i].amount+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+salePlans[i].appliedAmount+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+salePlans[i].usedAmount+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+formatDateTime(salePlans[i].createTime)+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+salePlans[i].creater+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+salePlans[i].totalStatus+"</td>");
                 }
             }
         }
@@ -1537,7 +2036,10 @@ function findAllSalePlan() {
 function findAllSalePlanNext() {
     salestart = salestart +1;
     if(salestart > salePages){
-        alert("此页为最后一页");
+        $.message({
+            message:'此页已是最后一页',
+            type:'warning'
+        })
     }else{
         $.ajax({
             type:"post",
@@ -1548,12 +2050,21 @@ function findAllSalePlanNext() {
                 $("#salePlanData").html("");
                 var result = data.result;
                 if(result == "暂无数据"){
-                    alert("暂无数据")
                 }else{
                     var salePlans = data.salePlans;
                     for(var i = 0 ; i < salePlans.length ; i++){
-                        $("#salePlanData").append("<tr>"+"<td>"+salePlans[i].salesPlanNumber+"</td>"+"<td>"+salePlans[i].company+"</td>"+"<td>"+salePlans[i].costEstimate+"</td>"+"<td>"+salePlans[i].costType+"</td>"+"<td>"+salePlans[i].costCenter+"</td>"+"<td>"+salePlans[i].amount+"</td>"+"<td>"+salePlans[i].appliedAmount+"</td>"+"<td>"+salePlans[i].usedAmount+"</td>"+"<td>"+formatDateTime(salePlans[i].createTime)+"</td>"+"<td>"+salePlans[i].creater+"</td>"+"<td>"+salePlans[i].totalStatus+"</td>")
-                    }
+                        $("#salePlanData").append("<tr>"
+                            +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+salePlans[i].salesPlanNumber+"</td>"
+                            +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+salePlans[i].company+"</td>"
+                            +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+salePlans[i].costEstimate+"</td>"
+                            +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+salePlans[i].costType+"</td>"
+                            +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+salePlans[i].costCenter+"</td>"
+                            +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+salePlans[i].amount+"</td>"
+                            +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+salePlans[i].appliedAmount+"</td>"
+                            +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+salePlans[i].usedAmount+"</td>"
+                            +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+formatDateTime(salePlans[i].createTime)+"</td>"
+                            +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+salePlans[i].creater+"</td>"
+                            +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+salePlans[i].totalStatus+"</td>");                    }
                 }
             }
         })
@@ -1561,10 +2072,14 @@ function findAllSalePlanNext() {
 }
 
 function findAllSalePlanPrevious() {
-    salestart = salestart - 1;
-    if(salestart == 0){
-        alert("此页为第一页");
+
+    if(salestart == 1){
+        $.message({
+            message:'此页已是第一页',
+            type:'warning'
+        })
     }else{
+        salestart = salestart - 1;
         $.ajax({
             type:"post",
             data:{"start":salestart},
@@ -1574,12 +2089,21 @@ function findAllSalePlanPrevious() {
                 $("#salePlanData").html("");
                 var result = data.result;
                 if(result == "暂无数据"){
-                    alert("暂无数据")
                 }else{
                     var salePlans = data.salePlans;
                     for(var i = 0 ; i < salePlans.length ; i++){
-                        $("#salePlanData").append("<tr>"+"<td>"+salePlans[i].salesPlanNumber+"</td>"+"<td>"+salePlans[i].company+"</td>"+"<td>"+salePlans[i].costEstimate+"</td>"+"<td>"+salePlans[i].costType+"</td>"+"<td>"+salePlans[i].costCenter+"</td>"+"<td>"+salePlans[i].amount+"</td>"+"<td>"+salePlans[i].appliedAmount+"</td>"+"<td>"+salePlans[i].usedAmount+"</td>"+"<td>"+formatDateTime
-                        (salePlans[i].createTime)+"</td>"+"<td>"+salePlans[i].creater+"</td>"+"<td>"+salePlans[i].totalStatus+"</td>")
+                        $("#salePlanData").append("<tr>"
+                            +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+salePlans[i].salesPlanNumber+"</td>"
+                            +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+salePlans[i].company+"</td>"
+                            +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+salePlans[i].costEstimate+"</td>"
+                            +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+salePlans[i].costType+"</td>"
+                            +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+salePlans[i].costCenter+"</td>"
+                            +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+salePlans[i].amount+"</td>"
+                            +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+salePlans[i].appliedAmount+"</td>"
+                            +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+salePlans[i].usedAmount+"</td>"
+                            +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+formatDateTime(salePlans[i].createTime)+"</td>"
+                            +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+salePlans[i].creater+"</td>"
+                            +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+salePlans[i].totalStatus+"</td>");
                     }
                 }
             }
@@ -1598,13 +2122,22 @@ function findAllSalePlanFirst() {
             $("#salePlanData").html("");
             var result = data.result;
             if(result == "暂无数据"){
-                alert("暂无数据")
             }else{
                 var salePlans = data.salePlans;
                 salePages = data.size;
                 for(var i = 0 ; i < salePlans.length ; i++){
-                    $("#salePlanData").append("<tr>"+"<td>"+salePlans[i].salesPlanNumber+"</td>"+"<td>"+salePlans[i].company+"</td>"+"<td>"+salePlans[i].costEstimate+"</td>"+"<td>"+salePlans[i].costType+"</td>"+"<td>"+salePlans[i].costCenter+"</td>"+"<td>"+salePlans[i].amount+"</td>"+"<td>"+salePlans[i].appliedAmount+"</td>"+"<td>"+salePlans[i].usedAmount+"</td>"+"<td>"+formatDateTime(salePlans[i].createTime)+"</td>"+"<td>"+salePlans[i].creater+"</td>"+"<td>"+salePlans[i].totalStatus+"</td>")
-                }
+                    $("#salePlanData").append("<tr>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+salePlans[i].salesPlanNumber+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+salePlans[i].company+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+salePlans[i].costEstimate+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+salePlans[i].costType+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+salePlans[i].costCenter+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+salePlans[i].amount+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+salePlans[i].appliedAmount+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+salePlans[i].usedAmount+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+formatDateTime(salePlans[i].createTime)+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+salePlans[i].creater+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+salePlans[i].totalStatus+"</td>");                }
             }
         }
     })
@@ -1621,13 +2154,22 @@ function findAllSalePlanLast() {
             $("#salePlanData").html("");
             var result = data.result;
             if(result == "暂无数据"){
-                alert("暂无数据")
             }else{
                 var salePlans = data.salePlans;
                 salePages = data.size;
                 for(var i = 0 ; i < salePlans.length ; i++){
-                    $("#salePlanData").append("<tr>"+"<td>"+salePlans[i].salesPlanNumber+"</td>"+"<td>"+salePlans[i].company+"</td>"+"<td>"+salePlans[i].costEstimate+"</td>"+"<td>"+salePlans[i].costType+"</td>"+"<td>"+salePlans[i].costCenter+"</td>"+"<td>"+salePlans[i].amount+"</td>"+"<td>"+salePlans[i].appliedAmount+"</td>"+"<td>"+salePlans[i].usedAmount+"</td>"+"<td>"+formatDateTime(salePlans[i].createTime)+"</td>"+"<td>"+salePlans[i].creater+"</td>"+"<td>"+salePlans[i].totalStatus+"</td>")
-                }
+                    $("#salePlanData").append("<tr>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+salePlans[i].salesPlanNumber+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+salePlans[i].company+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+salePlans[i].costEstimate+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+salePlans[i].costType+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+salePlans[i].costCenter+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+salePlans[i].amount+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+salePlans[i].appliedAmount+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+salePlans[i].usedAmount+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+formatDateTime(salePlans[i].createTime)+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+salePlans[i].creater+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+salePlans[i].totalStatus+"</td>");                }
             }
         }
     })
@@ -1655,17 +2197,25 @@ function findAllSalePlanWrite() {
             $("#salePlanWrite").html("");
             var result = data.result;
             if(result == "暂无数据"){
-                alert("暂无数据")
             }else{
                 var salePlans = data.salePlans;
                 salePages = data.size;
                 for(var i = 0 ; i < salePlans.length ; i++){
-                    $("#salePlanWrite").append("<tr>"+"<td>"+salePlans[i].salesPlanNumber+"</td>"+"<td>"+salePlans[i].salesPlanDesc+"</td>"+"<td>"+salePlans[i].company+"</td>"+"<td>"+salePlans[i].totalStatus+"</td>"+"<td>"+salePlans[i].creater+"</td>"+"<td>"+formatDateTime(salePlans[i].createTime)+"</td>");
+                    $("#salePlanWrite").append("<tr>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+salePlans[i].salesPlanNumber+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+salePlans[i].salesPlanDesc+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+salePlans[i].company+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+salePlans[i].totalStatus+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+salePlans[i].creater+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+formatDateTime(salePlans[i].createTime)+"</td>");
                 }
             }
         },
         error:function () {
-            alert("程序出错");
+            $.message({
+                message:'程序出错',
+                type:'error'
+            })
         }
     })
 }
@@ -1673,11 +2223,17 @@ function findAllSalePlanWrite() {
 function clickGetting() {
     var contactWay = $("#contactWay").val();
     if(contactWay == ""){
-        alert("输入的手机号不能为空");
+        $.message({
+            message:'输入的手机号不能为空',
+            type:'error'
+        })
         return false;
     }else {
         if (isNaN(contactWay)) {
-            alert("手机号码填写错误,含有非法字符,手机号只能是数字");
+            $.message({
+                message:'手机号码填写错误(含有非法字符,手机号只能是数字)',
+                type:'error'
+            })
         } else {
             sendCode();
             var btn = $(this);
@@ -1686,14 +2242,15 @@ function clickGetting() {
                 count--;
                 if (count > 0){
                     btn.val(count+"秒后可重新获取");
-                    document.getElementById("getting").innerText=count+"秒";
+                    document.getElementById("getting").innerHTML=count+"秒";
                     $.cookie("captcha", count, {path: '/', expires: (1/86400)*count});
-
+                    $('#getting').attr('disabled',"true");
 
                 }else {
                     clearInterval(resend);
                     $("#getting").attr('disabled',false);
                     document.getElementById("getting").innerText="获取验证码";
+                    $('#getting').removeAttr("disabled");
                 }
             }, 1000);
             btn.attr('disabled',true).css('cursor','allowed');
@@ -1710,10 +2267,23 @@ function sendCode() {
         url:"sendVcode",
         async:false,
         success:function(data){
-            alert(data);
+            if(data == "获取验证码成功"){
+                $.message({
+                    message:'获取验证码成功',
+                    type:'success'
+                })
+            }else{
+                $.message({
+                    message:data,
+                    type:'error'
+                })
+            }
         },
         error:function () {
-            alert("获取验证码失败");
+            $.message({
+                message:'获取验证码失败',
+                type:'error'
+            })
         }
     })
 }
@@ -1722,8 +2292,8 @@ function saleWrite() {
     var number = $("#saleWriteNO").val();
     var name = $("#saleWriteName").val();
     var describe = $("#saleWriteDesc").val();
-    var data = {"namber":number , "name":name , "describe":describe};
-    var url = "";
+    var data = {"number":number , "name":name , "describe":describe};
+    var url = "createSalePlanFirst";
     $.ajax({
         type:"post",
         data:data,
@@ -1731,13 +2301,23 @@ function saleWrite() {
         async:false,
         success:function(data){
             if(data == "OK"){
-                alert("销售计划创建成功");
+                $.message({
+                    message:'销售计划创建成功',
+                    type:'success'
+                })
+                findAllSalePlan();
             }else{
-                alert(data);
+                $.message({
+                    message:data,
+                    type:'error'
+                })
             }
         },
         error:function(){
-            alert("程序出错");
+            $.message({
+                message:'程序出错',
+                type:'error'
+            })
         }
     })
 }
@@ -1754,7 +2334,6 @@ function findSalePlanByNO(number) {
             $("#salePlanWrite").html("");
             var result = data.result;
             if(result == "暂无数据"){
-                alert("暂无数据");
             }else{
                 var salePlans = data.salesPlans;
                     $("#salePlanWrite").append("<tr>"+"<td>"+salePlans.no+"</td>"+"<td>"+salePlans.describe+"</td>"+"<td>"+salePlans.company+"</td>"+"<td>"+salePlans.status+"</td>"+"<td>"+salePlans.creater+"</td>"+"<td>"+formatDateTime(salePlans.createTime)+"</td>");
@@ -1786,36 +2365,6 @@ function findSalePlanByCompany() {
     })
 }
 
-function showAllCustomer() {
-    $.ajax({
-        type:"post",
-        url:"findAllCustomer",
-        async:true,
-        success:function(data){
-            $("#allCustomer").html("");
-            for(var i = 0 ; i < data.length ; i++){
-                $("#allCustomer").append("<tr>"+"<td>"+'<input id="checklist" type="checkbox" name="chooseOne" value="'+data[i].id+'">'+"</td>"+"<td>"+data[i].companyName+"</td>"+"<td>"+data[i].establishTime+"</td>"+"<td>"+data[i].registerMoney+"</td>"+"<td>"+data[i].contact+"</td>"+"<td>"+data[i].contactWay+"</td>"+"<td>"+'<a href="downloadCustomerByExcel?cid='+data[i].id+'">下载</a>'+"</td>"+"</tr>");
-            }
-        }
-    })
-}
-
-function downloadAll() {
-    window.location.href="downloadAllCustomerByExcel";
-}
-
-function downloadBatch() {
-    var ids = $('input[name=chooseOne]');
-    var arr = [];
-    ids.each(function () {
-        //获取当前元素的勾选状态
-        if ($(this).prop("checked")) {
-            arr.push($(this).val());
-        }
-    });
-    window.location.href="downloadBatchCustomerByExcel?cids="+arr;
-}
-
 function sureCompany() {
     var salePlanNum = $("#salePlanNumber").val();
     $.ajax({
@@ -1825,30 +2374,35 @@ function sureCompany() {
         async:false,
         success:function (data) {
             if(data == "F"){
-                alert("销售计划编号输入有误");
+                $.message({
+                    message:'销售计划不存在',
+                    type:'error'
+                })
+                $("#company").val("");
             }else{
                 $("#company").val(data);
             }
         },
         error:function(){
-            alert("程序出错");
+            $.message({
+                message:'程序出错',
+                type:'error'
+            })
         }
     })
 }
 
 function getAllTraveler() {
-    var str = $("#traveller").val();
-    var traveller = str.match(/\d+/g);
     var salePlanNum = $("#salePlanNumber").val();
     var company = $("#company").val();
     var target = $("#target").val();
-    var province = $("#province").text();
-    var city = $("#city").text();
+    var province = $("#province option:selected").val();
+    var city = $("#city option:selected").val();
     var address = $("#address").val();
     var bdate = $("#bdate").val();
-    var edate = $("#edate").val();
+    var creater = $("#creater").val();
     var data = {"salePlanNum":salePlanNum , "company":company , "target":target , "province":province , "city":city ,
-    "address":address , "bdate":bdate , "edate":edate , "traveller":traveller};
+    "address":address , "bdate":bdate , "creater":creater};
     var url = "saveTravelPlan";
     $.ajax({
         type:"post",
@@ -1856,35 +2410,17 @@ function getAllTraveler() {
         url:url,
         async:false,
         success:function(data){
-            alert(data);
-        }
-    })
-}
-
-function saveVisit() {
-    var salePlanNum = $("#salePlanNumber").val();
-    var company = $("#company").val();
-    var target = $("#target").val();
-    var bdate = $("#bdate").val();
-    var edate = $("#edate").val();
-    var str = $("#visitor").val();
-    var traveller = str.match(/\d+/g);
-    var data = {"salePlanNum":salePlanNum , "company":company , "target":target , "bdate":bdate , "edate":edate , "visitor":traveller};
-    var url = "createVisitSchedule";
-    $.ajax({
-        type:"post",
-        data:data,
-        url:url,
-        async:false,
-        success:function(data){
             if(data == "OK"){
-                alert("数据保存成功");
+                $.message({
+                    message:'数据保存成功',
+                    type:'success'
+                })
             }else{
-                alert(data);
+                $.message({
+                    message:data,
+                    type:'error'
+                })
             }
-        },
-        error:function(){
-            alert("程序出错");
         }
     })
 }
@@ -1912,7 +2448,10 @@ function createExpense() {
         errorInfo = errorInfo +"费用日期  "
     }
     if(errorInfo != ""){
-        alert(errorInfo+"未填写");
+        $.message({
+            message:errorInfo+"未填写",
+            type:'error'
+        })
     }else{
         var data = {"costNum":costNum , "costType":costType , "employee":employee , "dept":dept , "costDate":costDate};
         var url = "createExpenseHead";
@@ -1923,13 +2462,22 @@ function createExpense() {
             async:false,
             success:function(data){
                 if(data == "OK"){
-                    alert("数据保存成功");
+                    $.message({
+                        message:'数据保存成功',
+                        type:'success'
+                    })
                 }else{
-                    alert(data);
+                    $.message({
+                        message:data,
+                        type:'error'
+                    })
                 }
             },
             error:function () {
-                alert("程序出错");
+                $.message({
+                    message:'程序出错',
+                    type:'error'
+                })
             }
         })
     }
@@ -1997,7 +2545,10 @@ function writeMore() {
         errorInfo = errorInfo + "预算编号  ";
     }
     if(errorInfo != ""){
-        alert(errorInfo +"未填写");
+        $.message({
+            message:errorInfo +"未填写",
+            type:'error'
+        })
     }else{
         $.ajax({
             type:"post",
@@ -2006,13 +2557,23 @@ function writeMore() {
             async:false,
             success:function (data) {
                 if(data == "OK"){
-                    alert("数据保存成功");
+                    $.message({
+                        message:'数据保存成功',
+                        type:'success'
+                    })
+                    judgeIdentity();
                 }else{
-                    alert(data);
+                    $.message({
+                        message:data,
+                        type:'error'
+                    })
                 }
             },
             error:function () {
-                alert("程序出错");
+                $.message({
+                    message:'程序出错',
+                    type:'error'
+                })
             }
         })
     }
@@ -2037,7 +2598,10 @@ function judgeIdentity() {
             }
         },
         error:function () {
-            alert("程序出错");
+            $.message({
+                message:'程序出错',
+                type:'error'
+            })
         }
     })
 }
@@ -2050,12 +2614,17 @@ function getAllApprove() {
         success:function (data) {
             if(data =="暂无数据"){
                 $("#expenseData").html("");
-                // alert("暂无数据");
             }else{
                 $("#expenseData").html("");
                 for(var i = 0 ; i < data.length ; i++){
                     var num = i+1;
-                    $("#expenseData").append("<tr>"+"<td>"+num+"</td>"+"<td>"+data[i].expenseNum+"</td>"+"<td>"+data[i].leafType+"</td>"+"<td>"+data[i].principal+"</td>"+"<td>"+data[i].dept+"</td>"+"<td>"+formatDateTime(data[i].expenseDate)+"</td>"+"<td>"+"<a data-toggle=\"modal\" data-target=\"#myModal3\" onclick=\"getTotalInfo("+data[i].id+")\">审批</a>"+"</td>"+"</tr>")
+                    $("#expenseData").append("<tr>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+num+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+data[i].expenseNum+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+data[i].leafType+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+data[i].principal+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+data[i].dept+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+formatDateTime(data[i].expenseDate)+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a data-toggle=\"modal\" data-target=\"#myModal3\" onclick=\"getTotalInfo("+data[i].id+")\">审批</a>"+"</td>"+"</tr>")
                 }
             }
         }
@@ -2072,12 +2641,17 @@ function getExpenseList() {
         success:function (data) {
             if(data =="暂无数据"){
                 $("#expenseData").html("");
-                // alert("暂无数据");
             }else{
                 $("#expenseData").html("");
                 for(var i = 0 ; i < data.length ; i++){
                     var num = i+1;
-                    $("#expenseData").append("<tr>"+"<td>"+num+"</td>"+"<td>"+data[i].expenseNum+"</td>"+"<td>"+data[i].leafType+"</td>"+"<td>"+data[i].principal+"</td>"+"<td>"+data[i].dept+"</td>"+"<td>"+formatDateTime(data[i].expenseDate)+"</td>"+"<td>"+"<a data-toggle=\"modal\" data-target=\"#myModal2\" onclick=\"passValue("+data[i].id+")\">编辑</a>"+"</td>"+"</tr>")
+                    $("#expenseData").append("<tr>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+num+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+data[i].expenseNum+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+data[i].leafType+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+data[i].principal+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+data[i].dept+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+formatDateTime(data[i].expenseDate)+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a data-toggle=\"modal\" data-target=\"#myModal2\" onclick=\"passValue("+data[i].id+")\">编辑</a>"+"</td>"+"</tr>")
                 }
             }
         }
@@ -2123,11 +2697,17 @@ function expensePass() {
         url:"expenseCheck",
         async:false,
         success:function (data) {
-            alert(data);
+            $.message({
+                message:data,
+                type:'success'
+            })
             getAllApprove();
         },
         error:function(){
-            alert("程序出错");
+            $.message({
+                message:'程序出错',
+                type:'error'
+            })
         }
     })
 }
@@ -2141,11 +2721,17 @@ function expenseRefuse() {
         url:"expenseCheck",
         async:false,
         success:function (data) {
-            alert(data);
+            $.message({
+                message:data,
+                type:'success'
+            })
             getAllApprove();
         },
         error:function(){
-            alert("程序出错");
+            $.message({
+                message:'程序出错',
+                type:'error'
+            })
         }
     })
 }
@@ -2190,7 +2776,10 @@ function writeIncomeHead() {
         errorInfo = errorInfo+"源单编号  ";
     }
     if(errorInfo != ""){
-        alert(errorInfo + "未填写");
+        $.message({
+            message:errorInfo + "未填写",
+            type:'error'
+        })
     }else{
         $.ajax({
             type:"post",
@@ -2198,10 +2787,16 @@ function writeIncomeHead() {
             url:"saveIncomeHead",
             async:false,
             success:function (data) {
-                alert(data);
+                $.message({
+                    message:data,
+                    type:'success'
+                })
             },
             error:function () {
-                alert("程序出错");
+                $.message({
+                    message:'程序出错',
+                    type:'error'
+                })
             }
 
         })
@@ -2217,12 +2812,14 @@ function judgeIdentityOnIncome() {
             if(data == 1){
                 loadSimpleIncome();
             }else if(data == 2){
-                // getAllApprove();
                 loadSimpleApprove();
             }
         },
         error:function () {
-            alert("程序出错");
+            $.message({
+                message:'程序出错',
+                type:'error'
+            })
         }
     })
 }
@@ -2238,7 +2835,13 @@ function loadSimpleIncome() {
             $("#incomeData").html("");
             var incomes = data.incomes;
             for(var i = 0 ; i < incomes.length ; i++){
-                $("#incomeData").append("<tr>"+"<td>"+incomes[i].incomeNum+"</td>"+"<td>"+incomes[i].employee+"</td>"+"<td>"+incomes[i].dept+"</td>"+"<td>"+incomes[i].customer+"</td>"+"<td>"+formatDate(incomes[i].incomeDate)+"</td>"+"<td>"+"<a data-toggle=\"modal\" data-target=\"#myModal1\" onclick=\"getIncomeId("+incomes[i].id+")\">编辑</a>"+"</td>"+"</tr>");
+                $("#incomeData").append("<tr>"
+                    +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+incomes[i].incomeNum+"</td>"
+                    +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+incomes[i].employee+"</td>"
+                    +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+incomes[i].dept+"</td>"
+                    +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+incomes[i].customer+"</td>"
+                    +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+formatDate(incomes[i].incomeDate)+"</td>"
+                    +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a data-toggle=\"modal\" data-target=\"#myModal1\" onclick=\"getIncomeId("+incomes[i].id+")\">编辑</a>"+"</td>"+"</tr>");
             }
         }
     })
@@ -2255,7 +2858,13 @@ function loadSimpleApprove() {
             $("#incomeData").html("");
             var incomes = data.incomes;
             for(var i = 0 ; i < incomes.length ; i++){
-                $("#incomeData").append("<tr>"+"<td>"+incomes[i].incomeNum+"</td>"+"<td>"+incomes[i].employee+"</td>"+"<td>"+incomes[i].dept+"</td>"+"<td>"+incomes[i].customer+"</td>"+"<td>"+formatDate(incomes[i].incomeDate)+"</td>"+"<td>"+"<a data-toggle=\"modal\" data-target=\"#myModal2\" onclick=\"findIncomeTotalInfo("+incomes[i].id+")\">审批</a>"+"</td>"+"</tr>");
+                $("#incomeData").append("<tr>"
+                    +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+incomes[i].incomeNum+"</td>"
+                    +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+incomes[i].employee+"</td>"
+                    +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+incomes[i].dept+"</td>"
+                    +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+incomes[i].customer+"</td>"
+                    +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+formatDate(incomes[i].incomeDate)+"</td>"
+                    +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a data-toggle=\"modal\" data-target=\"#myModal2\" onclick=\"findIncomeTotalInfo("+incomes[i].id+")\">审批</a>"+"</td>"+"</tr>");
             }
         }
     })
@@ -2298,7 +2907,10 @@ function writeIncomeDetail() {
         errorInfo += "关联金额  ";
     }
     if(errorInfo != ""){
-        alert(errorInfo + "未填写或未选择");
+        $.message({
+            message:errorInfo + "未填写或未选择",
+            type:'error'
+        })
     }else{
         $.ajax({
             type:"post",
@@ -2306,11 +2918,17 @@ function writeIncomeDetail() {
             url:"saveIncomeDetail",
             async:false,
             success:function (data) {
-                alert(data);
+                $.message({
+                    message:data,
+                    type:'success'
+                })
                 loadSimpleIncome();
             },
             error:function () {
-                alert("程序出错");
+                $.message({
+                    message:'程序出错',
+                    type:'error'
+                })
             }
         })
     }
@@ -2356,11 +2974,17 @@ function passIncome() {
         url:"approveIncome",
         async:false,
         success:function (data) {
-            alert(data);
+            $.message({
+                message:data,
+                type:'success'
+            })
             loadSimpleApprove();
         },
         error:function () {
-            alert("程序出错");
+            $.message({
+                message:'程序出错',
+                type:'error'
+            })
         }
     })
 }
@@ -2374,11 +2998,1854 @@ function refuseIncome() {
         url:"approveIncome",
         async:false,
         success:function (data) {
-            alert(data);
+            $.message({
+                message:data,
+                type:'success'
+            })
             loadSimpleApprove();
         },
         error:function () {
-            alert("程序出错");
+            $.message({
+                message:'程序出错',
+                type:'error'
+            })
+        }
+    })
+}
+
+function saveCustomer() {
+    var customerName = $("#customerName").val();
+    var customerType = $("#customerType").val();
+    var area = $("#area option:selected").val();
+    var decisionMaker = $("#decisionMaker").val();
+    var decisionPhone = $("#decisionPhone").val();
+    var principal = $("#principal").val();
+    var phone = $("#phone").val();
+
+    var superior = $("#superior").val();
+    var email = $("#email").val();
+    var wechat = $("#wechat").val();
+    var industry = $("#industry").val();
+    var companyAddress = $("#companyAddress").val();
+    var saleAmount = $("#saleAmount").val();
+    var useAmount = $("#useAmount").val();
+
+    var data = {"customerName":customerName , "customerType":customerType , "area":area , "decisionMaker":decisionMaker , "decisionPhone":decisionPhone , "principal":principal , "phone":phone ,
+        "superior":superior , "email":email , "wechat":wechat ,"industry":industry , "companyAddress":companyAddress , "saleAmount":saleAmount ,  "useAmount":useAmount };
+    $.ajax({
+        type:"post",
+        data:data,
+        url:"saveCustomer",
+        async:false,
+        success:function(data){
+            if(data == "客户创建成功"){
+                $.message({
+                    message:'客户创建成功',
+                    type:'success'
+                })
+                $("#customerName").val("");
+                $("#industry").val("");
+                $("#companyName").val("");
+                $("#companyAddress").val("");
+                $("#customerType").val("");
+                $("#saleAmount").val("");
+                $("#contact").val("");
+                $("#useAmount").val("");
+                $("#email").val("");
+                $("#superior").val("");
+                $("#phone").val("");
+                $("#principal").val("");
+                $("#wechat").val("");
+                $("#saleMan").val("");
+                findAllCustomer();
+            }else{
+                $.message({
+                    message:data,
+                    type:'error'
+                })
+            }
+        },
+        error:function () {
+            $.message({
+                message:'程序出错',
+                type:'error'
+            })
+        }
+    })
+}
+
+var customerStart = 1;
+var customerPages;
+
+function findAllCustomer() {
+    customerStart = 1;
+    $.ajax({
+        type:"post",
+        data:{"start":customerStart},
+        url:"selectCustomerByPage",
+        async:false,
+        success:function (data) {
+            $("#dataforCustomer").html("");
+            customerPages = data.pages;
+            var customers = data.customers;
+            for(var i = 0 ; i < customers.length ; i++){
+                $("#dataforCustomer").append("<tr>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].id+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].name+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].customerType+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].decisionMaker+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].principal+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].industry+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].followName+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].createDate+"</td>"+"</tr>");
+                // $("#dataforCustomer").append("<tr>"+"<td>"+customers[i].name+"</td>"+"<td>"+customers[i].contact+"</td>"+"<td>"+customers[i].phone+"</td>"+"<td>"+customers[i].customerType+"</td>"+"<td>"+customers[i].industry+"</td>"+"<td>"+customers[i].principal+"</td>"+"<td>"+formatDate(customers[i].createDate)+"</td>"+"</tr>");
+
+            }
+            $("#customerPage").show();
+        },
+        error:function () {
+            $.message({
+                message:'程序出错',
+                type:'error'
+            })
+        }
+    })
+}
+
+function findFirstCustomer() {
+
+    if(customerStart == 1){
+        $.message({
+            message:'此页已是第一页',
+            type:'warning'
+        })
+
+    }else{
+        customerStart = customerStart+1;
+        $.ajax({
+            type:"post",
+            data:{"start":customerStart},
+            url:"selectCustomerByPage",
+            async:false,
+            success:function (data) {
+                $("#dataforCustomer").html("");
+                // customerPages = data.pages;
+                var customers = data.customers;
+                for(var i = 0 ; i < customers.length ; i++){
+                    $("#dataforCustomer").append("<tr>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].id+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].name+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].customerType+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].decisionMaker+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].principal+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].industry+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].followName+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].createDate+"</td>"+"</tr>");
+                    // $("#dataforCustomer").append("<tr>"+"<td>"+customers[i].name+"</td>"+"<td>"+customers[i].contact+"</td>"+"<td>"+customers[i].phone+"</td>"+"<td>"+customers[i].customerType+"</td>"+"<td>"+customers[i].industry+"</td>"+"<td>"+customers[i].principal+"</td>"+"<td>"+formatDate(customers[i].createDate)+"</td>"+"</tr>");
+
+                }
+                $("#customerPage").show();
+            },
+            error:function () {
+                $.message({
+                    message:'程序出错',
+                    type:'error'
+                })
+            }
+        })
+    }
+}
+
+function findNextCustomer() {
+
+    if(customerStart == customerPages){
+        $.message({
+            message:'此页已是最后一页',
+            type:'warning'
+        })
+
+    }else{
+        customerStart = customerStart+1;
+        $.ajax({
+            type:"post",
+            data:{"start":customerStart},
+            url:"selectCustomerByPage",
+            async:false,
+            success:function (data) {
+                $("#dataforCustomer").html("");
+                // customerPages = data.pages;
+                var customers = data.customers;
+                for(var i = 0 ; i < customers.length ; i++){
+                    $("#dataforCustomer").append("<tr>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].id+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].name+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].customerType+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].decisionMaker+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].principal+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].industry+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].followName+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].createDate+"</td>"+"</tr>");
+                    // $("#dataforCustomer").append("<tr>"+"<td>"+customers[i].name+"</td>"+"<td>"+customers[i].contact+"</td>"+"<td>"+customers[i].phone+"</td>"+"<td>"+customers[i].customerType+"</td>"+"<td>"+customers[i].industry+"</td>"+"<td>"+customers[i].principal+"</td>"+"<td>"+formatDate(customers[i].createDate)+"</td>"+"</tr>");
+
+                }
+                $("#customerPage").show();
+            },
+            error:function () {
+                $.message({
+                    message:'程序出错',
+                    type:'error'
+                })
+            }
+        })
+    }
+}
+
+function findPreviousCustomer() {
+
+    if(customerStart == 1){
+        $.message({
+            message:'此页已是第一页',
+            type:'warning'
+        })
+    }else{
+        customerStart = customerStart-1;
+        $.ajax({
+            type:"post",
+            data:{"start":customerStart},
+            url:"selectCustomerByPage",
+            async:false,
+            success:function (data) {
+                $("#dataforCustomer").html("");
+                // customerPages = data.pages;
+                var customers = data.customers;
+                for(var i = 0 ; i < customers.length ; i++){
+                    $("#dataforCustomer").append("<tr>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].id+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].name+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].customerType+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].decisionMaker+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].principal+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].industry+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].followName+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].createDate+"</td>"+"</tr>");
+                    // $("#dataforCustomer").append("<tr>"+"<td>"+customers[i].name+"</td>"+"<td>"+customers[i].contact+"</td>"+"<td>"+customers[i].phone+"</td>"+"<td>"+customers[i].customerType+"</td>"+"<td>"+customers[i].industry+"</td>"+"<td>"+customers[i].principal+"</td>"+"<td>"+formatDate(customers[i].createDate)+"</td>"+"</tr>");
+
+                }
+                $("#customerPage").show();
+            },
+            error:function () {
+                $.message({
+                    message:'程序出错',
+                    type:'error'
+                })
+            }
+        })
+    }
+}
+
+function findLastCustomer() {
+    if(customerStart == customerPages){
+        $.message({
+            message:'此页已是最后一页',
+            type:'warning'
+        })
+    }else{
+        customerStart = customerPages;
+        $.ajax({
+            type:"post",
+            data:{"start":customerStart},
+            url:"selectCustomerByPage",
+            async:false,
+            success:function (data) {
+                $("#dataforCustomer").html("");
+                // customerPages = data.pages;
+                var customers = data.customers;
+                for(var i = 0 ; i < customers.length ; i++){
+                    $("#dataforCustomer").append("<tr>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].id+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].name+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].customerType+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].decisionMaker+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].principal+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].industry+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].followName+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].createDate+"</td>"+"</tr>");
+                    // $("#dataforCustomer").append("<tr>"+"<td>"+customers[i].name+"</td>"+"<td>"+customers[i].contact+"</td>"+"<td>"+customers[i].phone+"</td>"+"<td>"+customers[i].customerType+"</td>"+"<td>"+customers[i].industry+"</td>"+"<td>"+customers[i].principal+"</td>"+"<td>"+formatDate(customers[i].createDate)+"</td>"+"</tr>");
+
+                }
+                $("#customerPage").show();
+            },
+            error:function () {
+                $.message({
+                    message:'程序出错',
+                    type:'error'
+                })
+            }
+        })
+    }
+}
+
+
+function getTodayCustomer() {
+    var now = new Date();
+    var year = now.getFullYear();
+    var month = now.getMonth()+1;
+    if(month < 10){
+        month = "0"+month;
+    }
+    var day = now.getDate();
+
+    var next = day+1;
+    if(day < 10){
+        day = "0"+day;
+    }
+    if(next < 10){
+        next = "0" + next;
+    }
+    var start = year+"-"+month+"-"+day;
+    var end =  year+"-"+month+"-"+next;
+    var data = {"start":start , "end":start};
+    $.ajax({
+        type:"post",
+        data:data,
+        url:"getTodayCustomer",
+        async:false,
+        success:function (data) {
+            $("#dataforCustomer").html("");
+            $("#customerPage").hide();
+            var result = data.result;
+            if(result == "OK"){
+                var customers = data.customers;
+                for(var i = 0 ; i < customers.length ; i++){
+                    $("#dataforCustomer").append("<tr>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].id+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].name+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].customerType+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].decisionMaker+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].principal+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].industry+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].followName+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].createDate+"</td>"+"</tr>");
+                    // $("#dataforCustomer").append("<tr>"+"<td>"+customers[i].name+"</td>"+"<td>"+customers[i].contact+"</td>"+"<td>"+customers[i].phone+"</td>"+"<td>"+customers[i].customerType+"</td>"+"<td>"+customers[i].industry+"</td>"+"<td>"+customers[i].principal+"</td>"+"<td>"+formatDate(customers[i].createDate)+"</td>"+"</tr>");
+
+                }
+            }else{
+                $.message({
+                    message:result,
+                    type:'error'
+                })
+            }
+        }
+    })
+
+}
+
+
+function getYesterdayCustomer() {
+    var now = new Date();
+    var year = now.getFullYear();
+    var month = now.getMonth()+1;
+    if(month < 10){
+        month = "0"+month;
+    }
+    var day = now.getDate();
+    if(day < 10){
+        day = "0" + day;
+    }
+    var last = day-1;
+    if(last < 10){
+        last = "0" + last;
+    }
+    var start = year+"-"+month+"-"+last;
+    var end =  year+"-"+month+"-"+day;
+    var data = {"start":start , "end":start};
+    $.ajax({
+        type:"post",
+        data:data,
+        url:"getTodayCustomer",
+        async:false,
+        success:function (data) {
+            $("#dataforCustomer").html("");
+            $("#customerPage").hide();
+            var result = data.result;
+            if(result == "OK"){
+                var customers = data.customers;
+                for(var i = 0 ; i < customers.length ; i++){
+                    $("#dataforCustomer").append("<tr>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].id+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].name+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].customerType+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].decisionMaker+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].principal+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].industry+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].followName+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].createDate+"</td>"+"</tr>");
+                    // $("#dataforCustomer").append("<tr>"+"<td>"+customers[i].name+"</td>"+"<td>"+customers[i].contact+"</td>"+"<td>"+customers[i].phone+"</td>"+"<td>"+customers[i].customerType+"</td>"+"<td>"+customers[i].industry+"</td>"+"<td>"+customers[i].principal+"</td>"+"<td>"+formatDate(customers[i].createDate)+"</td>"+"</tr>");
+
+                }
+            }else{
+                $.message({
+                    message:result,
+                    type:'error'
+                })
+            }
+        }
+    })
+
+}
+
+function getNextDate(day) {
+    var dd = new Date();
+    dd.setDate(dd.getDate() + day);
+    var y = dd.getFullYear();
+    var m = dd.getMonth() + 1 < 10 ? "0" + (dd.getMonth() + 1) : dd.getMonth() + 1;
+    var d = dd.getDate() < 10 ? "0" + dd.getDate() : dd.getDate();
+    return y + "-" + m + "-" + d;
+};
+
+function getThisWeekCustomer() {
+    var now = new Date();
+    var week = now.getDay();
+    var first = getNextDate(-week+1)
+    var last = getNextDate(7-week+1);
+    var start = first;
+    var end =  last;
+    var data = {"start":start , "end":end};
+    $.ajax({
+        type:"post",
+        data:data,
+        url:"getTodayCustomer",
+        async:false,
+        success:function (data) {
+            $("#dataforCustomer").html("");
+            $("#customerPage").hide();
+            var result = data.result;
+            if(result == "OK"){
+                var customers = data.customers;
+                for(var i = 0 ; i < customers.length ; i++){
+                    $("#dataforCustomer").append("<tr>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].id+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].name+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].customerType+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].decisionMaker+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].principal+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].industry+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].followName+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].createDate+"</td>"+"</tr>");
+                    // $("#dataforCustomer").append("<tr>"+"<td>"+customers[i].name+"</td>"+"<td>"+customers[i].contact+"</td>"+"<td>"+customers[i].phone+"</td>"+"<td>"+customers[i].customerType+"</td>"+"<td>"+customers[i].industry+"</td>"+"<td>"+customers[i].principal+"</td>"+"<td>"+formatDate(customers[i].createDate)+"</td>"+"</tr>");
+
+                }
+            }else{
+                $.message({
+                    message:result,
+                    type:'error'
+                })
+            }
+        }
+    })
+
+}
+
+function getLastWeekCustomer() {
+    var now = new Date();
+    var week = now.getDay();
+    var first = getNextDate(-week-6)
+    var last = getNextDate(7-week-6);
+    var start = first
+    var end =  last
+    var data = {"start":start , "end":end};
+    $.ajax({
+        type:"post",
+        data:data,
+        url:"getTodayCustomer",
+        async:false,
+        success:function (data) {
+            $("#dataforCustomer").html("");
+            $("#customerPage").hide();
+            var result = data.result;
+            if(result == "OK"){
+                var customers = data.customers;
+                for(var i = 0 ; i < customers.length ; i++){
+                    $("#dataforCustomer").append("<tr>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].id+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].name+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].customerType+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].decisionMaker+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].principal+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].industry+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].followName+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].createDate+"</td>"+"</tr>");
+                    // $("#dataforCustomer").append("<tr>"+"<td>"+customers[i].name+"</td>"+"<td>"+customers[i].contact+"</td>"+"<td>"+customers[i].phone+"</td>"+"<td>"+customers[i].customerType+"</td>"+"<td>"+customers[i].industry+"</td>"+"<td>"+customers[i].principal+"</td>"+"<td>"+formatDate(customers[i].createDate)+"</td>"+"</tr>");
+
+                }
+            }else{
+                $.message({
+                    message:result,
+                    type:'error'
+                })
+            }
+        }
+    })
+
+}
+
+function getThisMonthCustomer() {
+    var beginMonth;
+    var endMonth;
+    var now = new Date();
+    var year = now.getFullYear();
+    var month = now.getMonth()+1;
+    if(month == 12){
+        if(month < 10){
+            month = "0" + month;
+        }
+        beginMonth = year+"-"+month;
+        var nextYear = year+1;
+        endMonth = nextYear+"-"+"01";
+    }else{
+        var newMonth = month+1;
+        if(month < 10){
+            month = "0" + month;
+        }
+        beginMonth = year+"-"+month;
+        if(newMonth < 10){
+            newMonth = "0"+newMonth;
+        }
+        endMonth = year+"-"+newMonth;
+    }
+    var start = beginMonth+"-"+"01";
+    var end =  endMonth+"-"+"01";
+    var data = {"start":start , "end":end};
+    $.ajax({
+        type:"post",
+        data:data,
+        url:"getTodayCustomer",
+        async:false,
+        success:function (data) {
+            $("#dataforCustomer").html("");
+            $("#customerPage").hide();
+            var result = data.result;
+            if(result == "OK"){
+                var customers = data.customers;
+                for(var i = 0 ; i < customers.length ; i++){
+                    $("#dataforCustomer").append("<tr>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].id+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].name+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].customerType+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].decisionMaker+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].principal+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].industry+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].followName+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].createDate+"</td>"+"</tr>");
+                    // $("#dataforCustomer").append("<tr>"+"<td>"+customers[i].name+"</td>"+"<td>"+customers[i].contact+"</td>"+"<td>"+customers[i].phone+"</td>"+"<td>"+customers[i].customerType+"</td>"+"<td>"+customers[i].industry+"</td>"+"<td>"+customers[i].principal+"</td>"+"<td>"+formatDate(customers[i].createDate)+"</td>"+"</tr>");
+
+                }
+            }else{
+                $.message({
+                    message:result,
+                    type:'error'
+                })
+            }
+        }
+    })
+
+}
+
+function getLastMonthCustomer() {
+    var beginMonth;
+    var endMonth;
+    var now = new Date();
+    var year = now.getFullYear();
+    var month = now.getMonth()+1;
+    if(month == 1){
+
+        var lastYear = year-1;
+        beginMonth = lastYear+"-"+"12";
+        if(month < 10){
+            month = "0"+month;
+        }
+        endMonth = year+"-"+month;
+
+    }else{
+        var newMonth = month-1;
+        if(newMonth < 10){
+            newMonth = "0"+newMonth;
+        }
+        if(month < 10){
+            month = "0"+month;
+        }
+        beginMonth = year+"-"+newMonth;
+        endMonth = year+"-"+month;
+    }
+    var start = beginMonth+"-"+"01";
+    var end =  endMonth+"-"+"01";
+    var data = {"start":start , "end":end};
+    $.ajax({
+        type:"post",
+        data:data,
+        url:"getTodayCustomer",
+        async:false,
+        success:function (data) {
+            $("#dataforCustomer").html("");
+            $("#customerPage").hide();
+            var result = data.result;
+            if(result == "OK"){
+                var customers = data.customers;
+                for(var i = 0 ; i < customers.length ; i++){
+                    $("#dataforCustomer").append("<tr>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].id+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].name+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].customerType+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].decisionMaker+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].principal+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].industry+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].followName+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].createDate+"</td>"+"</tr>");
+                    // $("#dataforCustomer").append("<tr>"+"<td>"+customers[i].name+"</td>"+"<td>"+customers[i].contact+"</td>"+"<td>"+customers[i].phone+"</td>"+"<td>"+customers[i].customerType+"</td>"+"<td>"+customers[i].industry+"</td>"+"<td>"+customers[i].principal+"</td>"+"<td>"+formatDate(customers[i].createDate)+"</td>"+"</tr>");
+
+                }
+            }else{
+                $.message({
+                    message:result,
+                    type:'error'
+                })
+            }
+        }
+    })
+
+}
+
+function findCutomerByNameOrPhone() {
+    var  name = $("#customerSearch").val();
+    if(name == ""){
+        $.message({
+            message:'请填写搜索客户的名称或联系方式',
+            type:'error'
+        })
+    }else{
+        if(isNaN(name)){//判断输入的内容是客户名称还是联系方式
+            //客户名称
+            $.ajax({
+                type:"post",
+                data:{"name":name},
+                url:"findCustomerByName",
+                async:false,
+                success:function (data) {
+                    $("#dataforCustomer").html("");
+                    $("#customerPage").hide();
+                    var customers = data.customers;
+                    for(var i = 0 ; i < customers.length ; i++){
+                        $("#dataforCustomer").append("<tr>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].id+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].name+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].customerType+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].decisionMaker+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].principal+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].industry+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].followName+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].createDate+"</td>"+"</tr>");
+                    }
+                }
+            })
+        }else{
+            //联系方式
+            $.ajax({
+                type:"post",
+                data:{"phone":name},
+                url:"findCustomerByPhone",
+                async:false,
+                success:function (data) {
+                    $("#dataforCustomer").html("");
+                    $("#customerPage").hide();
+                    var customers = data.customers;
+                    for(var i = 0 ; i < customers.length ; i++){
+                        $("#dataforCustomer").append("<tr>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].id+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].name+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].customerType+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].decisionMaker+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].principal+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].industry+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].followName+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].createDate+"</td>"+"</tr>");
+                    }
+                }
+            })
+        }
+    }
+}
+
+function createNewSaleCost() {
+    var costType = $("#costType").val();
+    var happenDate = $("#happenDate").val();
+    var describe = $("#describe").val();
+    var contract = $("#contract").val();
+    var costAmount = $("#costAmount").val();
+    var principal = $("#costPrincipal").val();
+    var data = {"costType":costType , "happenDate":happenDate , "describe":describe , "contract":contract , "costAmount":costAmount , "principal":principal};
+    $.ajax({
+        type:"post",
+        data:data,
+        url:"saveSaleCost",
+        async:false,
+        success:function (data) {
+            if(data == "OK"){
+                $.message({
+                    message:'数据保存成功',
+                    type:'success'
+                })
+            }else{
+                $.message({
+                    message:data,
+                    type:'error'
+                })
+            }
+        },
+        error:function () {
+            $.message({
+                message:'程序出错',
+                type:'error'
+            })
+        }
+    })
+}
+
+function findByParams() {
+    var type = $("#costType").val();
+    var principal = $("#costPrincipal").val();
+    var data={"type":type , "principal":principal};
+    $.ajax({
+        type:"post",
+        data:data,
+        url:"findByTypeAndPrincipal",
+        async:false,
+        success:function (data) {
+            $("#allSaleCost").html("");
+            var costs = data.costs;
+            for(var i = 0 ; i < costs.length ; i++){
+                $("#allSaleCost").append("<tr>"
+                    +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+costs[i].costType+"</td>"
+                    +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+costs[i].costDescribe+"</td>"
+                    +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+costs[i].costAmount+"元"+"</td>"
+                    +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+costs[i].happenDate+"</td>"
+                    +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+costs[i].contract+"</td>"
+                    +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+costs[i].principal+"</td>"
+                    +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+formatDate(costs[i].createDate)+"</td>"
+                    +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a>操作</a>"+"</td>"
+                    +"</tr>")
+            }
+        }
+    })
+}
+
+function saveOpportunity() {
+    var name = $("#name").val();
+    var fax = $("#fax").val();
+    var companyName = $("#companyName").val();
+    var email = $("#email").val();
+    var source = $("#source").val();
+    var principal = $("#principal").val();
+    var body = $("#body").val();
+    var dept = $("#dept").val();
+    var contract = $("#contract").val();
+    var maker = $("#maker").val();
+    var phone = $("#phone").val();
+    var makeDate = $("#makeDate").val();
+    var mobile = $("#mobile").val();
+    var leafType = $("#leafType").val();
+    var province = $("#province option:selected").text();
+    var city = $("#city option:selected").text();
+    var area = $("#area option:selected").text();
+    var address = $("#address").val();
+    var companyAddress = province + city + area + address;
+    var leafNum = $("#leafNum").val();
+    var data = {"name":name , "fax":fax , "companyName":companyName , "email":email , "source":source , "principal":principal , "body":body , "dept":dept ,
+    "contract":contract , "maker":maker , "phone":phone , "makeDate":makeDate , "mobile":mobile , "leafType":leafType , "address":companyAddress , "leafNum":leafNum};
+    $.ajax({
+        type:"post",
+        data:data,
+        url:"createOpportunity",
+        async:false,
+        success:function (data) {
+            if(data == "OK"){
+                $.message({
+                    message:'数据保存成功',
+                    type:'success'
+                })
+            }else{
+                $.message({
+                    message:data,
+                    type:'error'
+                })
+            }
+        },
+        error:function () {
+            $.message({
+                message:'程序出错',
+                type:'error'
+            })
+        }
+    })
+}
+
+var oppoSatrt = 1;
+var oppoPages;
+
+function getOppoByPageLoad() {
+    oppoSatrt = 1;
+    $.ajax({
+        type:"post",
+        data:{"start":oppoSatrt},
+        url:"getOpportunityByPage",
+        async:false,
+        success:function(data){
+            $("#opportunityData").html("");
+            oppoPages = data.pages;
+            var oppos = data.oppos;
+            for(var i = 0 ; i < oppos.length ; i++){
+                $("#opportunityData").append("<tr>"
+                    +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].name+"</td>"
+                    +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].companyName+"</td>"
+                    +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].resource+"</td>"
+                    +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].contract+"</td>"
+                    +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].phone+"</td>"
+                    +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].mobile+"</td>"
+                    +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].principal+"</td>"
+                    +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].makeDate+"</td>"
+                    +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a data-toggle=\"modal\" data-target=\"#myModal\">编辑</a>"+"</td>"
+                    +"</tr>");
+            }
+            $("#pageDIV").show();
+        }
+    })
+}
+
+function getOppoByPageFirst() {
+    if(oppoSatrt == 1){
+        $.message({
+            message:'此页已是第一页',
+            type:'warning'
+        })
+    }else{
+        oppoSatrt = 1;
+        $.ajax({
+            type:"post",
+            data:{"start":oppoSatrt},
+            url:"getOpportunityByPage",
+            async:false,
+            success:function(data){
+                $("#opportunityData").html("");
+                oppoPages = data.pages;
+                var oppos = data.oppos;
+                for(var i = 0 ; i < oppos.length ; i++){
+                    $("#opportunityData").append("<tr>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].name+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].companyName+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].resource+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].contract+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].phone+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].mobile+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].principal+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].makeDate+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a data-toggle=\"modal\" data-target=\"#myModal\">编辑</a>"+"</td>"
+                        +"</tr>");
+                }
+                $("#pageDIV").show();
+            }
+        })
+    }
+}
+
+function getOppoByPagePrevious() {
+    if(oppoSatrt == 1){
+        $.message({
+            message:'此页已是第一页',
+            type:'warning'
+        })
+    }else{
+        oppoSatrt = oppoSatrt - 1;
+        $.ajax({
+            type:"post",
+            data:{"start":oppoSatrt},
+            url:"getOpportunityByPage",
+            async:false,
+            success:function(data){
+                $("#opportunityData").html("");
+                oppoPages = data.pages;
+                var oppos = data.oppos;
+                for(var i = 0 ; i < oppos.length ; i++){
+                    $("#opportunityData").append("<tr>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].name+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].companyName+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].resource+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].contract+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].phone+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].mobile+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].principal+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].makeDate+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a data-toggle=\"modal\" data-target=\"#myModal\">编辑</a>"+"</td>"
+                        +"</tr>");
+                }
+                $("#pageDIV").show();
+            }
+        })
+    }
+}
+
+function getOppoByPageNext() {
+    if(oppoSatrt == oppoPages){
+        $.message({
+            message:'此页已是最后一页',
+            type:'warning'
+        })
+    }else{
+        oppoSatrt = oppoSatrt + 1;
+        $.ajax({
+            type:"post",
+            data:{"start":oppoSatrt},
+            url:"getOpportunityByPage",
+            async:false,
+            success:function(data){
+                $("#opportunityData").html("");
+                oppoPages = data.pages;
+                var oppos = data.oppos;
+                for(var i = 0 ; i < oppos.length ; i++){
+                    $("#opportunityData").append("<tr>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].name+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].companyName+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].resource+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].contract+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].phone+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].mobile+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].principal+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].makeDate+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a data-toggle=\"modal\" data-target=\"#myModal\">编辑</a>"+"</td>"
+                        +"</tr>");
+                }
+                $("#pageDIV").show();
+            }
+        })
+    }
+}
+
+function getOppoByPageLast() {
+    if(oppoSatrt == oppoPages){
+        $.message({
+            message:'此页已是最后一页',
+            type:'warning'
+        })
+    }else{
+        oppoSatrt = oppoPages;
+        $.ajax({
+            type:"post",
+            data:{"start":oppoSatrt},
+            url:"getOpportunityByPage",
+            async:false,
+            success:function(data){
+                $("#opportunityData").html("");
+                oppoPages = data.pages;
+                var oppos = data.oppos;
+                for(var i = 0 ; i < oppos.length ; i++){
+                    $("#opportunityData").append("<tr>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].name+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].companyName+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].resource+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].contract+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].phone+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].mobile+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].principal+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].makeDate+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a data-toggle=\"modal\" data-target=\"#myModal\">编辑</a>"+"</td>"
+                        +"</tr>");
+                }
+                $("#pageDIV").show();
+            }
+        })
+    }
+}
+
+
+function getOppoByAddress() {
+    var province = $("#province option:selected").text();
+    var city = $("#city option:selected").text();
+    var area = $("#area option:selected").text();
+    var address = province+city+area;
+    $.ajax({
+        type:"post",
+        data:{"address":address},
+        url:"findOppoByAddress",
+        async:false,
+        success:function(data){
+            $("#opportunityData").html("");
+            var oppos = data.oppos;
+            for(var i = 0 ; i < oppos.length ; i++){
+                $("#opportunityData").append("<tr>"
+                    +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].name+"</td>"
+                    +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].companyName+"</td>"
+                    +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].resource+"</td>"
+                    +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].contract+"</td>"
+                    +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].phone+"</td>"
+                    +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].mobile+"</td>"
+                    +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].principal+"</td>"
+                    +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].makeDate+"</td>"
+                    +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a data-toggle=\"modal\" data-target=\"#myModal\">编辑</a>"+"</td>"
+                    +"</tr>");
+            }
+            $("#pageDIV").hide();
+        }
+    })
+}
+
+function getOppoByResource(obj) {
+    var resource = $(obj).text();
+    $.ajax({
+        type:"post",
+        data:{"resource":resource},
+        url:"findOppoByResource",
+        async:false,
+        success:function(data){
+            $("#opportunityData").html("");
+            var oppos = data.oppos;
+            for(var i = 0 ; i < oppos.length ; i++){
+                $("#opportunityData").append("<tr>"
+                    +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].name+"</td>"
+                    +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].companyName+"</td>"
+                    +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].resource+"</td>"
+                    +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].contract+"</td>"
+                    +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].phone+"</td>"
+                    +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].mobile+"</td>"
+                    +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].principal+"</td>"
+                    +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].makeDate+"</td>"
+                    +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a data-toggle=\"modal\" data-target=\"#myModal\">编辑</a>"+"</td>"
+                    +"</tr>");
+            }
+            $("#pageDIV").hide();
+        }
+    })
+}
+
+//竞争对手新增
+function createCompetitor() {
+    var competitor = $("#competitorName").val();
+    var owner = $("#owner").val();
+    var province = $("#province option:selected").text();
+    var city = $("#city option:selected").text();
+    var address = $("#address").val();
+    var website = $("#website").val();
+    var manace = $("#manace").val();
+
+    var product = $("#mainProduct").val();
+    var customer = $("#mainCustomer").val();
+    var advantage = $("#advantage").val();
+    var data={"competitorName":competitor , "owner":owner , "province":province , "city":city  , "address":address , "advantage":advantage , "manace":manace , "website":website , "product":product , "customer":customer};
+    $.ajax({
+        type:"post",
+        data:data,
+        url:"saveCompetitor",
+        async:false,
+        success:function (data) {
+            if(data == "OK"){
+                $.message({
+                    message:'数据保存成功',
+                    type:'success'
+                })
+                loadCompetitor();
+            }else{
+                $.message({
+                    message:data,
+                    type:'error'
+                })
+            }
+        }
+    })
+}
+
+function getCompetitorByName() {
+    var name = $("#competitorSearch").val();
+    $.ajax({
+        type:"post",
+        data:{"name" : name},
+        url:"getCompetitorByName",
+        async:false,
+        success:function (data) {
+            $("#competitorData").html("");
+            for(var i = 0 ; i < data.length ; i++){
+                $("#competitorData").append("<tr>"
+                    +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+data[i].competitorName+"</td>"
+                    +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+data[i].owner+"</td>"
+                    +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+data[i].province+data[i].city+"</td>"
+                    +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+data[i].address+"</td>"
+                    +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+data[i].website+"</td>"
+                    +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+data[i].manace+"</td>"
+                    +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+data[i].updatePerson+"</td>"+"</tr>");
+            }
+            if(name == ""){
+                $("#pageDIV").show();
+            }else{
+                $("#pageDIV").hide();
+            }
+        }
+    })
+}
+
+var competitorStart = 1;
+var competitorPages;
+
+function loadCompetitor() {
+    competitorStart = 1;
+    $.ajax({
+        type:"post",
+        data:{"start" : competitorStart},
+        url:"findAllCompetitor",
+        async:false,
+        success:function (data) {
+            $("#competitorData").html("");
+            competitorPages = data.pages;
+            var competitors = data.competitors;
+            for(var i = 0 ; i < competitors.length ; i++){
+                $("#competitorData").append("<tr>"
+                    +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+competitors[i].competitorName+"</td>"
+                    +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+competitors[i].owner+"</td>"
+                    +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+competitors[i].province+competitors[i].city+"</td>"
+                    +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+competitors[i].address+"</td>"
+                    +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+competitors[i].website+"</td>"
+                    +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+competitors[i].manace+"</td>"
+                    +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+competitors[i].updatePerson+"</td>"+"</tr>");
+            }
+            $("#pageDIV").show();
+        }
+    })
+}
+
+function findCompetitorByPageFirst() {
+    if(competitorStart == 1){
+        $.message({
+            message:'此页已是第一页',
+            type:'warning'
+        })
+    }else{
+        competitorStart = 1;
+        $.ajax({
+            type:"post",
+            data:{"start":competitorStart},
+            url:"findAllCompetitor",
+            async:false,
+            success:function (data) {
+                $("#competitorData").html("");
+                var competitors = data.competitors;
+                for(var i = 0 ; i < competitors.length ; i++){
+                    $("#competitorData").append("<tr>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+competitors[i].competitorName+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+competitors[i].owner+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+competitors[i].province+competitors[i].city+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+competitors[i].address+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+competitors[i].website+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+competitors[i].manace+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+competitors[i].updatePerson+"</td>"+"</tr>");
+                }
+                $("#pageDIV").show();
+            }
+        })
+    }
+}
+
+function findCompetitorByPagePrevious() {
+    if(competitorStart == 1){
+        $.message({
+            message:'此页已是第一页',
+            type:'warning'
+        })
+    }else{
+        competitorStart = competitorStart - 1;
+        $.ajax({
+            type:"post",
+            data:{"start":competitorStart},
+            url:"findAllCompetitor",
+            async:false,
+            success:function (data) {
+                $("#competitorData").html("");
+                var competitors = data.competitors;
+                for(var i = 0 ; i < competitors.length ; i++){
+                    $("#competitorData").append("<tr>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+competitors[i].competitorName+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+competitors[i].owner+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+competitors[i].province+competitors[i].city+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+competitors[i].address+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+competitors[i].website+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+competitors[i].manace+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+competitors[i].updatePerson+"</td>"+"</tr>");
+                }
+                $("#pageDIV").show();
+            }
+        })
+    }
+}
+
+function findCompetitorByPageNext() {
+    if(competitorStart == competitorPages){
+        $.message({
+            message:'此页已是最后一页',
+            type:'warning'
+        })
+    }else{
+        competitorStart = competitorStart + 1;
+        $.ajax({
+            type:"post",
+            data:{"start":competitorStart},
+            url:"findAllCompetitor",
+            async:false,
+            success:function (data) {
+                $("#competitorData").html("");
+                var competitors = data.competitors;
+                for(var i = 0 ; i < competitors.length ; i++){
+                    $("#competitorData").append("<tr>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+competitors[i].competitorName+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+competitors[i].owner+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+competitors[i].province+competitors[i].city+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+competitors[i].address+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+competitors[i].website+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+competitors[i].manace+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+competitors[i].updatePerson+"</td>"+"</tr>");
+                }
+                $("#pageDIV").show();
+            }
+        })
+    }
+}
+
+function findCompetitorByPageLast() {
+    if(competitorStart == competitorPages){
+        $.message({
+            message:'此页已是最后一页',
+            type:'warning'
+        })
+    }else{
+        competitorStart = competitorPages;
+        $.ajax({
+            type:"post",
+            data:{"start":competitorStart},
+            url:"findAllCompetitor",
+            async:false,
+            success:function (data) {
+                $("#competitorData").html("");
+                var competitors = data.competitors;
+                for(var i = 0 ; i < competitors.length ; i++){
+                    $("#competitorData").append("<tr>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+competitors[i].competitorName+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+competitors[i].owner+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+competitors[i].province+competitors[i].city+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+competitors[i].address+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+competitors[i].website+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+competitors[i].manace+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+competitors[i].updatePerson+"</td>"+"</tr>");
+                }
+                $("#pageDIV").show();
+            }
+        })
+    }
+}
+
+function saveVisit() {
+    var salePlanNo = $("#salePlanNo").val();
+    var company = $("#company").val();
+    var record = $("#record").val();
+    var bdate = $("#bdate").val();
+    var creater = $("#creater").val();
+    var data = {"salePlanNo":salePlanNo , "company":company , "record":record , "bdate":bdate , "creater":creater};
+    var url = "createVisitSchedule";
+    $.ajax({
+        type:"post",
+        data:data,
+        url:url,
+        async:false,
+        success:function(data){
+            if(data == "OK"){
+                $.message({
+                    message:'数据保存成功',
+                    type:'success'
+                })
+            }else{
+                $.message({
+                    message:data,
+                    type:'error'
+                })
+            }
+        },
+        error:function(){
+            $.message({
+                message:'程序出错',
+                type:'error'
+            })
+        }
+    })
+}
+
+var visitScheduleStart = 1;
+var visitSchedulePages;
+function loadVisitSchedule() {
+    visitScheduleStart = 1;
+    $.ajax({
+        type:"post",
+        data:{"start":visitScheduleStart},
+        url:"findVisitScheduleByPage",
+        async:true,
+        success:function (data) {
+            var pages = data.pages;
+            visitSchedulePages = pages;
+            $("#visitRecord").html("");
+            $("#visitPageDIV").show();
+            var visitSchedules = data.visitSchedules;
+            for(var i = 0 ; i <visitSchedules.length ; i++){
+                $("#visitRecord").append("<tr>"
+                    +"<td>"+visitSchedules[i].number+"</td>"
+                    +"<td>"+visitSchedules[i].vname+"</td>"
+                    +"<td>"+visitSchedules[i].bdate+"</td>"
+                    +"<td>"+visitSchedules[i].destination+"</td>"
+                    +"<td>"+visitSchedules[i].creater+"</td>"
+                    +"<td>"+formatDateTime(visitSchedules[i].createDate)+"</td>"
+                    +"</tr>");
+            }
+        }
+    })
+}
+
+function getVisitScheduleFirst() {
+    if(visitScheduleStart == 1){
+        $.message({
+            message:'此页已是第一页',
+            type:'warning'
+        })
+    }else{
+        visitScheduleStart = 1;
+        $.ajax({
+            type:"post",
+            data:{"start":visitScheduleStart},
+            url:"findVisitScheduleByPage",
+            async:true,
+            success:function (data) {
+                var pages = data.pages;
+                visitSchedulePages = pages;
+                $("#visitRecord").html("");
+                $("#visitPageDIV").show();
+                var visitSchedules = data.visitSchedules;
+                for(var i = 0 ; i <visitSchedules.length ; i++){
+                    $("#visitRecord").append("<tr>"
+                        +"<td>"+visitSchedules[i].number+"</td>"
+                        +"<td>"+visitSchedules[i].vname+"</td>"
+                        +"<td>"+visitSchedules[i].bdate+"</td>"
+                        +"<td>"+visitSchedules[i].destination+"</td>"
+                        +"<td>"+visitSchedules[i].creater+"</td>"
+                        +"<td>"+formatDateTime(visitSchedules[i].createDate)+"</td>"
+                        +"</tr>");
+                }
+            }
+        })
+    }
+}
+
+function getVisitSchedulePrevious() {
+    if(visitScheduleStart == 1){
+        $.message({
+            message:'此页已是第一页',
+            type:'warning'
+        })
+    }else{
+        visitScheduleStart = visitScheduleStart -1;
+        $.ajax({
+            type:"post",
+            data:{"start":visitScheduleStart},
+            url:"findVisitScheduleByPage",
+            async:true,
+            success:function (data) {
+                var pages = data.pages;
+                visitSchedulePages = pages;
+                $("#visitRecord").html("");
+                $("#visitPageDIV").show();
+                var visitSchedules = data.visitSchedules;
+                for(var i = 0 ; i <visitSchedules.length ; i++){
+                    $("#visitRecord").append("<tr>"
+                        +"<td>"+visitSchedules[i].number+"</td>"
+                        +"<td>"+visitSchedules[i].vname+"</td>"
+                        +"<td>"+visitSchedules[i].bdate+"</td>"
+                        +"<td>"+visitSchedules[i].destination+"</td>"
+                        +"<td>"+visitSchedules[i].creater+"</td>"
+                        +"<td>"+formatDateTime(visitSchedules[i].createDate)+"</td>"
+                        +"</tr>");
+                }
+            }
+        })
+    }
+}
+
+function getVisitScheduleNext() {
+    if(visitScheduleStart == visitSchedulePages){
+        $.message({
+            message:'此页已是最后一页',
+            type:'warning'
+        })
+    }else{
+        visitScheduleStart = visitScheduleStart + 1;
+        $.ajax({
+            type:"post",
+            data:{"start":visitScheduleStart},
+            url:"findVisitScheduleByPage",
+            async:true,
+            success:function (data) {
+                var pages = data.pages;
+                visitSchedulePages = pages;
+                $("#visitRecord").html("");
+                $("#visitPageDIV").show();
+                var visitSchedules = data.visitSchedules;
+                for(var i = 0 ; i <visitSchedules.length ; i++){
+                    $("#visitRecord").append("<tr>"
+                        +"<td>"+visitSchedules[i].number+"</td>"
+                        +"<td>"+visitSchedules[i].vname+"</td>"
+                        +"<td>"+visitSchedules[i].bdate+"</td>"
+                        +"<td>"+visitSchedules[i].destination+"</td>"
+                        +"<td>"+visitSchedules[i].creater+"</td>"
+                        +"<td>"+formatDateTime(visitSchedules[i].createDate)+"</td>"
+                        +"</tr>");
+                }
+            }
+        })
+    }
+}
+
+function getVisitScheduleLast() {
+    if(visitScheduleStart == visitSchedulePages){
+        $.message({
+            message:'此页已是最后一页',
+            type:'warning'
+        })
+    }else{
+        visitScheduleStart = visitSchedulePages;
+        $.ajax({
+            type:"post",
+            data:{"start":visitScheduleStart},
+            url:"findVisitScheduleByPage",
+            async:true,
+            success:function (data) {
+                var pages = data.pages;
+                visitSchedulePages = pages;
+                $("#visitRecord").html("");
+                $("#visitPageDIV").show();
+                var visitSchedules = data.visitSchedules;
+                for(var i = 0 ; i <visitSchedules.length ; i++){
+                    $("#visitRecord").append("<tr>"
+                        +"<td>"+visitSchedules[i].number+"</td>"
+                        +"<td>"+visitSchedules[i].vname+"</td>"
+                        +"<td>"+visitSchedules[i].bdate+"</td>"
+                        +"<td>"+visitSchedules[i].destination+"</td>"
+                        +"<td>"+visitSchedules[i].creater+"</td>"
+                        +"<td>"+formatDateTime(visitSchedules[i].createDate)+"</td>"
+                        +"</tr>");
+                }
+            }
+        })
+    }
+}
+
+function searchVisit() {
+    var searchId = $("#searchId").val();
+    $.ajax({
+        type:"post",
+        data:{"search" : searchId},
+        url:"findVisitByParam",
+        async:false,
+        success:function(data){
+            $("#visitRecord").html("");
+            $("#visitPageDIV").hide();
+            var result = data.result;
+            var visitSchedules = data.visitSchedules;
+            if(result == "OK"){
+
+                for(var i = 0 ; i <visitSchedules.length ; i++){
+                    $("#visitRecord").append("<tr>"
+                        +"<td>"+visitSchedules[i].number+"</td>"
+                        +"<td>"+visitSchedules[i].vname+"</td>"
+                        +"<td>"+visitSchedules[i].bdate+"</td>"
+                        +"<td>"+visitSchedules[i].destination+"</td>"
+                        +"<td>"+visitSchedules[i].creater+"</td>"
+                        +"<td>"+formatDateTime(visitSchedules[i].createDate)+"</td>"
+                        +"</tr>");
+                }
+            }
+        }
+    })
+
+}
+
+var travelPlanStart = 1;
+var travelPlanPages;
+
+function loadTravelPlan() {
+    travelPlanStart = 1;
+    $.ajax({
+        type:"post",
+        data:{"start":travelPlanStart},
+        url:"findTravelByPage",
+        async:true,
+        success:function (data) {
+            travelPlanPages = data.pages;
+            $("#travelList").html("");
+            var travels = data.travels;
+            for(var i = 0 ; i < travels.length ; i++){
+                $("#travelList").append("<tr>"
+                    +"<td>"+travels[i].salePlanNumber+"</td>"
+                    +"<td>"+travels[i].customer+"</td>"
+                    +"<td>"+travels[i].province+travels[i].city+travels[i].address+"</td>"
+                    +"<td>"+travels[i].target+"</td>"
+                    +"<td>"+travels[i].bdate+"</td>"
+                    +"<td>"+travels[i].creater+"</td>"
+                    +"<td>"+formatDateTime(travels[i].createDate)+"</td>"
+                    +"</tr>");
+            }
+            $("#travelPageDIV").show();
+        }
+    })
+}
+
+function getTravelFirst() {
+    if(travelPlanStart == 1){
+        $.message({
+            message:'此页已是第一页',
+            type:'warning'
+        })
+    }else{
+        travelPlanStart = 1;
+        $.ajax({
+            type:"post",
+            data:{"start":travelPlanStart},
+            url:"findTravelByPage",
+            async:true,
+            success:function (data) {
+                travelPlanPages = data.pages;
+                $("#travelList").html("");
+                var travels = data.travels;
+                for(var i = 0 ; i < travels.length ; i++){
+                    $("#travelList").append("<tr>"
+                        +"<td>"+travels[i].salePlanNumber+"</td>"
+                        +"<td>"+travels[i].customer+"</td>"
+                        +"<td>"+travels[i].province+travels[i].city+travels[i].address+"</td>"
+                        +"<td>"+travels[i].target+"</td>"
+                        +"<td>"+travels[i].bdate+"</td>"
+                        +"<td>"+travels[i].creater+"</td>"
+                        +"<td>"+formatDateTime(travels[i].createDate)+"</td>"
+                        +"</tr>");
+                }
+                $("#travelPageDIV").show();
+            }
+        })
+    }
+}
+
+function getTravelPrevious() {
+    if(travelPlanStart == 1){
+        $.message({
+            message:'此页已是第一页',
+            type:'warning'
+        })
+    }else{
+        travelPlanStart = travelPlanStart - 1;
+        $.ajax({
+            type:"post",
+            data:{"start":travelPlanStart},
+            url:"findTravelByPage",
+            async:true,
+            success:function (data) {
+                travelPlanPages = data.pages;
+                $("#travelList").html("");
+                var travels = data.travels;
+                for(var i = 0 ; i < travels.length ; i++){
+                    $("#travelList").append("<tr>"
+                        +"<td>"+travels[i].salePlanNumber+"</td>"
+                        +"<td>"+travels[i].customer+"</td>"
+                        +"<td>"+travels[i].province+travels[i].city+travels[i].address+"</td>"
+                        +"<td>"+travels[i].target+"</td>"
+                        +"<td>"+travels[i].bdate+"</td>"
+                        +"<td>"+travels[i].creater+"</td>"
+                        +"<td>"+formatDateTime(travels[i].createDate)+"</td>"
+                        +"</tr>");
+                }
+                $("#travelPageDIV").show();
+            }
+        })
+    }
+}
+
+function getTravelNext() {
+    if(travelPlanStart == travelPlanPages){
+        $.message({
+            message:'此页已是最后一页',
+            type:'warning'
+        })
+    }else{
+        travelPlanStart = travelPlanStart + 1;
+        $.ajax({
+            type:"post",
+            data:{"start":travelPlanStart},
+            url:"findTravelByPage",
+            async:true,
+            success:function (data) {
+                travelPlanPages = data.pages;
+                $("#travelList").html("");
+                var travels = data.travels;
+                for(var i = 0 ; i < travels.length ; i++){
+                    $("#travelList").append("<tr>"
+                        +"<td>"+travels[i].salePlanNumber+"</td>"
+                        +"<td>"+travels[i].customer+"</td>"
+                        +"<td>"+travels[i].province+travels[i].city+travels[i].address+"</td>"
+                        +"<td>"+travels[i].target+"</td>"
+                        +"<td>"+travels[i].bdate+"</td>"
+                        +"<td>"+travels[i].creater+"</td>"
+                        +"<td>"+formatDateTime(travels[i].createDate)+"</td>"
+                        +"</tr>");
+                }
+                $("#travelPageDIV").show();
+            }
+        })
+    }
+}
+
+function getTravelLast() {
+    if(travelPlanStart == travelPlanPages){
+        $.message({
+            message:'此页已是最后一页',
+            type:'warning'
+        })
+    }else{
+        travelPlanStart = travelPlanPages;
+        $.ajax({
+            type:"post",
+            data:{"start":travelPlanStart},
+            url:"findTravelByPage",
+            async:true,
+            success:function (data) {
+                travelPlanPages = data.pages;
+                $("#travelList").html("");
+                var travels = data.travels;
+                for(var i = 0 ; i < travels.length ; i++){
+                    $("#travelList").append("<tr>"
+                        +"<td>"+travels[i].salePlanNumber+"</td>"
+                        +"<td>"+travels[i].customer+"</td>"
+                        +"<td>"+travels[i].province+travels[i].city+travels[i].address+"</td>"
+                        +"<td>"+travels[i].target+"</td>"
+                        +"<td>"+travels[i].bdate+"</td>"
+                        +"<td>"+travels[i].creater+"</td>"
+                        +"<td>"+formatDateTime(travels[i].createDate)+"</td>"
+                        +"</tr>");
+                }
+                $("#travelPageDIV").show();
+            }
+        })
+    }
+}
+
+function searchTravel() {
+    var travelSearch = $("#travelSearch").val();
+    $.ajax({
+        type:"post",
+        data:{"param" : travelSearch},
+        url:"searchTravelPlan",
+        async:false,
+        success:function (data) {
+            $("#travelPageDIV").hide();
+            $("#travelList").html("");
+            var result = data.result;
+            if(result == "OK"){
+                var travels = data.travels;
+                for(var i = 0 ; i < travels.length ; i++){
+                    $("#travelList").append("<tr>"
+                        +"<td>"+travels[i].salePlanNumber+"</td>"
+                        +"<td>"+travels[i].customer+"</td>"
+                        +"<td>"+travels[i].province+travels[i].city+travels[i].address+"</td>"
+                        +"<td>"+travels[i].target+"</td>"
+                        +"<td>"+travels[i].bdate+"</td>"
+                        +"<td>"+travels[i].creater+"</td>"
+                        +"<td>"+formatDateTime(travels[i].createDate)+"</td>"
+                        +"</tr>");
+                }
+
+            }
+        }
+    })
+}
+
+//点击 显示/隐藏 填写更多字段
+function showMore() {
+    $("#operation2").show();
+    $("#moreInfo1").show();
+    $("#moreInfo2").show();
+    $("#moreInfo3").show();
+    $("#operation1").hide();
+}
+function hideMore() {
+    $("#operation2").hide();
+    $("#moreInfo1").hide();
+    $("#moreInfo2").hide();
+    $("#moreInfo3").hide();
+    $("#operation1").show();
+}
+
+function customerShowMore() {
+    $("#operation2").show();
+    $("#moreInfo1").show();
+    $("#moreInfo2").show();
+    $("#moreInfo3").show();
+    $("#moreInfo4").show();
+    $("#moreInfo5").show();
+    $("#moreInfo6").show();
+    $("#moreInfo7").show();
+    $("#operation1").hide();
+}
+
+function customerHideMore() {
+    $("#operation2").hide();
+    $("#moreInfo1").hide();
+    $("#moreInfo2").hide();
+    $("#moreInfo3").hide();
+    $("#moreInfo4").hide();
+    $("#moreInfo5").hide();
+    $("#moreInfo6").hide();
+    $("#moreInfo7").hide();
+    $("#operation1").show();
+}
+
+function generateNum() {
+    $.ajax({
+        type:"post",
+        url:"generateSalePlanNum",
+        async:false,
+        success:function (data) {
+            $("#saleWriteNO").val(data);
+        }
+    })
+}
+
+
+function createNewSaleSpend() {
+    var costType = $("#costType").val();
+    var describe = $("#describe").val();
+    var amount = $("#amount").val();
+    var happenDate = $("#happenDate").val();
+    var contract = $("#contract").val();
+    var principal = $("#principal").val();
+    var data = {"costType":costType , "describe":describe , "money":amount , "happenDate":happenDate , "contract":contract , "principal":principal};
+    $.ajax({
+        type:"post",
+        data:data,
+        url:"saveSaleSpend",
+        async:false,
+        success:function (data) {
+            if(data == "OK"){
+                $.message({
+                    message:'数据保存成功',
+                    type:'success'
+                })
+            }else{
+                $.message({
+                    message:data,
+                    type:'error'
+                })
+            }
+        }
+    })
+}
+
+var saleSpendStart = 1;
+var saleSpendPage ;
+function loadSaleSpend() {
+    saleSpendStart = 1;
+    $.ajax({
+        type:"post",
+        data:{"start":saleSpendStart},
+        url:"findSaleSpendByPage",
+        async:false,
+        success:function (data) {
+            $("#spendData").html("");
+            $("#saleSpendPageDIV").show();
+            saleSpendPage = data.pages;
+            var spends = data.spends;
+            for(var i = 0 ; i < spends.length ; i++){
+                $("#spendData").append("<tr>"
+                    +"<td>"+spends[i].costType+"</td>"
+                    +"<td>"+spends[i].describe+"</td>"
+                    +"<td>"+spends[i].amount+"元"+"</td>"
+                    +"<td>"+spends[i].happenDate+"</td>"
+                    +"<td>"+spends[i].contract+"</td>"
+                    +"<td>"+spends[i].principal+"</td>"
+                    +"<td>"+formatDateTime(spends[i].createDate)+"</td>"
+                    +"<td>"+"<a>编辑</a>"+"</td>"
+                    +"</tr>");
+            }
+        }
+    })
+}
+
+function getSaleSpendFirst() {
+    if(saleSpendStart == 1){
+        $.message({
+            message:'此页已是第一页',
+            type:'warning'
+        })
+    }else{
+        saleSpendStart = 1;
+        $.ajax({
+            type:"post",
+            data:{"start":saleSpendStart},
+            url:"findSaleSpendByPage",
+            async:false,
+            success:function (data) {
+                $("#spendData").html("");
+                $("#saleSpendPageDIV").show();
+                // saleSpendPage = data.pages;
+                var spends = data.spends;
+                for(var i = 0 ; i < spends.length ; i++){
+                    $("#spendData").append("<tr>"
+                        +"<td>"+spends[i].costType+"</td>"
+                        +"<td>"+spends[i].describe+"</td>"
+                        +"<td>"+spends[i].amount+"元"+"</td>"
+                        +"<td>"+spends[i].happenDate+"</td>"
+                        +"<td>"+spends[i].contract+"</td>"
+                        +"<td>"+spends[i].principal+"</td>"
+                        +"<td>"+formatDateTime(spends[i].createDate)+"</td>"
+                        +"<td>"+"<a>编辑</a>"+"</td>"
+                        +"</tr>");
+                }
+            }
+        })
+    }
+}
+
+function getSaleSpendPrevious() {
+    if(saleSpendStart == 1){
+        $.message({
+            message:'此页已是第一页',
+            type:'warning'
+        })
+    }else{
+        saleSpendStart = saleSpendStart - 1;
+        $.ajax({
+            type:"post",
+            data:{"start":saleSpendStart},
+            url:"findSaleSpendByPage",
+            async:false,
+            success:function (data) {
+                $("#spendData").html("");
+                $("#saleSpendPageDIV").show();
+                // saleSpendPage = data.pages;
+                var spends = data.spends;
+                for(var i = 0 ; i < spends.length ; i++){
+                    $("#spendData").append("<tr>"
+                        +"<td>"+spends[i].costType+"</td>"
+                        +"<td>"+spends[i].describe+"</td>"
+                        +"<td>"+spends[i].amount+"元"+"</td>"
+                        +"<td>"+spends[i].happenDate+"</td>"
+                        +"<td>"+spends[i].contract+"</td>"
+                        +"<td>"+spends[i].principal+"</td>"
+                        +"<td>"+formatDateTime(spends[i].createDate)+"</td>"
+                        +"<td>"+"<a>编辑</a>"+"</td>"
+                        +"</tr>");
+                }
+            }
+        })
+    }
+}
+
+function getSaleSpendNext() {
+    if(saleSpendStart == saleSpendPage){
+        $.message({
+            message:'此页已是最后一页',
+            type:'warning'
+        })
+    }else{
+        saleSpendStart = saleSpendStart + 1;
+        $.ajax({
+            type:"post",
+            data:{"start":saleSpendStart},
+            url:"findSaleSpendByPage",
+            async:false,
+            success:function (data) {
+                $("#spendData").html("");
+                $("#saleSpendPageDIV").show();
+                // saleSpendPage = data.pages;
+                var spends = data.spends;
+                for(var i = 0 ; i < spends.length ; i++){
+                    $("#spendData").append("<tr>"
+                        +"<td>"+spends[i].costType+"</td>"
+                        +"<td>"+spends[i].describe+"</td>"
+                        +"<td>"+spends[i].amount+"元"+"</td>"
+                        +"<td>"+spends[i].happenDate+"</td>"
+                        +"<td>"+spends[i].contract+"</td>"
+                        +"<td>"+spends[i].principal+"</td>"
+                        +"<td>"+formatDateTime(spends[i].createDate)+"</td>"
+                        +"<td>"+"<a>编辑</a>"+"</td>"
+                        +"</tr>");
+                }
+            }
+        })
+    }
+}
+
+function getSaleSpendLast() {
+    if(saleSpendStart == saleSpendPage){
+        $.message({
+            message:'此页已是最后一页',
+            type:'warning'
+        })
+    }else{
+        saleSpendStart = saleSpendPage;
+        $.ajax({
+            type:"post",
+            data:{"start":saleSpendStart},
+            url:"findSaleSpendByPage",
+            async:false,
+            success:function (data) {
+                $("#spendData").html("");
+                $("#saleSpendPageDIV").show();
+                // saleSpendPage = data.pages;
+                var spends = data.spends;
+                for(var i = 0 ; i < spends.length ; i++){
+                    $("#spendData").append("<tr>"
+                        +"<td>"+spends[i].costType+"</td>"
+                        +"<td>"+spends[i].describe+"</td>"
+                        +"<td>"+spends[i].amount+"元"+"</td>"
+                        +"<td>"+spends[i].happenDate+"</td>"
+                        +"<td>"+spends[i].contract+"</td>"
+                        +"<td>"+spends[i].principal+"</td>"
+                        +"<td>"+formatDateTime(spends[i].createDate)+"</td>"
+                        +"<td>"+"<a>编辑</a>"+"</td>"
+                        +"</tr>");
+                }
+            }
+        })
+    }
+}
+
+function findSpendByTypeAndPrincipal() {
+    var type = $("#spendType option:selected").val();
+    var name = $("#principalName").val();
+    var data = {"type":type , "name":name};
+    $.ajax({
+        type:"post",
+        data:data,
+        url:"findSaleSpendByParams",
+        async:false,
+        success:function (data) {
+            $("#spendData").html("");
+            $("#saleSpendPageDIV").hide();
+            var result = data.result;
+            if(result == "OK"){
+                var spends = data.spends;
+                for(var i = 0 ; i < spends.length ; i++){
+                    $("#spendData").append("<tr>"
+                        +"<td>"+spends[i].costType+"</td>"
+                        +"<td>"+spends[i].describe+"</td>"
+                        +"<td>"+spends[i].amount+"元"+"</td>"
+                        +"<td>"+spends[i].happenDate+"</td>"
+                        +"<td>"+spends[i].contract+"</td>"
+                        +"<td>"+spends[i].principal+"</td>"
+                        +"<td>"+formatDateTime(spends[i].createDate)+"</td>"
+                        +"<td>"+"<a>编辑</a>"+"</td>"
+                        +"</tr>");
+                }
+            }
         }
     })
 }

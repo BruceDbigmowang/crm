@@ -1,11 +1,17 @@
 package com.knowhy.crm.controller;
 
+import com.knowhy.crm.dao.CompanyInfoDAO;
 import com.knowhy.crm.dao.DataDetailDAO;
+import com.knowhy.crm.dao.ManufactureDAO;
+import com.knowhy.crm.dao.SalesPlanDAO;
 import com.knowhy.crm.pojo.CompanyInfo;
 import com.knowhy.crm.pojo.DataDetail;
 import com.knowhy.crm.pojo.Manufacture;
+import com.knowhy.crm.pojo.SalesPlan;
+import com.knowhy.crm.service.SalePlanService;
 import com.knowhy.crm.service.SaveDataService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,6 +33,14 @@ public class OnlineSurveyController {
     SaveDataService saveDataService;
     @Autowired
     DataDetailDAO dataDetailDAO;
+    @Autowired
+    SalePlanService planService;
+    @Autowired
+    SalesPlanDAO planDAO;
+    @Autowired
+    CompanyInfoDAO companyInfoDAO;
+    @Autowired
+    ManufactureDAO manufactureDAO;
 
     @RequestMapping("/getVcode")
     public String getCode(HttpSession session){
@@ -35,7 +49,7 @@ public class OnlineSurveyController {
     }
 
     @RequestMapping("/saveCompanyInfo")
-    public String saveBussinessInfo(@RequestParam("companyName")String companyName , @RequestParam("contact")String contact , @RequestParam("contactWay")String contactWay , @RequestParam("wechatNum")String wechatNum , HttpSession session){
+    public String saveBussinessInfo(@RequestParam("salePlanID")String salePlanID , @RequestParam("companyName")String companyName , @RequestParam("contact")String contact , @RequestParam("contactWay")String contactWay , @RequestParam("wechatNum")String wechatNum , HttpSession session){
         if("".equals(companyName) || companyName == null){
             return "请填写您的公司名称";
         }
@@ -49,7 +63,9 @@ public class OnlineSurveyController {
             return "请选择手机号与微信号是否一致或填写微信号";
         }
         try{
+
             CompanyInfo companyInfo = new CompanyInfo();
+            companyInfo.setSalePlanID(salePlanID);
             companyInfo.setCompanyName(companyName);
             companyInfo.setContact(contact);
             companyInfo.setContactWay(contactWay);
@@ -63,6 +79,9 @@ public class OnlineSurveyController {
             int cid = saveDataService.getCid(companyInfo);
             session.setAttribute("cid" , cid);
             session.setAttribute("companyInfo" , companyInfo);
+            SalesPlan salesPlan = planService.findById(salePlanID);
+            salesPlan.setStep(2);
+            planDAO.save(salesPlan);
         }catch (Exception e){
             return e.getMessage();
         }
@@ -71,7 +90,9 @@ public class OnlineSurveyController {
 
     @RequestMapping("/updateCompanyInfoFirst")
     public String saveCompanyInfoFirst(HttpServletRequest request , HttpSession session){
-        int cid = (int)session.getAttribute("cid");
+//        int cid = (int)session.getAttribute("cid");
+        String salePlanID = request.getParameter("salePlanID");
+        int cid = companyInfoDAO.findBySalePlanID(salePlanID).get(0).getId();
         String register = request.getParameter("registerMoney");
         BigDecimal registerMoney;
         if(!"".equals(register) && register != null){
@@ -100,8 +121,12 @@ public class OnlineSurveyController {
         if("".equals(employeeNum) || employeeNum == null ){
             return "请选择公司员工数量";
         }
+
         try{
             saveDataService.updateCompanyInfo(cid , registerMoney , establishTime , bussinessNature , sonCompanyNum , employeeNum);
+            SalesPlan salesPlan = planService.findById(salePlanID);
+            salesPlan.setStep(3);
+            planDAO.save(salesPlan);
         }catch (Exception e){
             return e.getMessage();
         }
@@ -131,7 +156,8 @@ public class OnlineSurveyController {
 
     @RequestMapping("/updateCompanyInfoSecond")
     public String saveCompanyInfoSecond(HttpServletRequest request , HttpSession session){
-        int cid = (int)session.getAttribute("cid");
+        String salePlanID = request.getParameter("salePlanID");
+        int cid = companyInfoDAO.findBySalePlanID(salePlanID).get(0).getId();
         String industry = request.getParameter("industry");
         if("".equals(industry) || industry == null){
             return "请选择公司所属行业";
@@ -150,6 +176,9 @@ public class OnlineSurveyController {
         }
         try{
             saveDataService.updateCompanyTwice(cid , industry , industryNature , product , picture);
+            SalesPlan salesPlan = planService.findById(salePlanID);
+            salesPlan.setStep(4);
+            planDAO.save(salesPlan);
         }catch (Exception e){
             return e.getMessage();
         }
@@ -157,8 +186,10 @@ public class OnlineSurveyController {
     }
 
     @RequestMapping("/saveKnowMorePage")
-    public String saveKnowMore(HttpServletRequest request , HttpSession session){
-        int cid = (int)session.getAttribute("cid");
+    @Transactional
+    public String saveKnowMore(HttpServletRequest request ){
+        String salePlanID = request.getParameter("salePlanID");
+        int cid = companyInfoDAO.findBySalePlanID(salePlanID).get(0).getId();
         String means = request.getParameter("means");
         if("".equals(means) || means == null){
             return "请选择你是通过何途径了解诺而为";
@@ -199,17 +230,18 @@ public class OnlineSurveyController {
         if("".equals(ask) || ask == null){
             return "请选择项目进展要求";
         }
-        try{
             saveDataService.saveKnowMore(cid , means , toolManage , facilitatorName , problem , consume , principle , mobile , email , ask);
-        }catch (Exception e){
-            return e.getMessage();
-        }
+            SalesPlan salesPlan = planService.findById(salePlanID);
+            salesPlan.setStep(5);
+            planDAO.save(salesPlan);
+
         return "OK";
     }
 
     @RequestMapping("/saveManufactureOne")
     public String saveOne(HttpServletRequest request , HttpSession session){
-        int cid = (int)session.getAttribute("cid");
+        String salePlanID = request.getParameter("salePlanID");
+        int cid = companyInfoDAO.findBySalePlanID(salePlanID).get(0).getId();
         Manufacture manufacture = new Manufacture();
         if(saveDataService.findByCid(cid) != null){
             manufacture = saveDataService.findByCid(cid);
@@ -234,22 +266,24 @@ public class OnlineSurveyController {
         if(!"".equals(project) && project != null){
             manufacture.setProject(project);
         }
-
-        try{
             saveDataService.save(manufacture);
             int mid = saveDataService.findByCid(cid).getId();
             System.out.println(mid);
             session.removeAttribute("mid");
             session.setAttribute("mid" , mid);
-        }catch (Exception e){
-            e.getMessage();
-        }
+            SalesPlan salesPlan = planService.findById(salePlanID);
+            salesPlan.setStep(6);
+            planDAO.save(salesPlan);
+
         return "OK";
     }
 
     @RequestMapping("/saveManufactureTwo")
     public String saveTwo(HttpServletRequest request , HttpSession session){
-        int mid = (int)session.getAttribute("mid");
+        String salePlanID = request.getParameter("salePlanID");
+        int cid = companyInfoDAO.findBySalePlanID(salePlanID).get(0).getId();
+        int mid = manufactureDAO.findByCid(cid).get(0).getId();
+//        int mid = (int)session.getAttribute("mid");
         Manufacture manufacture = saveDataService.findById(mid);
         String assetType = request.getParameter("assetType");
         if("".equals(assetType) || assetType == null){
@@ -282,6 +316,9 @@ public class OnlineSurveyController {
         manufacture.setForm(form);
         try{
             saveDataService.save(manufacture);
+            SalesPlan salesPlan = planService.findById(salePlanID);
+            salesPlan.setStep(7);
+            planDAO.save(salesPlan);
         }catch (Exception e){
             return e.getMessage();
         }
@@ -291,7 +328,9 @@ public class OnlineSurveyController {
 
     @RequestMapping("/saveManufactureThree")
     public String saveThree(HttpServletRequest request , HttpSession session){
-        int mid = (int)session.getAttribute("mid");
+        String salePlanID = request.getParameter("salePlanID");
+        int cid = companyInfoDAO.findBySalePlanID(salePlanID).get(0).getId();
+        int mid = manufactureDAO.findByCid(cid).get(0).getId();
         Manufacture manufacture = saveDataService.findById(mid);
         String buyMoney = request.getParameter("buyMoney");
         if("".equals(buyMoney) || buyMoney == null){
@@ -319,13 +358,17 @@ public class OnlineSurveyController {
         }
         manufacture.setManageModel(manageModel);
         saveDataService.save(manufacture);
+        SalesPlan salesPlan = planService.findById(salePlanID);
+        salesPlan.setStep(8);
+        planDAO.save(salesPlan);
         return "OK";
     }
 
     @RequestMapping("/saveDataOne")
     public String saveFirst(HttpServletRequest request , HttpSession session){
+        String salePlanID = request.getParameter("salePlanID");
+        int cid = companyInfoDAO.findBySalePlanID(salePlanID).get(0).getId();
         DataDetail dataDetail = new DataDetail();
-        int cid = (int)session.getAttribute("cid");
         List<DataDetail> dataDetailList = dataDetailDAO.findByCid(cid);
         if(dataDetailList != null && dataDetailList.size() != 0){
             dataDetail = dataDetailList.get(0);
@@ -453,12 +496,13 @@ public class OnlineSurveyController {
                 dataDetail.setGsgBrand(gsgBrand);
             }
         }
-
-
         try{
             saveDataService.saveOrUpdate(dataDetail);
             int did = saveDataService.getByCid(cid).getId();
             session.setAttribute("did" , did);
+            SalesPlan salesPlan = planService.findById(salePlanID);
+            salesPlan.setStep(9);
+            planDAO.save(salesPlan);
         }catch (Exception e){
             return e.getMessage();
         }
@@ -467,7 +511,9 @@ public class OnlineSurveyController {
 
     @RequestMapping("/saveDataTwo")
     public String saveSecond(HttpServletRequest request , HttpSession session){
-        int did = (int)session.getAttribute("did");
+        String salePlanID = request.getParameter("salePlanID");
+        int cid = companyInfoDAO.findBySalePlanID(salePlanID).get(0).getId();
+        int did = dataDetailDAO.findByCid(cid).get(0).getId();
         DataDetail dataDetail = saveDataService.getById(did);
         String stockMoney = request.getParameter("stockMoney");
         if("".equals(stockMoney) || stockMoney == null){
@@ -531,6 +577,9 @@ public class OnlineSurveyController {
         }
         try{
             saveDataService.saveOrUpdate(dataDetail);
+            SalesPlan salesPlan = planService.findById(salePlanID);
+            salesPlan.setStep(10);
+            planDAO.save(salesPlan);
         }catch (Exception e){
             return e.getMessage();
         }
@@ -539,7 +588,9 @@ public class OnlineSurveyController {
 
     @RequestMapping("/saveDataThree")
     public String saveThird(HttpServletRequest request , HttpSession session){
-        int did = (int)session.getAttribute("did");
+        String salePlanID = request.getParameter("salePlanID");
+        int cid = companyInfoDAO.findBySalePlanID(salePlanID).get(0).getId();
+        int did = dataDetailDAO.findByCid(cid).get(0).getId();
         DataDetail dataDetail = saveDataService.getById(did);
         String hasERP = request.getParameter("hasERP");
         if("".equals(hasERP) || hasERP == null){
@@ -584,9 +635,11 @@ public class OnlineSurveyController {
                 return "请正确填写生产线数量，输入值为整数";
             }
         }
-
         try{
             saveDataService.saveOrUpdate(dataDetail);
+            SalesPlan salesPlan = planService.findById(salePlanID);
+            salesPlan.setStep(11);
+            planDAO.save(salesPlan);
         }catch (Exception e){
             return e.getMessage();
         }
@@ -595,7 +648,9 @@ public class OnlineSurveyController {
 
     @RequestMapping("/saveDataFour")
     public String saveFourth(HttpServletRequest request , HttpSession session){
-        int did = (int)session.getAttribute("did");
+        String salePlanID = request.getParameter("salePlanID");
+        int cid = companyInfoDAO.findBySalePlanID(salePlanID).get(0).getId();
+        int did = dataDetailDAO.findByCid(cid).get(0).getId();
         DataDetail dataDetail = saveDataService.getById(did);
         String sp = request.getParameter("stockPerson");
         if("".equals(sp) || sp == null){
@@ -636,9 +691,11 @@ public class OnlineSurveyController {
         if(!"".equals(payWay) && payWay != null){
             dataDetail.setPayWay(payWay);
         }
-
         try{
             saveDataService.saveOrUpdate(dataDetail);
+            SalesPlan salesPlan = planService.findById(salePlanID);
+            salesPlan.setStep(12);
+            planDAO.save(salesPlan);
         }catch (Exception e){
             return e.getMessage();
         }
@@ -647,7 +704,9 @@ public class OnlineSurveyController {
 
     @RequestMapping("/saveDataFive")
     public String saveFifth(HttpServletRequest request , HttpSession session){
-        int did = (int)session.getAttribute("did");
+        String salePlanID = request.getParameter("salePlanID");
+        int cid = companyInfoDAO.findBySalePlanID(salePlanID).get(0).getId();
+        int did = dataDetailDAO.findByCid(cid).get(0).getId();
         DataDetail dataDetail = saveDataService.getById(did);
         String repair = request.getParameter("repair");
         if("".equals(repair) || repair == null){
@@ -678,9 +737,18 @@ public class OnlineSurveyController {
         dataDetail.setAppeal(appeal);
         try{
             saveDataService.saveOrUpdate(dataDetail);
+            SalesPlan salesPlan = planService.findById(salePlanID);
+            salesPlan.setPlanStatus("fourth");
+            salesPlan.setStep(1);
+            planDAO.save(salesPlan);
         }catch (Exception e){
             return e.getMessage();
         }
         return "OK";
+    }
+
+    @RequestMapping("/loadSurveyDetail")
+    public int getStep(String salePlanID){
+        return planService.getStep(salePlanID);
     }
 }

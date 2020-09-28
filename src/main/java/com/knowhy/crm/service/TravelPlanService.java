@@ -20,4 +20,12 @@ public class TravelPlanService {
     public List<TravelPlan> findAll(){
         return travelPlanDAO.findAll();
     }
+
+    public List<TravelPlan> findBySalePlanNum(String salePlanNum){
+        return travelPlanDAO.findBySalePlanNumber(salePlanNum);
+    }
+
+    public List<TravelPlan> findByCustomerName(String customer){
+        return travelPlanDAO.findByCustomer(customer);
+    }
 }

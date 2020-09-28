@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<title>销售过程——线上尽调</title>
+<head th:include="include/fore/newHeader::html" ></head>
+<body>
+<div id="workingArea">
+    <div th:replace="include/fore/top::html" ></div>
+    <div th:replace="include/fore/leftMenu::html" ></div>
+    <div th:replace="include/fore/homePages/saleProcessManage/survey/surveyOnline::html" ></div>
+</div>
+<script>
+    $(function () {
+        loadFirstPlan();
+        getAllSaleMan();
+    });
+
+    laydate.render({
+        elem: '#travelDate' //指定元素
+    });
+
+    function loadFirstPlan() {
+        var status = "third";
+        $.ajax({
+            type:"post",
+            data:{"status":status},
+            url:"findCanOperate",
+            async:false,
+            success:function (data) {
+                $("#allFirst").html("");
+                for(var i = 0 ; i < data.length ; i++){
+                    $("#allFirst").append("<tr>"+
+                        "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+data[i].id+"</td>"+
+                        "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+data[i].customerName+"</td>"+
+                        "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+data[i].describe+"</td>"+
+                        "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+data[i].principalName+"</td>"+
+                        "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<button class='btn btn-warning' data-toggle=\"modal\" data-target=\"#myModal2\" onclick=\"getRowId(this)\">在线尽调</button>"+"</td>"
+                        +"</tr>");
+
+                    $("#customer").append('<option value="'+data[i].customerCode+'">'+data[i].customerName+"</option>");
+                    $("#customer2").append('<option value="'+data[i].customerCode+'">'+data[i].customerName+"</option>");
+                }
+            }
+        })
+    }
+
+    function getRowId(obj) {
+        var i = obj.parentNode.parentNode.rowIndex;
+        var tab = document.getElementById("firstData");
+        var orderID = tab.rows[i].cells[0].innerHTML;
+        var customerName = tab.rows[i].cells[1].innerHTML;
+        $("#customerName").val(customerName);
+        $("#customerID").val(orderID);
+        $.ajax({
+            type:"post",
+            data:{"salePlanID":orderID},
+            url:"loadSurveyDetail",
+            async:false,
+            success:function (data) {
+                switch (data) {
+                    case 1:
+                        loadfirst();
+                        break;
+                    case 2:
+                        loadSecond();
+                        break;
+                    case 3:
+                        loadThird();
+                        break;
+                    case 4:
+                        loadfourth();
+                        break;
+                    case 5:
+                        loadfifth();
+                        break;
+                    case 6:
+                        loadsixth();
+                        break;
+                    case 7:
+                        loadseventh();
+                        break;
+                    case 8:
+                        loadeighth();
+                        break;
+                    case 9:
+                        loadnineth();
+                        break;
+                    case 10:
+                        loadtenth();
+                        break;
+                    case 11:
+                        loadeleventh();
+                        break;
+                    case 12:
+                        loadtwelfth();
+                        break;
+                }
+            }
+        })
+    }
+
+    function loadfirst() {
+        $("#survey").html("");
+        $("#footPart").html("");
+        $("#survey").append("<tr>\n" +
+            "                            <td style=\"font-size: 14px;\"><span style=\"color: red\" y>*</span>您公司的全称</td>\n" +
+            "                            <td colspan=\"2\"><input id=\"companyName\" class=\"form-control\" placeholder=\"请输入您公司的全称\" style=\"font-size: 14px;width: 100%;border: 0px;\" maxlength=\"30\"></td>\n" +
+            "                        </tr>\n" +
+            "                        <tr>\n" +
+            "                            <td style=\"font-size: 14px;\"><span style=\"color: red\" y>*</span>您的姓名</td>\n" +
+            "                            <td colspan=\"2\"><input id=\"contact\" class=\"form-control\"  style=\"font-size: 14px;width: 100%;border: 0px;\" placeholder=\"请输入您的姓名\" maxlength=\"30\"></td>\n" +
+            "                        </tr>\n" +
+            "                        <tr>\n" +
+            "                            <td style=\"font-size: 14px;\"><span style=\"color: red\" y>*</span>您的联系方式</td>\n" +
+            "                            <td><input id=\"contactWay\" class=\"form-control\" name=\"contactWay\" placeholder=\"请输入你的联系方式\" style=\"width:100%;font-size: 14px;border: 0px;\" maxlength=\"11\"></td>\n" +
+            "                            <td style=\"width: 95px;\"><button style=\"width: 96px;height: 34px;border: 0px;\" id=\"getting\" class=\"btn btn-success\" value=\"获取验证码\" onclick=\"clickGetting()\">获取验证码</button></td>\n" +
+            "                        </tr>\n" +
+            "                        <tr>\n" +
+            "                            <td style=\"font-size: 14px;\"><span style=\"color: red\" y>*</span>输入验证码</td>\n" +
+            "                            <td  colspan=\"2\"><input id=\"vcode\" class=\"form-control\" style=\"width: 100%;font-size: 14px;border: 0px;\" placeholder=\"请输入验证码\" onblur=\"sureVcode()\" maxlength=\"6\"><span id=\"result\" style=\"font-size: 14px;\"></span></td>\n" +
+            "                        </tr>\n" +
+            "                        <tr>\n" +
+            "                            <td style=\"font-size: 14px;\"><span style=\"color: red\" y>*</span>微信号与手机号一致</td>\n" +
+            "                            <td  colspan=\"2\"  style=\"font-size: 14px;\"><input type=\"radio\" name=\"wechat\" value=\"0\" style=\"width: 20px;vertical-align:middle; margin-top:0;\" onclick=\"chooseNO()\">否\n" +
+            "                                <input type=\"radio\" class=\"form-control\" name=\"wechat\" value=\"1\" style=\"width: 20px;margin-left: 5%;vertical-align:middle; margin-top:0;\" onclick=\"chooseYES()\">是\n" +
+            "                            </td>\n" +
+            "                        </tr>\n" +
+            "                        <tr id=\"wechat\" style=\"display: none;\">\n" +
+            "                            <td style=\"font-size: 14px;\"><span style=\"color: red\" y>*</span>您的微信号</td>\n" +
+            "                            <td  colspan=\"2\" style=\"font-size: 14px;\"><input id=\"wechatNum\" placeholder=\"请输入您的微信号\" maxlength=\"30\" style=\"width: 100%;border: 0px;\"></td>\n" +
+            "                        </tr>");
+        $("#footPart").append("<button data-dismiss=\"modal\" class=\"btn btn-default\" type=\"button\">关闭</button>\n" +
+            "                    <button class=\"btn btn-primary\" type=\"button\" onclick=\"sureBeforeSbmit()\">下一页</button>");
+    }
+
+    function loadSecond() {
+        $("#survey").html("");
+        $("#footPart").html("");
+        $("#survey").append("<tr>\n" +
+            "            <td style=\"font-size: 14px;vertical-align: inherit;\">您公司的注册资本</td>\n" +
+            "            <td style=\"font-size: 14px;\">\n" +
+            "                    <input id=\"registerMoney\" style='display: inherit;width: 210px;'  class=\"form-control\" maxlength=\"18\" placeholder=\"请输入注册资本\"><span style='margin-left: 5px;'>万元</span>\n" +
+            "            </td>\n" +
+            "        </tr>\n" +
+            "        <tr>\n" +
+            "            <td style=\"font-size: 14px;vertical-align: inherit;\">您公司成立于</td>\n" +
+            "            <td style=\"font-size: 14px;\">\n" +
+            "                    <input id=\"establishTime\" style='width:210px;display: inherit;'  class=\"form-control\" placeholder=\"请输入公司成立时间\" maxlength=\"4\"><span style='margin-left: 5px;'>年</span>\n" +
+            "            </td>\n" +
+            "        </tr>\n" +
+            "        <tr>\n" +
+            "            <td style=\"font-size: 14px;vertical-align: inherit;\"><span style=\"color: red\" y>*</span>您公司的性质</td>\n" +
+            "            <td style=\"font-size: 14px;\">\n" +
+            "                <select id=\"bussinessNature\"  class=\"selectpicker\" style=\"border:1px solid rgb(192, 188, 188) ;font-size: 14px;width: 210px;height: 30px;\">\n" +
+            "                    <option value=\"0\">国有企业</option>\n" +
+            "                    <option value=\"1\">中外合资</option>\n" +
+            "                    <option value=\"2\">外企独资</option>\n" +
+            "                    <option value=\"3\">民营上市公司</option>\n" +
+            "                    <option value=\"4\">民营企业</option>\n" +
+            "                </select>\n" +
+            "            </td>\n" +
+            "        </tr>\n" +
+            "        <tr>\n" +
+            "            <td style=\"font-size: 14px;vertical-align: inherit;\"><span style=\"color: red\" y>*</span>您公司有几个子公司</td>\n" +
+            "            <td style=\"font-size: 14px;\">\n" +
+            "                <select id=\"son\"  class=\"form-control\" style=\"border:1px solid rgb(192, 188, 188) ;font-size: 14px;width: 210px;height: 30px;\">\n" +
+            "                    <option value=\"0个\">0个</option>\n" +
+            "                    <option value=\"1-3个\">1-3个</option>\n" +
+            "                    <option value=\"4-6个\">4-6个</option>\n" +
+            "                    <option value=\"7个以上\">7个以上</option>\n" +
+            "                </select>\n" +
+            "            </td>\n" +
+            "        </tr>\n" +
+            "        <tr>\n" +
+            "            <td style=\"font-size: 14px;\"><span style=\"color: red\" y>*</span>您公司员工数量</td>\n" +
+            "            <td style=\"font-size: 14px;\">\n" +
+            "                <select id=\"employee\"  class=\"form-control\" style=\"border:1px solid rgb(192, 188, 188) ;font-size: 14px;width: 210px;height: 30px;\">\n" +
+            "                    <option value=\"500人以下\">500人以下</option>\n" +
+            "                    <option value=\"500-2000人\">500-2000人</option>\n" +
+            "                    <option value=\"2000-5000人\">2000-5000人</option>\n" +
+            "                    <option value=\"5000人以上\">5000人以上</option>\n" +
+            "                </select>\n" +
+            "            </td>\n" +
+            "        </tr>");
+        $("#footPart").append("<button data-dismiss=\"modal\" class=\"btn btn-default\" type=\"button\">关闭</button>\n" +
+            "                    <button class=\"btn btn-primary\" type=\"button\" onclick=\"saveSecondPart()\">下一页</button>");
+    }
+
+    function loadThird() {
+        $("#survey").html("");
+        $("#footPart").html("");
+        $("#survey").append("<tr>\n" +
+            "            <td style=\"font-size: 14px;\"><span style=\"color: red\" y>*</span>您公司所在的行业</td>\n" +
+            "            <td>\n" +
+            "                <input type=\"radio\" name=\"bussiness\" style=\"width: 15px;vertical-align:middle; margin-top:0;\" value=\"汽车\" onclick=\"chooseCar()\">汽车\n" +
+            "                <input type=\"radio\" name=\"bussiness\" style=\"width: 15px;margin-left: 5%;vertical-align:middle; margin-top:0;\" value=\"航空军工\" onclick=\"chooseAir()\">航空军工\n" +
+            "                <input type=\"radio\" name=\"bussiness\" style=\"width: 15px;margin-left: 5%;vertical-align:middle; margin-top:0;\" value=\"医疗\" onclick=\"chooseMedical()\">医疗<br>\n" +
+            "                <input type=\"radio\" name=\"bussiness\" style=\"width: 15px;vertical-align:middle; margin-top:0;\" value=\"重工\" onclick=\"chooseIndustry()\">重工\n" +
+            "                <input type=\"radio\" name=\"bussiness\" style=\"width: 15px;margin-left: 5%;vertical-align:middle; margin-top:0;\" value=\"精密模具\" onclick=\"chooseMouldl()\">精密模具\n" +
+            "                <input type=\"radio\" name=\"bussiness\" style=\"width: 15px;margin-left: 5%;vertical-align:middle; margin-top:0;\" value=\"3C行业\" onclick=\"choose3C()\">3C行业<br>\n" +
+            "                <input type=\"radio\" name=\"bussiness\" style=\"width: 15px;vertical-align:middle; margin-top:0;\"value=\"其它\" onclick=\"chooseOther()\">其它\n" +
+            "            </td>\n" +
+            "        </tr>\n" +
+            "        <tr id=\"bussiness\"></tr>\n" +
+            "        <tr id=\"products\"></tr>\n" +
+            "        <tr id=\"pic\" style=\"display: none;font-size: 14px;\">\n" +
+            "            <td style=\"font-size: 14px;\">上传图片</td>\n" +
+            "            <td><input id=\"images\" name=\"images\" type=\"file\"accept=\"image/*\" multiple=\"multiple\" onchange=\"uploadImages()\"></td>\n" +
+            "        </tr>");
+        $("#footPart").append("<button data-dismiss=\"modal\" class=\"btn btn-default\" type=\"button\">关闭</button>\n" +
+            "                    <button class=\"btn btn-primary\" type=\"button\" onclick=\"saveFourthPage()\">下一页</button>");
+    }
+
+    function loadfourth() {
+        $("#survey").html("");
+        $("#footPart").html("");
+        $("#survey").append("<tr>\n" +
+            "            <td style=\"font-size: 14px;\"><span style=\"color: red\" y>*</span>您是通过何种途径了解诺而为</td>\n" +
+            "            <td style=\"font-size: 14px;\">\n" +
+            "                <input name=\"way\" type=\"radio\" value=\"同行推荐\" style=\"width: 15px;vertical-align:middle; margin-top:0;\">同行推荐\n" +
+            "                <input name=\"way\" type=\"radio\" value=\"微信平台\" style=\"width: 15px;margin-left: 5%;vertical-align:middle; margin-top:0;\">微信平台<br>\n" +
+            "                <input name=\"way\" type=\"radio\" value=\"官网搜索\" style=\"width: 15px;vertical-align:middle; margin-top:0;\">官网搜索\n" +
+            "                <input name=\"way\" type=\"radio\" value=\"抖音/西瓜视频\" style=\"width: 15px;vertical-align:middle; margin-top:0;\">抖音/西瓜视频<br>\n" +
+            "                <input name=\"way\" type=\"radio\" value=\"其他途径\" style=\"width: 15px;vertical-align:middle; margin-top:0;\">其他途径\n" +
+            "            </td>\n" +
+            "        </tr>\n" +
+            "        <tr>\n" +
+            "            <td style=\"font-size: 14px;\"><span style=\"color: red\" y>*</span>您公司之前有做过刀具外包管理吗？</td>\n" +
+            "            <td style=\"font-size: 14px;\">\n" +
+            "                <input name=\"manage\" type=\"radio\" value=\"有\" style=\"width: 15px;vertical-align:middle; margin-top:0;\" onclick=\"servicShow()\">有\n" +
+            "                <input name=\"manage\" type=\"radio\" value=\"无\" style=\"width: 15px;margin-left: 5%;vertical-align:middle; margin-top:0;\" onclick=\"serviceHide()\">无\n" +
+            "            </td>\n" +
+            "        </tr>\n" +
+            "        <tr id=\"hidden1\" style=\"display: none\">\n" +
+            "            <td style=\"font-size: 14px;\"><span style=\"color: red\" y>*</span>服务商名称</td>\n" +
+            "            <td>\n" +
+            "                <input id=\"facilitatorName\" class=\"form-control\" type=\"text\" placeholder=\"请输入服务商名称\" maxlength=\"30\" style=\"width: 100%;border: 0px;font-size: 14px;\">\n" +
+            "            </td>\n" +
+            "        </tr>\n" +
+            "        <tr id=\"hidden2\" style=\"display: none;\">\n" +
+            "            <td style=\"font-size: 14px;\"><span style=\"color: red\" y>*</span>您之前的服务主要碰到的问题是</td>\n" +
+            "            <td >\n" +
+            "                <input id=\"problem\" class=\"form-control\" type=\"text\" placeholder=\"请输入遇到的问题\" style=\"width: 100%;border: 0px;font-size: 14px;\" maxlength=\"200\">\n" +
+            "            </td>\n" +
+            "        </tr>\n" +
+            "        <tr>\n" +
+            "            <td style=\"font-size: 14px;\"><span style=\"color: red\" y>*</span>您公司的刀具总消耗为（万元/年）</td>\n" +
+            "            <td style=\"font-size: 14px;\">\n" +
+            "                <input name=\"expend\" type=\"radio\" style=\"width: 15px;vertical-align:middle; margin-top:0;\" value=\"<200\"><200\n" +
+            "                <input name=\"expend\" type=\"radio\" style=\"width: 15px;margin-left: 5%;vertical-align:middle; margin-top:0;\" value=\"200-500\">200-500<br>\n" +
+            "                <input name=\"expend\" type=\"radio\" style=\"width: 15px;vertical-align:middle; margin-top:0;\" value=\"500-1000\">500-1000<br>\n" +
+            "                <input name=\"expend\" type=\"radio\" style=\"width: 15px;vertical-align:middle; margin-top:0;\" value=\"1000-2000\">1000-2000<br>\n" +
+            "                <input name=\"expend\" type=\"radio\" style=\"width: 15px;vertical-align:middle; margin-top:0;\" value=\"2000以上\">2000以上\n" +
+            "            </td>\n" +
+            "        </tr>\n" +
+            "        <tr>\n" +
+            "            <td style=\"font-size: 14px;width: 140px;\"><span style=\"color: red\" y>*</span>目前负责该项目的联系人</td>\n" +
+            "            <td style=\"font-size: 14px;\">\n" +
+            "                <input id=\"principal\" class=\"form-control\" style=\"font-size: 14px;width: 100%;border: 0px;\" type=\"text\" placeholder=\"请输入项目负责人姓名\" maxlength=\"30\">\n" +
+            "            </td>\n" +
+            "        </tr>\n" +
+            "        <tr>\n" +
+            "            <td style=\"font-size: 14px;\"><span style=\"color: red\" y>*</span>手机号码</td>\n" +
+            "            <td style=\"font-size: 14px;\">\n" +
+            "                <input id=\"mobile\" class=\"form-control\" type=\"text\" placeholder=\"请输入项目负责人手机号\" style=\"width: 100%;border: 0px;font-size: 14px;\" maxlength=\"11\">\n" +
+            "            </td>\n" +
+            "        </tr>\n" +
+            "        <tr>\n" +
+            "            <td style=\"font-size: 14px;\">邮箱</td>\n" +
+            "            <td>\n" +
+            "                <input id=\"email\" style=\"font-size: 14px;width: 100%;border: 0px;\" class=\"form-control\" type=\"text\" placeholder=\"请输入项目负责人邮箱\" maxlength=\"30\">\n" +
+            "            </td>\n" +
+            "        </tr>\n" +
+            "        <tr>\n" +
+            "            <td style=\"font-size: 14px;\"><span style=\"color: red\" y>*</span>您对该项目的进展要求</td>\n" +
+            "            <td style=\"font-size: 14px;\">\n" +
+            "                <input name=\"ask\" type=\"radio\" style=\"width: 15px;vertical-align:middle; margin-top:0;\" value=\"紧急\">紧急\n" +
+            "                <input name=\"ask\" type=\"radio\" style=\"width: 15px;margin-left: 5%;vertical-align:middle; margin-top:0;\" value=\"2个月内\">2个月内<br>\n" +
+            "                <input name=\"ask\" type=\"radio\" style=\"width: 15px;vertical-align:middle; margin-top:0;\" value=\"2-5个月内\">2-5个月内\n" +
+            "                <input name=\"ask\" type=\"radio\" style=\"width: 15px;margin-left: 5%;vertical-align:middle; margin-top:0;\" value=\"半年后\">半年后\n" +
+            "            </td>\n" +
+            "        </tr>");
+        $("#footPart").append("<button data-dismiss=\"modal\" class=\"btn btn-default\" type=\"button\">关闭</button>\n" +
+            "                    <button class=\"btn btn-primary\" type=\"button\" onclick=\"saveFifthPage()\">下一页</button>");
+    }
+
+    function loadfifth() {
+        $("#survey").html("");
+        $("#footPart").html("");
+        $("#survey").append("<tr>\n" +
+            "            <td style=\"font-size: 14px;\"><span style=\"color: red\" y>*</span>您公司近三年的平均产值约为</td>\n" +
+            "            <td style=\"font-size: 14px;\">\n" +
+            "                <input name=\"output\" type=\"radio\" style=\"width: 15px;vertical-align:middle; margin-top:0;\" value=\"<1 亿元\"><1 亿元\n" +
+            "                <input name=\"output\" type=\"radio\" style=\"width: 15px;margin-left: 5%;vertical-align:middle; margin-top:0;\" value=\"2-5 亿元\">2-5 亿元<br>\n" +
+            "                <input name=\"output\" type=\"radio\" style=\"width: 15px;vertical-align:middle; margin-top:0;\" value=\"5-10 亿元\">5-10 亿元\n" +
+            "                <input name=\"output\" type=\"radio\" style=\"width: 15px;margin-left: 5%;vertical-align:middle; margin-top:0;\" value=\"10-20 亿元\">10-20 亿元<br>\n" +
+            "                <input name=\"output\" type=\"radio\" style=\"width: 15px;vertical-align:middle; margin-top:0;\" value=\"20 亿元以上\">20 亿元以上\n" +
+            "            </td>\n" +
+            "        </tr>\n" +
+            "        <tr>\n" +
+            "            <td style=\"font-size: 14px;\"><span style=\"color: red\" y>*</span>您公司的产品销售市场主要为（可多选）</td>\n" +
+            "            <td style=\"font-size: 14px;\">\n" +
+            "                <input name=\"market\" type=\"checkbox\" style=\"width: 15px;vertical-align:middle; margin-top:0;\" value=\"国内\">国内\n" +
+            "                <input name=\"market\" type=\"checkbox\" style=\"width: 15px;margin-left: 5%;vertical-align:middle; margin-top:0;\" value=\"出口\">出口\n" +
+            "            </td>\n" +
+            "        </tr>\n" +
+            "        <tr>\n" +
+            "            <td style=\"font-size: 14px;\">您公司的主要竞争对手(请填写企业简称)</td>\n" +
+            "            <td style=\"font-size: 14px;\"><input id=\"competitor\" style=\"font-size: 14px;width: 100%;border: 0px;\" class=\"form-control\" type=\"text\" maxlength=\"30\" placeholder=\"请填写企业名称\"></td>\n" +
+            "        </tr>\n" +
+            "        <tr>\n" +
+            "            <td style=\"font-size: 14px;\">您公司未来三年的的发展计划为（可多选）</td>\n" +
+            "            <td style=\"font-size: 14px;\">\n" +
+            "                <input name=\"plan\" type=\"checkbox\" style=\"width: 15px;vertical-align:middle; margin-top:0;\" value=\"扩充产能\">扩充产能\n" +
+            "                <input name=\"plan\" type=\"checkbox\" style=\"width: 15px;margin-left: 5%;vertical-align:middle; margin-top:0;\" value=\"争取上市\">争取上市<br>\n" +
+            "                <input name=\"plan\" type=\"checkbox\" style=\"width: 15px;vertical-align:middle; margin-top:0;\" value=\"减少投入寻求合作\">减少投入寻求合作<br>\n" +
+            "                <input name=\"plan\" type=\"checkbox\" style=\"width: 15px;vertical-align:middle; margin-top:0;\" value=\"研发新产品\">研发新产品<br>\n" +
+            "                <input name=\"plan\" type=\"checkbox\" style=\"width: 15px;vertical-align:middle; margin-top:0;\" value=\"扩大市场份额\">扩大市场份额<br>\n" +
+            "                <input name=\"plan\" type=\"checkbox\" style=\"width: 15px;vertical-align:middle; margin-top:0;\" value=\"引入新项目\">引入新项目<br>\n" +
+            "                <input name=\"plan\" type=\"checkbox\" style=\"width: 15px;vertical-align:middle; margin-top:0;\" value=\"加工自动化改造\">加工自动化改造\n" +
+            "            </td>\n" +
+            "        </tr>");
+        $("#footPart").append("<button data-dismiss=\"modal\" class=\"btn btn-default\" type=\"button\">关闭</button>\n" +
+            "                    <button class=\"btn btn-primary\" type=\"button\" onclick=\"saveSevenPage()\">下一页</button>");
+
+    }
+
+    function loadsixth() {
+        $("#survey").html("");
+        $("#footPart").html("");
+        $("#survey").append("<tr>\n" +
+            "            <td style=\"font-size: 14px;\"><span style=\"color: red\" y>*</span>您公司主要使用的设备类型</td>\n" +
+            "            <td style=\"font-size: 14px;\">\n" +
+            "                <input name=\"assetType\" type=\"checkbox\" style=\"width: 15px;vertical-align:middle; margin-top:0;\" value=\"普通加工中心\">普通加工中心\n" +
+            "                <input name=\"assetType\" type=\"checkbox\" style=\"width: 15px;margin-left: 5%;vertical-align:middle; margin-top:0;\" value=\"车床\">车床<br>\n" +
+            "                <input name=\"assetType\" type=\"checkbox\" style=\"width: 15px;vertical-align:middle; margin-top:0;\" value=\"五轴加工中心\">五轴加工中心\n" +
+            "                <input name=\"assetType\" type=\"checkbox\" style=\"width: 15px;margin-left: 5%;vertical-align:middle; margin-top:0;\" value=\"专机\">专机\n" +
+            "            </td>\n" +
+            "        </tr>\n" +
+            "        <tr>\n" +
+            "            <td style=\"font-size: 14px;\"><span style=\"color: red\" y>*</span>您公司刀具采购的主要来源有（可多选）</td>\n" +
+            "            <td style=\"font-size: 14px;\">\n" +
+            "                <input name=\"assetSource\" type=\"checkbox\" style=\"width: 15px;vertical-align:middle; margin-top:0;\" value=\"欧美进口\">欧美进口\n" +
+            "                <input name=\"assetSource\" type=\"checkbox\" style=\"width: 15px;margin-left: 5%;vertical-align:middle; margin-top:0;\" value=\"日本进口\">日本进口<br>\n" +
+            "                <input name=\"assetSource\" type=\"checkbox\" style=\"width: 15px;vertical-align:middle; margin-top:0;\" value=\"合资品牌\">合资品牌\n" +
+            "                <input name=\"assetSource\" type=\"checkbox\" style=\"width: 15px;margin-left: 5%;vertical-align:middle; margin-top:0;\" value=\"纯国产设备\">纯国产设备\n" +
+            "            </td>\n" +
+            "        </tr>\n" +
+            "        <tr>\n" +
+            "            <td style=\"font-size: 14px;\">您公司的主要设备品牌</td>\n" +
+            "            <td><input id=\"brand\" class=\"form-control\" style=\"font-size: 14px;width: 100%;border: 0px;\" type=\"text\" maxlength=\"100\" placeholder=\"请填写您公司的主要设备品牌\"></td>\n" +
+            "        </tr>\n" +
+            "        <tr>\n" +
+            "            <td style=\"font-size: 14px;\"><span style=\"color: red\" y>*</span>您公司设备数量约为（台）</td>\n" +
+            "            <td style=\"font-size: 14px;\">\n" +
+            "                <input name=\"assetNum\" type=\"radio\" style=\"width: 15px;vertical-align:middle; margin-top:0;\" value=\"< 50\">< 50\n" +
+            "                <input name=\"assetNum\" type=\"radio\" style=\"width: 15px;margin-left: 5%;vertical-align:middle; margin-top:0;\" value=\"50 - 150\">50 - 150<br>\n" +
+            "                <input name=\"assetNum\" type=\"radio\" style=\"width: 15px;vertical-align:middle; margin-top:0;\" value=\"150 - 250\">150 - 250\n" +
+            "                <input name=\"assetNum\" type=\"radio\" style=\"width: 15px;margin-left: 5%;vertical-align:middle; margin-top:0;\" value=\"250以上\">250以上\n" +
+            "            </td>\n" +
+            "        </tr>\n" +
+            "        <tr>\n" +
+            "            <td style=\"font-size: 14px;\"><span style=\"color: red\" y>*</span>您公司主要设备使用年限</td>\n" +
+            "            <td style=\"font-size: 14px;\">\n" +
+            "                <input name=\"life\" type=\"radio\" style=\"width: 15px;vertical-align:middle; margin-top:0;\" value=\"<3 年\"><3 年\n" +
+            "                <input name=\"life\" type=\"radio\" style=\"width: 15px;margin-left: 5%;vertical-align:middle; margin-top:0;\" value=\"3-5 年\">3-5 年<br>\n" +
+            "                <input name=\"life\" type=\"radio\" style=\"width: 15px;vertical-align:middle; margin-top:0;\" value=\"5-10 年\">5-10 年\n" +
+            "                <input name=\"life\" type=\"radio\" style=\"width: 15px;margin-left: 5%;vertical-align:middle; margin-top:0;\" value=\"10 年以上\">10 年以上\n" +
+            "            </td>\n" +
+            "        </tr>\n" +
+            "        <tr>\n" +
+            "            <td style=\"font-size: 14px;\"><span style=\"color: red\" y>*</span>您公司的产品主要生产形式</td>\n" +
+            "            <td style=\"font-size: 14px;\">\n" +
+            "                <input name=\"format\" type=\"radio\" style=\"width: 15px;vertical-align:middle; margin-top:0;\" value=\"多品种小批量\">多品种小批量<br>\n" +
+            "                <input name=\"format\" type=\"radio\" style=\"width: 15px;vertical-align:middle; margin-top:0;\" value=\"小品种大批量\">小品种大批量<br>\n" +
+            "                <input name=\"format\" type=\"radio\" style=\"width: 15px;vertical-align:middle; margin-top:0;\" value=\"两种情况均有\">两种情况均有\n" +
+            "            </td>\n" +
+            "        </tr>");
+        $("#footPart").append("<button data-dismiss=\"modal\" class=\"btn btn-default\" type=\"button\">关闭</button>\n" +
+            "                    <button class=\"btn btn-primary\" type=\"button\" onclick=\"saveEightPage()\">下一页</button>");
+
+
+    }
+
+    function loadseventh() {
+        $("#survey").html("");
+        $("#footPart").html("");
+        $("#survey").append("<tr>\n" +
+            "            <td style=\"font-size: 14px;\"><span style=\"color: red\" y>*</span>您公司近3 年刀具采购金额</td>\n" +
+            "            <td style=\"font-size: 14px;\">\n" +
+            "                <input name=\"buyMoney\" type=\"radio\" style=\"width: 15px;vertical-align:middle; margin-top:0;\" value=\"<200 万元\"><200 万元<br>\n" +
+            "                <input name=\"buyMoney\" type=\"radio\" style=\"width: 15px;vertical-align:middle; margin-top:0;\" value=\"200-500万元\">200-500万元<br>\n" +
+            "                <input name=\"buyMoney\" type=\"radio\" style=\"width: 15px;vertical-align:middle; margin-top:0;\" value=\"500-1000万元\">500-1000万元<br>\n" +
+            "                <input name=\"buyMoney\" type=\"radio\" style=\"width: 15px;vertical-align:middle; margin-top:0;\" value=\"1000-2000万元\">1000-2000万元<br>\n" +
+            "                <input name=\"buyMoney\" type=\"radio\" style=\"width: 15px;vertical-align:middle; margin-top:0;\" value=\"2000万元以上\">2000万元以上\n" +
+            "            </td>\n" +
+            "        </tr>\n" +
+            "        <tr>\n" +
+            "            <td style=\"font-size: 14px;\"><span style=\"color: red\" y>*</span>您公司刀具采购的主要来源有（可多选）</td>\n" +
+            "            <td style=\"font-size: 14px;\">\n" +
+            "                <input name=\"origin\" type=\"checkbox\" style=\"width: 15px;vertical-align:middle; margin-top:0;\" value=\"欧美进口\">欧美进口\n" +
+            "                <input name=\"origin\" type=\"checkbox\" style=\"width: 15px;margin-left: 5%;vertical-align:middle; margin-top:0;\" value=\"日韩进口\">日韩进口<br>\n" +
+            "                <input name=\"origin\" type=\"checkbox\" style=\"width: 15px;vertical-align:middle; margin-top:0;\" value=\"国产品牌\">国产品牌\n" +
+            "            </td>\n" +
+            "        </tr>\n" +
+            "        <tr>\n" +
+            "            <td style=\"font-size: 14px;width: 230px;\">您公司刀具采购的主要品牌有（可多选）</td>\n" +
+            "            <td style=\"font-size: 14px;\">\n" +
+            "                <input name=\"buyBrand\" type=\"checkbox\" style=\"width: 15px;vertical-align:middle; margin-top:0;\" value=\"山特维克\">山特维克\n" +
+            "                <input name=\"buyBrand\" type=\"checkbox\" style=\"width: 15px;margin-left: 5%;vertical-align:middle; margin-top:0;\" value=\"肯纳\">肯纳<br>\n" +
+            "                <input name=\"buyBrand\" type=\"checkbox\" style=\"width: 15px;vertical-align:middle; margin-top:0;\" value=\"钴领\">钴领\n" +
+            "                <input name=\"buyBrand\" type=\"checkbox\" style=\"width: 15px;margin-left: 5%;vertical-align:middle; margin-top:0;\" value=\"玛帕\">玛帕\n" +
+            "                <input name=\"buyBrand\" type=\"checkbox\" style=\"width: 15px;margin-left: 5%;vertical-align:middle; margin-top:0;\" value=\"蓝帜\">蓝帜<br>\n" +
+            "                <input name=\"buyBrand\" type=\"checkbox\" style=\"width: 15px;vertical-align:middle; margin-top:0;\" value=\"伊斯卡\">伊斯卡\n" +
+            "                <input name=\"buyBrand\" type=\"checkbox\" style=\"width: 15px;vertical-align:middle; margin-top:0;\" value=\"瓦尔特\">瓦尔特\n" +
+            "                <input name=\"buyBrand\" type=\"checkbox\" style=\"width: 15px;margin-left: 5%;vertical-align:middle; margin-top:0;\" value=\"山高\">山高<br>\n" +
+            "                <input name=\"buyBrand\" type=\"checkbox\" style=\"width: 15px;vertical-align:middle; margin-top:0;\" value=\"OSG\">OSG\n" +
+            "                <input name=\"buyBrand\" type=\"checkbox\" style=\"width: 15px;margin-left: 5%;vertical-align:middle; margin-top:0;\" value=\"住友\">住友\n" +
+            "                <input name=\"buyBrand\" type=\"checkbox\" style=\"width: 15px;margin-left: 5%;vertical-align:middle; margin-top:0;\" value=\"三菱\">三菱<br>\n" +
+            "                <input name=\"buyBrand\" type=\"checkbox\" style=\"width: 15px;vertical-align:middle; margin-top:0;\" value=\"京瓷\">京瓷\n" +
+            "                <input name=\"buyBrand\" type=\"checkbox\" style=\"width: 15px;margin-left: 5%;vertical-align:middle; margin-top:0;\" value=\"特固克\">特固克\n" +
+            "                <input name=\"buyBrand\" type=\"checkbox\" style=\"width: 15px;margin-left: 5%;vertical-align:middle; margin-top:0;\" value=\"克洛依\">克洛依<br>\n" +
+            "                <input name=\"buyBrand\" type=\"checkbox\" style=\"width: 15px;vertical-align:middle; margin-top:0;\" value=\"YG1\">YG1\n" +
+            "                <input name=\"buyBrand\" type=\"checkbox\" style=\"width: 15px;margin-left: 5%;vertical-align:middle; margin-top:0;\" value=\"阿诺\">阿诺\n" +
+            "                <input name=\"buyBrand\" type=\"checkbox\" style=\"width: 15px;margin-left: 5%;vertical-align:middle; margin-top:0;\" value=\"株钻\">株钻<br>\n" +
+            "                <input name=\"buyBrand\" type=\"checkbox\" style=\"width: 15px;vertical-align:middle; margin-top:0;\" value=\"金鹭\">金鹭\n" +
+            "                <input name=\"buyBrand\" type=\"checkbox\" style=\"width: 15px;vertical-align:middle; margin-top:0;\" value=\"东莞品牌刀具\">东莞品牌刀具<br>\n" +
+            "                <input name=\"buyBrand\" type=\"checkbox\" style=\"width: 15px;vertical-align:middle; margin-top:0;\" value=\"常州西夏墅\">常州西夏墅<br>\n" +
+            "                <input name=\"buyBrand\" type=\"checkbox\" style=\"width: 15px;vertical-align:middle; margin-top:0;\" value=\"株洲品牌刀具\">株洲品牌刀具\n" +
+            "                <input name=\"buyBrand\" type=\"checkbox\" style=\"width: 15px;margin-left: 5%;vertical-align:middle; margin-top:0;\" value=\"其它\">其它\n" +
+            "            </td>\n" +
+            "        </tr>\n" +
+            "        <tr>\n" +
+            "            <td style=\"font-size: 14px;\"><span style=\"color: red\" y>*</span>您公司刀具采购的模式是（可多选）</td>\n" +
+            "            <td style=\"font-size: 14px;\">\n" +
+            "                <input name=\"buyModel\" type=\"checkbox\" style=\"width: 15px;vertical-align:middle; margin-top:0;\" value=\"厂家直采\">厂家直采\n" +
+            "                <input name=\"buyModel\" type=\"checkbox\" style=\"width: 15px;margin-left: 5%;vertical-align:middle; margin-top:0;\" value=\"经销商\">经销商\n" +
+            "            </td>\n" +
+            "        </tr>\n" +
+            "        <tr>\n" +
+            "            <td style=\"font-size: 14px;\"><span style=\"color: red\" y>*</span>您公司的刀具库存管理模式是（可多选）</td>\n" +
+            "            <td style=\"font-size: 14px;\">\n" +
+            "                <input name=\"manageModel\" type=\"checkbox\" style=\"width: 15px;vertical-align:middle; margin-top:0;\" value=\"自有管理\">自有管理\n" +
+            "                <input name=\"manageModel\" type=\"checkbox\" style=\"width: 15px;margin-left: 5%;vertical-align:middle; margin-top:0;\" value=\"刀具寄售\">刀具寄售<br>\n" +
+            "                <input name=\"manageModel\" type=\"checkbox\" style=\"width: 15px;vertical-align:middle; margin-top:0;\" value=\"其它\">其它\n" +
+            "            </td>\n" +
+            "        </tr>");
+        $("#footPart").append("<button data-dismiss=\"modal\" class=\"btn btn-default\" type=\"button\">关闭</button>\n" +
+            "                    <button class=\"btn btn-primary\" type=\"button\" onclick=\"saveNinthPage()\">下一页</button>");
+
+    }
+
+    function loadeighth() {
+        $("#survey").html("");
+        $("#footPart").html("");
+        $("#survey").append("<tr>\n" +
+            "                <td colspan=\"2\" style=\"font-size: 14px;\">硬质合金旋转类</td>\n" +
+            "            </tr>\n" +
+            "            <tr>\n" +
+            "                <td style=\"font-size: 14px;\">钻铰类头约占<p style=\"color: red;\">(若不清楚填0或者不填)</p></td>\n" +
+            "                <td style=\"font-size: 14px;\"><input id=\"ztzb\" class=\"form-control\" style=\"font-size: 14px;width: 200px;border:0px;\" type=\"text\" maxlength=\"10\" placeholder=\"请填写钻头占比\" title=\"若不清楚则填写 0\"><span style=\"margin-left: 5%;font-size: 14px;\">%</span></td>\n" +
+            "            </tr>\n" +
+            "            <tr>\n" +
+            "                <td style=\"font-size: 14px;\">铣刀约占<p style=\"color: red;\">(若不清楚填0或者不填)</p></td>\n" +
+            "                <td><input id=\"xdzb\" class=\"form-control\" style=\"font-size: 14px;width: 200px;border:0px;\" type=\"text\" maxlength=\"10\" placeholder=\"请填写铣刀占比\"><span style=\"margin-left: 5%;font-size: 14px;\">%</span></td>\n" +
+            "            </tr>\n" +
+            "            <tr>\n" +
+            "                <td style=\"font-size: 14px;\">丝锥约占<p style=\"color: red;\">(若不清楚填0或者不填)</p></td>\n" +
+            "                <td><input id=\"szzb\" class=\"form-control\" style=\"font-size: 14px;width: 200px;border:0px;\" type=\"text\" maxlength=\"10\" placeholder=\"请填写丝锥占比\"><span style=\"margin-left: 5%;font-size: 14px;\">%</span></td>\n" +
+            "            </tr>\n" +
+            "            <tr>\n" +
+            "                <td style=\"font-size: 14px;\">其它约占<p style=\"color: red;\">(若不清楚填0或者不填)</p></td>\n" +
+            "                <td><input id=\"qtOne\" class=\"form-control\" style=\"font-size: 14px;width: 200px;border:0px;\" type=\"text\" maxlength=\"10\" placeholder=\"请填写其它占比\"><span style=\"margin-left: 5%;font-size: 14px;\">%</span></td>\n" +
+            "            </tr>\n" +
+            "\n" +
+            "            <tr>\n" +
+            "                <td colspan=\"2\" style=\"font-size: 14px;\">硬质合金刀片类</td>\n" +
+            "            </tr>\n" +
+            "            <tr>\n" +
+            "                <td style=\"font-size: 14px;\">车刀片约占<p style=\"color: red;\">(若不清楚填0或者不填)</p></td>\n" +
+            "                <td><input id=\"cdpzb\" class=\"form-control\" style=\"font-size: 14px;width: 200px;border:0px;\" type=\"text\" maxlength=\"10\" placeholder=\"请填写车刀片占比\"><span style=\"margin-left: 5%;font-size: 14px;\">%</span></td>\n" +
+            "            </tr>\n" +
+            "            <tr>\n" +
+            "                <td style=\"font-size: 14px;\">铣刀片约占<p style=\"color: red;\">(若不清楚填0或者不填)</p></td>\n" +
+            "                <td><input id=\"xdpzb\" class=\"form-control\" style=\"font-size: 14px;width: 200px;border:0px;\" type=\"text\" maxlength=\"10\" placeholder=\"请填写铣刀片占比\"><span style=\"margin-left: 5%;font-size: 14px;\">%</span></td>\n" +
+            "            </tr>\n" +
+            "            <tr>\n" +
+            "                <td style=\"font-size: 14px;\">钻镗刀片类约占<p style=\"color: red;\">(若不清楚填0或者不填)</p></td>\n" +
+            "                <td><input id=\"tdpzb\" style=\"font-size: 14px;width: 200px;border:0px;\" type=\"text\" maxlength=\"10\" placeholder=\"请填写镗刀片占比\"><span style=\"margin-left: 5%;font-size: 14px;\">%</span></td>\n" +
+            "            </tr>\n" +
+            "            <tr>\n" +
+            "                <td style=\"font-size: 14px;\">其它约占<p style=\"color: red;\">(若不清楚填0或者不填)</p></td>\n" +
+            "                <td><input id=\"qtTwo\" class=\"form-control\" style=\"font-size: 14px;width: 200px;border:0px;\" type=\"text\" maxlength=\"10\" placeholder=\"请填写其它占比\"><span style=\"margin-left: 5%;font-size: 14px;\">%</span></td>\n" +
+            "            </tr>\n" +
+            "\n" +
+            "            <tr>\n" +
+            "                <td colspan=\"2\" style=\"font-size: 14px;\">超硬刀具类</td>\n" +
+            "            </tr>\n" +
+            "            <tr>\n" +
+            "                <td style=\"font-size: 14px;\">CBN 约占<p style=\"color: red;\">(若不清楚填0或者不填)</p></td>\n" +
+            "                <td><input id=\"cbn\" class=\"form-control\" style=\"font-size: 14px;width: 200px;border:0px;\" type=\"text\" maxlength=\"10\" placeholder=\"请填写CBN占比\"><span style=\"margin-left: 5%;font-size: 14px;\">%</span></td>\n" +
+            "            </tr>\n" +
+            "            <tr>\n" +
+            "                <td style=\"font-size: 14px;\">PCD 约占<p style=\"color: red;\">(若不清楚填0或者不填)</p></td>\n" +
+            "                <td><input id=\"pcd\" class=\"form-control\" style=\"font-size: 14px;width: 200px;border:0px;\" type=\"text\" maxlength=\"10\" placeholder=\"请填写PCD占比\"><span style=\"margin-left: 5%;font-size: 14px;\">%</span></td>\n" +
+            "            </tr>\n" +
+            "            <tr>\n" +
+            "                <td style=\"font-size: 14px;\">焊接超硬约占<p style=\"color: red;\">(若不清楚填0或者不填)</p></td>\n" +
+            "                <td><input id=\"hjzb\" class=\"form-control\" style=\"font-size: 14px;width: 200px;border:0px;\" type=\"text\" maxlength=\"10\" placeholder=\"请填写焊接超硬占比\"><span style=\"margin-left: 5%;font-size: 14px;\">%</span></td>\n" +
+            "            </tr>\n" +
+            "            <tr>\n" +
+            "                <td style=\"font-size: 14px;\">您公司是否使用高速钢刀具</td>\n" +
+            "                <td style=\"font-size: 14px;\">\n" +
+            "                    <input name=\"hasGSG\" type=\"radio\" style=\"width: 15px;vertical-align:middle; margin-top:0;\" value=\"有\" onclick=\"chooseShow()\">有\n" +
+            "                    <input name=\"hasGSG\" type=\"radio\" style=\"width: 15px;margin-left: 5%;vertical-align:middle; margin-top:0;\" value=\"非常少\" onclick=\"chooseHide()\">非常少<br>\n" +
+            "                    <input name=\"hasGSG\" type=\"radio\" style=\"width: 15px;vertical-align:middle; margin-top:0;\" value=\"无\" onclick=\"chooseHide()\">无\n" +
+            "                </td>\n" +
+            "            </tr>\n" +
+            "            <tr id=\"brandGSG\" style=\"display: none;\">\n" +
+            "                <td style=\"font-size: 14px;\">高速钢刀具品牌</td>\n" +
+            "                <td style=\"font-size: 14px;\">\n" +
+            "                    <input name=\"gsgBrand\" type=\"checkbox\" style=\"width: 15px;vertical-align:middle; margin-top:0;\" value=\"进口品牌\">进口品牌\n" +
+            "                    <input name=\"gsgBrand\" type=\"checkbox\" style=\"width: 15px;margin-left: 5%;vertical-align:middle; margin-top:0;\" value=\"国产品牌\">国产品牌\n" +
+            "                </td>\n" +
+            "            </tr>");
+        $("#footPart").append("<button data-dismiss=\"modal\" class=\"btn btn-default\" type=\"button\">关闭</button>\n" +
+            "                    <button class=\"btn btn-primary\" type=\"button\" onclick=\"saveTenthPage()\">下一页</button>");
+    }
+
+    function loadnineth() {
+        $("#survey").html("");
+        $("#footPart").html("");
+        $("#survey").append("<tr>\n" +
+            "            <td style=\"font-size: 14px;width: 160px;\"><span style=\"color: red\" y>*</span>您公司目前的刀具库存总金额约为（万元）</td>\n" +
+            "            <td style=\"font-size: 14px;\">\n" +
+            "                <input name=\"stockMoney\" type=\"radio\" style=\"width: 15px;vertical-align:middle; margin-top:0;\" value=\"<200 万元\"><200 <br>\n" +
+            "                <input name=\"stockMoney\" type=\"radio\" style=\"width: 15px;vertical-align:middle; margin-top:0;\" value=\"200-500万元\">200-500<br>\n" +
+            "                <input name=\"stockMoney\" type=\"radio\" style=\"width: 15px;vertical-align:middle; margin-top:0;\" value=\"500-1000万元\">500-1000<br>\n" +
+            "                <input name=\"stockMoney\" type=\"radio\" style=\"width: 15px;vertical-align:middle; margin-top:0;\" value=\"1000-2000万元\">1000-2000<br>\n" +
+            "                <input name=\"stockMoney\" type=\"radio\" style=\"width: 15px;vertical-align:middle; margin-top:0;\" value=\"2000万元以上\">2000以上\n" +
+            "            </td>\n" +
+            "        </tr>\n" +
+            "        <tr>\n" +
+            "            <td colspan=\"2\" style=\"font-size: 14px;width: 160px;\">\n" +
+            "                您公司刀具库龄的占比（非必填项）\n" +
+            "            </td>\n" +
+            "        </tr>\n" +
+            "        <tr>\n" +
+            "            <td style=\"font-size: 14px;\"><90 天约占</td>\n" +
+            "            <td><input id=\"stockOne\" class=\"form-control\" style=\"font-size: 14px;width: 200px;border:0px;\" type=\"text\" maxlength=\"10\" placeholder=\"库龄<90天的占比\"><span style=\"margin-left: 5%;font-size: 14px;\">%</span></td>\n" +
+            "        </tr>\n" +
+            "        <tr>\n" +
+            "            <td style=\"font-size: 14px;\">90-180 天约占</td>\n" +
+            "            <td><input id=\"stockTwo\" class=\"form-control\" style=\"font-size: 14px;width: 200px;border:0px;\" type=\"text\" maxlength=\"10\" placeholder=\"库龄90-180天的占比\"><span style=\"margin-left: 5%;font-size: 14px;\">%</span></td>\n" +
+            "        </tr>\n" +
+            "        <tr>\n" +
+            "            <td style=\"font-size: 14px;\">180-365 天约占</td>\n" +
+            "            <td><input id=\"stockThree\" class=\"form-control\" style=\"font-size: 14px;width: 200px;border:0px;\" type=\"text\" maxlength=\"10\" placeholder=\"库龄180-365天的占比\"><span style=\"margin-left: 5%;font-size: 14px;\">%</span></td>\n" +
+            "        </tr>\n" +
+            "        <tr>\n" +
+            "            <td style=\"font-size: 14px;\">365 天以上约占</td>\n" +
+            "            <td><input id=\"stockFour\" class=\"form-control\" style=\"font-size: 14px;width: 200px;border:0px;\" type=\"text\" placeholder=\"库龄>365天的占比\"><span style=\"margin-left: 5%;font-size: 14px;\">%</span></td>\n" +
+            "        </tr>\n" +
+            "        <tr>\n" +
+            "            <td colspan=\"2\" style=\"font-size: 14px;\">您公司刀具库存占比约为（非必填项）</td>\n" +
+            "        </tr>\n" +
+            "        <tr>\n" +
+            "            <td style=\"font-size: 14px;\">标准刀具约占</td>\n" +
+            "            <td><input id=\"normTool\" style=\"font-size: 14px;width: 200px;border:0px;\" class=\"form-control\" type=\"text\" maxlength=\"10\" placeholder=\"标准刀具占比\"><span style=\"margin-left: 5%;font-size: 14px;\">%</span></td>\n" +
+            "        </tr>\n" +
+            "        <tr>\n" +
+            "            <td style=\"font-size: 14px;\">非标刀具约占</td>\n" +
+            "            <td><input id=\"unnormTool\" style=\"font-size: 14px;width: 200px;border:0px;\" class=\"form-control\" type=\"text\" maxlength=\"10\" placeholder=\"非标刀具占比\"><span style=\"margin-left: 5%;font-size: 14px;\">%</span></td>\n" +
+            "        </tr>");
+        $("#footPart").append("<button data-dismiss=\"modal\" class=\"btn btn-default\" type=\"button\">关闭</button>\n" +
+            "                    <button class=\"btn btn-primary\" type=\"button\" onclick=\"saveEleventhPage()\">下一页</button>");
+    }
+
+    function loadtenth() {
+        $("#survey").html("");
+        $("#footPart").html("");
+        $("#survey").append("<tr>\n" +
+            "            <td style=\"font-size: 14px;width: 215px;\"><span style=\"color: red\" y>*</span>您公司是否使用ERP 管理系统</td>\n" +
+            "            <td style=\"font-size: 14px;\">\n" +
+            "                <input name=\"erp\" type=\"radio\" style=\"width: 15px;vertical-align:middle; margin-top:0;\" value=\"是\" onclick=\"ERPShow()\">是\n" +
+            "                <input name=\"erp\" type=\"radio\" style=\"width: 15px;margin-left: 5%;vertical-align:middle; margin-top:0;\" value=\"否\" onclick=\"ERPHide()\">否\n" +
+            "            </td>\n" +
+            "        </tr>\n" +
+            "        <tr id=\"erpBrand\" style=\"display: none;\">\n" +
+            "            <td style=\"font-size: 14px;\"><span style=\"color: red\" y>*</span>ERP品牌</td>\n" +
+            "            <td><input id=\"erpBrand2\" class=\"form-control\" style=\"font-size: 14px;width: 200px;border:0px;\" type=\"text\" maxlength=\"100\" placeholder=\"请填写使用的ERP系统品牌\"></td>\n" +
+            "        </tr>\n" +
+            "        <tr>\n" +
+            "            <td style=\"font-size: 14px;\"><span style=\"color: red\" y>*</span>您公司是否使用MES 管理系统</td>\n" +
+            "            <td style=\"font-size: 14px;\">\n" +
+            "                <input name=\"mes\" type=\"radio\" style=\"width: 15px;vertical-align:middle; margin-top:0;\" value=\"是\" onclick=\"MESShow()\">是\n" +
+            "                <input name=\"mes\" type=\"radio\" style=\"width: 15px;margin-left: 5%;vertical-align:middle; margin-top:0;\" value=\"否\" onclick=\"MESHide()\">否\n" +
+            "            </td>\n" +
+            "        </tr>\n" +
+            "        <tr id=\"mesBrand\" style=\"display: none;\">\n" +
+            "            <td style=\"font-size: 14px;\"><span style=\"color: red\" y>*</span>MES品牌</td>\n" +
+            "            <td><input id=\"mesBrand2\" class=\"form-control\" style=\"font-size: 14px;width: 200px;border:0px;\" type=\"text\" maxlength=\"100\" placeholder=\"请填写使用的MES系统品牌\"></td>\n" +
+            "        </tr>\n" +
+            "        <tr>\n" +
+            "            <td style=\"font-size: 14px;\">您公司生产现场的换班安排</td>\n" +
+            "            <td style=\"font-size: 14px;\">\n" +
+            "                <input name=\"arrange\" type=\"radio\" style=\"width: 15px;vertical-align:middle; margin-top:0;\" value=\"8小时\" >8小时\n" +
+            "                <input name=\"arrange\" type=\"radio\" style=\"width: 15px;margin-left: 5%;vertical-align:middle; margin-top:0;\" value=\"10小时\">10小时<br>\n" +
+            "                <input name=\"arrange\" type=\"radio\" style=\"width: 15px;vertical-align:middle; margin-top:0;\" value=\"12小时\">12小时\n" +
+            "                <input name=\"arrange\" type=\"radio\" style=\"width: 15px;margin-left: 5%;vertical-align:middle; margin-top:0;\" value=\"其它\">其它\n" +
+            "            </td>\n" +
+            "        </tr>\n" +
+            "        <tr>\n" +
+            "            <td style=\"font-size: 14px;\">您公司生产休息</td>\n" +
+            "            <td style=\"font-size: 14px;\">\n" +
+            "                <input name=\"rest\" type=\"radio\" style=\"width: 15px;vertical-align:middle; margin-top:0;\" value=\"周末2天\" >周末2天<br>\n" +
+            "                <input name=\"rest\" type=\"radio\" style=\"width: 15px;vertical-align:middle; margin-top:0;\" value=\"周末1天\">周末1天<br>\n" +
+            "                <input name=\"rest\" type=\"radio\" style=\"width: 15px;vertical-align:middle; margin-top:0;\" value=\"其它\">其它\n" +
+            "            </td>\n" +
+            "        </tr>\n" +
+            "        <tr>\n" +
+            "            <td style=\"font-size: 14px;\">您公司生产线共有</td>\n" +
+            "            <td><input id=\"productNum\" class=\"form-control\" style=\"font-size: 14px;width: 200px;border:0px;\" type=\"text\" placeholder=\"公司生产线数量\"><span style=\"margin-left: 5%;font-size: 14px;\">条</span></td>\n" +
+            "        </tr>");
+        $("#footPart").append("<button data-dismiss=\"modal\" class=\"btn btn-default\" type=\"button\">关闭</button>\n" +
+            "                    <button class=\"btn btn-primary\" type=\"button\" onclick=\"saveTwelfthPage()\">下一页</button>");
+    }
+
+    function loadeleventh() {
+        $("#survey").html("");
+        $("#footPart").html("");
+        $("#survey").append("<tr>\n" +
+            "            <td style=\"font-size: 14px;\"><span style=\"color: red\" y>*</span>您公司库管的人员约有</td>\n" +
+            "            <td><input id=\"stockPerson\" class=\"form-control\" style=\"font-size: 14px;width: 200px;border:0px;\" type=\"text\" placeholder=\"请填写库管的人员数量\"><span style=\"margin-left: 5%;font-size: 14px;\">人</span></td>\n" +
+            "        </tr>\n" +
+            "        <tr>\n" +
+            "            <td style=\"font-size: 14px;\">您公司刀具调试发放人员有</td>\n" +
+            "            <td><input id=\"grantPerson\" class=\"form-control\" style=\"font-size: 14px;width: 200px;border: 0px;\" type=\"text\" placeholder=\"请填写刀具调试发放人员数量\"><span style=\"margin-left: 5%;font-size: 14px;\">人</span></td>\n" +
+            "        </tr>\n" +
+            "        <tr>\n" +
+            "            <td style=\"font-size: 14px;\"><span style=\"color: red\" y>*</span>您公司刀具发放方式</td>\n" +
+            "            <td style=\"font-size: 14px;\">\n" +
+            "                <input name=\"grantWay\" type=\"checkbox\" style=\"width: 15px;vertical-align:middle; margin-top:0;\" value=\"人工发放\">人工发放<br>\n" +
+            "                <input name=\"grantWay\" type=\"checkbox\" style=\"width: 15px;vertical-align:middle; margin-top:0;\" value=\"智能刀具柜\">智能刀具柜\n" +
+            "            </td>\n" +
+            "        </tr>\n" +
+            "        <tr>\n" +
+            "            <td style=\"font-size: 14px;\">您公司刀具回收方式</td>\n" +
+            "            <td style=\"font-size: 14px;\">\n" +
+            "                <input name=\"recycleWay\" type=\"checkbox\" style=\"width: 15px;vertical-align:middle; margin-top:0;\" value=\"报废回收\">报废回收\n" +
+            "                <input name=\"recycleWay\" type=\"checkbox\" style=\"width: 15px;margin-left: 5%;vertical-align:middle; margin-top:0;\" value=\"以旧换新\">以旧换新<br>\n" +
+            "                <input name=\"recycleWay\" type=\"checkbox\" style=\"width: 15px;vertical-align:middle; margin-top:0;\" value=\"旧刀处理\">旧刀处理\n" +
+            "            </td>\n" +
+            "        </tr>\n" +
+            "        <tr>\n" +
+            "            <td style=\"font-size: 14px;\">您公司刀具的付款周期</td>\n" +
+            "            <td style=\"font-size: 14px;\">\n" +
+            "                <input name=\"payCycle\" type=\"checkbox\" style=\"width: 15px;vertical-align:middle; margin-top:0;\" value=\"部分预付款\">部分预付款<br>\n" +
+            "                <input name=\"payCycle\" type=\"checkbox\" style=\"width: 15px;vertical-align:middle; margin-top:0;\" value=\"月结30天\">月结30天<br>\n" +
+            "                <input name=\"payCycle\" type=\"checkbox\" style=\"width: 15px;vertical-align:middle; margin-top:0;\" value=\"月结60天\">月结60天<br>\n" +
+            "                <input name=\"payCycle\" type=\"checkbox\" style=\"width: 15px;vertical-align:middle; margin-top:0;\" value=\"月结90天\">月结90天<br>\n" +
+            "                <input name=\"payCycle\" type=\"checkbox\" style=\"width: 15px;vertical-align:middle; margin-top:0;\" value=\"其它\">其它\n" +
+            "            </td>\n" +
+            "        </tr>\n" +
+            "        <tr>\n" +
+            "            <td style=\"font-size: 14px;\">您公司付款方式</td>\n" +
+            "            <td style=\"font-size: 14px;\">\n" +
+            "                <input name=\"payWay\" type=\"checkbox\" style=\"width: 15px;vertical-align:middle; margin-top:0;\" value=\"现金\">现金\n" +
+            "                <input name=\"payWay\" type=\"checkbox\" style=\"width: 15px;margin-left: 5%;vertical-align:middle; margin-top:0;\" value=\"电子承兑\">电子承兑<br>\n" +
+            "                <input name=\"payWay\" type=\"checkbox\" style=\"width: 15px;vertical-align:middle; margin-top:0;\" value=\"其它\">其它\n" +
+            "            </td>\n" +
+            "        </tr>");
+        $("#footPart").append("<button data-dismiss=\"modal\" class=\"btn btn-default\" type=\"button\">关闭</button>\n" +
+            "                    <button class=\"btn btn-primary\" type=\"button\" onclick=\"saveThirteenPage()\">下一页</button>");
+    }
+
+    function loadtwelfth() {
+        $("#survey").html("");
+        $("#footPart").html("");
+        $("#survey").append("<tr>\n" +
+            "            <td style=\"font-size: 14px;\"><span style=\"color: red\" y>*</span>您公司目前刀具修磨</td>\n" +
+            "            <td style=\"font-size: 14px;\">\n" +
+            "                <input name=\"repair\" type=\"radio\" style=\"width: 15px;vertical-align:middle; margin-top:0;\" value=\"修\" onclick=\"spendShow()\">修\n" +
+            "                <input name=\"repair\" type=\"radio\" style=\"width: 15px;margin-left: 5%;vertical-align:middle; margin-top:0;\" value=\"很少修磨\" onclick=\"spendHide()\">很少修磨<br>\n" +
+            "                <input name=\"repair\" type=\"radio\" style=\"width: 15px;vertical-align:middle; margin-top:0;\" value=\"从不修磨\" onclick=\"spendHide()\">从不修磨\n" +
+            "            </td>\n" +
+            "        </tr>\n" +
+            "        <tr id=\"repairSpend\" style=\"display: none;\">\n" +
+            "            <td style=\"font-size: 14px;\"><span style=\"color: red\" y>*</span>每月修磨费用</td>\n" +
+            "            <td><input id=\"repairSpend2\" class=\"form-control\" style=\"font-size: 14px;width: 200px;border: 0px;\" type=\"text\" placeholder=\"请填写每月的修磨费用\"><span style=\"margin-left: 5%;font-size: 14px;\">万元</span></td>\n" +
+            "        </tr>\n" +
+            "        <tr>\n" +
+            "            <td style=\"font-size: 14px;\"><span style=\"color: red\" y>*</span>您公司的刀具有优化流程</td>\n" +
+            "            <td style=\"font-size: 14px;\">\n" +
+            "                <input name=\"optimize\" type=\"radio\" style=\"width: 15px;vertical-align:middle; margin-top:0;\" value=\"有，执行的非常好\">有，执行的非常好<br>\n" +
+            "                <input name=\"optimize\" type=\"radio\" style=\"width: 15px;vertical-align:middle; margin-top:0;\" value=\"有，执行的比较弱\">有，执行的比较弱<br>\n" +
+            "                <input name=\"optimize\" type=\"radio\" style=\"width: 15px;vertical-align:middle; margin-top:0;\" value=\"流程还在讨论中\">流程还在讨论中\n" +
+            "            </td>\n" +
+            "        </tr>\n" +
+            "        <tr>\n" +
+            "            <td style=\"font-size: 14px;width: 170px;\"><span style=\"color: red\" y>*</span>您公司目前刀具管理的主要诉求是（可多选）</td>\n" +
+            "            <td style=\"font-size: 14px;\">\n" +
+            "                <input name=\"appeal\" type=\"checkbox\" style=\"width: 15px;vertical-align:middle; margin-top:0;\" value=\"降低刀具成本\">降低刀具成本<br>\n" +
+            "                <input name=\"appeal\" type=\"checkbox\" style=\"width: 15px;vertical-align:middle; margin-top:0;\" value=\"提高生产效率\">提高生产效率<br>\n" +
+            "                <input name=\"appeal\" type=\"checkbox\" style=\"width: 15px;vertical-align:middle; margin-top:0;\" value=\"减少呆滞库存\">减少呆滞库存<br>\n" +
+            "                <input name=\"appeal\" type=\"checkbox\" style=\"width: 15px;vertical-align:middle; margin-top:0;\" value=\"优化刀具工艺\">优化刀具工艺<br>\n" +
+            "                <input name=\"appeal\" type=\"checkbox\" style=\"width: 15px;vertical-align:middle; margin-top:0;\" value=\"减少人员成本\">减少人员成本<br>\n" +
+            "                <input name=\"appeal\" type=\"checkbox\" style=\"width: 15px;vertical-align:middle; margin-top:0;\" value=\"辅助新产品开发\">辅助新产品开发<br>\n" +
+            "                <input name=\"appeal\" type=\"checkbox\" style=\"width: 15px;vertical-align:middle; margin-top:0;\" value=\"提高库存周转\">提高库存周转<br>\n" +
+            "                <input name=\"appeal\" type=\"checkbox\" style=\"width: 15px;vertical-align:middle; margin-top:0;\" value=\"减少丢刀\">减少丢刀<br>\n" +
+            "                <input name=\"appeal\" type=\"checkbox\" style=\"width: 15px;vertical-align:middle; margin-top:0;\" value=\"实现刀具数据实时查询\">实现刀具数据实时查询<br>\n" +
+            "                <input name=\"appeal\" type=\"checkbox\" style=\"width: 15px;vertical-align:middle; margin-top:0;\" value=\"其它\">其它<br>\n" +
+            "            </td>\n" +
+            "        </tr>");
+        $("#footPart").append("<button data-dismiss=\"modal\" class=\"btn btn-default\" type=\"button\">关闭</button>\n" +
+            "                    <button class=\"btn btn-primary\" type=\"button\" onclick=\"saveFourteenthPage()\">完成</button>");
+    }
+
+    function getAllSaleMan() {
+        $.ajax({
+            type:"post",
+            url:"loadAllSaleMan",
+            async:false,
+            success:function (data) {
+                $("#applyer").html("");
+                $("#applyer").append("<option value='0'>"+"--请选择--"+"</option>");
+                for(var i = 0 ; i < data.length ; i++){
+                    $("#applyer").append('<option value="'+data[i].account+'">'+data[i].name+"</option>");
+                }
+            }
+        })
+    }
+
+    function saveTravel() {
+        var customerCode = $("#customer option:selected").val();
+        var customerName = $("#customer option:selected").text();
+        var applyAccount = $("#applyer option:selected").val();
+        var applyName = $("#applyer option:selected").text();
+        var travelDate = $("#travelDate").val();
+        var travelTarget = $("#travelTarget").val();
+        var supportPerson = $("#supportPerson").val();
+        var spend = $("#spend").val();
+        var costType = $("#costType option:selected").val();
+        var costCenter = $("#costCenter").val();
+        var other = $("#other").val();
+        var processCode = "PC0003";
+        var processName = "在线尽调";
+        var data = {"customerCode":customerCode , "customerName":customerName , "applyAccount":applyAccount , "applyName":applyName , "travelDate":travelDate , "travelTarget":travelTarget , "supportPerson":supportPerson , "spend":spend , "costType":costType , "costCenter":costCenter , "other":other , "processCode":processCode , "processName":processName};
+        $.ajax({
+            type:"post",
+            data:data,
+            url:"createTravel",
+            async:false,
+            success:function (data) {
+                if(data == "OK"){
+                    $.message({
+                        message:"出差申请已提交",
+                        type:'success'
+                    })
+                }else{
+                    $.message({
+                        message:data,
+                        type:'error'
+                    })
+                }
+            },
+        })
+    }
+
+    function saveImage() {
+        $.ajaxFileUpload({
+            type:"post",
+            fileElementId:"voucher",
+            url:"saveVoucher",
+            async:false,
+            dataType:'text',
+            success:function(data){
+                if(data == "文件上传成功"){
+                    $.message({
+                        message:'文件上传成功',
+                        type:'success'
+                    });
+                }else{
+                    $.message({
+                        message:data,
+                        type:'error'
+                    });
+                }
+            },
+            error:function(){
+                alert("设备类型文件上传出错");
+            }
+        })
+    }
+
+    function saveTravelSum() {
+        var customer = $("#customer2 option:selected").val();
+        var travelSum = $("#travelSum").val();
+        var needSupport = $("#needSupport").val();
+        var trouble = $("#trouble").val();
+        var oppose = $("#oppose").val();
+        var nextPlan = $("#nextPlan").val();
+        var travel = $("#travelCost").val();
+        var eatting = $("#eattingCost").val();
+        var server = $("#serverCost").val();
+        var other = $("#otherCost").val();
+
+        var name = $("#voucher").val();
+        var picNames = name.split("\\");
+        var le = picNames.length - 1;
+        var targetFile = picNames[le];
+
+        var processCode = "PC0003";
+
+        var data = {"customer":customer , "travelSum":travelSum , "needSupport":needSupport , "trouble":trouble , "oppose":oppose , "nextPlan":nextPlan , "travelSpend":travel , "eatting":eatting , "server":server , "other":other , "fileName":targetFile , "processCode":processCode };
+        $.ajax({
+            type:"post",
+            data:data,
+            url:"saveTravelSum",
+            async:false,
+            success:function (data) {
+                if(data == "OK"){
+                    $.message({
+                        message:'已提交',
+                        type:'success'
+                    })
+                }else{
+                    $.message({
+                        message:data,
+                        type:'error'
+                    })
+                }
+            }
+        })
+    }
+
+
+
+</script>
+</body>
+</html>

@@ -5,24 +5,7 @@
     <title>出差计划</title>
 </head>
 <body>
-<style type="text/css">
-    #province,#city{
-        margin-right: 20px;
-        width: 100px;
-        height: 30px;
-        font-size: 12px;
-        line-height: 30px;
-        border: none;
-        border-bottom: 1px dashed #ccc;
-        outline: none;
-        -moz-appearance:none;
-        -webkit-appearance:none;
-        background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABYAAAANCAYAAACtpZ5jAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoV2luZG93cykiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6RjQ0NDJFRkVCQzdDMTFFOEExODdERDQ0Mjc4RDY1OEUiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6RjQ0NDJFRkZCQzdDMTFFOEExODdERDQ0Mjc4RDY1OEUiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDpGNDQ0MkVGQ0JDN0MxMUU4QTE4N0RENDQyNzhENjU4RSIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDpGNDQ0MkVGREJDN0MxMUU4QTE4N0RENDQyNzhENjU4RSIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PsgLGscAAAEfSURBVHjaYmQAgv3796uIiYk90tbW/sVAITh06JAoiGYCGioBpG+/evXqzLFjx4QoMXTfvn3mf//+vffnz58tTA4ODi+BYheAWPfnz58HyDUcZCgjI+MeIJMHSG9mAhL/WVhYnP7//38VZvju3bv5yTUUiKc4Ojq2MIEkbG1t37OystrCDAdatJ9Yw7EYmgsOY5gCmOHQYDEkxnBgRBlhMxQEGNEVnzhxgu/79+8HgUwDID4PjAhHV1fXj9gMBcrtAxrMj24oiothwMLC4hMnJ6c9PpejGdqDbihWFxNyORZDS7HpZ8QXhlDDQWFoCjKciYmpAJhONxEylKDB0FwJiph9UMNhAK+hRBmMxXCChpIEzpw5wwUMXzNi1QMEGABbwKJVttXGvgAAAABJRU5ErkJggg==);
-        background-position: right 2px center;
-        background-repeat: no-repeat;
-        background-size: 18px;
-    }
-</style>
+
 <script type="text/javascript">
     var chineseCities = new ChineseCities({
         'province':'province', //省份ID
@@ -31,54 +14,103 @@
             console.log(data);
         }//选中后回调函数
     });
+
+    laydate.render({
+        trigger:'click',
+        theme: '#ff9f20',
+        elem: '#bdate'
+    });
+
+    $(function () {
+        loadTravelPlan();
+    })
 </script>
 
-<div style="margin-top: 20px;margin-left: 20px;width: 100%">
-    <table class="table" style="width: 1000px;margin:0px auto;">
-        <tr style="height: 47px;">
-            <td  style="text-align: left;vertical-align: inherit;" >销售计划编号</td>
-            <td  style="vertical-align: inherit;"><input id="salePlanNumber" style="width: 100%;height: 100%;border:0px;" placeholder="输入销售计划编号" onblur="sureCompany()"></td>
-            <td  style="text-align: left;vertical-align: inherit;">客户</td>
-            <td style="vertical-align: inherit;"><input id="company" style="width: 250px;height: 100%;border: 0px;" readonly placeholder="客户"></td>
-            <td  style="text-align: left;vertical-align: inherit;">出差目的</td>
-            <td style="vertical-align: inherit;"><input id="target"  style="width: 250px;height: 100%;border: 0px;" placeholder="填写出差目的"></td>
-        </tr>
+<div style="width: 1050px;margin:0px auto;">
+    <span style="font-size: 16px;">日程管理 / 出差计划</span>
+    <table style="width: 100%;border: 0px;margin-top: 20px;">
         <tr>
-            <td style="text-align: left;vertical-align: inherit;">选择省份</td>
-            <td>
-                <select id="province">
-                    <option value="请选择城市">请选择省份</option>
-                </select>
+            <td style="text-align: left;width: 400px;">
+                <input id="travelSearch" class="form-control" style="width: 300px;" placeholder="请输入销售计划编号/客户名称"><button type="button" class="btn btn-primary" style="margin-top: -5px;background-color: #FF9502;" onclick="searchTravel()">查询</button>
             </td>
-            <td style="text-align: left;vertical-align: inherit;">选择城市</td>
-            <td>
-                <select id="city">
-                    <option value="请选择城市">请选择城市</option>
-                </select>
-            </td>
-            <td style="text-align: left;vertical-align: inherit;">具体地址</td>
-            <td style="text-align: left;vertical-align: inherit;">
-                <input id="address" style="width: 100%;height: 100%;border:0px;" placeholder="输入具体地址">
-            </td>
-        </tr>
-        <tr>
-            <td>开始时间</td>
-            <td><input id="bdate" style="width: 100%;border: 0px;" placeholder="请选择出差开始时间"></td>
-            <td>结束时间</td>
-            <td><input id="edate" style="width: 100%;border: 0px;" placeholder="请选择出差结束时间"></td>
-            <td></td>
-            <td></td>
-        </tr>
-        <tr style="height: 47px;">
-            <td style="vertical-align: inherit;text-align: left">出差人员</td>
-            <td colspan="5" style="vertical-align: inherit;"><input id="traveller" style="width: 100%;height: 100%;border:0px;" placeholder="填写所有出差人员的工号，多人用‘；’隔开"></td>
-        </tr>
-        <tr>
-            <td colspan="6" style="text-align: center">
-                <button class="btn btn-primary" onclick="getAllTraveler()">提交</button>
+            <td style="text-align: right">
+                <button type="button" type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" style="background-color: #FF9502;">+&nbsp;新建</button>
             </td>
         </tr>
     </table>
+    <table class="table table-striped table-bordered table-hover  table-condensed" style="width: 1050px;font-size: 14px;margin-top: 20px;">
+        <thead style="background-color: #dde5e5;font-size: 14px;text-align: left;vertical-align: inherit;">
+        <tr>
+            <th>销售计划编号</th>
+            <th>客户名称</th>
+            <th>客户地址</th>
+            <th>拜访目的</th>
+            <th>出差日期</th>
+            <th>创建人</th>
+            <th>创建时间</th>
+        </tr>
+        </thead>
+        <tbody id="travelList"></tbody>
+    </table>
+    <div id="travelPageDIV" style="width:200px;margin: 0px auto;display: none;">
+        <a onclick="getTravelFirst()">首 页</a>&nbsp;&nbsp;<a onclick="getTravelPrevious()">上一页</a>&nbsp;&nbsp;<a onclick="getTravelNext()">下一页</a>&nbsp;&nbsp;<a onclick="getTravelLast()">尾 页</a>
+    </div>
+</div>
+
+<div class="modal fade" id="myModal"  data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" >
+        <div class="modal-content">
+            <div class="modal-header">
+                <button data-dismiss="modal" class="close" type="button"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title">出差计划</h4>
+            </div>
+            <div class="modal-body">
+                <table class="table" >
+                    <tr style="height: 47px;">
+                        <td  style="text-align: left;vertical-align: inherit;font-size: 14px;" >销售计划编号</td>
+                        <td  style="vertical-align: inherit;"><input id="salePlanNumber" class="form-control"  placeholder="输入销售计划编号" onblur="sureCompany()"></td>
+                    </tr>
+                    <tr>
+                        <td  style="text-align: left;vertical-align: inherit;font-size: 14px;">客户</td>
+                        <td style="vertical-align: inherit;"><input id="company"  class="form-control" readonly placeholder="客户"></td>
+                    </tr>
+                    <tr>
+                        <td  style="text-align: left;vertical-align: inherit;font-size: 14px;">出差目的</td>
+                        <td style="vertical-align: inherit;"><input id="target"   class="form-control" placeholder="填写出差目的"></td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: left;vertical-align: inherit;font-size: 14px;">客户地址</td>
+                        <td>
+                            <select id="province" class="form-control" style="width: 202px;">
+                                <option value="请选择城市">请选择省份</option>
+                            </select>
+                            <select id="city" class="form-control" style="width: 202px;">
+                                <option value="请选择城市">请选择城市</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: left;vertical-align: inherit;font-size: 14px;">具体地址</td>
+                        <td style="text-align: left;vertical-align: inherit;">
+                            <input id="address" class="form-control"  placeholder="输入具体地址">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="font-size: 14px;vertical-align: inherit;">出差日期</td>
+                        <td><input id="bdate" class="form-control"  placeholder="请选择出差日期"></td>
+                    </tr>
+                    <tr style="height: 47px;">
+                        <td style="vertical-align: inherit;text-align: left;font-size: 14px;">创建人</td>
+                        <td colspan="5" style="vertical-align: inherit;"><input id="creater" class="form-control"  placeholder="请输入..."></td>
+                    </tr>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button data-dismiss="modal" class="btn btn-default" type="button">关闭</button>
+                <button type="button" style="background-color: #ff9f20" class="btn btn-primary" type="button" onclick="getAllTraveler()">保存</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
 </div>
 </body>
 </html>

@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 @Entity
-@Table(name = "CompanyInfo")
+@Table(name = "CRM_CompanyInfo")
 @JsonIgnoreProperties({"handler" , "hibernateLazyInitializer"})
 public class CompanyInfo {
     @Id
@@ -45,6 +45,8 @@ public class CompanyInfo {
     String createDate;
     @Column(name = "CreateTime")
     Date createTime;
+    @Column(name = "salePlanID")
+    String salePlanID;
 
     public int getId() {
         return id;
@@ -172,5 +174,13 @@ public class CompanyInfo {
 
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
+    }
+
+    public String getSalePlanID() {
+        return salePlanID;
+    }
+
+    public void setSalePlanID(String salePlanID) {
+        this.salePlanID = salePlanID;
     }
 }

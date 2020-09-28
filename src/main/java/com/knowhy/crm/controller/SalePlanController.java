@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -30,116 +31,119 @@ public class SalePlanController {
     @Resource
     CrmSalesplanMapper crmSalesplanMapper;
 
-    @RequestMapping("/createSalePlanFirst")
-    public String createPlan(HttpSession session , @RequestParam("number")String number , @RequestParam("name")String name , @RequestParam("describe")String describe){
-        SalesPlan salesPlan = new SalesPlan();
-        if("".equals(number)){
-            return "请填写销售计划编号";
-        }else{
-            salesPlan.setNo(number);
-        }
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
-        if("".equals(name)){
-            return "请填写客户名称";
-        }else{
-            salesPlan.setCompany(name);
-        }
-
-        if("".equals(describe)){
-            return "请填写销售描述";
-        }else{
-            salesPlan.setDescribe(describe);
-        }
-
-        salesPlan.setCreateTime(new Date());
-        IUser user = (IUser)session.getAttribute("user");
-        salesPlan.setCreater(user.getAccount());
-
-        try{
-
-            salePlanService.createSalePlan(salesPlan);
-        }catch (Exception e){
-            return e.getMessage();
-        }
-        return "OK";
-
-    }
-
-
-
-    @RequestMapping("/createNewSalePlan")
-    public String createNew(HttpSession session , @RequestParam("salePlanNumber")String salePlanNum , @RequestParam("costEstimate") String costEstimate , @RequestParam("company")String company , @RequestParam("costType")String costType , @RequestParam("costCenter")String costCenter , @RequestParam("amount")String amount , @RequestParam("applied")String applied , @RequestParam("used")String used){
-        SalesPlan salesPlan = new SalesPlan();
-        if("".equals(salePlanNum)){
-            return "请输入销售计划编号";
-        }
-        salesPlan = salePlanService.findById(salePlanNum);
-//        if(!"".equals(desc)){
-//            salesPlan.setDescribe(desc);
+//    @RequestMapping("/createSalePlanFirst")
+//    public String createPlan(HttpSession session , @RequestParam("number")String number , @RequestParam("name")String name , @RequestParam("describe")String describe){
+//        SalesPlan salesPlan = new SalesPlan();
+//        if("".equals(number)){
+//            return "请填写销售计划编号";
+//        }else{
+//            salesPlan.setNo(number);
 //        }
-        if("".equals(costEstimate)){
-            return "请填写销售费用估算";
-        }else{
-            try{
-                BigDecimal cost = new BigDecimal(costEstimate);
-                salesPlan.setCostEstimate(cost);
-            }catch (Exception e){
-                return "销售费用估算填写有误,必须是数字";
-            }
-        }
-       if("".equals(company)){
-           return "请填写客户名称";
-       } else{
-           salesPlan.setCompany(company);
-       }
-       if("".equals(costType)){
-           return "请填写费用类型";
-       }else{
-           salesPlan.setCostType(costType);
-       }
-       if("".equals(costCenter)){
-           return "请输入成本中心";
-       }else{
-           salesPlan.setCostCenter(costCenter);
-       }
-       if("".equals(amount)){
-           return "请输入金额";
-       }else{
-           try{
-               BigDecimal total = new BigDecimal(amount);
-               salesPlan.setAmount(total);
-           }catch (Exception e){
-               return "金额输入有误，必须是数字";
-           }
-       }
-       if("".equals(applied)){
-           return "请输入申请金额";
-       }else {
-           try {
-               BigDecimal appliedAmount = new BigDecimal(applied);
-               salesPlan.setAppliedAmount(appliedAmount);
-           } catch (Exception e) {
-               return "申请金额填写有误，必须是数字";
-           }
-       }
-       if("".equals(used)){
-           return "请填写使用金额";
-       }else{
-            try{
-                BigDecimal usedAmount = new BigDecimal(used);
-                salesPlan.setUsedAmount(usedAmount);
-            }catch (Exception e){
-                return "使用金额填写有误，必须是数字";
-            }
-       }
-       try{
+//
+//        if("".equals(name)){
+//            return "请填写客户名称";
+//        }else{
+//            salesPlan.setCompany(name);
+//        }
+//
+//        if(!"".equals(describe)){
+//            salesPlan.setDescribe(describe);
+//        }
+//
+//        salesPlan.setCreateTime(new Date());
+//        IUser user = (IUser)session.getAttribute("user");
+//        salesPlan.setCreater(user.getAccount());
+//
+//        String createDate = sdf.format(new Date());
+//        salesPlan.setCreateDate(createDate);
+//
+//        try{
+//
+//            salePlanService.createSalePlan(salesPlan);
+//        }catch (Exception e){
+//            return e.getMessage();
+//        }
+//        return "OK";
+//
+//    }
 
-           salePlanService.createSalePlan(salesPlan);
-       }catch (Exception e){
-           return e.getMessage();
-       }
-       return "OK";
-    }
+
+
+//    @RequestMapping("/createNewSalePlan")
+//    public String createNew(HttpSession session , @RequestParam("salePlanNumber")String salePlanNum , @RequestParam("costEstimate") String costEstimate , @RequestParam("company")String company , @RequestParam("costType")String costType , @RequestParam("costCenter")String costCenter , @RequestParam("amount")String amount , @RequestParam("applied")String applied , @RequestParam("used")String used){
+//        SalesPlan salesPlan = new SalesPlan();
+//        if("".equals(salePlanNum)){
+//            return "请输入销售计划编号";
+//        }
+//        salesPlan = salePlanService.findById(salePlanNum);
+////        if(!"".equals(desc)){
+////            salesPlan.setDescribe(desc);
+////        }
+//        if("".equals(costEstimate)){
+//            return "请填写销售费用估算";
+//        }else{
+//            try{
+//                BigDecimal cost = new BigDecimal(costEstimate);
+//                salesPlan.setCostEstimate(cost);
+//            }catch (Exception e){
+//                return "销售费用估算填写有误,必须是数字";
+//            }
+//        }
+//       if("".equals(company)){
+//           return "请填写客户名称";
+//       } else{
+//           salesPlan.setCompany(company);
+//       }
+//       if("".equals(costType)){
+//           return "请填写费用类型";
+//       }else{
+//           salesPlan.setCostType(costType);
+//       }
+//       if("".equals(costCenter)){
+//           return "请输入成本中心";
+//       }else{
+//           salesPlan.setCostCenter(costCenter);
+//       }
+//       if("".equals(amount)){
+//           return "请输入金额";
+//       }else{
+//           try{
+//               BigDecimal total = new BigDecimal(amount);
+//               salesPlan.setAmount(total);
+//           }catch (Exception e){
+//               return "金额输入有误，必须是数字";
+//           }
+//       }
+//       if("".equals(applied)){
+//           return "请输入申请金额";
+//       }else {
+//           try {
+//               BigDecimal appliedAmount = new BigDecimal(applied);
+//               salesPlan.setAppliedAmount(appliedAmount);
+//           } catch (Exception e) {
+//               return "申请金额填写有误，必须是数字";
+//           }
+//       }
+//       if("".equals(used)){
+//           return "请填写使用金额";
+//       }else{
+//            try{
+//                BigDecimal usedAmount = new BigDecimal(used);
+//                salesPlan.setUsedAmount(usedAmount);
+//            }catch (Exception e){
+//                return "使用金额填写有误，必须是数字";
+//            }
+//       }
+//       try{
+//
+//           salePlanService.createSalePlan(salesPlan);
+//       }catch (Exception e){
+//           return e.getMessage();
+//       }
+//       return "OK";
+//    }
 
     @RequestMapping("/getAllSalePlan")
     public Map<String,Object> getAll(@RequestParam("start")int start){
@@ -186,13 +190,13 @@ public class SalePlanController {
             return map;
         }else{
 
-            String totalStatus = salesPlan.getStatus();
+            String totalStatus = salesPlan.getPlanStatus();
             if(totalStatus == null){
-                salesPlan.setStatus("尚未进行");
+                salesPlan.setPlanStatus("尚未进行");
             }else if(totalStatus == "END"){
-                salesPlan.setStatus("已完成");
+                salesPlan.setPlanStatus("已完成");
             }else{
-                salesPlan.setStatus("进行中");
+                salesPlan.setPlanStatus("进行中");
             }
 
             map.put("result" , "成功获取数据");
@@ -210,13 +214,13 @@ public class SalePlanController {
             return map;
         }else{
             for(int i = 0 ; i < salesPlanList.size() ; i++){
-                String totalStatus = salesPlanList.get(i).getStatus();
+                String totalStatus = salesPlanList.get(i).getPlanStatus();
                 if(totalStatus == null){
-                    salesPlanList.get(i).setStatus("尚未进行");
+                    salesPlanList.get(i).setPlanStatus("尚未进行");
                 }else if(totalStatus == "END"){
-                    salesPlanList.get(i).setStatus("已完成");
+                    salesPlanList.get(i).setPlanStatus("已完成");
                 }else{
-                    salesPlanList.get(i).setStatus("进行中");
+                    salesPlanList.get(i).setPlanStatus("进行中");
                 }
             }
             map.put("result" , "成功获取数据");
@@ -227,16 +231,31 @@ public class SalePlanController {
 
     @RequestMapping("/findCompanyBySalePlan")
     public String findComapny(@RequestParam("salePlanNum")String salePlanNum){
-        SalesPlan salesPlan = salePlanService.findById(salePlanNum);
-        if(salesPlan != null){
-            return salesPlan.getCompany();
-        }else{
+        if(salePlanNum == null || "".equals(salePlanNum)){
             return "F";
+        }else{
+            SalesPlan salesPlan = salePlanService.findById(salePlanNum);
+            try{
+                if(salesPlan != null){
+                    return salesPlan.getCustomerName();
+                }else{
+                    return "F";
+                }
+            }catch (Exception e){
+                return "F";
+            }
         }
     }
 
-//    @RequestMapping("/findAllSalePlan")
-//    public List<SalesPlan> findAll(){
-//        return salePlanService.findAllSalePlan();
-//    }
+    @RequestMapping("/generateSalePlanNum")
+    public String generateNum(){
+        return salePlanService.generateNumber();
+    }
+
+    @RequestMapping("/findCanOperate")
+    public List<SalesPlan> getCanOperate(HttpSession session , String status){
+        IUser user = (IUser)session.getAttribute("user");
+        String account = user.getAccount();
+        return salePlanService.findAllCanOperate(account , status);
+    }
 }
