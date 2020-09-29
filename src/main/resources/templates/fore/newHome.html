@@ -7,6 +7,9 @@
     <div th:replace="include/fore/leftMenu::html" ></div>
     <div th:replace="include/fore/body::html" ></div>
 </div>
+<style type="text/css">
+    a:hover { color: #fff; text-decoration: underline; }/* 鼠标移动到链接上 */
+</style>
 <script>
     $(function() {
 
@@ -88,7 +91,7 @@
     $(function(){
         changeHeight();
         getHeadPic();
-        findAllMyFlowPrevoius();
+        findAllMyApprove();
     })
 
     //第三页：上传图片 保存内容
@@ -545,6 +548,7 @@
             async:false,
             success:function (data) {
                 $("#allRequest").html("");
+                $("#requestPage").hide();
                 var info = data.info;
                 if(info == "no"){
                     $("#allRequest").append("<tr>"+'<td colspan="7" style="text-align: center;">'+"暂无数据"+"</td>"+"</tr>");

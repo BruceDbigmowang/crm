@@ -69,7 +69,7 @@ public class CustomerService {
             salesPlan.setPrincipal(saleManAccount);
             salesPlan.setPrincipalName(saleManName);
             salesPlan.setAllOperator(follow);
-            salesPlan.setPlanStatus("first");
+//            salesPlan.setPlanStatus("first");
             salesPlanDAO.save(salesPlan);
         }
     }

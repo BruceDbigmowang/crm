@@ -39,7 +39,7 @@
                         "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].principal+"</td>"+
                         "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].phone+"</td>"+
                         "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].followName+"</td>"+
-                        "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<button class='btn btn-warning'>跟进</button>"+"</td>"+"</tr>");
+                        "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<button class='btn btn-warning' onclick='followSalePlan(this)'>跟进</button>"+"</td>"+"</tr>");
                 }
                 $("#poolPage").show();
             },
@@ -74,7 +74,7 @@
                             "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].principal+"</td>"+
                             "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].phone+"</td>"+
                             "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].followName+"</td>"+
-                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<button class='btn btn-warning'>跟进</button>"+"</td>"+"</tr>");
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<button class='btn btn-warning' onclick='followSalePlan(this)'>跟进</button>"+"</td>"+"</tr>");
                     }
                     $("#poolPage").show();
                 },
@@ -111,7 +111,7 @@
                             "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].principal+"</td>"+
                             "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].phone+"</td>"+
                             "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].followName+"</td>"+
-                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<button class='btn btn-warning'>跟进</button>"+"</td>"+"</tr>");
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<button class='btn btn-warning' onclick='followSalePlan(this)'>跟进</button>"+"</td>"+"</tr>");
                     }
                     $("#poolPage").show();
                 },
@@ -147,7 +147,7 @@
                             "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].principal+"</td>"+
                             "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].phone+"</td>"+
                             "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].followName+"</td>"+
-                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<button class='btn btn-warning'>跟进</button>"+"</td>"+"</tr>");
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<button class='btn btn-warning' onclick='followSalePlan(this)'>跟进</button>"+"</td>"+"</tr>");
                     }
                     $("#poolPage").show();
                 },
@@ -179,7 +179,7 @@
                         "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+data[i].principal+"</td>"+
                         "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+data[i].phone+"</td>"+
                         "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+data[i].followName+"</td>"+
-                        "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<button class='btn btn-warning'>跟进</button>"+"</td>"+"</tr>");
+                        "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<button class='btn btn-warning' onclick='followSalePlan(this)'>跟进</button>"+"</td>"+"</tr>");
                 }
                 $("#poolPage").hide();
             },
@@ -256,6 +256,32 @@
                 }
             })
         }
+    }
+
+    function followSalePlan(obj) {
+        var i = obj.parentNode.parentNode.rowIndex;
+        var tab = document.getElementById("seaPool");
+        var orderID = tab.rows[i].cells[2].innerHTML;
+        $.ajax({
+            type:"post",
+            data:{"salePlanID":orderID},
+            url:"",
+            async:false,
+            success:function (data) {
+                if(data == "OK"){
+                    $.message({
+                        message:'已跟进该客户',
+                        type:'success'
+                    });
+                    loadAllCustomerPool();
+                }else{
+                    $.message({
+                        message:data,
+                        type:'error'
+                    });
+                }
+            }
+        })
     }
 </script>
 </body>

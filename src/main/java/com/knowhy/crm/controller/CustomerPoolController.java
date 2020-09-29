@@ -4,6 +4,7 @@ import com.knowhy.crm.dao.CustomerDAO;
 import com.knowhy.crm.dao.SaleManDAO;
 import com.knowhy.crm.dao.SalesPlanDAO;
 import com.knowhy.crm.pojo.Customer;
+import com.knowhy.crm.pojo.IUser;
 import com.knowhy.crm.pojo.SaleMan;
 import com.knowhy.crm.pojo.SalesPlan;
 import com.knowhy.crm.service.CustomerService;
@@ -12,6 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpSession;
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -48,6 +51,40 @@ public class CustomerPoolController {
 //            }
         }
         return "分配成功";
+    }
+
+    @RequestMapping("/followSalePlan")
+    @Transactional
+    public String toFollow(String salePlanID , HttpSession session){
+        IUser user = (IUser)session.getAttribute("user");
+        String account = user.getAccount();
+        String name = user.getName();
+        Customer customer = customerDAO.getOne(salePlanID);
+        customer.setFollowStatus("C");
+        customer.setFollowDate(LocalDate.now());
+        customer.setFollowPerson(account);
+        customer.setFollowName(name);
+
+        //修改销售计划表中的数据
+        SalesPlan salesPlan = salesPlanDAO.findByCustomerCode(salePlanID).get(0);
+        String follow = salesPlan.getAllOperator();
+        if(follow != null && !"".equals(follow)){
+            follow = follow+","+account;
+        }else{
+            follow = account;
+        }
+        salesPlan.setPrincipal(account);
+        salesPlan.setPrincipalName(name);
+        salesPlan.setAllOperator(follow);
+//            salesPlan.setPlanStatus("first");
+        try{
+            customerDAO.save(customer);
+            salesPlanDAO.save(salesPlan);
+        }catch (Exception e){
+            return e.getMessage();
+        }
+
+        return "OK";
     }
 
     /**

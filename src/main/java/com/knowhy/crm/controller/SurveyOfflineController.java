@@ -519,9 +519,6 @@ public class SurveyOfflineController {
     @RequestMapping("/saveSaleMoney")
     @Transactional
     public String toSaveSale(String salePlanID , String[] years , String[] saleMoneys , String[] notes){
-        System.out.println(years[0]);
-        System.out.println(saleMoneys[0]);
-        System.out.println(notes[0]);
         for(int i = 0 ; i < years.length ; i++){
             int num = i+1;
             SaleAmount saleAmount = new SaleAmount();

@@ -33,8 +33,8 @@
                         "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+data[i].customerName+"</td>"+
                         "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+data[i].describe+"</td>"+
                         "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+data[i].principalName+"</td>"+
-                        "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a data-toggle=\"modal\" data-target=\"#myModal2\" onclick=\"getRowId(this)\">现场尽调</a>"+
-                        "<a style=\"margin-left: 10px;\" onclick=\"giveup(this)\">挂起</a>"+
+                        "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a href='#' data-toggle=\"modal\" data-target=\"#myModal2\" onclick=\"getRowId(this)\">现场尽调</a>"+
+                        "<a href='#' style=\"margin-left: 10px;\" onclick=\"giveup(this)\">挂起</a>"+
                         "</td>"
                         +"</tr>");
                     $("#customer").append('<option value="'+data[i].customerCode+'">'+data[i].customerName+"</option>");
@@ -119,9 +119,9 @@
             "<table id=\"survey\" class=\"table\" style=\"width: 3300px;\">\n" +
             "                        <thead>\n" +
             "                        <tr>\n" +
-            "                            <th>资产类别</th>\n" +
-            "                            <th>资产编号</th>\n" +
-            "                            <th>资产名称</th>\n" +
+            "                            <th><span style=\"color: red;\">*</span>资产类别</th>\n" +
+            "                            <th><span style=\"color: red;\">*</span>资产编号</th>\n" +
+            "                            <th><span style=\"color: red;\">*</span>资产名称</th>\n" +
             "                            <th>规格型号</th>\n" +
             "                            <th>品牌</th>\n" +
             "                            <th>供应商</th>\n" +
@@ -346,8 +346,8 @@
             "<table id=\"survey\" class=\"table\" style=\"width: 3300px;\">\n" +
             "                        <thead>\n" +
             "                        <tr>\n" +
-            "                            <th>员工工号</th>\n" +
-            "                            <th>员工姓名</th>\n" +
+            "                            <th><span style=\"color: red;\">*</span>员工工号</th>\n" +
+            "                            <th><span style=\"color: red;\">*</span>员工姓名</th>\n" +
             "                            <th>身份证号</th>\n" +
             "                            <th>学历</th>\n" +
             "                            <th>专业</th>\n" +
@@ -707,7 +707,7 @@
             '<table id="survey" class="table" style="width: 1500px;">\n' +
             '                        <thead>\n' +
             '                        <tr>\n' +
-            '                            <th>投产日期</th><th>零件编号</th><th>零件名称</th><th>投产数量</th><th>合格数量</th><th>让步接收数量</th><th>报废数量</th><th>备注</th><th style="width: 50px;">操作</th>\n' +
+            '                            <th><span style="color: red;">*</span>投产日期</th><th><span style="color: red;">*</span>零件编号</th><th<span style="color: red;">*</span>>零件名称</th><th>投产数量</th><th>合格数量</th><th>让步接收数量</th><th>报废数量</th><th>备注</th><th style="width: 50px;">操作</th>\n' +
             '                        </tr>\n' +
             '                        </thead>\n' +
             '                        <tbody id="surveyBody">\n' +
@@ -836,7 +836,7 @@
             "<table id=\"survey\" class=\"table\" style=\"width: 600px;margin:0px auto;\">\n" +
             "                        <thead>\n" +
             "                        <tr>\n" +
-            "                            <th>年份</th><th>销售收入（未税）</th><th>备注</th><th style=\"width: 50px;\">操作</th>\n" +
+            "                            <th><span style=\"color: red;\">*</span>年份</th><th><span style=\"color: red;\">*</span>销售收入（未税）</th><th>备注</th><th style=\"width: 50px;\">操作</th>\n" +
             "                        </tr>\n" +
             "                        </thead>\n" +
             "                        <tbody id=\"surveyBody\">\n" +
@@ -933,7 +933,7 @@
             "<table id=\"survey\" class=\"table\" style=\"width: 3000px;\">\n" +
             "                        <thead>\n" +
             "                        <tr>\n" +
-            "                            <th>零件号</th><th>零件名称</th><th>零件类型</th>\n" +
+            "                            <th><span style=\"color: red;\">*</span>零件号</th><th><span style=\"color: red;\">*</span>零件名称</th><th><span style=\"color: red;\">*</span>零件类型</th>\n" +
             "                            <th>零件材料</th><th>材料硬度</th><th>材料产地</th>\n" +
             "                            <th>月产量</th><th>测试标准</th><th>报废率</th>\n" +
             "                            <th>图纸编号</th><th>图纸审核时间</th><th>标准工时</th><th style=\"width: 50px;\">操作</th>\n" +
@@ -1099,7 +1099,7 @@
             "<table id=\"survey\" class=\"table\" style=\"width: 3600px;\">\n" +
             "                        <thead>\n" +
             "                        <tr>\n" +
-            "                            <th>工件</th><th>工序号</th><th>工序名</th>\n" +
+            "                            <th><span style=\"color: red;\">*</span>工件</th><th><span style=\"color: red;\">*</span>工序号</th><th><span style=\"color: red;\">*</span>工序名</th>\n" +
             "                            <th>刀具物料代码</th><th>品牌</th><th>种类</th>\n" +
             "                            <th>规格</th><th>刃数</th><th>装刀数</th>\n" +
             "                            <th>夹具编号</th><th>夹具品牌</th><th>冷却方式</th>\n" +
@@ -1308,8 +1308,8 @@
             "<table id=\"survey\" class=\"table\" style=\"width: 3600px;\">\n" +
             "                        <thead>\n" +
             "                        <tr>\n" +
-            "                            <th>供应商代码</th>\n" +
-            "                            <th>供应商名称</th>\n" +
+            "                            <th><span style=\"color: red;\">*</span>供应商代码</th>\n" +
+            "                            <th><span style=\"color: red;\">*</span>供应商名称</th>\n" +
             "                            <th>所在地区</th>\n" +
             "                            <th>邮政编码</th>\n" +
             "                            <th>通讯地址</th>\n" +
@@ -1537,9 +1537,9 @@
             "<table id=\"survey\" class=\"table\" style=\"width: 3000px;\">\n" +
             "                        <thead>\n" +
             "                        <tr>\n" +
-            "                            <th>固定资产编号</th>\n" +
-            "                            <th>零件编号</th>\n" +
-            "                            <th>刀具物料号</th>\n" +
+            "                            <th><span style=\"color: red;\">*</span>固定资产编号</th>\n" +
+            "                            <th><span style=\"color: red;\">*</span>零件编号</th>\n" +
+            "                            <th><span style=\"color: red;\">*</span>刀具物料号</th>\n" +
             "                            <th>刀具名称</th>\n" +
             "                            <th>刀具品类</th>\n" +
             "                            <th>规格型号</th>\n" +
@@ -1701,8 +1701,8 @@
             "                    <table id=\"survey\" class=\"table\" style=\"width: 3000px;\">\n" +
             "                        <thead>\n" +
             "                        <tr>\n" +
-            "                            <th>物料编号</th>\n" +
-            "                            <th>物料名称</th>\n" +
+            "                            <th><span style=\"color: red;\">*</span>物料编号</th>\n" +
+            "                            <th><span style=\"color: red;\">*</span>物料名称</th>\n" +
             "                            <th>规格型号</th>\n" +
             "                            <th>品类名称</th>\n" +
             "                            <th>领用数量</th>\n" +
