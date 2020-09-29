@@ -13,6 +13,7 @@
                             </td>
                             <td style="width: 100px;"><button class="btn btn-warning">查询</button></td>
                             <td></td>
+<!--                            <td style="width: 90px;text-align: center;"><button class="btn btn-warning" data-toggle="modal" data-target="#myModal5">延期</button></td>-->
                             <td style="width: 120px;text-align: center;"><button class="btn btn-warning" data-toggle="modal" data-target="#myModal">出差申请</button></td>
                             <td style="width: 120px;text-align: center;"><button class="btn btn-warning" data-toggle="modal" data-target="#myModal3">出差总结</button></td>
                         </tr>
@@ -302,6 +303,41 @@
         </div><!-- /.modal-dialog -->
     </div>
 
+<!--    延期申请-->
+    <div class="modal fade" id="myModal5"  data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button data-dismiss="modal" class="close" type="button"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title">延期申请</h4>
+                </div>
+                <div class="modal-body">
+                    <table class="table" >
+                        <tr>
+                            <td>客户</td>
+                            <td>
+                                <select id="customer3" class="form-control">
+                                    <option>请选择</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr style="height: 47px;">
+                            <td  style="text-align: left;vertical-align: inherit;font-size: 14px;width: 110px;" ><span style="color: red;">*</span>延期天数</td>
+                            <td  style="vertical-align: inherit;"><input id="delay" class="form-control"></td>
+                        </tr>
+                        <tr style="height: 47px;">
+                            <td  style="text-align: left;vertical-align: inherit;font-size: 14px;width: 110px;" ><span style="color: red;">*</span>理由</td>
+                            <td  style="vertical-align: inherit;"><textarea id="reason" class="form-control"></textarea></td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button data-dismiss="modal" class="btn btn-default" type="button">关闭</button>
+                    <button class="btn btn-primary" type="button">提交</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div>
     <div class="row footer">
         <div class="col-md-6 text-left">
             &nbsp;&nbsp;&nbsp;&nbsp;

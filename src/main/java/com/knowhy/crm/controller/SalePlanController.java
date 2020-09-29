@@ -3,13 +3,16 @@ package com.knowhy.crm.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.knowhy.crm.dao.CustomerDAO;
 import com.knowhy.crm.entity.CrmAccount;
 import com.knowhy.crm.entity.CrmSalesplan;
 import com.knowhy.crm.mapper.CrmSalesplanMapper;
+import com.knowhy.crm.pojo.Customer;
 import com.knowhy.crm.pojo.IUser;
 import com.knowhy.crm.pojo.SalesPlan;
 import com.knowhy.crm.service.SalePlanService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -30,6 +33,8 @@ public class SalePlanController {
     SalePlanService salePlanService;
     @Resource
     CrmSalesplanMapper crmSalesplanMapper;
+    @Autowired
+    CustomerDAO customerDAO;
 
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -257,5 +262,27 @@ public class SalePlanController {
         IUser user = (IUser)session.getAttribute("user");
         String account = user.getAccount();
         return salePlanService.findAllCanOperate(account , status);
+    }
+
+    @RequestMapping("/giveUpSalePlan")
+    @Transactional
+    public String toGiveUp( String salePlanID){
+        SalesPlan salesPlan = salePlanService.findById(salePlanID);
+        salesPlan.setPrincipal(null);
+        salesPlan.setPrincipalName(null);
+
+        String customerID = salesPlan.getCustomerCode();
+        Customer customer = customerDAO.getOne(customerID);
+        customer.setFollowPerson(null);
+        customer.setFollowName(null);
+        customer.setFollowStatus("O");
+
+        try{
+            salePlanService.createSalePlan(salesPlan);
+            customerDAO.save(customer);
+        }catch (Exception e){
+            return e.getMessage();
+        }
+        return "OK";
     }
 }

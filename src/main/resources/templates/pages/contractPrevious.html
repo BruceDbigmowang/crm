@@ -32,7 +32,9 @@
                         "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+data[i].customerName+"</td>"+
                         "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+data[i].describe+"</td>"+
                         "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+data[i].principalName+"</td>"+
-                        "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<button class='btn btn-warning' data-toggle=\"modal\" data-target=\"#myModal2\" onclick=\"getRowId(this)\">初步合同</button>"+"</td>"
+                        "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a data-toggle=\"modal\" data-target=\"#myModal2\" onclick=\"getRowId(this)\">初步合同</a>"+
+                        "<a style=\"margin-left: 10px;\" onclick=\"giveup(this)\">挂起</a>"+
+                        "</td>"
                         +"</tr>");
 
                     $("#customer").append('<option value="'+data[i].customerCode+'">'+data[i].customerName+"</option>");
@@ -40,6 +42,38 @@
                 }
             }
         })
+    }
+
+    function giveup(obj) {
+        var i = obj.parentNode.parentNode.rowIndex;
+        var tab = document.getElementById("firstData");
+        var orderID = tab.rows[i].cells[0].innerHTML;
+        var d = confirm("是否挂起"+orderID+"该销售订单");
+        if(d == true){
+            $.ajax({
+                type:"post",
+                data:{"salePlanID":orderID},
+                url:"giveUpSalePlan",
+                async:false,
+                success:function (data) {
+                    if(data == "OK"){
+                        $.message({
+                            message:"销售订单已挂起",
+                            type:'success'
+                        });
+                        loadFirstPlan();
+                    }else{
+                        $.message({
+                            message:data,
+                            type:'error'
+                        })
+                    }
+                }
+
+            })
+        }else{
+
+        }
     }
 
     function getRowId(obj) {
@@ -66,9 +100,10 @@
             success:function (data) {
                 if(data == "OK"){
                     $.message({
-                        message:'数据已保存',
+                        message:'初步合同已上传，请等待审批',
                         type:'success'
-                    })
+                    });
+                    $("#myModal2").modal('hide');
                 }else{
                     $.message({
                         message:data,
@@ -88,10 +123,10 @@
             dataType:'text',
             success:function(data){
                 if(data == "文件上传成功"){
-                    $.message({
-                        message:'文件上传成功',
-                        type:'success'
-                    });
+                    // $.message({
+                    //     message:'文件上传成功',
+                    //     type:'success'
+                    // });
                 }else{
                     $.message({
                         message:data,
@@ -143,9 +178,10 @@
             success:function (data) {
                 if(data == "OK"){
                     $.message({
-                        message:"出差申请已提交",
+                        message:"出差申请已提交,请等待审批",
                         type:'success'
-                    })
+                    });
+                    $("#myModal").modal('hide');
                 }else{
                     $.message({
                         message:data,
@@ -184,9 +220,10 @@
             success:function (data) {
                 if(data == "OK"){
                     $.message({
-                        message:'已提交',
+                        message:'报销申请已提交,请等待审批',
                         type:'success'
-                    })
+                    });
+                    $("#myModal4").modal('hide');
                 }else{
                     $.message({
                         message:data,

@@ -17,7 +17,7 @@
     $(function () {
         loadAllCustomerPool();
         getAllSaleMan();
-    })
+    });
     function loadAllCustomerPool() {
         customerStartPool = 1;
         $.ajax({
@@ -50,6 +50,114 @@
                 })
             }
         })
+    }
+
+    function loadAllCustomerPoolPrevious() {
+        if(customerStartPool > 1){
+            customerStartPool = customerStartPool - 1;
+            $.ajax({
+                type:"post",
+                data:{"start":customerStartPool},
+                url:"selectCustomerByPageAndCondition",
+                async:false,
+                success:function (data) {
+                    $("#customerPool").html("");
+                    customerPagesPool = data.pages;
+                    var customers = data.customers;
+                    for(var i = 0 ; i < customers.length ; i++){
+                        $("#customerPool").append("<tr>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+'<input name="choose" type="checkbox" value="'+i+'">'+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].id+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].name+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].customerType+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].area+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].principal+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].phone+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].followName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<button class='btn btn-warning'>跟进</button>"+"</td>"+"</tr>");
+                    }
+                    $("#poolPage").show();
+                },
+                error:function () {
+                    $.message({
+                        message:'程序出错',
+                        type:'error'
+                    })
+                }
+            })
+        }
+
+    }
+
+    function loadAllCustomerPoolNext() {
+        if(customerStartPool < customerPagesPool){
+            customerStartPool = customerStartPool + 1;
+            $.ajax({
+                type:"post",
+                data:{"start":customerStartPool},
+                url:"selectCustomerByPageAndCondition",
+                async:false,
+                success:function (data) {
+                    $("#customerPool").html("");
+                    customerPagesPool = data.pages;
+                    var customers = data.customers;
+                    for(var i = 0 ; i < customers.length ; i++){
+                        $("#customerPool").append("<tr>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+'<input name="choose" type="checkbox" value="'+i+'">'+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].id+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].name+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].customerType+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].area+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].principal+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].phone+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].followName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<button class='btn btn-warning'>跟进</button>"+"</td>"+"</tr>");
+                    }
+                    $("#poolPage").show();
+                },
+                error:function () {
+                    $.message({
+                        message:'程序出错',
+                        type:'error'
+                    })
+                }
+            })
+        }
+
+    }
+
+    function loadAllCustomerPoolLast() {
+            customerStartPool = customerPagesPool;
+            $.ajax({
+                type:"post",
+                data:{"start":customerStartPool},
+                url:"selectCustomerByPageAndCondition",
+                async:false,
+                success:function (data) {
+                    $("#customerPool").html("");
+                    customerPagesPool = data.pages;
+                    var customers = data.customers;
+                    for(var i = 0 ; i < customers.length ; i++){
+                        $("#customerPool").append("<tr>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+'<input name="choose" type="checkbox" value="'+i+'">'+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].id+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].name+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].customerType+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].area+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].principal+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].phone+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].followName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<button class='btn btn-warning'>跟进</button>"+"</td>"+"</tr>");
+                    }
+                    $("#poolPage").show();
+                },
+                error:function () {
+                    $.message({
+                        message:'程序出错',
+                        type:'error'
+                    })
+                }
+            })
     }
 
     function loadAllCustomerPoolByName() {

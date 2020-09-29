@@ -60,7 +60,7 @@ public class CustomerService {
             customerDAO.save(customer);
             //修改销售计划表中的数据
             SalesPlan salesPlan = salesPlanDAO.findByCustomerCode(customerID).get(0);
-            String follow = salesPlan.getPrincipal();
+            String follow = salesPlan.getAllOperator();
             if(follow != null && !"".equals(follow)){
                 follow = follow+","+saleManAccount;
             }else{

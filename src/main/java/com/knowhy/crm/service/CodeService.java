@@ -22,6 +22,8 @@ public class CodeService {
     SchemeFlowDAO schemeFlowDAO;
     @Autowired
     ContractFlowDAO contractFlowDAO;
+    @Autowired
+    PostponeDAO postponeDAO;
 
     SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 
@@ -96,5 +98,19 @@ public class CodeService {
         }
         contract = contract + len;
         return contract;
+    }
+
+    /**
+     * 自动生成延期流程的ID
+     */
+    public String generatePostponseFlowID(){
+        String postPonseCode = "knowhy0P"+sdf.format(new Date());
+        List<Postpone> pones = postponeDAO.findByMakeDate(LocalDate.now());
+        String len = String.valueOf(pones.size() + 1);
+        for(int i = len.length() ; i < 4 ; i++){
+            len = "0"+len;
+        }
+        postPonseCode = postPonseCode + len;
+        return postPonseCode;
     }
 }

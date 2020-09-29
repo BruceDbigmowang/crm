@@ -88,7 +88,7 @@
     $(function(){
         changeHeight();
         getHeadPic();
-        findAllMyFlow();
+        findAllMyFlowPrevoius();
     })
 
     //第三页：上传图片 保存内容
@@ -693,6 +693,7 @@
             success:function (data) {
                 $("#reqSchemeF").val(orderID);
                 $("#customerSF").val(data.customerName);
+                $("#schemeF").html("");
                 $("#schemeF").append("<a href='downLoadSchemeF?filename="+data.fileName+"'>"+data.fileName+"</a>");
                 $("#applySF").val(data.makerName);
                 $("#applyDateSF").val(data.makeDate);
@@ -712,6 +713,7 @@
             success:function (data) {
                 $("#reqSchemeS").val(orderID);
                 $("#customerSS").val(data.customerName);
+                $("#secondScheme").html("");
                 $("#secondScheme").append("<a href='downLoadSchemeS?filename="+data.fileName+"'>"+data.fileName+"</a>");
                 var note = data.note;
                 $("#personChange").val(data.note);
@@ -735,6 +737,7 @@
             success:function (data) {
                 $("#reqContractF").val(orderID);
                 $("#customerCF").val(data.customerName);
+                $("#contractF").html("");
                 $("#contractF").append("<a href='downLoadContractF?filename="+data.fileName+"'>"+data.fileName+"</a>");
                 $("#applyCF").val(data.makerName);
                 $("#applyDateCF").val(data.makeDate);
@@ -754,6 +757,7 @@
             success:function (data) {
                 $("#reqContractS").val(orderID);
                 $("#customerCS").val(data.customerName);
+                $("#secondContract").html("");
                 $("#secondContract").append("<a href='downLoadContractS?filename="+data.fileName+"'>"+data.fileName+"</a>");
                 $("#note").val(data.note);
                 $("#applyCS").val(data.makerName);
@@ -774,7 +778,8 @@
                     $.message({
                         message:'流程已审批通过',
                         type:'success'
-                    })
+                    });
+                    $("#myModal").modal('hide');
                 }else{
                     $.message({
                         message:data,
@@ -798,7 +803,8 @@
                     $.message({
                         message:'流程已退回',
                         type:'success'
-                    })
+                    });
+                    $("#myModal").modal('hide');
                 }else{
                     $.message({
                         message:data,
@@ -822,7 +828,8 @@
                     $.message({
                         message:'流程已审批通过',
                         type:'success'
-                    })
+                    });
+                    $("#myModal2").modal('hide');
                 }else{
                     $.message({
                         message:data,
@@ -846,7 +853,8 @@
                     $.message({
                         message:'流程已退回',
                         type:'success'
-                    })
+                    });
+                    $("#myModal2").modal('hide');
                 }else{
                     $.message({
                         message:data,
@@ -870,7 +878,8 @@
                     $.message({
                         message:'流程已审批通过',
                         type:'success'
-                    })
+                    });
+                    $("#myModal4").modal('hide');
                 }else{
                     $.message({
                         message:data,
@@ -894,7 +903,8 @@
                     $.message({
                         message:'流程已退回',
                         type:'success'
-                    })
+                    });
+                    $("#myModal4").modal('hide');
                 }else{
                     $.message({
                         message:data,
@@ -918,7 +928,8 @@
                     $.message({
                         message:'流程已审批通过',
                         type:'success'
-                    })
+                    });
+                    $("#myModal5").modal('hide');
                 }else{
                     $.message({
                         message:data,
@@ -942,7 +953,8 @@
                     $.message({
                         message:'流程已退回',
                         type:'success'
-                    })
+                    });
+                    $("#myModal5").modal('hide');
                 }else{
                     $.message({
                         message:data,
@@ -967,7 +979,8 @@
                     $.message({
                         message:'流程已审批通过',
                         type:'success'
-                    })
+                    });
+                    $("#myModal6").modal('hide');
                 }else{
                     $.message({
                         message:data,
@@ -991,7 +1004,8 @@
                     $.message({
                         message:'流程已退回',
                         type:'success'
-                    })
+                    });
+                    $("#myModal6").modal('hide');
                 }else{
                     $.message({
                         message:data,
@@ -1015,7 +1029,8 @@
                     $.message({
                         message:'流程已审批通过',
                         type:'success'
-                    })
+                    });
+                    $("#myModal7").modal('hide');
                 }else{
                     $.message({
                         message:data,
@@ -1039,7 +1054,8 @@
                     $.message({
                         message:'流程已退回',
                         type:'success'
-                    })
+                    });
+                    $("#myModal7").modal('hide');
                 }else{
                     $.message({
                         message:data,

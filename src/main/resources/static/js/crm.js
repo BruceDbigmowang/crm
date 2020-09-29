@@ -1908,6 +1908,7 @@ function saveFourteenthPage() {
                     message:'数据保存成功',
                     type:'success'
                 });
+                $("#myModal2").modal('hide');
                 loadFirstPlan();
             }else{
                 $.message({
