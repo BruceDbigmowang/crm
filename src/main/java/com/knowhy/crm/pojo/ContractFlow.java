@@ -23,7 +23,9 @@ public class ContractFlow {
     LocalDate makeDate;
     String step;
     String stepName;
+    String contractStatus;
     String note;
+    String reason;
 
     public String getContractId() {
         return contractId;
@@ -105,11 +107,27 @@ public class ContractFlow {
         this.stepName = stepName;
     }
 
+    public String getContractStatus() {
+        return contractStatus;
+    }
+
+    public void setContractStatus(String contractStatus) {
+        this.contractStatus = contractStatus;
+    }
+
     public String getNote() {
         return note;
     }
 
     public void setNote(String note) {
         this.note = note;
+    }
+
+    public String getReason() {
+        return reason;
+    }
+
+    public void setReason(String reason) {
+        this.reason = reason;
     }
 }

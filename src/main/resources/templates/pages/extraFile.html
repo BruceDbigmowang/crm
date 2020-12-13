@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<title>合同管理——补充合同</title>
+<head th:include="include/fore/newHeader::html" ></head>
+<body>
+<div id="workingArea">
+    <div th:replace="include/fore/top::html" ></div>
+    <div th:replace="include/fore/leftMenu::html" ></div>
+    <div th:replace="include/fore/homePages/contractManage/extraFilePage::html" ></div>
+</div>
+<script>
+    $(function () {
+        loadlFile();
+    });
+
+    function getRowId(obj) {
+        var i = obj.parentNode.parentNode.rowIndex;
+        var tab = document.getElementById("firstData");
+        var orderID = tab.rows[i].cells[0].innerHTML;
+        var customerName = tab.rows[i].cells[1].innerHTML;
+        $("#customerName").val(customerName);
+        $("#customerID").val(orderID);
+    }
+
+    function loadlFile() {
+        $.ajax({
+            type:"post",
+            url:"getHadFile",
+            async:false,
+            success:function (data) {
+                $("#allFirst").html("");
+                var records = data.records;
+                var contractNames = data.contractNames;
+                var fileNames = data.fileNames;
+                for(var i = 0 ; i < records.length ; i++){
+                    var contractNameList = contractNames[i].split(",");
+                    var fileNameList = fileNames[i].split(",");
+                    var fileLink = "";
+                    for(var j = 0 ; j < contractNameList.length ; j++){
+                        if(j == contractNameList.length - 1){
+                            fileLink = fileLink+"<a href='downLoadContractExtra?filename="+fileNameList[j]+"'>"+contractNameList[j]+"</a>";
+                        }else{
+                            fileLink = fileLink+"<a href='downLoadContractExtra?filename="+fileNameList[j]+"'>"+contractNameList[j]+"</a>"+",";
+                        }
+                    }
+                    $("#allFirst").append("<tr>"
+                        +"<td style='display: none'>"+records[i].customerCode+"</td>"
+                        +"<td>"+records[i].customerName+"</td>"
+                        +"<td>"+records[i].contractFileID+"</td>"
+                        +"<td>"+"<a href='downLoadContractS?filename="+records[i].fileName+"'>"
+                        +records[i].contractFileName+"</a>"+"</td>"
+                        +"<td>"+fileLink+"</td>"
+                        +"<td>"+records[i].name+"</td>"
+                        +"<td>"+"<a data-toggle=\"modal\" data-target=\"#myModal2\" onclick='getRowId(this)'>"+"新增合同"+"</a>"+"</td>"
+                        +"</tr>");
+                }
+            }
+        })
+    }
+
+    function saveExtraFile() {
+        var salePlanID = $("#customerID").val();
+        var contractCode = $("#contractFileCode").val();
+        var contractName = $("#contractFileName").val();
+        var name = $("#contractFile").val();
+        var picNames = name.split("\\");
+        var le = picNames.length - 1;
+        var fileName = picNames[le];
+        var note = $("#note").val();
+        var data = {"salePlanID":salePlanID , "contractCode":contractCode , "contractName":contractName , "fileName":fileName , "note":note};
+        $.ajax({
+            type:"post",
+            data:data,
+            url:"saveContractExtra",
+            async:false,
+            success:function (data) {
+                if(data == "OK"){
+                    $.message({
+                        message:"合同保存成功",
+                        type:'success'
+                    });
+                    $("#myModal2").modal('hide');
+                    loadlFile();
+                }else{
+                    $.message({
+                        message:data,
+                        type:'error'
+                    })
+                }
+            }
+        })
+    }
+
+    function saveExtra() {
+        $.ajaxFileUpload({
+            type:"post",
+            fileElementId:"contractFile",
+            url:"saveExtraContract",
+            async:false,
+            dataType:'text',
+            success:function(data){
+                if(data == "文件上传成功"){
+                    // $.message({
+                    //     message:'文件上传成功',
+                    //     type:'success'
+                    // });
+                }else{
+                    $.message({
+                        message:data,
+                        type:'error'
+                    });
+                }
+            },
+            error:function(){
+                alert("设备类型文件上传出错");
+            }
+        })
+    }
+</script>
+<style>
+    #mainContent{
+        overflow:hidden;
+        width:100%;
+    }
+
+    #extraListDIV{
+        width:calc(100% + 15px);/*使滚动条超出当前元素的父元素边界，而父元素设置了overflow为hidden，使溢出内容隐藏，即隐藏了滚动条*/
+        height:400px;
+        padding-right:15px;
+        box-sizing:content-box;/*兼容ie，使盒模型为w3c盒模型*/
+        overflow-y:scroll;/*控制能沿y轴滚动*/
+    }
+    #firstData{
+        width:100%;
+    }
+</style>
+</body>
+</html>

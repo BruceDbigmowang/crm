@@ -1,12 +1,11 @@
 package com.knowhy.crm.controller;
 
-import com.knowhy.crm.dao.ContractFileDAO;
-import com.knowhy.crm.dao.ContractFlowDAO;
-import com.knowhy.crm.dao.SalesPlanDAO;
-import com.knowhy.crm.dao.TravelReqDAO;
+import com.knowhy.crm.dao.*;
 import com.knowhy.crm.pojo.*;
 import com.knowhy.crm.service.CodeService;
+import com.knowhy.crm.service.TaskService;
 import com.knowhy.crm.service.TravelReqService;
+import com.knowhy.crm.util.SendRemind;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,7 +13,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpSession;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 public class ContractController {
@@ -30,6 +32,18 @@ public class ContractController {
     ContractFileDAO fileDAO;
     @Autowired
     CodeService codeService;
+    @Autowired
+    TaskDAO taskDAO;
+    @Autowired
+    TaskSumDAO taskSumDAO;
+    @Autowired
+    TaskService taskService;
+    @Autowired
+    RecordDAO recordDAO;
+    @Autowired
+    ExtraContractDAO extraContractDAO;
+    @Autowired
+    ArrangeRecordDAO arrangeRecordDAO;
     /**
      * 1、拟定合同后，上传合同附件
      * 自动生成审批流程
@@ -116,9 +130,25 @@ public class ContractController {
                     file.setFirstMakerName(makerName);
                     file.setFirstMakeDate(LocalDate.now());
                     fileDAO.save(file);
+                    List<TaskSum> sumList = taskSumDAO.findBySalePlanIDAndTask(salePlanID , "合同签订");
                     SalesPlan plan = planDAO.getOne(salePlanID);
                     plan.setPlanStatus("seventh");
+                    plan.setUpdateDate(LocalDate.now());
+                    plan.setSpendTime(21);
+                    plan.setDeadline(sumList.get(0).getDeadline());
                     planDAO.save(plan);
+
+                    List<ArrangeRecord> arrangeRecordList = arrangeRecordDAO.findBySalePlanIDAndStepAndType(salePlanID , "合同交流" , "sale");
+                    if(arrangeRecordList != null && arrangeRecordList.size() != 0){
+                        ArrangeRecord arrangeRecord = arrangeRecordList.get(0);
+                        arrangeRecord.setCompleteStatus("C");
+                        arrangeRecordDAO.save(arrangeRecord);
+                    }
+
+                    taskDAO.deleteBySalePlanIDAndJobName(salePlanID , "合同交流");
+                    taskSumDAO.deleteBySalePlanIDAndTask(salePlanID , "合同交流");
+//                    taskService.saveTask(salePlanID , "合同签订" , "foreContractLater", LocalDate.now().plusDays(21) , 3);
+
                     break;
                 case 0:
                     break;
@@ -142,12 +172,22 @@ public class ContractController {
     }
 
     @RequestMapping("/setContractFirstRefuse")
-    public String refuseContractFirst(String reqNum){
+    public String refuseContractFirst(String reqNum , String note){
         try{
             TravelReq req = reqDAO.getOne(reqNum);
             req.setStatus("refuse");
             req.setStatusName("已退回");
+            if(note == null || "".equals(note)){
+                return "请填写退回原因";
+            }else{
+                req.setNote(note);
+            }
             reqDAO.save(req);
+            String contractId = req.getLeafId();
+            ContractFlow contractFlow = flowDAO.getOne(contractId);
+            contractFlow.setContractStatus("refuse");
+            contractFlow.setReason(note);
+            flowDAO.save(contractFlow);
         }catch (Exception e){
             return e.getMessage();
         }
@@ -245,7 +285,22 @@ public class ContractController {
                     fileDAO.save(file);
                     SalesPlan plan = planDAO.getOne(salePlanID);
                     plan.setPlanStatus("eighth");
+                    plan.setUpdateDate(LocalDate.now());
+                    plan.setSpendTime(1);
+                    plan.setDeadline(LocalDate.now().plusDays(1));
                     planDAO.save(plan);
+
+                    List<ArrangeRecord> arrangeRecordList = arrangeRecordDAO.findBySalePlanIDAndStepAndType(salePlanID , "合同签订" , "sale");
+                    if(arrangeRecordList != null && arrangeRecordList.size() != 0){
+                        ArrangeRecord arrangeRecord = arrangeRecordList.get(0);
+                        arrangeRecord.setCompleteStatus("C");
+                        arrangeRecordDAO.save(arrangeRecord);
+                    }
+
+                    taskDAO.deleteBySalePlanIDAndJobName(salePlanID , "合同签订");
+                    taskSumDAO.deleteBySalePlanIDAndTask(salePlanID , "合同签订");
+                    taskService.saveTaskForAll(salePlanID , "合同归档"  , "foreAddFile" , LocalDate.now() , 1);
+//                    SendRemind.getPhonemsg(); //发送短信提醒
                     break;
                 case 0:
                     break;
@@ -269,15 +324,76 @@ public class ContractController {
     }
 
     @RequestMapping("/setContractSecondRefuse")
-    public String refuseContractSecond(String reqNum){
+    public String refuseContractSecond(String reqNum , String note){
         try{
             TravelReq req = reqDAO.getOne(reqNum);
             req.setStatus("refuse");
             req.setStatusName("已退回");
+            if(note == null || "".equals(note)){
+                return "请填写退回原因";
+            }else{
+                req.setNote(note);
+            }
             reqDAO.save(req);
+            String contractId = req.getLeafId();
+            ContractFlow contractFlow = flowDAO.getOne(contractId);
+            contractFlow.setContractStatus("refuse");
+            contractFlow.setReason(note);
+            flowDAO.save(contractFlow);
         }catch (Exception e){
             return e.getMessage();
         }
         return "OK";
+    }
+
+    /**
+     * 根据销售订单编号 查询出最终合同
+     * 从系统中取出最终合同，用于合同归档
+     */
+
+    @RequestMapping("/getContract")
+    public String selectCustomerContract(String salePlanID){
+        List<ContractFile> contractList = fileDAO.findByReqNum(salePlanID);
+        if(contractList != null && !"".equals(contractList)){
+            return contractList.get(0).getSecondFile();
+        }else{
+            return null;
+        }
+    }
+
+    @RequestMapping("/showContractList")
+    public Map<String, Object> getContractByCustomer(String search){
+        String customerName = "%"+search+"%";
+        Map<String , Object> map = new HashMap<>();
+        List<Record> recordList = recordDAO.findByCustomerNameLike(customerName);
+        map.put("records", recordList);
+        List<String> contractNameList = new ArrayList<>();
+        List<String> fileNameList = new ArrayList<>();
+        for(int i = 0 ; i < recordList.size() ; i++){
+            String salePlanID = recordList.get(i).getSalePlanID();
+            List<ExtraContract> extraContractList =extraContractDAO.findBySalePlanID(salePlanID);
+            String contractName = "";
+            String fileName = "";
+            for(int j = 0 ; j < extraContractList.size() ; j++){
+                if(j == extraContractList.size() - 1){
+                    contractName = contractName + extraContractList.get(j).getContractName();
+                    fileName = fileName + extraContractList.get(j).getFileName();
+                }else{
+                    contractName = contractName + extraContractList.get(j).getContractName()+",";
+                    fileName = fileName + extraContractList.get(j).getFileName()+",";
+                }
+            }
+            contractNameList.add(contractName);
+            fileNameList.add(fileName);
+        }
+        map.put("contractNames" , contractNameList);
+        map.put("fileNames" , fileNameList);
+        return map;
+    }
+
+    @RequestMapping("/getContractHistory")
+    public List<ContractFile> selectCustomerContractHistory(String salePlanID){
+        List<ContractFile> contractList = fileDAO.findByReqNum(salePlanID);
+        return contractList;
     }
 }

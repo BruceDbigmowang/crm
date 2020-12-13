@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<title>运营服务——技术服务</title>
+<head th:include="include/fore/newHeader::html" ></head>
+<body>
+<div id="workingArea">
+    <div th:replace="include/fore/top::html" ></div>
+    <div th:replace="include/fore/leftMenu::html" ></div>
+    <div th:replace="include/fore/homePages/saleProcessManage/operateServer/satisfactionPage::html" ></div>
+</div>
+
+<script>
+    $(function () {
+        judgeFunc();
+        getSatisfactionList();
+    });
+
+    function judgeFunc() {
+        $.ajax({
+            type:"post",
+            url:"getReportRole",
+            async:false,
+            success:function (data) {
+                $("#funcInput").val(data);
+            }
+        })
+    }
+
+    function getSatisfactionList() {
+        var role = $("#funcInput").val();
+        if(role == "0"){
+            $.ajax({
+                type:"post",
+                url:"getSatisfactionByAssistant",
+                async:false,
+                success:function (data) {
+                    $("#allFirst").html("");
+                    $("#allSecond").html("");
+                    var notSend = data.notSend;
+                    var send = data.send;
+                    for(var i = 0 ; i < notSend.length ; i++){
+                        $("#allFirst").append("<tr>"+
+                            "<td style='display: none;'>"+notSend[i].id+"</td>"+
+                            "<td>"+notSend[i].customerName+"</td>"+
+                            "<td>"+notSend[i].principal+"</td>"+
+                            "<td>"+notSend[i].phone+"</td>"+
+                            "<td>"+notSend[i].email+"</td>"+
+                            "<td>"+notSend[i].wechat+"</td>"+
+                            "<td>"+notSend[i].complete+"</td>"+
+                            "<td>"+"<a href='#' onclick='sendOneLink(this)'>"+"发送链接"+"</a>"+"</td>"+
+                            "</tr>");
+                    }
+                    for(var i = 0 ; i < send.length ; i++){
+                        $("#allSecond").append("<tr>"+
+                            "<td style='display: none;'>"+send[i].id+"</td>"+
+                            "<td>"+send[i].customerName+"</td>"+
+                            "<td>"+send[i].principal+"</td>"+
+                            "<td>"+send[i].phone+"</td>"+
+                            "<td>"+send[i].email+"</td>"+
+                            "<td>"+send[i].wechat+"</td>"+
+                            "<td>"+send[i].complete+"</td>"+
+                            "<td>"+"<a href='#' onclick='sendOneLink(this)'>"+"发送链接"+"</a>"+"</td>"+
+                            "</tr>");
+                    }
+                }
+            })
+        }else if(role == "1"){
+            $.ajax({
+                type:"post",
+                url:"getRelatedSatisfaction",
+                async:false,
+                success:function (data) {
+                    $("#allFirst").html("");
+                    $("#allSecond").html("");
+                    var notSend = data.notSend;
+                    var send = data.send;
+                    for(var i = 0 ; i < notSend.length ; i++){
+                        $("#allFirst").append("<tr>"+
+                            "<td style='display: none;'>"+notSend[i].id+"</td>"+
+                            "<td>"+notSend[i].customerName+"</td>"+
+                            "<td>"+notSend[i].principal+"</td>"+
+                            "<td>"+notSend[i].phone+"</td>"+
+                            "<td>"+notSend[i].email+"</td>"+
+                            "<td>"+notSend[i].wechat+"</td>"+
+                            "<td>"+notSend[i].complete+"</td>"+
+                            "<td>"+"<a href='#' onclick='sendOneLink(this)'>"+"发送链接"+"</a>"+"</td>"+
+                            "</tr>");
+                    }
+                    for(var i = 0 ; i < send.length ; i++){
+                        $("#allSecond").append("<tr>"+
+                            "<td style='display: none;'>"+send[i].id+"</td>"+
+                            "<td>"+send[i].customerName+"</td>"+
+                            "<td>"+send[i].principal+"</td>"+
+                            "<td>"+send[i].phone+"</td>"+
+                            "<td>"+send[i].email+"</td>"+
+                            "<td>"+send[i].wechat+"</td>"+
+                            "<td>"+send[i].complete+"</td>"+
+                            "<td>"+"<a href='#' onclick='sendOneLink(this)'>"+"发送链接"+"</a>"+"</td>"+
+                            "</tr>");
+                    }
+                }
+            })
+        }else{
+            $.ajax({
+                type:"post",
+                url:"getSatisfactionList",
+                async:false,
+                success:function (data) {
+                    $("#allFirst").html("");
+                    $("#allSecond").html("");
+                    var notSend = data.notSend;
+                    var send = data.send;
+                    for(var i = 0 ; i < notSend.length ; i++){
+                        $("#allFirst").append("<tr>"+
+                            "<td style='display: none;'>"+notSend[i].id+"</td>"+
+                            "<td>"+notSend[i].customerName+"</td>"+
+                            "<td>"+notSend[i].principal+"</td>"+
+                            "<td>"+notSend[i].phone+"</td>"+
+                            "<td>"+notSend[i].email+"</td>"+
+                            "<td>"+notSend[i].wechat+"</td>"+
+                            "<td>"+notSend[i].complete+"</td>"+
+                            "<td>"+"<a href='#' onclick='sendOneLink(this)'>"+"发送链接"+"</a>"+"</td>"+
+                            "</tr>");
+                    }
+                    for(var i = 0 ; i < send.length ; i++){
+                        $("#allSecond").append("<tr>"+
+                            "<td style='display: none;'>"+send[i].id+"</td>"+
+                            "<td>"+send[i].customerName+"</td>"+
+                            "<td>"+send[i].principal+"</td>"+
+                            "<td>"+send[i].phone+"</td>"+
+                            "<td>"+send[i].email+"</td>"+
+                            "<td>"+send[i].wechat+"</td>"+
+                            "<td>"+send[i].complete+"</td>"+
+                            "<td>"+"<a href='#' onclick='sendOneLink(this)'>"+"发送链接"+"</a>"+"</td>"+
+                            "</tr>");
+                    }
+                }
+            })
+        }
+    }
+
+    function getSatisfactionListByName() {
+        var role = $("#funcInput").val();
+        if(role == "0"){
+            var customerName = $("#customerSearch").val();
+            $.ajax({
+                type:"post",
+                data:{"customerName":customerName},
+                url:"getSatisfactionByAssistantAndName",
+                async:false,
+                success:function (data) {
+                    $("#allFirst").html("");
+                    $("#allSecond").html("");
+                    var notSend = data.notSend;
+                    var send = data.send;
+                    for(var i = 0 ; i < notSend.length ; i++){
+                        $("#allFirst").append("<tr>"+
+                            "<td style='display: none;'>"+notSend[i].id+"</td>"+
+                            "<td>"+notSend[i].customerName+"</td>"+
+                            "<td>"+notSend[i].principal+"</td>"+
+                            "<td>"+notSend[i].phone+"</td>"+
+                            "<td>"+notSend[i].email+"</td>"+
+                            "<td>"+notSend[i].wechat+"</td>"+
+                            "<td>"+notSend[i].complete+"</td>"+
+                            "<td>"+"<a href='#' onclick='sendOneLink(this)'>"+"发送链接"+"</a>"+"</td>"+
+                            "</tr>");
+                    }
+                    for(var i = 0 ; i < send.length ; i++){
+                        $("#allSecond").append("<tr>"+
+                            "<td style='display: none;'>"+send[i].id+"</td>"+
+                            "<td>"+send[i].customerName+"</td>"+
+                            "<td>"+send[i].principal+"</td>"+
+                            "<td>"+send[i].phone+"</td>"+
+                            "<td>"+send[i].email+"</td>"+
+                            "<td>"+send[i].wechat+"</td>"+
+                            "<td>"+send[i].complete+"</td>"+
+                            "<td>"+"<a href='#' onclick='sendOneLink(this)'>"+"发送链接"+"</a>"+"</td>"+
+                            "</tr>");
+                    }
+                }
+            })
+        }else if(role == "1"){
+            var customerName = $("#customerSearch").val();
+            $.ajax({
+                type:"post",
+                data:{"customerName":customerName},
+                url:"getRelatedSatisfactionByName",
+                async:false,
+                success:function (data) {
+                    $("#allFirst").html("");
+                    $("#allSecond").html("");
+                    var notSend = data.notSend;
+                    var send = data.send;
+                    for(var i = 0 ; i < notSend.length ; i++){
+                        $("#allFirst").append("<tr>"+
+                            "<td style='display: none;'>"+notSend[i].id+"</td>"+
+                            "<td>"+notSend[i].customerName+"</td>"+
+                            "<td>"+notSend[i].principal+"</td>"+
+                            "<td>"+notSend[i].phone+"</td>"+
+                            "<td>"+notSend[i].email+"</td>"+
+                            "<td>"+notSend[i].wechat+"</td>"+
+                            "<td>"+notSend[i].complete+"</td>"+
+                            "<td>"+"<a href='#' onclick='sendOneLink(this)'>"+"发送链接"+"</a>"+"</td>"+
+                            "</tr>");
+                    }
+                    for(var i = 0 ; i < send.length ; i++){
+                        $("#allSecond").append("<tr>"+
+                            "<td style='display: none;'>"+send[i].id+"</td>"+
+                            "<td>"+send[i].customerName+"</td>"+
+                            "<td>"+send[i].principal+"</td>"+
+                            "<td>"+send[i].phone+"</td>"+
+                            "<td>"+send[i].email+"</td>"+
+                            "<td>"+send[i].wechat+"</td>"+
+                            "<td>"+send[i].complete+"</td>"+
+                            "<td>"+"<a href='#' onclick='sendOneLink(this)'>"+"发送链接"+"</a>"+"</td>"+
+                            "</tr>");
+                    }
+                }
+            })
+        }else{
+            var customerName = $("#customerSearch").val();
+            $.ajax({
+                type:"post",
+                data:{"customerName":customerName},
+                url:"getSatisfactionListByName",
+                async:false,
+                success:function (data) {
+                    $("#allFirst").html("");
+                    $("#allSecond").html("");
+                    var notSend = data.notSend;
+                    var send = data.send;
+                    for(var i = 0 ; i < notSend.length ; i++){
+                        $("#allFirst").append("<tr>"+
+                            "<td style='display: none;'>"+notSend[i].id+"</td>"+
+                            "<td>"+notSend[i].customerName+"</td>"+
+                            "<td>"+notSend[i].principal+"</td>"+
+                            "<td>"+notSend[i].phone+"</td>"+
+                            "<td>"+notSend[i].email+"</td>"+
+                            "<td>"+notSend[i].wechat+"</td>"+
+                            "<td>"+notSend[i].complete+"</td>"+
+                            "<td>"+"<a href='#' onclick='sendOneLink(this)'>"+"发送链接"+"</a>"+"</td>"+
+                            "</tr>");
+                    }
+                    for(var i = 0 ; i < send.length ; i++){
+                        $("#allSecond").append("<tr>"+
+                            "<td style='display: none;'>"+send[i].id+"</td>"+
+                            "<td>"+send[i].customerName+"</td>"+
+                            "<td>"+send[i].principal+"</td>"+
+                            "<td>"+send[i].phone+"</td>"+
+                            "<td>"+send[i].email+"</td>"+
+                            "<td>"+send[i].wechat+"</td>"+
+                            "<td>"+send[i].complete+"</td>"+
+                            "<td>"+"<a href='#' onclick='sendOneLink(this)'>"+"发送链接"+"</a>"+"</td>"+
+                            "</tr>");
+                    }
+                }
+            })
+        }
+    }
+    
+    function sendOneLink(obj) {
+        var sId = obj.parentNode.parentNode.cells[0].innerText;
+        $.ajax({
+            type:"post",
+            data:{"sId":sId},
+            url:"sendLink",
+            async:false,
+            success:function (data) {
+                if(data == "OK"){
+                    $.message({
+                        message:"已发送",
+                        type:"success"
+                    });
+                    getSatisfactionList();
+                }else{
+                    $.message({
+                        message:data,
+                        type:"error"
+                    })
+                }
+            }
+        })
+    }
+    
+    function sendToAll() {
+        $.ajax({
+            type:"post",
+            url:"sendLinkAll",
+            async:false,
+            success:function (data) {
+                if(data == "OK"){
+                    $.message({
+                        message:"已发送",
+                        type:"success"
+                    });
+                    getSatisfactionList();
+                }else{
+                    $.message({
+                        message:data,
+                        type:"error"
+                    })
+                }
+            }
+        })
+    }
+    
+    // function sendLinkToSome() {
+    //
+    // }
+</script>
+<style>
+    p{
+        margin-left:10px;
+        margin-top:10px;
+    }
+</style>
+</body>
+</html>

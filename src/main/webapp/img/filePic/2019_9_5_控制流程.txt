@@ -1,0 +1,60 @@
+ 控制流程：
+ 		if:
+ 				if( ... ){
+ 					...
+ 				}	
+------------------------------------ 		
+ 				if( ... ){
+ 					...
+ 				}else{
+ 					...
+ 				}
+------------------------------------ 				
+ 				if( ... ){
+ 						...
+ 				}else if( ... ){
+ 						...
+ 				}
+ 						.
+ 						.
+ 						.
+ 				else{
+ 						...
+ 				}
+ 				
+ 		switch:
+ 		
+ 				switch(day){
+            case 1:
+                System.out.println("星期一");
+                break;
+            case 2:
+                System.out.println("星期二");
+                break;
+            case 3:
+            		...
+            		
+            		.
+            		.
+            		.
+            		
+            		
+		while:
+		
+				while(true){
+						循环体
+				}
+				
+				do{
+					循环体
+				}while(true)
+				
+		for:
+		
+				for( ... ){
+						...
+				}
+				
+				
+		continue:结束本次循环，跳到下一个循环
+		break:结束循环

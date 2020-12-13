@@ -8,5 +8,27 @@
     <div th:replace="include/fore/leftMenu::html" ></div>
     <div th:replace="include/fore/homePages/customerManage/customerMaintain/customerBase::html" ></div>
 </div>
+<script>
+    $("#distpicker").distpicker();
+
+    function chooseArea() {
+        var province = $("#province").val();
+        $.ajax({
+            type:"post",
+            data:{"provinceName":province},
+            url:"selectByProvince",
+            async:false,
+            success:function (data) {
+                var area = document.getElementById("areaSec");
+                for(var i = 0 ; i < area.options.length ; i++){
+                    if(area.options[i].value == data){
+                        area.options[i].selected = true;
+                        break;
+                    }
+                }
+            }
+        })
+    }
+</script>
 </body>
 </html>

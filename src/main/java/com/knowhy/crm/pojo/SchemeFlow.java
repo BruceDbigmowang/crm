@@ -28,6 +28,8 @@ public class SchemeFlow {
     String note;
     String note2;
     String note3;
+    String schemeStatus;
+    String reason;
 
     public String getSchemeId() {
         return schemeId;
@@ -131,5 +133,21 @@ public class SchemeFlow {
 
     public void setNote3(String note3) {
         this.note3 = note3;
+    }
+
+    public String getSchemeStatus() {
+        return schemeStatus;
+    }
+
+    public void setSchemeStatus(String schemeStatus) {
+        this.schemeStatus = schemeStatus;
+    }
+
+    public String getReason() {
+        return reason;
+    }
+
+    public void setReason(String reason) {
+        this.reason = reason;
     }
 }

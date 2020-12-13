@@ -42,6 +42,25 @@ public class ShiroConfig {
         perms.put("/foreContractPrevious" , "authc");
         perms.put("/foreContractLater" , "authc");
         perms.put("/foreSurveyOffline" , "authc");
+        perms.put("/foreCustomerInfo" , "authc");
+        perms.put("/foreAddFile" , "authc");
+        perms.put("/foreExtraFile" , "authc");
+        perms.put("/foreContractSum" , "authc");
+        perms.put("/foreSchedule" , "authc");
+        perms.put("/foreOperate" , "authc");
+        perms.put("/foreAddOpportunity" , "authc");
+        perms.put("/foreUpdateOpportunity" , "authc");
+        perms.put("/foreMarketingOnline" , "authc");
+        perms.put("/foreMarketingOffline" , "authc");
+        perms.put("/foreMarketSpend" , "authc");
+        perms.put("/foreTechnicalService" , "authc");
+        perms.put("/foreMonthlyReport" , "authc");
+        perms.put("/foreAllRoles" , "authc");
+        perms.put("/foreArrangeSale" , "authc");
+        perms.put("/foreContractManage" , "authc");
+        perms.put("/foreAddressManage" , "authc");
+        perms.put("/foreSatisfaction" , "authc");
+        perms.put("/foreAllArea" , "authc");
 
         shiroFilterFactoryBean.setLoginUrl("loginPage");
         shiroFilterFactoryBean.setUnauthorizedUrl("loginPage");

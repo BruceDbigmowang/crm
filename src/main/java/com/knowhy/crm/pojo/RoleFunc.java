@@ -6,7 +6,7 @@ import com.knowhy.crm.pk.PrimaryKeyRoleFunc;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "roleAndFunc")
+@Table(name = "CRM_RoleFunc")
 @IdClass(PrimaryKeyRoleFunc.class)
 @JsonIgnoreProperties({"handler" , "hibernateLazyInitializer"})
 public class RoleFunc {

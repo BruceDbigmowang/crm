@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<title>客户管理——联系人管理</title>
+<head th:include="include/fore/newHeader::html" ></head>
+<body>
+<div id="workingArea">
+    <div th:replace="include/fore/top::html" ></div>
+    <div th:replace="include/fore/leftMenu::html" ></div>
+    <div th:replace="include/fore/homePages/customerManage/customerMaintain/contractManagePage::html" ></div>
+</div>
+<script>
+    var start = 1;
+    var pageSize = 0;
+
+    $(function () {
+        loadPrincipalListByPage();
+    })
+
+    function loadPrincipalListByPage() {
+        start = 1;
+        $.ajax({
+            type:"post",
+            data:{"start":start},
+            url:"showAllPrincipalByPage",
+            async:false,
+            success:function (data) {
+                $("#dataforContract").html("");
+                var principals = data.allPrincipal;
+                pageSize = data.pageSize;
+                for(var i = 0 ; i < principals.length ; i++){
+                    $("#dataforContract").append("<tr>"+
+                    "<td style='display: none;'>"+principals[i].id+"</td>"+
+                    "<td>"+principals[i].name+"</td>"+
+                    "<td>"+principals[i].phone+"</td>"+
+                    "<td>"+principals[i].email+"</td>"+
+                    "<td>"+principals[i].wechat+"</td>"+
+                    "<td style='display: none;'>"+principals[i].customerCode+"</td>"+
+                    "<td>"+"<a href='#' onclick='getCustomerByPrincipal(this)' data-toggle=\"modal\" data-target=\"#myModal\">"+principals[i].customerName+"</a>"+"</td>"+
+                    "</tr>");
+                }
+                $("#principalPage").show();
+                $.message({
+                    message:"当前为第"+start+"页",
+                    type:"success"
+                })
+            }
+        })
+    }
+
+    function getPreviousPrincipal() {
+        if(start > 1){
+            start = start - 1;
+            $.ajax({
+                type:"post",
+                data:{"start":start},
+                url:"showAllPrincipalByPage",
+                async:false,
+                success:function (data) {
+                    $("#dataforContract").html("");
+                    var principals = data.allPrincipal;
+                    pageSize = data.pageSize;
+                    for(var i = 0 ; i < principals.length ; i++){
+                        $("#dataforContract").append("<tr>"+
+                            "<td style='display: none;'>"+principals[i].id+"</td>"+
+                            "<td>"+principals[i].name+"</td>"+
+                            "<td>"+principals[i].phone+"</td>"+
+                            "<td>"+principals[i].email+"</td>"+
+                            "<td>"+principals[i].wechat+"</td>"+
+                            "<td style='display: none;'>"+principals[i].customerCode+"</td>"+
+                            "<td>"+"<a href='#' onclick='getCustomerByPrincipal(this)' data-toggle=\"modal\" data-target=\"#myModal\">"+principals[i].customerName+"</a>"+"</td>"+
+                            "</tr>");
+                    }
+                    $("#principalPage").show();
+                    $.message({
+                        message:"当前为第"+start+"页",
+                        type:"success"
+                    })
+                }
+            })
+        }
+    }
+
+    function getPrincipalNext() {
+        if(start < pageSize){
+            start = start + 1;
+            $.ajax({
+                type:"post",
+                data:{"start":start},
+                url:"showAllPrincipalByPage",
+                async:false,
+                success:function (data) {
+                    $("#dataforContract").html("");
+                    var principals = data.allPrincipal;
+                    pageSize = data.pageSize;
+                    for(var i = 0 ; i < principals.length ; i++){
+                        $("#dataforContract").append("<tr>"+
+                            "<td style='display: none;'>"+principals[i].id+"</td>"+
+                            "<td>"+principals[i].name+"</td>"+
+                            "<td>"+principals[i].phone+"</td>"+
+                            "<td>"+principals[i].email+"</td>"+
+                            "<td>"+principals[i].wechat+"</td>"+
+                            "<td style='display: none;'>"+principals[i].customerCode+"</td>"+
+                            "<td>"+"<a href='#' onclick='getCustomerByPrincipal(this)' data-toggle=\"modal\" data-target=\"#myModal\">"+principals[i].customerName+"</a>"+"</td>"+
+                            "</tr>");
+                    }
+                    $("#principalPage").show();
+                    $.message({
+                        message:"当前为第"+start+"页",
+                        type:"success"
+                    })
+                }
+            })
+        }
+    }
+
+    function getPrincipalLast() {
+        start = pageSize;
+        $.ajax({
+            type:"post",
+            data:{"start":start},
+            url:"showAllPrincipalByPage",
+            async:false,
+            success:function (data) {
+                $("#dataforContract").html("");
+                var principals = data.allPrincipal;
+                pageSize = data.pageSize;
+                for(var i = 0 ; i < principals.length ; i++){
+                    $("#dataforContract").append("<tr>"+
+                        "<td style='display: none;'>"+principals[i].id+"</td>"+
+                        "<td>"+principals[i].name+"</td>"+
+                        "<td>"+principals[i].phone+"</td>"+
+                        "<td>"+principals[i].email+"</td>"+
+                        "<td>"+principals[i].wechat+"</td>"+
+                        "<td style='display: none;'>"+principals[i].customerCode+"</td>"+
+                        "<td>"+"<a href='#' onclick='getCustomerByPrincipal(this)' data-toggle=\"modal\" data-target=\"#myModal\">"+principals[i].customerName+"</a>"+"</td>"+
+                        "</tr>");
+                }
+                $("#principalPage").show();
+                $.message({
+                    message:"当前为第"+start+"页",
+                    type:"success"
+                })
+            }
+        })
+    }
+    function findPrincipalByNameLike() {
+        var name = $("#principalSearch").val();
+        $.ajax({
+            type:"post",
+            data:{"name":name},
+            url:"findPrincipalByName",
+            async:false,
+            success:function (data) {
+                $("#dataforContract").html("");
+                var principals = data;
+                for(var i = 0 ; i < principals.length ; i++){
+                    $("#dataforContract").append("<tr>"+
+                        "<td style='display: none;'>"+principals[i].id+"</td>"+
+                        "<td>"+principals[i].name+"</td>"+
+                        "<td>"+principals[i].phone+"</td>"+
+                        "<td>"+principals[i].email+"</td>"+
+                        "<td>"+principals[i].wechat+"</td>"+
+                        "<td style='display: none;'>"+principals[i].customerCode+"</td>"+
+                        "<td>"+"<a href='#' onclick='getCustomerByPrincipal(this)' data-toggle=\"modal\" data-target=\"#myModal\">"+principals[i].customerName+"</a>"+"</td>"+
+                        "</tr>");
+                }
+
+            }
+        })
+    }
+
+    function getCustomerByPrincipal(obj) {
+        var customerCode = obj.parentNode.parentNode.cells[5].innerText;
+        $("#customerCode").val(customerCode);
+        $.ajax({
+            type:"post",
+            data:{"customerCode":customerCode},
+            url:"getCustomerPrincipal",
+            async:false,
+            success:function (data) {
+                var customer = data.customer;
+                var principals = data.allPrincipal;
+                document.getElementById("customerName").innerText=customer.name;
+                document.getElementById("principalName").innerText=customer.principal;
+                document.getElementById("principalPhone").innerText=customer.phone;
+                $("#principalDetail").html("");
+                for(var i = 0 ; i < principals.length ; i++){
+                    $("#principalDetail").append("<tr>"+
+                        "<td style='display: none;'>"+principals[i].id+"</td>"+
+                        "<td>"+"<a href='#' onclick='getPrincipalDetail(this)' data-toggle=\"modal\" data-target=\"#myModal2\">"+principals[i].name+"</a>"+"</td>"+
+                        "<td>"+principals[i].phone+"</td>"+
+                        "<td>"+principals[i].sex+"</td>"+
+                        "<td>"+principals[i].position+"</td>"+
+                        "<td>"+principals[i].hobby+"</td>"+
+                        "<td>"+principals[i].relationship+"</td>"+
+                        "<td>"+principals[i].birthday+"</td>"+
+                        "<td>"+principals[i].mainPrincipal+"</td>"+
+                        "</tr>");
+                }
+            }
+        })
+    }
+
+    function getPrincipalDetail(obj) {
+        var id = obj.parentNode.parentNode.cells[0].innerText;
+        $("#pId").val(id);
+        $.ajax({
+            type:"post",
+            data:{"pId":id},
+            url:"getPrincipalDetail",
+            async:false,
+            success:function (data) {
+                $("#name").val(data.name);
+                $("#tel").val(data.phone);
+                $("#email").val(data.email);
+                $("#wechat").val(data.wechat);
+                $("#sex").find("option").each(function(){
+                    if($(this).text() == data.sex)	{
+                        $(this).attr("selected",true);
+                    }
+                });
+                $("#position").val(data.position);
+                $("#hobby").val(data.hobby);
+                $("#relationship").val(data.relationship);
+                $("#birthday").val(data.birthday);
+
+                if(data.mainPrincipal=="N"){
+                    $("#inc1").removeAttr("checked");
+                    $("#inc0").attr("checked","checked");
+                }else{
+                    $("#inc0").removeAttr("checked");
+                    $("#inc1").attr("checked","checked");
+                }
+            }
+        })
+    }
+
+    function deletePrincipal() {
+        var pId = $("#pId").val();
+        $.ajax({
+            type:"post",
+            data:{"pId":pId},
+            url:"deletePrincipal",
+            async:false,
+            success:function (data) {
+                if(data == "OK"){
+                    $.message({
+                        message:"联系人已删除",
+                        type:'success'
+                    });
+                    $("#myModal2").modal('hide');
+                    loadPrincipalListByPage();
+                    showUpdatePrincipal();
+
+                }else{
+                    $.message({
+                        message:data,
+                        type:'error'
+                    })
+                }
+            }
+        })
+
+    }
+    function showUpdatePrincipal() {
+        var customerCode = $("#customerCode").val();
+        $.ajax({
+            type:"post",
+            data:{"customerCode":customerCode},
+            url:"getCustomerPrincipal",
+            async:false,
+            success:function (data) {
+                var customer = data.customer;
+                var principals = data.allPrincipal;
+                document.getElementById("customerName").innerText=customer.name;
+                document.getElementById("principalName").innerText=customer.principal;
+                document.getElementById("principalPhone").innerText=customer.phone;
+                $("#principalDetail").html("");
+                for(var i = 0 ; i < principals.length ; i++){
+                    $("#principalDetail").append("<tr>"+
+                        "<td style='display: none;'>"+principals[i].id+"</td>"+
+                        "<td>"+"<a href='#' onclick='getPrincipalDetail(this)' data-toggle=\"modal\" data-target=\"#myModal2\">"+principals[i].name+"</a>"+"</td>"+
+                        "<td>"+principals[i].phone+"</td>"+
+                        "<td>"+principals[i].sex+"</td>"+
+                        "<td>"+principals[i].position+"</td>"+
+                        "<td>"+principals[i].hobby+"</td>"+
+                        "<td>"+principals[i].relationship+"</td>"+
+                        "<td>"+principals[i].birthday+"</td>"+
+                        "<td>"+principals[i].mainPrincipal+"</td>"+
+                        "</tr>");
+                }
+            }
+        })
+    }
+
+    function saveNewPrincipal() {
+        var customerCode = $("#customerCode").val();
+        var principalName = $("#name2").val();
+        var phone = $("#tel2").val();
+        var email = $("#email2").val();
+        var wechat = $("#wechat2").val();
+        var sex = $("#sex2 option:selected").val();
+        var position = $("#position2").val();
+        var hobby = $("#hobby2").val();
+        var relationship = $("#relationship2").val();
+        var birthday = $("#birthday2").val();
+        var mainPrincipal = $("input[name='mainPrincipal2']:checked").val();
+
+        var data = {"customerCode":customerCode , "principalName":principalName , "phone":phone , "email":email , "wechat":wechat , "sex":sex , "position":position , "hobby":hobby , "relationship":relationship , "birthday":birthday , "mainPrincipal":mainPrincipal};
+
+        $.ajax({
+            type:"post",
+            data:data,
+            url:"createNewPrincipal",
+            async:false,
+            success:function (data) {
+                if(data == "OK"){
+                    $.message({
+                        message:"数据已保存",
+                        type:'success'
+                    });
+                    $("#myModal3").modal('hide');
+                    loadPrincipalListByPage();
+                    showUpdatePrincipal();
+                }else{
+                    $.message({
+                        message:data,
+                        type:"error"
+                    });
+                }
+            }
+        })
+    }
+
+    function updatePrincipal() {
+        var pId = $("#pId").val();
+        var principalName = $("#name").val();
+        var phone = $("#tel").val();
+        var email = $("#email").val();
+        var wechat = $("#wechat").val();
+        var sex = $("#sex option:selected").val();
+        var position = $("#position").val();
+        var hobby = $("#hobby").val();
+        var relationship = $("#relationship").val();
+        var birthday = $("#birthday").val();
+        var mainPrincipal = $("input[name='mainPrincipal']:checked").val();
+
+        var data = {"pId":pId , "principalName":principalName , "phone":phone , "email":email , "wechat":wechat , "sex":sex , "position":position , "hobby":hobby , "relationship":relationship , "birthday":birthday , "mainPrincipal":mainPrincipal};
+
+        $.ajax({
+            type:"post",
+            data:data,
+            url:"updatePrincipalInfo",
+            async:false,
+            success:function (data) {
+                if(data == "OK"){
+                    $.message({
+                        message:"数据已保存",
+                        type:'success'
+                    });
+                    $("#myModal2").modal('hide');
+                    loadPrincipalListByPage();
+                    showUpdatePrincipal();
+                }else{
+                    $.message({
+                        message:data,
+                        type:"error"
+                    });
+                }
+            }
+        })
+    }
+
+</script>
+</body>
+</html>

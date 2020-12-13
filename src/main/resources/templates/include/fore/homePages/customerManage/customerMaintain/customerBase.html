@@ -44,7 +44,6 @@
                 <th>客户类型</th>
                 <th>决策者</th>
                 <th>项目负责人</th>
-                <th>所属行业</th>
                 <th>销售人员</th>
                 <th>创建时间</th>
             </tr>
@@ -52,7 +51,7 @@
             <tbody id="dataforCustomer"></tbody>
         </table>
         <div id="customerPage" style="width:1050px;display: none;text-align: center">
-            <a style="color: #ff6d0a;" onclick="findFirstCustomer()">首页</a>&nbsp&nbsp&nbsp<a style="color: #ff6d0a;" onclick="findPreviousCustomer()">上一页</a>&nbsp&nbsp&nbsp<a style="color: #ff6d0a;" onclick="findNextCustomer()">下一页</a>&nbsp&nbsp&nbsp<a style="color: #ff6d0a;" onclick="findLastCustomer()">末页</a>
+            <a href="#" style="color: #ff6d0a;" onclick="findFirstCustomer()">首页</a>&nbsp&nbsp&nbsp<a href="#" style="color: #ff6d0a;" onclick="findPreviousCustomer()">上一页</a>&nbsp&nbsp&nbsp<a href="#" style="color: #ff6d0a;" onclick="findNextCustomer()">下一页</a>&nbsp&nbsp&nbsp<a href="#" style="color: #ff6d0a;" onclick="findLastCustomer()">末页</a>
         </div>
     </div>
     </div>
@@ -78,17 +77,30 @@
                         </td>
                     </tr>
                     <tr>
+                        <td style="font-size: 14px;vertical-align: inherit;"><span style="color: red;">*</span>公司地址</td>
+                        <td id="distpicker">
+                            <select id="province" class="form-control" style="font-size: 14px;width: 130px;" onchange="chooseArea()"></select>
+                            <select id="city" class="form-control" style="font-size: 14px;width: 130px;"></select>
+                            <select id="area" class="form-control" style="font-size: 14px;width: 130px;"></select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="font-size: 14px;vertical-align: inherit;"><span style="color: red;">*</span>详细地址</td>
+                        <td><input id="companyAddress" class="form-control"  placeholder="请输入"></td>
+                    </tr>
+                    <tr>
                         <td  style="text-align: left;vertical-align: inherit;font-size: 14px;"><span style="color: red;">*</span>地区</td>
                         <td style="vertical-align: inherit;">
-                            <select id="area" class="form-control">
+                            <select id="areaSec" class="form-control" disabled="disabled">
                                 <option value="0">--请选择--</option>
-                                <option value="华北">华北</option>
-                                <option value="东北">东北</option>
-                                <option value="华东">华东</option>
-                                <option value="华中">华中</option>
-                                <option value="华南">华南</option>
-                                <option value="西南">西南</option>
-                                <option value="西北">西北</option>
+                                <option value="华北地区">华北地区</option>
+                                <option value="东北地区">东北地区</option>
+                                <option value="华东地区">华东地区</option>
+                                <option value="华中地区">华中地区</option>
+                                <option value="华南地区">华南地区</option>
+                                <option value="西南地区">西南地区</option>
+                                <option value="西北地区">西北地区</option>
+                                <option value="山东地区">山东地区</option>
                             </select>
                         </td>
                     </tr>
@@ -143,15 +155,12 @@
                         <td style="font-size: 14px;vertical-align: inherit;">所属行业</td>
                         <td><input id="industry" class="form-control"  placeholder="请输入"></td>
                     </tr>
+
                     <tr id="moreInfo5" style="display: none;">
-                        <td style="font-size: 14px;vertical-align: inherit;">公司地址</td>
-                        <td><input id="companyAddress" class="form-control"  placeholder="请输入"></td>
-                    </tr>
-                    <tr id="moreInfo6" style="display: none;">
                         <td style="font-size: 14px;vertical-align: inherit;">年度销售额</td>
                         <td><input id="saleAmount" class="form-control"  placeholder="请输入"></td>
                     </tr>
-                    <tr id="moreInfo7" style="display: none;">
+                    <tr id="moreInfo6" style="display: none;">
                         <td style="font-size: 14px;vertical-align: inherit;">年度刀具用量</td>
                         <td><input id="useAmount" class="form-control"  placeholder="请输入"></td>
                     </tr>
@@ -170,7 +179,116 @@
     </div><!-- /.modal-dialog -->
 </div>
 
-    </div>
+        <div class="modal fade" id="myModal2"  data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button data-dismiss="modal" class="close" type="button"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                        <h4 class="modal-title">客户信息</h4>
+                    </div>
+                    <div class="modal-body">
+                        <table class="table" >
+                            <tr style="height: 47px;">
+                                <td  style="text-align: left;vertical-align: inherit;font-size: 14px;width: 110px;" >客户编号</td>
+                                <td  style="vertical-align: inherit;"><input id="customerNum" class="form-control"  readonly></td>
+                            </tr>
+                            <tr style="height: 47px;">
+                                <td  style="text-align: left;vertical-align: inherit;font-size: 14px;width: 110px;" >客户名称</td>
+                                <td  style="vertical-align: inherit;"><input id="customerName2" class="form-control"  readonly></td>
+                            </tr>
+                            <tr>
+                                <td style="text-align: left;vertical-align: inherit;font-size: 14px;">客户类型</td>
+                                <td style="text-align: left;vertical-align: inherit;">
+                                    <input id="customerType2" class="form-control"  placeholder="请输入">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td  style="text-align: left;vertical-align: inherit;font-size: 14px;">地区</td>
+                                <td style="vertical-align: inherit;">
+                                    <select id="area2" class="form-control">
+                                        <option value="0">--请选择--</option>
+                                        <option value="华北">华北</option>
+                                        <option value="东北">东北</option>
+                                        <option value="华东">华东</option>
+                                        <option value="华中">华中</option>
+                                        <option value="华南">华南</option>
+                                        <option value="西南">西南</option>
+                                        <option value="西北">西北</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>客户来源</td>
+                                <td>
+                                    <input id="source" class="form-control" readonly>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="text-align: left;vertical-align: inherit;font-size: 14px;">决策者</td>
+                                <td style="text-align: left;vertical-align: inherit;">
+                                    <input id="decisionMaker2" class="form-control"  placeholder="请输入">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="text-align: left;vertical-align: inherit;font-size: 14px;">决策者联系方式</td>
+                                <td style="text-align: left;vertical-align: inherit;">
+                                    <input id="decisionPhone2" class="form-control"  placeholder="请输入">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="text-align: left;vertical-align: inherit;font-size: 14px;">项目负责人</td>
+                                <td style="text-align: left;vertical-align: inherit;">
+                                    <input id="principal2" class="form-control"  placeholder="请输入">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="text-align: left;vertical-align: inherit;font-size: 14px;"><span style="color: red;">*</span>项目负责人联系方式</td>
+                                <td style="text-align: left;vertical-align: inherit;">
+                                    <input id="phone2" class="form-control"  placeholder="请输入">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="font-size: 14px;vertical-align: inherit;">上级客户</td>
+                                <td><input id="superior2" class="form-control"  placeholder="请输入"></td>
+                            </tr>
+                            <tr>
+                                <td>邮箱</td>
+                                <td style="text-align: left;vertical-align: inherit;">
+                                    <input id="email2" class="form-control"  placeholder="请输入">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="font-size: 14px;vertical-align: inherit;">微信</td>
+                                <td><input id="wechat2" class="form-control"  placeholder="请输入"></td>
+                            </tr>
+                            <tr>
+                                <td style="font-size: 14px;vertical-align: inherit;">所属行业</td>
+                                <td><input id="industry2" class="form-control"  placeholder="请输入"></td>
+                            </tr>
+                            <tr>
+                                <td style="font-size: 14px;vertical-align: inherit;">公司地址</td>
+                                <td><input id="companyAddress2" class="form-control"  placeholder="请输入"></td>
+                            </tr>
+                            <tr>
+                                <td style="font-size: 14px;vertical-align: inherit;">年度销售额</td>
+                                <td><input id="saleAmount2" class="form-control"  placeholder="请输入"></td>
+                            </tr>
+                            <tr>
+                                <td style="font-size: 14px;vertical-align: inherit;">年度刀具用量</td>
+                                <td><input id="useAmount2" class="form-control"  placeholder="请输入"></td>
+                            </tr>
+
+                        </table>
+                    </div>
+                    <div class="modal-footer">
+                        <button data-dismiss="modal" class="btn btn-default" type="button">关闭</button>
+                        <button class="btn btn-primary" type="button" onclick="updateCustomerInfo()">提交</button>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div>
+
+</div>
     <div class="row footer">
         <div class="col-md-6 text-left">
             &nbsp;&nbsp;&nbsp;&nbsp;

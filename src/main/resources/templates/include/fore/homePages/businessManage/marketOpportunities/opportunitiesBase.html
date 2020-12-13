@@ -1,81 +1,231 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+<div id="allContent" class="content" th:fragment="html">
+    <!-- START CONTAINER -->
+    <div id="mainContent" class="container-widget">
 
-<script>
-    $("#distpicker").distpicker();
+        <div style="width:100%;margin: 0px auto;">
+            <div>
+                <span style="font-size: 16px;">商机管理 / 商机/线索/ 商机/线索更新</span>
+                <div style="background-color: white;height:617px"><br>
 
-    window.onload = getOppoByPageLoad;
-</script>
+                    <div id="distpicker" style="margin-top: 20px;">
+                        <select id="province" class="form-control" style="font-size: 14px;width: 150px;"></select>
+                        <select id="city" class="form-control" style="font-size: 14px;width: 150px;"></select>
+                        <select id="area" class="form-control" style="font-size: 14px;width: 150px;"></select>
+                        <button type="button" class="btn btn-primary" style="background-color: #ff9f20;font-size: 14px;margin-top: -4px;outline-color: #ffb72e;" onclick="getOppoByAddress()">查&nbsp&nbsp&nbsp&nbsp询</button>
+                    </div>
+                    <br>
+                    <div>
+                        <span style="font-size: 14px;display: contents">筛选：</span>
+                        <button type="button" class="btn btn-sm" style="background-color: #ffe4bb;color: #ff6d0a;outline-color: #ffb72e;" onclick="getOppoByPageLoad()">全部</button>
+                        <button type="button" class="btn btn-sm" style="background-color: #ffe4bb;color: #ff6d0a;outline-color: #ffb72e;" onclick="getOppoByResource(this)">广告</button>
+                        <button type="button" class="btn btn-sm" style="background-color: #ffe4bb;color: #ff6d0a;outline-color: #ffb72e;" onclick="getOppoByResource(this)">活动</button>
+                        <button type="button" class="btn btn-sm" style="background-color: #ffe4bb;color: #ff6d0a;outline-color: #ffb72e;" onclick="getOppoByResource(this)">电话</button>
+                        <button type="button" class="btn btn-sm" style="background-color: #ffe4bb;color: #ff6d0a;outline-color: #ffb72e;" onclick="getOppoByResource(this)">邮件</button>
+                        <button type="button" class="btn btn-sm" style="background-color: #ffe4bb;color: #ff6d0a;outline-color: #ffb72e;" onclick="getOppoByResource(this)">代理商</button>
+                        <button type="button" class="btn btn-sm" style="background-color: #ffe4bb;color: #ff6d0a;outline-color: #ffb72e;" onclick="getOppoByResource(this)">个人转介绍</button>
+                        <button type="button" class="btn btn-sm" style="background-color: #ffe4bb;color: #ff6d0a;outline-color: #ffb72e;" onclick="getOppoByResource(this)">公共关系</button>
+                        <button type="button" class="btn btn-sm" style="background-color: #ffe4bb;color: #ff6d0a;outline-color: #ffb72e;" onclick="getOppoByResource(this)">研讨会</button>
+                        <button type="button" class="btn btn-sm" style="background-color: #ffe4bb;color: #ff6d0a;outline-color: #ffb72e;" onclick="getOppoByResource(this)">其它</button>
+                    </div>
+                    <br>
+                    <div style="height: 350px;overflow: auto;">
+                        <table class="table table-striped table-bordered table-hover  table-condensed" style="width: 100%;font-size: 14px;">
+                            <thead style="background-color: #dde5e5;font-size: 14px;text-align: left;vertical-align: inherit;">
+                            <tr>
+                                <th style="display: none;">编号</th>
+                                <th>线索来源</th>
+                                <th>线索主题</th>
+                                <th>公司名称</th>
+                                <th>联系人</th>
+                                <th>办公电话</th>
+                                <th>移动电话</th>
+                                <th>负责人</th>
+                                <th>创建日期</th>
+                                <th>操作</th>
+                            </tr>
+                            </thead>
+                            <tbody id="opportunityData"></tbody>
+                        </table>
+                        <div id="pageDIV" style="width:200px;margin: 0px auto;">
+                            <a style="color: #ea9e11;" onclick="getOppoByPageFirst()">首 页</a>&nbsp&nbsp<a style="color: #ea9e11;" onclick="getOppoByPagePrevious()">上一页</a>&nbsp&nbsp<a style="color: #ea9e11;" onclick="getOppoByPageNext()">下一页</a>&nbsp&nbsp<a style="color: #ea9e11;" onclick="getOppoByPageLast()">尾 页</a>
+                        </div>
+                    </div>
 
-<div style="margin-left: 20px;margin-top: 20px;">
-    <span style="font-size: 16px;">商机管理 > 商机/线索 > 我的商机、线索</span>
-    <div id="distpicker" style="margin-top: 20px;">
-        <select id="province" class="form-control" style="font-size: 14px;width: 150px;"></select>
-        <select id="city" class="form-control" style="font-size: 14px;width: 150px;"></select>
-        <select id="area" class="form-control" style="font-size: 14px;width: 150px;"></select>
-        <button type="button" class="btn btn-primary" style="background-color: #ff9f20;font-size: 14px;margin-top: -4px;outline-color: #ffb72e;" onclick="getOppoByAddress()">查&nbsp&nbsp&nbsp&nbsp询</button>
+                </div>
+            </div>
+        </div>
+
     </div>
-    <br>
-    <div>
-        <span style="font-size: 14px;display: contents">筛选：</span>
-        <button type="button" class="btn btn-sm" style="background-color: #ffe4bb;color: #ff6d0a;outline-color: #ffb72e;" onclick="getOppoByPageLoad()">全部</button>
-        <button type="button" class="btn btn-sm" style="background-color: #ffe4bb;color: #ff6d0a;outline-color: #ffb72e;" onclick="getOppoByResource(this)">广告</button>
-        <button type="button" class="btn btn-sm" style="background-color: #ffe4bb;color: #ff6d0a;outline-color: #ffb72e;" onclick="getOppoByResource(this)">活动</button>
-        <button type="button" class="btn btn-sm" style="background-color: #ffe4bb;color: #ff6d0a;outline-color: #ffb72e;" onclick="getOppoByResource(this)">电话</button>
-        <button type="button" class="btn btn-sm" style="background-color: #ffe4bb;color: #ff6d0a;outline-color: #ffb72e;" onclick="getOppoByResource(this)">邮件</button>
-        <button type="button" class="btn btn-sm" style="background-color: #ffe4bb;color: #ff6d0a;outline-color: #ffb72e;" onclick="getOppoByResource(this)">代理商</button>
-        <button type="button" class="btn btn-sm" style="background-color: #ffe4bb;color: #ff6d0a;outline-color: #ffb72e;" onclick="getOppoByResource(this)">个人转介绍</button>
-        <button type="button" class="btn btn-sm" style="background-color: #ffe4bb;color: #ff6d0a;outline-color: #ffb72e;" onclick="getOppoByResource(this)">公共关系</button>
-        <button type="button" class="btn btn-sm" style="background-color: #ffe4bb;color: #ff6d0a;outline-color: #ffb72e;" onclick="getOppoByResource(this)">研讨会</button>
-        <button type="button" class="btn btn-sm" style="background-color: #ffe4bb;color: #ff6d0a;outline-color: #ffb72e;" onclick="getOppoByResource(this)">其它</button>
+
+    <div class="modal fade" id="myModal"  data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button data-dismiss="modal" class="close" type="button"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title">商机/线索详情</h4>
+                </div>
+                <div class="modal-body">
+                    <input id="opId" type="hidden">
+                    <table>
+                        <tr>
+                            <td style="width: 150px;text-align: center;height: 40px;font-size: 14px;vertical-align: inherit;">线索主题</td>
+                            <td style="width: 350px;"><input id="body" class="form-control" placeholder="请输入..." readonly></td>
+
+                        </tr>
+                        <tr>
+                            <td style="width: 150px;text-align: center;height: 40px;font-size: 14px;vertical-align: inherit;">线索来源</td>
+                            <td>
+                                <select id="source" class="form-control" disabled="disabled">
+                                    <option value="0">--请选择--</option>
+                                    <option value="广告">广告</option>
+                                    <option value="活动">活动</option>
+                                    <option value="电话">电话</option>
+                                    <option value="邮件">邮件</option>
+                                    <option value="代理商">代理商</option>
+                                    <option value="个人转介绍">个人转介绍</option>
+                                    <option value="公共关系">公共关系</option>
+                                    <option value="研讨会">研讨会</option>
+                                    <option value="其它">其它</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="width: 150px;text-align: center;height: 40px;font-size: 14px;vertical-align: inherit;">客户名称</td>
+                            <td><input id="companyName" class="form-control" placeholder="请输入..." readonly></td>
+                        </tr>
+                        <tr>
+                            <td style="width: 150px;text-align: center;height: 40px;font-size: 14px;vertical-align: inherit;">联系人</td>
+                            <td><input id="contract" class="form-control" placeholder="请输入..." ></td>
+                        </tr>
+                        <tr>
+                            <td style="width: 150px;text-align: center;height: 40px;font-size: 14px;vertical-align: inherit;">移动电话</td>
+                            <td><input id="mobile" class="form-control" placeholder="请输入..." ></td>
+                        </tr>
+                        <tr>
+                            <td style="width: 150px;text-align: center;height: 40px;font-size: 14px;vertical-align: inherit;">办公电话</td>
+                            <td><input id="phone" class="form-control" placeholder="请输入..."></td>
+                        </tr>
+                        <tr>
+                            <td style="width: 150px;text-align: center;height: 40px;font-size: 14px;vertical-align: inherit;">邮箱</td>
+                            <td><input id="email" class="form-control" placeholder="请输入..."></td>
+                        </tr>
+                        <tr>
+                            <td style="width: 150px;text-align: center;height: 40px;font-size: 14px;vertical-align: inherit;">传真</td>
+                            <td><input id="fax" class="form-control" placeholder="请输入..."></td>
+                        </tr>
+                        <tr>
+                            <td style="width: 150px;text-align: center;height: 40px;font-size: 14px;vertical-align: inherit;">负责人</td>
+                            <td><input id="principal" class="form-control" placeholder="请输入..."></td>
+                        </tr>
+
+                        <tr>
+                            <td style="width: 150px;text-align: center;height: 40px;font-size: 14px;vertical-align: inherit;">负责部门</td>
+                            <td><input id="dept" class="form-control" placeholder="请输入..."></td>
+                        </tr>
+
+<!--                        <tr><td style="width: 150px;text-align: center;height: 40px;font-size: 14px;vertical-align: inherit;">源单类型</td>-->
+<!--                            <td><input id="leafType" class="form-control" placeholder="请输入..." ></td></tr>-->
+<!--                        <tr>-->
+<!--                            <td style="width: 150px;text-align: center;height: 40px;font-size: 14px;vertical-align: inherit;">源单编号</td>-->
+<!--                            <td style="vertical-align: inherit;"><input id="leafNum" class="form-control" placeholder="请输入..." ></td>-->
+<!--                        </tr>-->
+                        <tr>
+                            <td style="width: 150px;text-align: center;height: 40px;font-size: 14px;vertical-align: inherit;">详细地址</td>
+                            <td><input id="address" class="form-control" placeholder="详细地址..." readonly></td>
+                        </tr>
+                        <tr></tr>
+                        <tr></tr>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button data-dismiss="modal" class="btn btn-default" type="button">关闭</button>
+                    <button class="btn btn-primary" type="button" onclick="updateDetail()">提交</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
     </div>
-    <br>
-    <div style="height: 350px;overflow: auto;">
-        <table class="table table-striped table-bordered table-hover  table-condensed" style="width: 1100px;font-size: 14px;">
-            <thead style="background-color: #dde5e5;font-size: 14px;text-align: left;vertical-align: inherit;">
-            <tr>
-                <th>姓名</th>
-                <th>公司名称</th>
-                <th>线索来源</th>
-                <th>联系人</th>
-                <th>电话</th>
-                <th>手机</th>
-                <th>负责人</th>
-                <th>创建日期</th>
-                <th>操作</th>
-            </tr>
-            </thead>
-            <tbody id="opportunityData"></tbody>
-        </table>
-        <div id="pageDIV" style="width:200px;margin: 0px auto;">
-            <a style="color: #ea9e11;" onclick="getOppoByPageFirst()">首 页</a>&nbsp&nbsp<a style="color: #ea9e11;" onclick="getOppoByPagePrevious()">上一页</a>&nbsp&nbsp<a style="color: #ea9e11;" onclick="getOppoByPageNext()">下一页</a>&nbsp&nbsp<a style="color: #ea9e11;" onclick="getOppoByPageLast()">尾 页</a>
+
+    <div class="modal fade" id="myModal2"  data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button data-dismiss="modal" class="close" type="button"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title">活动推广新增</h4>
+                </div>
+                <div class="modal-body">
+                    <input id="oppId" type="hidden">
+                    <input id="theme" type="hidden">
+                    <table>
+                        <tr style="height: 60px;">
+                            <td style="width: 150px;text-align: center;height: 40px;font-size: 14px;vertical-align: inherit;">活动类型</td>
+                            <td>
+                                <select id="opportunityType" class="form-control" onchange="chooseActivityType()">
+                                    <option value="0">--请选择--</option>
+                                    <option value="线上推广">线上推广</option>
+                                    <option value="线下推广">线下推广</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr style="height: 60px;">
+                            <td style="width: 150px;text-align: center;height: 40px;font-size: 14px;vertical-align: inherit;">活动分类</td>
+                            <td>
+                                <select id="activity" class="form-control" onchange="chooseActivity()">
+                                    <option value="论坛">论坛</option>
+                                    <option value="展会">展会</option>
+                                    <option value="广告">广告</option>
+                                    <option value="协会活动">协会活动</option>
+                                    <option value="其它">其它</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr id="activityDetail" style="height: 60px;display: none;">
+                            <td style="width: 150px;text-align: center;height: 40px;font-size: 14px;vertical-align: inherit;">活动分类</td>
+                            <td><input id="other" class="form-control" placeholder="请备注名称"></td>
+                        </tr>
+                        <tr style="height: 60px;">
+                            <td style="width: 150px;text-align: center;height: 40px;font-size: 14px;vertical-align: inherit;">活动说明</td>
+                            <td><input id="describe" class="form-control" placeholder="请输入..." ></td>
+                        </tr>
+                        <tr style="height: 60px;">
+                            <td style="width: 150px;text-align: center;height: 40px;font-size: 14px;vertical-align: inherit;">费用预算</td>
+                            <td><input id="spend" class="form-control" placeholder="请输入..." ></td>
+                        </tr>
+                        <tr style="height: 60px;">
+                            <td style="width: 150px;text-align: center;height: 40px;font-size: 14px;vertical-align: inherit;">是否在计划内</td>
+                            <td>
+                                <input name="isPlan" type="radio" value="Y" style=";vertical-align:middle; margin-top:0;">是
+                                <input name="isPlan" type="radio" value="N" style="margin-left: 10px;;vertical-align:middle; margin-top:0;">否
+                            </td>
+                        </tr>
+                        <tr style="height: 60px;">
+                            <td style="width: 150px;text-align: center;height: 40px;font-size: 14px;vertical-align: inherit;">合同金额</td>
+                            <td><input id="contractAmount" class="form-control" placeholder="请输入..."></td>
+                        </tr>
+                        <tr style="height: 60px;">
+                            <td style="width: 150px;text-align: center;height: 40px;font-size: 14px;vertical-align: inherit;">合同附件</td>
+                            <td><input id="contractFile" name="contractFile" class="form-control" type="file" onchange="saveImage()"></td>
+                        </tr>
+                        <tr id="channelTd" style="height: 60px;display: none;">
+                            <td style="width: 150px;text-align: center;height: 40px;font-size: 14px;vertical-align: inherit;">推广渠道</td>
+                            <td><input id="channel" name="contractFile" class="form-control" placeholder="请输入..."></td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button data-dismiss="modal" class="btn btn-default" type="button">关闭</button>
+                    <button class="btn btn-primary" type="button" onclick="saveActivityData()">提交</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div>
+
+    <div class="row footer">
+        <div class="col-md-6 text-left">
+            &nbsp;&nbsp;&nbsp;&nbsp;
+        </div>
+        <div class="col-md-6 text-right">
+            &nbsp;&nbsp;&nbsp;&nbsp;
         </div>
     </div>
 </div>
 
-<div class="modal fade" id="myModal"  data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button data-dismiss="modal" class="close" type="button"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
-                <h4 class="modal-title">提问</h4>
-            </div>
-            <div class="modal-body">
-                <p>问题描述</p>
-                <textarea class="form-control"></textarea>
-            </div>
-            <div class="modal-footer">
-                <button data-dismiss="modal" class="btn btn-default" type="button">关闭</button>
-                <button class="btn btn-primary" type="button">提交</button>
-            </div>
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-</div>
-
-</body>
-</html>

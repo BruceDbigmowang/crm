@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<title>合同管理——合同查询</title>
+<head th:include="include/fore/newHeader::html" ></head>
+<body>
+<div id="workingArea">
+    <div th:replace="include/fore/top::html" ></div>
+    <div th:replace="include/fore/leftMenu::html" ></div>
+    <div th:replace="include/fore/homePages/contractManage/contractSumPage::html" ></div>
+</div>
+<script>
+    $(function () {
+        loadlFile();
+    });
+
+    function findContractByCustomer() {
+        var search = $("#contractSearch").val();
+        $.ajax({
+            type:"post",
+            data:{"search":search},
+            url:"showContractList",
+            async:false,
+            success:function (data) {
+                $("#allFirst").html("");
+                var records = data.records;
+                var contractNames = data.contractNames;
+                var fileNames = data.fileNames;
+                for(var i = 0 ; i < records.length ; i++){
+                    var contractNameList = contractNames[i].split(",");
+                    var fileNameList = fileNames[i].split(",");
+                    var fileLink = "";
+                    for(var j = 0 ; j < contractNameList.length ; j++){
+                        if(j == contractNameList.length - 1){
+                            fileLink = fileLink+"<a href='downLoadContractExtra?filename="+fileNameList[j]+"'>"+contractNameList[j]+"</a>";
+                        }else{
+                            fileLink = fileLink+"<a href='downLoadContractExtra?filename="+fileNameList[j]+"'>"+contractNameList[j]+"</a>"+",";
+                        }
+                    }
+                    $("#allFirst").append("<tr>"
+                        +"<td style='display: none;'>"+records[i].customerCode+"</td>"
+                        +"<td>"+records[i].customerName+"</td>"
+                        +"<td>"+records[i].contractFileID+"</td>"
+                        +"<td>"+"<a href='downLoadContractS?filename="+records[i].fileName+"'>"
+                        +records[i].contractFileName+"</a>"+"</td>"
+                        +"<td>"+fileLink+"</td>"
+                        +"<td>"+records[i].name+"</td>"
+                        +"<td>"+"<a data-toggle=\"modal\" data-target=\"#myModal\" onclick='getDetail(this)' href='#'>"+"查看详情"+"</a>"+"</td>"
+                        +"</tr>");
+                }
+            }
+        })
+    }
+
+    function loadlFile() {
+        $.ajax({
+            type:"post",
+            url:"getHadFile",
+            async:false,
+            success:function (data) {
+                $("#allFirst").html("");
+                var records = data.records;
+                var contractNames = data.contractNames;
+                var fileNames = data.fileNames;
+                for(var i = 0 ; i < records.length ; i++){
+                    var contractNameList = contractNames[i].split(",");
+                    var fileNameList = fileNames[i].split(",");
+                    var fileLink = "";
+                    for(var j = 0 ; j < contractNameList.length ; j++){
+                        if(j == contractNameList.length - 1){
+                            fileLink = fileLink+"<a href='downLoadContractExtra?filename="+fileNameList[j]+"'>"+contractNameList[j]+"</a>";
+                        }else{
+                            fileLink = fileLink+"<a href='downLoadContractExtra?filename="+fileNameList[j]+"'>"+contractNameList[j]+"</a>"+",";
+                        }
+                    }
+                    $("#allFirst").append("<tr>"
+                        +"<td style='display: none;'>"+records[i].customerCode+"</td>"
+                        +"<td>"+records[i].customerName+"</td>"
+                        +"<td>"+records[i].contractFileID+"</td>"
+                        +"<td>"+"<a href='downLoadContractS?filename="+records[i].fileName+"'>"
+                        +records[i].contractFileName+"</a>"+"</td>"
+                        +"<td>"+fileLink+"</td>"
+                        +"<td>"+records[i].name+"</td>"
+                        +"<td>"+"<a data-toggle=\"modal\" data-target=\"#myModal\" onclick='getDetail(this)' href='#'>"+"查看详情"+"</a>"+"</td>"
+                        +"</tr>");
+                }
+            }
+        })
+    }
+
+    function getDetail(obj) {
+        var salePlanID =  obj.parentNode.parentNode.cells[0].innerHTML;
+        $.ajax({
+            type:"post",
+            data:{"salePlanID":salePlanID},
+            url:"showAllContractInfo",
+            async:false,
+            success:function (data) {
+                $("#customerName").val(data.customerName);
+                $("#contractFileCode").val(data.contractFileID);
+                $("#contractFileName").val(data.contractFileName);
+                $("#produceCode").val(data.productCode);
+                $("#productName").val(data.productName);
+                var selectid = document.getElementById("serverContent");
+                for(i=0;i<selectid.length;i++){
+                    if(selectid[i].value==data.serverContent)
+                        selectid[i].selected = true;
+                }
+                var selectid2 = document.getElementById("clearWay");
+                for(i=0;i<selectid2.length;i++){
+                    if(selectid2[i].value==data.clearWay)
+                        selectid2[i].selected = true;
+                }
+                $("#currency").val(data.currency);
+                $("#parities").val(data.parities);
+                $("#annualMoney").val(data.annualMoney);
+                $("#concludeDate").val(data.concludeDate);
+                $("#effectiveDate").val(data.effectiveDate);
+                $("#deadline").val(data.deadline);
+                $("#contractExplain").val(data.contractExplain);
+                $("#price").val(data.price);
+                $("#serverAsk").val(data.serverAsk);
+                $("#steward").val(data.operator);
+                $("#technicist").val(data.technicist);
+                $("#assistant").val(data.server);
+                $("#operator").val(data.steward);
+                $("#cabinetAmount").val(data.cabineAmount);
+                $("#cabinetNum").val(data.cabineNum);
+                $("#cabinetSpend").val(data.cabineSpend);
+                if(data.useTDMP=="是"){
+                    $("#inc1").removeAttr("checked");
+                    $("#inc0").attr("checked","checked");
+                }else{
+                    $("#inc0").removeAttr("checked");
+                    $("#inc1").attr("checked","checked");
+                }
+                $("#TDMPSpend").val(data.tdmpSpend);
+                $("#payment").val(data.payment);
+                $("#otherServer").val(data.otherServer);
+                $("#remind").val(data.remind);
+                $("#dispose").val(data.dispose);
+
+            }
+        })
+    }
+
+</script>
+<style>
+    #mainContent{
+        overflow:hidden;
+        width:100%;
+    }
+
+    #tableBody{
+        width:calc(100% + 15px);/*使滚动条超出当前元素的父元素边界，而父元素设置了overflow为hidden，使溢出内容隐藏，即隐藏了滚动条*/
+        height:550px;
+        padding-right:15px;
+        box-sizing:content-box;/*兼容ie，使盒模型为w3c盒模型*/
+        overflow-y:scroll;/*控制能沿y轴滚动*/
+    }
+    #firstData{
+        width:100%;
+    }
+</style>
+</body>
+</html>

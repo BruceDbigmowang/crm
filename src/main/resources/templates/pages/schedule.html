@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<title>运营服务——计划排成</title>
+<head th:include="include/fore/newHeader::html" ></head>
+<body>
+<div id="workingArea">
+    <div th:replace="include/fore/top::html" ></div>
+    <div th:replace="include/fore/leftMenu::html" ></div>
+    <div th:replace="include/fore/homePages/saleProcessManage/operateServer/schedulePage::html" ></div>
+</div>
+
+<script>
+
+    var city = "";
+    $(function () {
+        judgeFunc();
+        loadFirstPlan();
+        loadYearMonth();
+    });
+
+    laydate.render({
+        elem: '#firstBdate', //指定元素
+        min:0,
+        trigger: 'click'
+    });
+    laydate.render({
+        elem: '#firstEdate', //指定元素
+        min:0,
+        trigger: 'click'
+    });
+    laydate.render({
+        elem: '#secondBdate', //指定元素
+        min:0,
+        trigger: 'click'
+    });
+    laydate.render({
+        elem: '#secondEdate', //指定元素
+        min:0,
+        trigger: 'click'
+    });
+    laydate.render({
+        elem: '#thirdBdate', //指定元素
+        min:0,
+        trigger: 'click'
+    });
+    laydate.render({
+        elem: '#thirdEdate', //指定元素
+        min:0
+    });
+    laydate.render({
+        elem: '#fourthBdate', //指定元素
+        min:0,
+        trigger: 'click'
+    });
+    laydate.render({
+        elem: '#fourthEdate', //指定元素
+        min:0,
+        trigger: 'click'
+    });
+    laydate.render({
+        elem: '#fifthBdate', //指定元素
+        min:0,
+        trigger: 'click'
+    });
+    laydate.render({
+        elem: '#fifthEdate', //指定元素
+        min:0,
+        trigger: 'click'
+    });
+    laydate.render({
+        elem: '#sixthBdate', //指定元素
+        min:0,
+        trigger: 'click'
+    });
+    laydate.render({
+        elem: '#sixthEdate', //指定元素
+        min:0,
+        trigger: 'click'
+    });
+    laydate.render({
+        elem: '#seventhBdate', //指定元素
+        min:0,
+        trigger: 'click'
+    });
+    laydate.render({
+        elem: '#seventhEdate', //指定元素
+        min:0,
+        trigger: 'click'
+    });
+    laydate.render({
+        elem: '#eighthBdate', //指定元素
+        min:0,
+        trigger: 'click'
+    });
+    laydate.render({
+        elem: '#eighthEdate', //指定元素
+        min:0,
+        trigger: 'click'
+    });
+    laydate.render({
+        elem: '#ninthBdate', //指定元素
+        min:0,
+        trigger: 'click'
+    });
+    laydate.render({
+        elem: '#ninthEdate', //指定元素
+        min:0,
+        trigger: 'click'
+    });
+    laydate.render({
+        elem: '#tenthBdate', //指定元素
+        min:0,
+        trigger: 'click'
+    });
+    laydate.render({
+        elem: '#tenthEdate', //指定元素
+        min:0,
+        trigger: 'click'
+    });
+    laydate.render({
+        elem: '#eleventhBdate', //指定元素
+        min:0,
+        trigger: 'click'
+    });
+    laydate.render({
+        elem: '#eleventhEdate', //指定元素
+        min:0,
+        trigger: 'click'
+    });
+    laydate.render({
+        elem: '#twelfthBdate', //指定元素
+        min:0,
+        trigger: 'click'
+    });
+    laydate.render({
+        elem: '#twelfthEdate', //指定元素
+        min:0,
+        trigger: 'click'
+    });
+    laydate.render({
+        elem: '#thirteenthBdate', //指定元素
+        min:0,
+        trigger: 'click'
+    });
+    laydate.render({
+        elem: '#thirteenthEdate', //指定元素
+        min:0,
+        trigger: 'click'
+    });
+    laydate.render({
+        elem: '#fourteenthBdate', //指定元素
+        min:0,
+        trigger: 'click'
+    });
+    laydate.render({
+        elem: '#fourteenthEdate', //指定元素
+        min:0,
+        trigger: 'click'
+    });
+
+    function judgeFunc() {
+        $.ajax({
+            type:"post",
+            url:"getScheduleRole",
+            async:false,
+            success:function (data) {
+                $("#funcInput").val(data);
+            }
+        })
+    }
+
+    function loadFirstPlan() {
+        var role = $("#funcInput").val();
+        if(role == "0"){
+            var status = "ninth";
+            $.ajax({
+                type:"post",
+                data:{"status":status},
+                url:"getAllOperateArrange",
+                async:false,
+                success:function (data) {
+                    var list1 = data.notArrange;
+                    var list2 = data.arranged;
+                    $("#allFirst").html("");
+                    for(var i = 0 ; i < list1.length ; i++){
+                        $("#allFirst").append("<tr>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].id+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].customerName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].describe+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].deadline+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].principalName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+
+                            "<a href='#' data-toggle=\"modal\" data-target=\"#myModal\" onclick=\"getRowId(this)\">排程</a>"+
+                            "</td>"
+                            +"</tr>");
+
+                    }
+                    $("#allSecond").html("");
+                    for(var i = 0 ; i < list2.length ; i++){
+                        $("#allSecond").append("<tr>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].id+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].customerName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].describe+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].deadline+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].principalName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+
+                            "<a href='#' data-toggle=\"modal\" data-target=\"#myModal2\" onclick='getOperateArrange(this)'>查看排程</a>"+
+                            "</td>"
+                            +"</tr>");
+
+                    }
+                }
+            })
+        }else if(role == "1"){
+            var status = "ninth";
+            $.ajax({
+                type:"post",
+                data:{"status":status},
+                url:"getRelatedSalePlan",
+                async:false,
+                success:function (data) {
+                    var list1 = data.list1;
+                    var list2 = data.list2;
+                    $("#allFirst").html("");
+                    for(var i = 0 ; i < list1.length ; i++){
+                        $("#allFirst").append("<tr>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].id+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].customerName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].describe+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].deadline+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].principalName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+
+                            "<a href='#' data-toggle=\"modal\" data-target=\"#myModal\" onclick=\"getRowId(this)\">排程</a>"+
+                            "</td>"
+                            +"</tr>");
+
+                    }
+                    var trs = document.getElementById("firstData").rows;
+                    for(var i = 0 ; i < trs.length ; i++){
+                        var cell = trs[i].cells[5];
+                        cell.style.display = 'none';
+                    }
+                    $("#allSecond").html("");
+                    for(var i = 0 ; i < list2.length ; i++){
+                        $("#allSecond").append("<tr>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].id+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].customerName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].describe+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].deadline+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].principalName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+
+                            "<a href='#' data-toggle=\"modal\" data-target=\"#myModal2\" onclick='getOperateArrange(this)'>查看排程</a>"+
+                            "</td>"
+                            +"</tr>");
+
+                    }
+                }
+            })
+        }else{
+            var status = "ninth";
+            $.ajax({
+                type:"post",
+                data:{"status":status},
+                url:"getAllScheduleCustomer",
+                async:false,
+                success:function (data) {
+                    var list1 = data.list1;
+                    var list2 = data.list2;
+                    $("#allFirst").html("");
+                    for(var i = 0 ; i < list1.length ; i++){
+                        $("#allFirst").append("<tr>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].id+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].customerName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].describe+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].deadline+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].principalName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+
+                            "<a href='#' data-toggle=\"modal\" data-target=\"#myModal\" onclick=\"getRowId(this)\">排程</a>"+
+                            "</td>"
+                            +"</tr>");
+
+                    }
+                    var trs = document.getElementById("firstData").rows;
+                    for(var i = 0 ; i < trs.length ; i++){
+                        var cell = trs[i].cells[5];
+                        cell.style.display = 'none';
+                    }
+                    $("#allSecond").html("");
+                    for(var i = 0 ; i < list2.length ; i++){
+                        $("#allSecond").append("<tr>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].id+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].customerName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].describe+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].deadline+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].principalName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+
+                            "<a href='#' data-toggle=\"modal\" data-target=\"#myModal2\" onclick='getOperateArrange(this)'>查看排程</a>"+
+                            "</td>"
+                            +"</tr>");
+
+                    }
+                }
+            })
+        }
+
+    }
+
+    function getSalePlanByCustomerName() {
+        var role = $("#funcInput").val();
+        if(role == "0"){
+            var status = "ninth";
+            var customerName = $("#customerNameSearch").val();
+            $.ajax({
+                type:"post",
+                data:{"customerName":customerName , "status":status},
+                url:"getAllOperateArrangeByName",
+                async:false,
+                success:function (data) {
+                    var list1 = data.notArrange;
+                    var list2 = data.arranged;
+                    $("#allFirst").html("");
+                    for(var i = 0 ; i < list1.length ; i++){
+                        $("#allFirst").append("<tr>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].id+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].customerName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].describe+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].deadline+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].principalName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+
+                            "<a href='#' data-toggle=\"modal\" data-target=\"#myModal\" onclick=\"getRowId(this)\">排程</a>"+
+                            "</td>"
+                            +"</tr>");
+
+                    }
+                    $("#allSecond").html("");
+                    for(var i = 0 ; i < list2.length ; i++){
+                        $("#allSecond").append("<tr>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].id+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].customerName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].describe+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].deadline+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].principalName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+
+                            "<a href='#' data-toggle=\"modal\" data-target=\"#myModal2\" onclick='getOperateArrange(this)'>查看排程</a>"+
+                            "</td>"
+                            +"</tr>");
+
+                    }
+                }
+            })
+        }else if(role == "1"){
+            var status = "ninth";
+            var customerName = $("#customerNameSearch").val();
+            $.ajax({
+                type:"post",
+                data:{"customerName":customerName , "status":status},
+                url:"getRelatedSalePlanByName",
+                async:false,
+                success:function (data) {
+                    var list1 = data.list1;
+                    var list2 = data.list2;
+                    $("#allFirst").html("");
+                    for(var i = 0 ; i < list1.length ; i++){
+                        $("#allFirst").append("<tr>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].id+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].customerName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].describe+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].deadline+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].principalName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+
+                            "<a href='#' data-toggle=\"modal\" data-target=\"#myModal\" onclick=\"getRowId(this)\">排程</a>"+
+                            "</td>"
+                            +"</tr>");
+
+                    }
+                    var trs = document.getElementById("firstData").rows;
+                    for(var i = 0 ; i < trs.length ; i++){
+                        var cell = trs[i].cells[5];
+                        cell.style.display = 'none';
+                    }
+                    $("#allSecond").html("");
+                    for(var i = 0 ; i < list2.length ; i++){
+                        $("#allSecond").append("<tr>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].id+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].customerName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].describe+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].deadline+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].principalName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+
+                            "<a href='#' data-toggle=\"modal\" data-target=\"#myModal2\" onclick='getOperateArrange(this)'>查看排程</a>"+
+                            "</td>"
+                            +"</tr>");
+
+                    }
+                }
+            })
+        }else{
+            var status = "ninth";
+            var customerName = $("#customerNameSearch").val();
+            $.ajax({
+                type:"post",
+                data:{"customerName":customerName , "status":status},
+                url:"getAllScheduleCustomerByName",
+                async:false,
+                success:function (data) {
+                    var list1 = data.list1;
+                    var list2 = data.list2;
+                    $("#allFirst").html("");
+                    for(var i = 0 ; i < list1.length ; i++){
+                        $("#allFirst").append("<tr>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].id+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].customerName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].describe+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].deadline+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].principalName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+
+                            "<a href='#' data-toggle=\"modal\" data-target=\"#myModal\" onclick=\"getRowId(this)\">排程</a>"+
+                            "</td>"
+                            +"</tr>");
+
+                    }
+                    var trs = document.getElementById("firstData").rows;
+                    for(var i = 0 ; i < trs.length ; i++){
+                        var cell = trs[i].cells[5];
+                        cell.style.display = 'none';
+                    }
+                    $("#allSecond").html("");
+                    for(var i = 0 ; i < list2.length ; i++){
+                        $("#allSecond").append("<tr>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].id+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].customerName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].describe+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].deadline+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].principalName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+
+                            "<a href='#' data-toggle=\"modal\" data-target=\"#myModal2\" onclick='getOperateArrange(this)'>查看排程</a>"+
+                            "</td>"
+                            +"</tr>");
+
+                    }
+                }
+            })
+        }
+
+    }
+
+    function getRowId(obj) {
+        var i = obj.parentNode.parentNode.rowIndex;
+        var tab = document.getElementById("firstData");
+        var orderID = tab.rows[i].cells[0].innerHTML;
+        var customerName = tab.rows[i].cells[1].innerHTML;
+        $("#customerName").val(customerName);
+        $("#customerID").val(orderID);
+        showCandidate();
+    }
+
+    function saveArrange() {
+        var salePlanID = $("#customerID").val();
+        var spendTime = $("#spendTime option:selected").val();
+        var bdates = [];
+        $("input[name='bdate']").each(function(){
+            bdates.push($(this).val());
+        });
+        var edates = [];
+        $("input[name='edate']").each(function(){
+            edates.push($(this).val());
+        });
+
+        var data = {"salePlanID":salePlanID , "spendTime":spendTime , "bdates":bdates , "edates":edates};
+        $.ajax({
+            type:"post",
+            data:data,
+            url:"saveTimeArrange",
+            async:false,
+            traditional:true,
+            success:function (data) {
+                if(data == "OK"){
+                    $.message({
+                        message:"数据已保存",
+                        type:'success'
+                    });
+                    $("#myModal").modal('hide');
+                    loadFirstPlan();
+                }else{
+                    $.message({
+                        message:data,
+                        type:'error'
+                    });
+                }
+            }
+        })
+    }
+
+    function getOperateArrange(obj) {
+        var salePlanID = obj.parentNode.parentNode.cells[0].innerText;
+        $.ajax({
+            type:"post",
+            data:{"salePlanID":salePlanID},
+            url:"getOperateArrange",
+            async:false,
+            success:function (data) {
+                $("#allRecord").html("");
+                for(var i = 0 ; i < data.length ; i++){
+                    $("#allRecord").append("<tr>"+
+                        "<td>"+data[i].customerName+"</td>"+
+                        "<td>"+data[i].step+"</td>"+
+                        "<td>"+data[i].bdate+"</td>"+
+                        "<td>"+data[i].spendTime+"</td>"+
+                        "<td>"+data[i].createDate+"</td>"+
+                        "</tr>");
+                }
+            }
+        })
+    }
+
+    function loadYearMonth() {
+        var today = new Date();
+        var year = today.getFullYear();
+        var month = today.getMonth()+1;
+        for(var i = 0 ; i < 6 ; i++){
+            var newMonth = month + i;
+            if(newMonth > 12){
+                var newYear = year + 1;
+                newMonth = newMonth - 12;
+                $("#yearMonth").append('<option value="'+newYear+"-"+newMonth+'">'+newYear+"-"+"0"+newMonth+"</option>");
+            }else{
+                $("#yearMonth").append('<option value="'+year+"-"+newMonth+'">'+year+"-"+newMonth+"</option>");
+            }
+
+        }
+    }
+
+    function showCandidate() {
+        $("#calendar").html("");
+        var choosedTime = $("#yearMonth").val();
+        var first = choosedTime+"-"+1;
+        var cur_date= new Date(Date.parse(first.replace(/-/g,   "/")));
+        var cur_month = cur_date.getMonth();
+        var str = "";
+        str = str+'<table id="tab" cellpadding=3 cellspacing=0 class="table" style="background-color: lightgrey;">';
+
+        str = str+'<td align="center">日</td>';
+        str = str+'<td align="center">一</td>';
+        str = str+'<td align="center">二</td>';
+        str = str+'<td align="center">三</td>'
+        str = str+'<td align="center">四</td>';
+        str = str+'<td align="center">五</td>'
+        str = str+'<td align="center">六</td>';
+        str = str+"</tr>";
+
+        if (cur_date.getDay() != 0) {//如果1号不是星期天
+            str = str+"<tr>";
+            for (i = 0; i < cur_date.getDay(); i++) {//输出1号前面空白的星期
+                str = str+"<td>&nbsp;</td>";
+            }
+        }
+
+        while (cur_date.getMonth()== cur_month) {
+
+            if (cur_date.getDay == 0) {//星期天时换行<tr>
+                str = str+"<tr>";
+            }
+            getTaskByDate(cur_date);
+            if( city == ""){
+                str = str+'<td align="center">'+ cur_date.getDate() + "</td>";
+            }else{
+                str = str+'<td align="center">'+ cur_date.getDate() +'<span class="badge" style="background-color: red;">'+city+'</span>'+ "</td>";
+            }
+
+            if (cur_date.getDay() == 6) {//星期六时换行结束</tr>
+                str = str+"</tr>";
+            }
+            cur_date.setDate(cur_date.getDate() + 1);
+            city = "";
+        }
+
+        for(var i=cur_date.getDay() ; i<=6 ; i++){//输出月最后一天后面空白的星期
+            str = str+"<td>&nbsp;</td>";
+        }
+        str = str+"</table>";
+        $("#calendar").append(str);
+    }
+
+    function getTaskByDate(date) {
+        $.ajax({
+            type:"post",
+            data:{"time":date},
+            url:"showOnCalendar",
+            async:false,
+            success:function (data) {
+                var result = data.info;
+                if(result == "OK"){
+                    city = data.city;
+                }else{
+                    // alert(data.info);
+                }
+
+            }
+        })
+    }
+</script>
+<style>
+    #mainContent{
+        overflow:hidden;
+        width:100%;
+    }
+    #myTabContent{
+        width:calc(100% + 15px);/*使滚动条超出当前元素的父元素边界，而父元素设置了overflow为hidden，使溢出内容隐藏，即隐藏了滚动条*/
+        height:500px;
+        padding-right:15px;
+        box-sizing:content-box;/*兼容ie，使盒模型为w3c盒模型*/
+        overflow-y:scroll;/*控制能沿y轴滚动*/
+    }
+    #firstData{
+        width:100%;
+    }
+    #secondData{
+        width:100%;
+    }
+    p{
+
+        margin-left:10px;
+        margin-top:10px;
+    }
+</style>
+</body>
+</html>

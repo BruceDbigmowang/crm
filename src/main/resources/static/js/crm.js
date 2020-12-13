@@ -112,7 +112,6 @@ function uploadImages(){
         async:false,
         dataType:'text',
         success:function(data){
-            alert(data);
             if(data == "文件上传成功"){
                 $.message({
                     message:'文件上传成功',
@@ -906,62 +905,6 @@ function spendShow() {
 }
 function spendHide() {
     $("#repairSpend").hide();
-}
-
-//点击跳转至下一页
-function foreSecond() {
-    var link_url="include/fore/homePages/survey/secondPage.html";
-    showAtRight(link_url);
-}
-
-function foreThird() {
-    var link_url="include/fore/homePages/survey/thirdPage.html";
-    showAtRight(link_url);
-}
-
-function foreFourth() {
-    var link_url="include/fore/homePages/survey/fourthPage.html";
-    showAtRight(link_url);
-}
-
-function foreFifth() {
-    var link_url="include/fore/homePages/survey/fifthPage.html";
-    showAtRight(link_url);
-}
-
-function foreSixth() {
-    var link_url="include/fore/homePages/survey/SixthPage.html";
-    showAtRight(link_url);
-}
-
-function foreSeventh() {
-    var link_url="include/fore/homePages/survey/seventhPage.html";
-    showAtRight(link_url);
-}
-
-function foreEight() {
-    var link_url="include/fore/homePages/survey/eighthPage.html";
-    showAtRight(link_url);
-}
-
-function foreNinth() {
-    var link_url="include/fore/homePages/survey/ninthPage.html";
-    showAtRight(link_url);
-}
-
-function foreTenth() {
-    var link_url="include/fore/homePages/survey/tenthPage.html";
-    showAtRight(link_url);
-}
-
-function foreEleventh() {
-    var link_url="include/fore/homePages/survey/eleventhPage.html";
-    showAtRight(link_url);
-}
-
-function  foreTwelfth() {
-    var link_url="include/fore/homePages/survey/twelfthPage.html";
-    showAtRight(link_url);
 }
 
 //进行在线尽调，对各个页面的内容进行保存，并跳转至下一页面
@@ -1905,7 +1848,7 @@ function saveFourteenthPage() {
         success:function(data){
             if(data == "OK"){
                 $.message({
-                    message:'数据保存成功',
+                    message:'数据保存成功,并进入现场尽调阶段',
                     type:'success'
                 });
                 $("#myModal2").modal('hide');
@@ -3017,7 +2960,12 @@ function refuseIncome() {
 function saveCustomer() {
     var customerName = $("#customerName").val();
     var customerType = $("#customerType").val();
+    var province = $("#province option:selected").val();
+    var city = $("#city option:selected").val();
     var area = $("#area option:selected").val();
+    var address = $("#companyAddress").val();
+    var companyAddress = province+city+area+address;
+    var area = $("#areaSec option:selected").val();
     var decisionMaker = $("#decisionMaker").val();
     var decisionPhone = $("#decisionPhone").val();
     var principal = $("#principal").val();
@@ -3027,12 +2975,11 @@ function saveCustomer() {
     var email = $("#email").val();
     var wechat = $("#wechat").val();
     var industry = $("#industry").val();
-    var companyAddress = $("#companyAddress").val();
     var saleAmount = $("#saleAmount").val();
     var useAmount = $("#useAmount").val();
 
     var data = {"customerName":customerName , "customerType":customerType , "area":area , "decisionMaker":decisionMaker , "decisionPhone":decisionPhone , "principal":principal , "phone":phone ,
-        "superior":superior , "email":email , "wechat":wechat ,"industry":industry , "companyAddress":companyAddress , "saleAmount":saleAmount ,  "useAmount":useAmount };
+        "superior":superior , "email":email , "wechat":wechat ,"industry":industry , "companyAddress":companyAddress ,"city":city , "saleAmount":saleAmount ,  "useAmount":useAmount };
     $.ajax({
         type:"post",
         data:data,
@@ -3059,6 +3006,7 @@ function saveCustomer() {
                 $("#wechat").val("");
                 $("#saleMan").val("");
                 findAllCustomer();
+                $("#myModal").modal('hide');
             }else{
                 $.message({
                     message:data,
@@ -3090,7 +3038,7 @@ function findAllCustomer() {
             customerPages = data.pages;
             var customers = data.customers;
             for(var i = 0 ; i < customers.length ; i++){
-                $("#dataforCustomer").append("<tr>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].id+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].name+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].customerType+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].decisionMaker+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].principal+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].industry+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].followName+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].createDate+"</td>"+"</tr>");
+                $("#dataforCustomer").append("<tr>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a data-toggle=\"modal\" data-target=\"#myModal2\" onclick='getCustomerId(this)'>"+customers[i].id+"</a>"+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].name+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].customerType+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].decisionMaker+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].principal+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].followName+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].createDate+"</td>"+"</tr>");
                 // $("#dataforCustomer").append("<tr>"+"<td>"+customers[i].name+"</td>"+"<td>"+customers[i].contact+"</td>"+"<td>"+customers[i].phone+"</td>"+"<td>"+customers[i].customerType+"</td>"+"<td>"+customers[i].industry+"</td>"+"<td>"+customers[i].principal+"</td>"+"<td>"+formatDate(customers[i].createDate)+"</td>"+"</tr>");
 
             }
@@ -3101,6 +3049,79 @@ function findAllCustomer() {
                 message:'程序出错',
                 type:'error'
             })
+        }
+    })
+}
+
+function getCustomerId(obj) {
+    var customerId = obj.parentNode.innerText;
+    $.ajax({
+        type:"post",
+        data:{"customerId":customerId},
+        url:"getCustomerDetail",
+        async:false,
+        success:function (data) {
+            $("#customerNum").val(data.id);
+            $("#customerName2").val(data.name);
+            $("#customerType2").val(data.customerType);
+            var select = document.getElementById("area2");
+            for (var i = 0; i < select.options.length; i++){
+                if (select.options[i].value == data.area){
+                    select.options[i].selected = true;
+                    break;
+                }
+            }
+            $("#decisionMaker2").val(data.decisionMaker);
+            $("#decisionPhone2").val(data.decisionPhone);
+            $("#principal2").val(data.principal);
+            $("#phone2").val(data.phone);
+            $("#superior2").val(data.superior);
+            $("#email2").val(data.email);
+            $("#source").val(data.source);
+            $("#wechat2").val(data.wechat);
+            $("#industry2").val(data.industry);
+            $("#companyAddress2").val(data.companyAddress);
+            $("#saleAmount2").val(data.saleAmount);
+            $("#useAmount2").val(data.useAmount);
+        }
+    })
+}
+
+function updateCustomerInfo() {
+    var customerId = $("#customerNum").val();
+    var customerType = $("#customerType2").val();
+    var area = $("#area2 option:selected").val();
+    var decisionMaker = $("#decisionMaker2").val();
+    var decisionPhone = $("#decisionPhone2").val();
+    var principal = $("#principal2").val();
+    var phone = $("#phone2").val();
+    var superior = $("#superior2").val();
+    var email = $("#email2").val();
+    var wechat = $("#wechat2").val();
+    var industry = $("#industry2").val();
+    var companyAddress = $("#companyAddress2").val();
+    var saleAmount = $("#saleAmount2").val();
+    var useAmount = $("#useAmount2").val();
+
+    var data = {"customerId":customerId , "customerType":customerType , "area":area , "decisionMaker":decisionMaker , "decisionPhone":decisionPhone , "principal":principal , "phone":phone ,
+        "superior":superior , "email":email , "wechat":wechat ,"industry":industry , "companyAddress":companyAddress , "saleAmount":saleAmount ,  "useAmount":useAmount };
+    $.ajax({
+        type:"post",
+        data:data,
+        url:"updateCustomer",
+        async:false,
+        success:function(data){
+            if(data == "OK"){
+                $.message({
+                    message:"客户信息已更新",
+                    type:'success'
+                });
+            }else{
+                $.message({
+                    message:data,
+                    type:'error'
+                });
+            }
         }
     })
 }
@@ -3125,7 +3146,7 @@ function findFirstCustomer() {
                 // customerPages = data.pages;
                 var customers = data.customers;
                 for(var i = 0 ; i < customers.length ; i++){
-                    $("#dataforCustomer").append("<tr>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].id+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].name+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].customerType+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].decisionMaker+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].principal+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].industry+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].followName+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].createDate+"</td>"+"</tr>");
+                    $("#dataforCustomer").append("<tr>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a data-toggle=\"modal\" data-target=\"#myModal2\" onclick='getCustomerId(this)'>"+customers[i].id+"</a>"+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].name+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].customerType+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].decisionMaker+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].principal+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].followName+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].createDate+"</td>"+"</tr>");
                     // $("#dataforCustomer").append("<tr>"+"<td>"+customers[i].name+"</td>"+"<td>"+customers[i].contact+"</td>"+"<td>"+customers[i].phone+"</td>"+"<td>"+customers[i].customerType+"</td>"+"<td>"+customers[i].industry+"</td>"+"<td>"+customers[i].principal+"</td>"+"<td>"+formatDate(customers[i].createDate)+"</td>"+"</tr>");
 
                 }
@@ -3161,7 +3182,7 @@ function findNextCustomer() {
                 // customerPages = data.pages;
                 var customers = data.customers;
                 for(var i = 0 ; i < customers.length ; i++){
-                    $("#dataforCustomer").append("<tr>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].id+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].name+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].customerType+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].decisionMaker+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].principal+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].industry+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].followName+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].createDate+"</td>"+"</tr>");
+                    $("#dataforCustomer").append("<tr>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a data-toggle=\"modal\" data-target=\"#myModal2\" onclick='getCustomerId(this)'>"+customers[i].id+"</a>"+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].name+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].customerType+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].decisionMaker+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].principal+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].followName+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].createDate+"</td>"+"</tr>");
                     // $("#dataforCustomer").append("<tr>"+"<td>"+customers[i].name+"</td>"+"<td>"+customers[i].contact+"</td>"+"<td>"+customers[i].phone+"</td>"+"<td>"+customers[i].customerType+"</td>"+"<td>"+customers[i].industry+"</td>"+"<td>"+customers[i].principal+"</td>"+"<td>"+formatDate(customers[i].createDate)+"</td>"+"</tr>");
 
                 }
@@ -3196,7 +3217,7 @@ function findPreviousCustomer() {
                 // customerPages = data.pages;
                 var customers = data.customers;
                 for(var i = 0 ; i < customers.length ; i++){
-                    $("#dataforCustomer").append("<tr>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].id+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].name+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].customerType+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].decisionMaker+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].principal+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].industry+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].followName+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].createDate+"</td>"+"</tr>");
+                    $("#dataforCustomer").append("<tr>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a data-toggle=\"modal\" data-target=\"#myModal2\" onclick='getCustomerId(this)'>"+customers[i].id+"</a>"+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].name+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].customerType+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].decisionMaker+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].principal+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].followName+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].createDate+"</td>"+"</tr>");
                     // $("#dataforCustomer").append("<tr>"+"<td>"+customers[i].name+"</td>"+"<td>"+customers[i].contact+"</td>"+"<td>"+customers[i].phone+"</td>"+"<td>"+customers[i].customerType+"</td>"+"<td>"+customers[i].industry+"</td>"+"<td>"+customers[i].principal+"</td>"+"<td>"+formatDate(customers[i].createDate)+"</td>"+"</tr>");
 
                 }
@@ -3230,7 +3251,7 @@ function findLastCustomer() {
                 // customerPages = data.pages;
                 var customers = data.customers;
                 for(var i = 0 ; i < customers.length ; i++){
-                    $("#dataforCustomer").append("<tr>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].id+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].name+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].customerType+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].decisionMaker+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].principal+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].industry+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].followName+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].createDate+"</td>"+"</tr>");
+                    $("#dataforCustomer").append("<tr>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a data-toggle=\"modal\" data-target=\"#myModal2\" onclick='getCustomerId(this)'>"+customers[i].id+"</a>"+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].name+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].customerType+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].decisionMaker+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].principal+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].followName+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].createDate+"</td>"+"</tr>");
                     // $("#dataforCustomer").append("<tr>"+"<td>"+customers[i].name+"</td>"+"<td>"+customers[i].contact+"</td>"+"<td>"+customers[i].phone+"</td>"+"<td>"+customers[i].customerType+"</td>"+"<td>"+customers[i].industry+"</td>"+"<td>"+customers[i].principal+"</td>"+"<td>"+formatDate(customers[i].createDate)+"</td>"+"</tr>");
 
                 }
@@ -3278,7 +3299,7 @@ function getTodayCustomer() {
             if(result == "OK"){
                 var customers = data.customers;
                 for(var i = 0 ; i < customers.length ; i++){
-                    $("#dataforCustomer").append("<tr>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].id+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].name+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].customerType+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].decisionMaker+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].principal+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].industry+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].followName+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].createDate+"</td>"+"</tr>");
+                    $("#dataforCustomer").append("<tr>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a data-toggle=\"modal\" data-target=\"#myModal2\" onclick='getCustomerId(this)'>"+customers[i].id+"</a>"+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].name+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].customerType+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].decisionMaker+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].principal+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].followName+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].createDate+"</td>"+"</tr>");
                     // $("#dataforCustomer").append("<tr>"+"<td>"+customers[i].name+"</td>"+"<td>"+customers[i].contact+"</td>"+"<td>"+customers[i].phone+"</td>"+"<td>"+customers[i].customerType+"</td>"+"<td>"+customers[i].industry+"</td>"+"<td>"+customers[i].principal+"</td>"+"<td>"+formatDate(customers[i].createDate)+"</td>"+"</tr>");
 
                 }
@@ -3324,7 +3345,7 @@ function getYesterdayCustomer() {
             if(result == "OK"){
                 var customers = data.customers;
                 for(var i = 0 ; i < customers.length ; i++){
-                    $("#dataforCustomer").append("<tr>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].id+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].name+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].customerType+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].decisionMaker+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].principal+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].industry+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].followName+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].createDate+"</td>"+"</tr>");
+                    $("#dataforCustomer").append("<tr>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a data-toggle=\"modal\" data-target=\"#myModal2\" onclick='getCustomerId(this)'>"+customers[i].id+"</a>"+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].name+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].customerType+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].decisionMaker+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].principal+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].followName+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].createDate+"</td>"+"</tr>");
                     // $("#dataforCustomer").append("<tr>"+"<td>"+customers[i].name+"</td>"+"<td>"+customers[i].contact+"</td>"+"<td>"+customers[i].phone+"</td>"+"<td>"+customers[i].customerType+"</td>"+"<td>"+customers[i].industry+"</td>"+"<td>"+customers[i].principal+"</td>"+"<td>"+formatDate(customers[i].createDate)+"</td>"+"</tr>");
 
                 }
@@ -3368,7 +3389,7 @@ function getThisWeekCustomer() {
             if(result == "OK"){
                 var customers = data.customers;
                 for(var i = 0 ; i < customers.length ; i++){
-                    $("#dataforCustomer").append("<tr>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].id+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].name+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].customerType+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].decisionMaker+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].principal+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].industry+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].followName+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].createDate+"</td>"+"</tr>");
+                    $("#dataforCustomer").append("<tr>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a data-toggle=\"modal\" data-target=\"#myModal2\" onclick='getCustomerId(this)'>"+customers[i].id+"</a>"+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].name+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].customerType+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].decisionMaker+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].principal+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].followName+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].createDate+"</td>"+"</tr>");
                     // $("#dataforCustomer").append("<tr>"+"<td>"+customers[i].name+"</td>"+"<td>"+customers[i].contact+"</td>"+"<td>"+customers[i].phone+"</td>"+"<td>"+customers[i].customerType+"</td>"+"<td>"+customers[i].industry+"</td>"+"<td>"+customers[i].principal+"</td>"+"<td>"+formatDate(customers[i].createDate)+"</td>"+"</tr>");
 
                 }
@@ -3403,7 +3424,7 @@ function getLastWeekCustomer() {
             if(result == "OK"){
                 var customers = data.customers;
                 for(var i = 0 ; i < customers.length ; i++){
-                    $("#dataforCustomer").append("<tr>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].id+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].name+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].customerType+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].decisionMaker+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].principal+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].industry+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].followName+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].createDate+"</td>"+"</tr>");
+                    $("#dataforCustomer").append("<tr>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a data-toggle=\"modal\" data-target=\"#myModal2\" onclick='getCustomerId(this)'>"+customers[i].id+"</a>"+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].name+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].customerType+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].decisionMaker+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].principal+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].followName+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].createDate+"</td>"+"</tr>");
                     // $("#dataforCustomer").append("<tr>"+"<td>"+customers[i].name+"</td>"+"<td>"+customers[i].contact+"</td>"+"<td>"+customers[i].phone+"</td>"+"<td>"+customers[i].customerType+"</td>"+"<td>"+customers[i].industry+"</td>"+"<td>"+customers[i].principal+"</td>"+"<td>"+formatDate(customers[i].createDate)+"</td>"+"</tr>");
 
                 }
@@ -3457,7 +3478,7 @@ function getThisMonthCustomer() {
             if(result == "OK"){
                 var customers = data.customers;
                 for(var i = 0 ; i < customers.length ; i++){
-                    $("#dataforCustomer").append("<tr>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].id+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].name+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].customerType+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].decisionMaker+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].principal+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].industry+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].followName+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].createDate+"</td>"+"</tr>");
+                    $("#dataforCustomer").append("<tr>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a data-toggle=\"modal\" data-target=\"#myModal2\" onclick='getCustomerId(this)'>"+customers[i].id+"</a>"+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].name+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].customerType+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].decisionMaker+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].principal+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].followName+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].createDate+"</td>"+"</tr>");
                     // $("#dataforCustomer").append("<tr>"+"<td>"+customers[i].name+"</td>"+"<td>"+customers[i].contact+"</td>"+"<td>"+customers[i].phone+"</td>"+"<td>"+customers[i].customerType+"</td>"+"<td>"+customers[i].industry+"</td>"+"<td>"+customers[i].principal+"</td>"+"<td>"+formatDate(customers[i].createDate)+"</td>"+"</tr>");
 
                 }
@@ -3513,7 +3534,7 @@ function getLastMonthCustomer() {
             if(result == "OK"){
                 var customers = data.customers;
                 for(var i = 0 ; i < customers.length ; i++){
-                    $("#dataforCustomer").append("<tr>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].id+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].name+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].customerType+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].decisionMaker+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].principal+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].industry+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].followName+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].createDate+"</td>"+"</tr>");
+                    $("#dataforCustomer").append("<tr>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a data-toggle=\"modal\" data-target=\"#myModal2\" onclick='getCustomerId(this)'>"+customers[i].id+"</a>"+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].name+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].customerType+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].decisionMaker+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].principal+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].followName+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].createDate+"</td>"+"</tr>");
                     // $("#dataforCustomer").append("<tr>"+"<td>"+customers[i].name+"</td>"+"<td>"+customers[i].contact+"</td>"+"<td>"+customers[i].phone+"</td>"+"<td>"+customers[i].customerType+"</td>"+"<td>"+customers[i].industry+"</td>"+"<td>"+customers[i].principal+"</td>"+"<td>"+formatDate(customers[i].createDate)+"</td>"+"</tr>");
 
                 }
@@ -3548,7 +3569,7 @@ function findCutomerByNameOrPhone() {
                     $("#customerPage").hide();
                     var customers = data.customers;
                     for(var i = 0 ; i < customers.length ; i++){
-                        $("#dataforCustomer").append("<tr>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].id+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].name+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].customerType+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].decisionMaker+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].principal+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].industry+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].followName+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].createDate+"</td>"+"</tr>");
+                        $("#dataforCustomer").append("<tr>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a data-toggle=\"modal\" data-target=\"#myModal2\" onclick='getCustomerId(this)'>"+customers[i].id+"</a>"+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].name+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].customerType+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].decisionMaker+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].principal+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].followName+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].createDate+"</td>"+"</tr>");
                     }
                 }
             })
@@ -3564,7 +3585,7 @@ function findCutomerByNameOrPhone() {
                     $("#customerPage").hide();
                     var customers = data.customers;
                     for(var i = 0 ; i < customers.length ; i++){
-                        $("#dataforCustomer").append("<tr>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].id+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].name+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].customerType+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].decisionMaker+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].principal+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].industry+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].followName+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].createDate+"</td>"+"</tr>");
+                        $("#dataforCustomer").append("<tr>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a data-toggle=\"modal\" data-target=\"#myModal2\" onclick='getCustomerId(this)'>"+customers[i].id+"</a>"+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].name+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].customerType+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].decisionMaker+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].principal+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].followName+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].createDate+"</td>"+"</tr>");
                     }
                 }
             })
@@ -3636,28 +3657,24 @@ function findByParams() {
 }
 
 function saveOpportunity() {
-    var name = $("#name").val();
     var fax = $("#fax").val();
     var companyName = $("#companyName").val();
     var email = $("#email").val();
-    var source = $("#source").val();
+    var source = $("#source option:selected").val();
     var principal = $("#principal").val();
     var body = $("#body").val();
     var dept = $("#dept").val();
     var contract = $("#contract").val();
-    var maker = $("#maker").val();
     var phone = $("#phone").val();
-    var makeDate = $("#makeDate").val();
     var mobile = $("#mobile").val();
-    var leafType = $("#leafType").val();
+    // var leafType = $("#leafType").val();
     var province = $("#province option:selected").text();
     var city = $("#city option:selected").text();
     var area = $("#area option:selected").text();
     var address = $("#address").val();
-    var companyAddress = province + city + area + address;
-    var leafNum = $("#leafNum").val();
-    var data = {"name":name , "fax":fax , "companyName":companyName , "email":email , "source":source , "principal":principal , "body":body , "dept":dept ,
-    "contract":contract , "maker":maker , "phone":phone , "makeDate":makeDate , "mobile":mobile , "leafType":leafType , "address":companyAddress , "leafNum":leafNum};
+    // var leafNum = $("#leafNum").val();
+    var data = { "fax":fax , "companyName":companyName , "email":email , "source":source , "principal":principal , "body":body , "dept":dept ,
+    "contract":contract ,  "phone":phone , "mobile":mobile , "province":province , "city":city , "area":area , "address":address };
     $.ajax({
         type:"post",
         data:data,
@@ -3701,15 +3718,16 @@ function getOppoByPageLoad() {
             var oppos = data.oppos;
             for(var i = 0 ; i < oppos.length ; i++){
                 $("#opportunityData").append("<tr>"
-                    +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].name+"</td>"
-                    +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].companyName+"</td>"
+                    +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;display:none;\">"+oppos[i].id+"</td>"
+                    +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].body+"</td>"
                     +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].resource+"</td>"
+                    +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].companyName+"</td>"
                     +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].contract+"</td>"
                     +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].phone+"</td>"
                     +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].mobile+"</td>"
                     +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].principal+"</td>"
                     +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].makeDate+"</td>"
-                    +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a data-toggle=\"modal\" data-target=\"#myModal\">编辑</a>"+"</td>"
+                    +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a href='#' data-toggle=\"modal\" data-target=\"#myModal2\" onclick='createActivity(this)'>"+"举办活动"+"</a>"+"<a style='margin-left: 10px;' data-toggle=\"modal\" data-target=\"#myModal\" onclick='loadDetail(this)'>编辑</a>"+"</td>"
                     +"</tr>");
             }
             $("#pageDIV").show();
@@ -3736,15 +3754,16 @@ function getOppoByPageFirst() {
                 var oppos = data.oppos;
                 for(var i = 0 ; i < oppos.length ; i++){
                     $("#opportunityData").append("<tr>"
-                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].name+"</td>"
-                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].companyName+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;display:none;\">"+oppos[i].id+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].body+"</td>"
                         +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].resource+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].companyName+"</td>"
                         +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].contract+"</td>"
                         +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].phone+"</td>"
                         +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].mobile+"</td>"
                         +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].principal+"</td>"
                         +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].makeDate+"</td>"
-                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a data-toggle=\"modal\" data-target=\"#myModal\">编辑</a>"+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a href='#' data-toggle=\"modal\" data-target=\"#myModal2\" onclick='createActivity(this)'>"+"举办活动"+"</a>"+"<a style='margin-left: 10px;' data-toggle=\"modal\" data-target=\"#myModal\" onclick='loadDetail(this)'>编辑</a>"+"</td>"
                         +"</tr>");
                 }
                 $("#pageDIV").show();
@@ -3772,15 +3791,16 @@ function getOppoByPagePrevious() {
                 var oppos = data.oppos;
                 for(var i = 0 ; i < oppos.length ; i++){
                     $("#opportunityData").append("<tr>"
-                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].name+"</td>"
-                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].companyName+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;display:none;\">"+oppos[i].id+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].body+"</td>"
                         +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].resource+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].companyName+"</td>"
                         +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].contract+"</td>"
                         +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].phone+"</td>"
                         +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].mobile+"</td>"
                         +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].principal+"</td>"
                         +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].makeDate+"</td>"
-                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a data-toggle=\"modal\" data-target=\"#myModal\">编辑</a>"+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a href='#' data-toggle=\"modal\" data-target=\"#myModal2\" onclick='createActivity(this)'>"+"举办活动"+"</a>"+"<a style='margin-left: 10px;' data-toggle=\"modal\" data-target=\"#myModal\" onclick='loadDetail(this)'>编辑</a>"+"</td>"
                         +"</tr>");
                 }
                 $("#pageDIV").show();
@@ -3808,15 +3828,16 @@ function getOppoByPageNext() {
                 var oppos = data.oppos;
                 for(var i = 0 ; i < oppos.length ; i++){
                     $("#opportunityData").append("<tr>"
-                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].name+"</td>"
-                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].companyName+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;display:none;\">"+oppos[i].id+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].body+"</td>"
                         +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].resource+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].companyName+"</td>"
                         +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].contract+"</td>"
                         +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].phone+"</td>"
                         +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].mobile+"</td>"
                         +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].principal+"</td>"
                         +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].makeDate+"</td>"
-                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a data-toggle=\"modal\" data-target=\"#myModal\">编辑</a>"+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a href='#' data-toggle=\"modal\" data-target=\"#myModal2\" onclick='createActivity(this)'>"+"举办活动"+"</a>"+"<a style='margin-left: 10px;' data-toggle=\"modal\" data-target=\"#myModal\" onclick='loadDetail(this)'>编辑</a>"+"</td>"
                         +"</tr>");
                 }
                 $("#pageDIV").show();
@@ -3844,15 +3865,16 @@ function getOppoByPageLast() {
                 var oppos = data.oppos;
                 for(var i = 0 ; i < oppos.length ; i++){
                     $("#opportunityData").append("<tr>"
-                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].name+"</td>"
-                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].companyName+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;display:none;\">"+oppos[i].id+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].body+"</td>"
                         +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].resource+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].companyName+"</td>"
                         +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].contract+"</td>"
                         +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].phone+"</td>"
                         +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].mobile+"</td>"
                         +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].principal+"</td>"
                         +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].makeDate+"</td>"
-                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a data-toggle=\"modal\" data-target=\"#myModal\">编辑</a>"+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a href='#' data-toggle=\"modal\" data-target=\"#myModal2\" onclick='createActivity(this)'>"+"举办活动"+"</a>"+"<a style='margin-left: 10px;' data-toggle=\"modal\" data-target=\"#myModal\" onclick='loadDetail(this)'>编辑</a>"+"</td>"
                         +"</tr>");
                 }
                 $("#pageDIV").show();
@@ -3866,10 +3888,9 @@ function getOppoByAddress() {
     var province = $("#province option:selected").text();
     var city = $("#city option:selected").text();
     var area = $("#area option:selected").text();
-    var address = province+city+area;
     $.ajax({
         type:"post",
-        data:{"address":address},
+        data:{"province":province , "city":city , "area":area},
         url:"findOppoByAddress",
         async:false,
         success:function(data){
@@ -3877,15 +3898,16 @@ function getOppoByAddress() {
             var oppos = data.oppos;
             for(var i = 0 ; i < oppos.length ; i++){
                 $("#opportunityData").append("<tr>"
-                    +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].name+"</td>"
-                    +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].companyName+"</td>"
+                    +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;display:none;\">"+oppos[i].id+"</td>"
+                    +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].body+"</td>"
                     +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].resource+"</td>"
+                    +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].companyName+"</td>"
                     +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].contract+"</td>"
                     +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].phone+"</td>"
                     +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].mobile+"</td>"
                     +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].principal+"</td>"
                     +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].makeDate+"</td>"
-                    +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a data-toggle=\"modal\" data-target=\"#myModal\">编辑</a>"+"</td>"
+                    +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a href='#' data-toggle=\"modal\" data-target=\"#myModal2\" onclick='createActivity(this)'>"+"举办活动"+"</a>"+"<a style='margin-left: 10px;' data-toggle=\"modal\" data-target=\"#myModal\" onclick='loadDetail(this)'>编辑</a>"+"</td>"
                     +"</tr>");
             }
             $("#pageDIV").hide();
@@ -3905,15 +3927,16 @@ function getOppoByResource(obj) {
             var oppos = data.oppos;
             for(var i = 0 ; i < oppos.length ; i++){
                 $("#opportunityData").append("<tr>"
-                    +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].name+"</td>"
-                    +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].companyName+"</td>"
+                    +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;display:none;\">"+oppos[i].id+"</td>"
+                    +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].body+"</td>"
                     +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].resource+"</td>"
+                    +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].companyName+"</td>"
                     +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].contract+"</td>"
                     +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].phone+"</td>"
                     +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].mobile+"</td>"
                     +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].principal+"</td>"
                     +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].makeDate+"</td>"
-                    +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a data-toggle=\"modal\" data-target=\"#myModal\">编辑</a>"+"</td>"
+                    +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a href='#' data-toggle=\"modal\" data-target=\"#myModal2\" onclick='createActivity(this)'>"+"举办活动"+"</a>"+"<a style='margin-left: 10px;' data-toggle=\"modal\" data-target=\"#myModal\" onclick='loadDetail(this)'>编辑</a>"+"</td>"
                     +"</tr>");
             }
             $("#pageDIV").hide();

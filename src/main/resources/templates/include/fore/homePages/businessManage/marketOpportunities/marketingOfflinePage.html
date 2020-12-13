@@ -1,0 +1,171 @@
+<div id="allContent" class="content" th:fragment="html">
+    <!-- START CONTAINER -->
+    <div id="mainContent" class="container-widget">
+
+        <div style="width:100%;margin: 0px auto;">
+            <div>
+                <span style="font-size: 16px;">商机管理 / 营销分类/ 线下推广</span>
+                <div style="background-color: white;height:617px"><br>
+
+                    <table style="width:100%;border: 0px;margin-top: 10px;">
+                        <tr>
+                            <td style="width: 400px">
+                                <input class="form-control" placeholder="请输入客户名称" autocomplete="off">
+                            </td>
+                            <td style="width: 100px;"><button class="btn btn-warning">查询</button></td>
+                            <td></td>
+                            <td style="width: 80px;"><button class="btn btn-warning" data-toggle="modal" data-target="#myModal">新增</button></td>
+                        </tr>
+                    </table><br>
+                    <br>
+                    <div style="height: 350px;overflow: auto;">
+                        <table class="table table-striped table-bordered table-hover  table-condensed" style="width: 100%;font-size: 14px;">
+                            <thead style="background-color: #dde5e5;font-size: 14px;text-align: left;vertical-align: inherit;">
+                            <tr>
+                                <th style="display: none;">编号</th>
+                                <th>线索主题</th>
+                                <th>活动分类</th>
+                                <th>活动说明</th>
+                                <th>费用预算</th>
+                                <th>是否在计划内</th>
+                                <th>创建人</th>
+                                <th>操作</th>
+                            </tr>
+                            </thead>
+                            <tbody id="marketOnline"></tbody>
+                        </table>
+                        <div id="pageDIV" style="width:200px;margin: 0px auto;">
+                            <a style="color: #ea9e11;" onclick="getOppoByPageFirst()">首 页</a>&nbsp&nbsp<a style="color: #ea9e11;" onclick="getOppoByPagePrevious()">上一页</a>&nbsp&nbsp<a style="color: #ea9e11;" onclick="getOppoByPageNext()">下一页</a>&nbsp&nbsp<a style="color: #ea9e11;" onclick="getOppoByPageLast()">尾 页</a>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="modal fade" id="myModal"  data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button data-dismiss="modal" class="close" type="button"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title">线下推广新增</h4>
+                </div>
+                <div class="modal-body">
+                    <table>
+                        <tr style="height: 60px;">
+                            <td style="width: 150px;text-align: center;height: 40px;font-size: 14px;vertical-align: inherit;">商机/线索</td>
+                            <td>
+                                <select id="opportunity" class="form-control">
+
+                                </select>
+                            </td>
+                        </tr>
+                        <tr style="height: 60px;">
+                            <td style="width: 150px;text-align: center;height: 40px;font-size: 14px;vertical-align: inherit;">活动分类</td>
+                            <td>
+                                <select id="activity" class="form-control" onchange="chooseActivity()">
+                                    <option value="论坛">论坛</option>
+                                    <option value="展会">展会</option>
+                                    <option value="广告">广告</option>
+                                    <option value="协会活动">协会活动</option>
+                                    <option value="其它">其它</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr id="activityDetail" style="height: 60px;display: none;">
+                            <td style="width: 150px;text-align: center;height: 40px;font-size: 14px;vertical-align: inherit;">活动分类</td>
+                            <td><input id="other" class="form-control" placeholder="请备注名称"></td>
+                        </tr>
+                        <tr style="height: 60px;">
+                            <td style="width: 150px;text-align: center;height: 40px;font-size: 14px;vertical-align: inherit;">活动说明</td>
+                            <td><input id="describe" class="form-control" placeholder="请输入..." ></td>
+                        </tr>
+                        <tr style="height: 60px;">
+                            <td style="width: 150px;text-align: center;height: 40px;font-size: 14px;vertical-align: inherit;">费用预算</td>
+                            <td><input id="spend" class="form-control" placeholder="请输入..." ></td>
+                        </tr>
+                        <tr style="height: 60px;">
+                            <td style="width: 150px;text-align: center;height: 40px;font-size: 14px;vertical-align: inherit;">是否在计划内</td>
+                            <td>
+                                <input name="isPlan" type="radio" value="Y" style=";vertical-align:middle; margin-top:0;">是
+                                <input name="isPlan" type="radio" value="N" style="margin-left: 10px;;vertical-align:middle; margin-top:0;">否
+                            </td>
+                        </tr>
+                        <tr style="height: 60px;">
+                            <td style="width: 150px;text-align: center;height: 40px;font-size: 14px;vertical-align: inherit;">合同金额</td>
+                            <td><input id="contractAmount" class="form-control" placeholder="请输入..."></td>
+                        </tr>
+                        <tr style="height: 60px;">
+                            <td style="width: 150px;text-align: center;height: 40px;font-size: 14px;vertical-align: inherit;">合同附件</td>
+                            <td><input id="contractFile" name="contractFile" class="form-control" type="file" onchange="saveImage()"></td>
+                        </tr>
+                        <tr style="height: 60px;">
+                            <td style="width: 150px;text-align: center;height: 40px;font-size: 14px;vertical-align: inherit;">推广渠道</td>
+                            <td><input id="channel" name="contractFile" class="form-control" placeholder="请输入..."></td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button data-dismiss="modal" class="btn btn-default" type="button">关闭</button>
+                    <button class="btn btn-primary" type="button" onclick="saveOfflineData()">提交</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div>
+
+    <div class="modal fade" id="myModal2"  data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button data-dismiss="modal" class="close" type="button"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title">推广维护</h4>
+                </div>
+                <div class="modal-body">
+                    <input id="mId" type="hidden">
+                    <input id="mTheme" type="hidden">
+                    <table class="table">
+                        <tr  style="height: 60px;">
+                            <td style="width: 150px;text-align: center;height: 40px;font-size: 14px;vertical-align: inherit;">活动资料附件</td>
+                            <td><input id="activityFile" name="activityFile" type="file" class="form-control" onchange="saveActivityFile"></td>
+                        </tr>
+                        <tr  style="height: 60px;">
+                            <td style="width: 150px;text-align: center;height: 40px;font-size: 14px;vertical-align: inherit;">客户资料附件</td>
+                            <td><input id="customerFile" name="customerFile" type="file" class="form-control" onchange="saveCustomerFile()"></td>
+                        </tr>
+                        <tr  style="height: 60px;">
+                            <td style="width: 150px;text-align: center;height: 40px;font-size: 14px;vertical-align: inherit;">线索数</td>
+                            <td><input id="culeNum" class="form-control" placeholder="请输入..."></td>
+                        </tr>
+                        <tr  style="height: 60px;">
+                            <td style="width: 150px;text-align: center;height: 40px;font-size: 14px;vertical-align: inherit;">意向客户数</td>
+                            <td><input id="customerOne" class="form-control" placeholder="请输入..."></td>
+                        </tr>
+                        <tr  style="height: 60px;">
+                            <td style="width: 150px;text-align: center;height: 40px;font-size: 14px;vertical-align: inherit;">成交客户数</td>
+                            <td><input id="customerTwo" class="form-control" placeholder="请输入..."></td>
+                        </tr>
+                        <tr  style="height: 60px;">
+                            <td style="width: 150px;text-align: center;height: 40px;font-size: 14px;vertical-align: inherit;">成交客户金额</td>
+                            <td><input id="customerMoney" class="form-control" placeholder="请输入..."></td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button data-dismiss="modal" class="btn btn-default" type="button">关闭</button>
+                    <button class="btn btn-primary" type="button" onclick="saveActivityData()">提交</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div>
+
+    <div class="row footer">
+        <div class="col-md-6 text-left">
+            &nbsp;&nbsp;&nbsp;&nbsp;
+        </div>
+        <div class="col-md-6 text-right">
+            &nbsp;&nbsp;&nbsp;&nbsp;
+        </div>
+    </div>
+</div>

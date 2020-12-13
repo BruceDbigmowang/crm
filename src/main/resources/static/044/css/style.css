@@ -4,6 +4,9 @@
   Author: Egemen Kapusuz
   Author URL: http://www.themeforest.net/user/egemem
 ================================================================================*/
+.modal-dialog table{
+  max-width: none !important;
+}
 
 /* Color Class */
 .color1 {

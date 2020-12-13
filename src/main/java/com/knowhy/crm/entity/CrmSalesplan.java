@@ -1,11 +1,8 @@
 package com.knowhy.crm.entity;
 
-import java.math.BigDecimal;
 import com.baomidou.mybatisplus.annotation.TableName;
+import java.time.LocalDate;
 import com.baomidou.mybatisplus.annotation.TableId;
-import java.time.LocalDateTime;
-import java.util.Date;
-
 import com.knowhy.crm.entity.BaseEntity;
 import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
@@ -18,7 +15,7 @@ import lombok.experimental.Accessors;
  * </p>
  *
  * @author Bruce
- * @since 2020-07-02
+ * @since 2020-10-19
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -31,62 +28,49 @@ public class CrmSalesplan extends BaseEntity {
     @TableId("salesPlanNumber")
     private String salesPlanNumber;
 
-    private String company;
+    @TableField("customerCode")
+    private String customerCode;
 
-    @TableField("salesPlanDesc")
-    private String salesPlanDesc;
+    @TableField("customerName")
+    private String customerName;
 
-    @TableField("costEstimate")
-    private BigDecimal costEstimate;
+    private String describe;
 
-    @TableField("costType")
-    private String costType;
-
-    @TableField("costCenter")
-    private String costCenter;
-
-    private BigDecimal amount;
-
-    @TableField("appliedAmount")
-    private BigDecimal appliedAmount;
-
-    @TableField("usedAmount")
-    private BigDecimal usedAmount;
-
-    @TableField("totalStatus")
-    private String totalStatus;
-
-    @TableField("firstVisitStatus")
-    private String firstVisitStatus;
-
-    @TableField("protocalStatus")
-    private String protocalStatus;
-
-    @TableField("inquiryStatus")
-    private String inquiryStatus;
-
-    @TableField("reportStatus")
-    private String reportStatus;
-
-    @TableField("solutionStatus")
-    private String solutionStatus;
-
-    @TableField("contractStatus")
-    private String contractStatus;
-
-    @TableField("erpStatus")
-    private String erpStatus;
+    @TableField("makeDate")
+    private LocalDate makeDate;
 
     private String creater;
 
-    @TableField("createTime")
-    private Date createTime;
+    @TableField("createrName")
+    private String createrName;
 
-    @TableField("ForwardId")
-    private Integer ForwardId;
+    @TableField("planStatus")
+    private String planStatus;
 
-    @TableField("Forwarder")
-    private String Forwarder;
+    private String principal;
+
+    @TableField("principalName")
+    private String principalName;
+
+    @TableField("allOperator")
+    private String allOperator;
+
+    private Integer step;
+
+    @TableField("updateDate")
+    private LocalDate updateDate;
+
+    @TableField("spendTime")
+    private Integer spendTime;
+
+    private LocalDate deadline;
+
+    private String assistant;
+
+    private String operator;
+
+    @TableField("lastTime")
+    private LocalDate lastTime;
 
 
 }

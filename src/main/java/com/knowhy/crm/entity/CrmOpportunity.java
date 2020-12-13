@@ -1,5 +1,6 @@
 package com.knowhy.crm.entity;
 
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -25,41 +26,48 @@ public class CrmOpportunity extends BaseEntity {
 
     private static final long serialVersionUID = 1L;
 
-    private String name;
+    @TableId("id")
+    private int id;
+
+    private String body;
 
     private String fax;
+
+    private String resource;
+
+    private String email;
 
     @TableField("companyName")
     private String companyName;
 
-    private String email;
-
-    private String resource;
-
     private String principal;
-
-    private String body;
-
-    private String dept;
 
     private String contract;
 
-    private String maker;
-
-    private String phone;
-
-    @TableField("makeDate")
-    private LocalDate makeDate;
+    private String dept;
 
     private String mobile;
+
+    private String phone;
 
     @TableField("leafType")
     private String leafType;
 
-    private String address;
-
     @TableField("leafNum")
     private String leafNum;
+
+    String province;
+
+    String city;
+
+    String area;
+
+    private String address;
+
+    private String maker;
+
+    @TableField("makeDate")
+    private LocalDate makeDate;
 
     private String creater;
 

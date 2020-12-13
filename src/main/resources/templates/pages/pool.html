@@ -16,8 +16,24 @@
 
     $(function () {
         loadAllCustomerPool();
-        getAllSaleMan();
+        changeHeight();
     });
+
+    function changeHeight() {
+        var totalHeight = document.getElementById("mainData").offsetHeight;
+        if(totalHeight > 776){
+            // var height = totalHeight -60;
+            // // $("#allContent").css('height' , totalHeight);
+            // $("#leftMenu").css('height' , height);
+
+            $("#mainContent").css('height' , 'auto');
+            $("#leftMenu").css('height' , 'auto');
+        }else{
+            $("#mainContent").css('height' , 653+'px');
+            $("#leftMenu").css('height' , 716+'px')
+        }
+    }
+
     function loadAllCustomerPool() {
         customerStartPool = 1;
         $.ajax({
@@ -29,19 +45,37 @@
                 $("#customerPool").html("");
                 customerPagesPool = data.pages;
                 var customers = data.customers;
-                for(var i = 0 ; i < customers.length ; i++){
-                    $("#customerPool").append("<tr>"+
-                        "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+'<input name="choose" type="checkbox" value="'+i+'">'+"</td>"+
-                        "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].id+"</td>"+
-                        "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].name+"</td>"+
-                        "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].customerType+"</td>"+
-                        "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].area+"</td>"+
-                        "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].principal+"</td>"+
-                        "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].phone+"</td>"+
-                        "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].followName+"</td>"+
-                        "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<button class='btn btn-warning' onclick='followSalePlan(this)'>跟进</button>"+"</td>"+"</tr>");
+                var role = data.role;
+                if(role == 1){
+                    for(var i = 0 ; i < customers.length ; i++){
+                        $("#customerPool").append("<tr>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+'<input name="choose" type="checkbox" value="'+i+'">'+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].id+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].name+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].customerType+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].area+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].principal+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].phone+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].followName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<button class='btn btn-warning' onclick='followSalePlan(this)'>跟进</button>"+"</td>"+"</tr>");
+                    }
+                }else{
+                    for(var i = 0 ; i < customers.length ; i++){
+                        $("#customerPool").append("<tr>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+'<input name="choose" type="checkbox" value="'+i+'">'+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].id+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].name+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].customerType+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].area+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].principal+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].phone+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].followName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"</td>"+"</tr>");
+                    }
                 }
+
                 $("#poolPage").show();
+                changeHeight();
             },
             error:function () {
                 $.message({
@@ -77,6 +111,7 @@
                             "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<button class='btn btn-warning' onclick='followSalePlan(this)'>跟进</button>"+"</td>"+"</tr>");
                     }
                     $("#poolPage").show();
+                    changeHeight();
                 },
                 error:function () {
                     $.message({
@@ -114,6 +149,7 @@
                             "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<button class='btn btn-warning' onclick='followSalePlan(this)'>跟进</button>"+"</td>"+"</tr>");
                     }
                     $("#poolPage").show();
+                    changeHeight();
                 },
                 error:function () {
                     $.message({
@@ -150,6 +186,7 @@
                             "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<button class='btn btn-warning' onclick='followSalePlan(this)'>跟进</button>"+"</td>"+"</tr>");
                     }
                     $("#poolPage").show();
+                    changeHeight();
                 },
                 error:function () {
                     $.message({
@@ -182,27 +219,13 @@
                         "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<button class='btn btn-warning' onclick='followSalePlan(this)'>跟进</button>"+"</td>"+"</tr>");
                 }
                 $("#poolPage").hide();
+                changeHeight();
             },
             error:function () {
                 $.message({
                     message:'程序出错',
                     type:'error'
                 })
-            }
-        })
-    }
-
-    function getAllSaleMan() {
-        $.ajax({
-            type:"post",
-            url:"loadAllSaleMan",
-            async:false,
-            success:function (data) {
-                $("#saleMen").html("");
-                $("#saleMen").append("<option value='0'>"+"--请选择--"+"</option>");
-                for(var i = 0 ; i < data.length ; i++){
-                    $("#saleMen").append('<option value="'+data[i].account+'">'+data[i].name+"</option>");
-                }
             }
         })
     }
@@ -214,7 +237,7 @@
     });
 
     function chooseCustomer() {
-        var account = $("#saleMen option:selected").val();
+        var account = $("#saleMenAccount").val();
         var obj = document.getElementsByName("choose");
         var check_val = [];
         for (k in obj) {
@@ -222,7 +245,11 @@
                 check_val.push(obj[k].value);
         }
         if(check_val.length == 0){
-            alert("请选择客户");
+            // alert("请选择客户");
+            $.message({
+                message:"请选择客户",
+                type:"success"
+            });
         }else{
             var IDs = "";
             for(var i = 0 ; i < check_val.length ; i++){
@@ -259,13 +286,11 @@
     }
 
     function followSalePlan(obj) {
-        var i = obj.parentNode.parentNode.rowIndex;
-        var tab = document.getElementById("seaPool");
-        var orderID = tab.rows[i].cells[2].innerHTML;
+        var orderID =  obj.parentNode.parentNode.cells[1].innerText;
         $.ajax({
             type:"post",
             data:{"salePlanID":orderID},
-            url:"",
+            url:"followSalePlan",
             async:false,
             success:function (data) {
                 if(data == "OK"){
@@ -279,6 +304,99 @@
                         message:data,
                         type:'error'
                     });
+                }
+            }
+        })
+    }
+
+    function dropCustomer() {
+        var obj = document.getElementsByName("choose");
+        var check_val = [];
+        for (k in obj) {
+            if (obj[k].checked)
+                check_val.push(obj[k].value);
+        }
+
+
+        if(check_val.length == 0){
+            // alert("请选择客户");
+            $.message({
+                message:"请选择客户",
+                type:"success"
+            });
+        }else{
+            var customers = new Array();
+            for(var i = 0 ; i < check_val.length ; i++){
+                var target = parseInt(check_val[i]);
+                var customerID = document .getElementById ("customerPool").rows [target].cells[1].innerHTML;
+                customers.push(customerID);
+            }
+            $.ajax({
+                type:"post",
+                data:{"customerIDs":customers},
+                url:"deleteCustomer",
+                async:false,
+                traditional: true,
+                success:function (data) {
+                    if(data == "OK"){
+                        $.message({
+                            message:"客户已删除",
+                            type:"success"
+                        });
+                        loadAllCustomerPool();
+                    }else{
+                        $.message({
+                            message:data,
+                            type:"error"
+                        });
+                    }
+                }
+            })
+        }
+    }
+
+    function getAllSaleMen() {
+        $("#myModal").modal('show');
+        $.ajax({
+            type:"post",
+            url:"loadAllSaleMan",
+            async:false,
+            success:function (data) {
+                $("#allSalesMan").html("");
+                for(var i = 0 ; i < data.length ; i++){
+                    $("#allSalesMan").append("<tr>"
+                        +"<td>"+data[i].account+"</td>"
+                        +"<td>"+data[i].name+"</td>"
+                        +"<td>"+"<a href='#' onclick='chooseSaleMan(this)'>"+"选择"+"</a>"+"</td>"
+                        +"</tr>");
+                }
+            }
+        })
+    }
+
+    function chooseSaleMan(obj) {
+        var account = obj.parentNode.parentNode.cells[0].innerText;
+        var name = obj.parentNode.parentNode.cells[1].innerText;
+        $("#saleMenAccount").val(account);
+        $("#saleMen").val(name);
+        $("#myModal").modal('hide');
+    }
+
+    function selectSaleMan() {
+        var condition = $("#saleManCondition").val();
+        $.ajax({
+            type:"post",
+            data:{"condition":condition},
+            url:"selectSaleManByCondition",
+            async:false,
+            success:function (data) {
+                $("#allSalesMan").html("");
+                for(var i = 0 ; i < data.length ; i++){
+                    $("#allSalesMan").append("<tr>"
+                        +"<td>"+data[i].account+"</td>"
+                        +"<td>"+data[i].name+"</td>"
+                        +"<td>"+"<a href='#' onclick='chooseSaleMan(this)'>"+"选择"+"</a>"+"</td>"
+                        +"</tr>");
                 }
             }
         })

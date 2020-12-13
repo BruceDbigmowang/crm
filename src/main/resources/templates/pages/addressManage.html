@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<title>客户管理——地址管理</title>
+<head th:include="include/fore/newHeader::html" ></head>
+<body>
+<div id="workingArea">
+    <div th:replace="include/fore/top::html" ></div>
+    <div th:replace="include/fore/leftMenu::html" ></div>
+    <div th:replace="include/fore/homePages/customerManage/customerMaintain/addressManagePage::html" ></div>
+</div>
+<script>
+    var start = 1;
+    var pageSize = 0;
+
+    $(function () {
+        getAddressByPage();
+    })
+
+    function getAddressByPage() {
+        start = 1;
+        $.ajax({
+            type:"post",
+            data:{"start":start},
+            url:"findAddressByPage",
+            async:false,
+            success:function (data) {
+                pageSize = data.pageSize;
+                var addressList = data.allAddress;
+                $("#dataforAddress").html("");
+                for(var i = 0 ; i < addressList.length ; i++){
+                    $("#dataforAddress").append("<tr>"+
+                        "<td style='display: none;'>"+addressList[i].id+"</td>"+
+                        "<td>"+addressList[i].describe+"</td>"+
+                        "<td>"+addressList[i].address+"</td>"+
+                        "<td>"+addressList[i].contacts+"</td>"+
+                        "<td>"+addressList[i].phone+"</td>"+
+                        "<td style='display: none;'>"+addressList[i].customerCode+"</td>"+
+                        "<td>"+"<a href='#' data-toggle=\"modal\" data-target=\"#myModal\" onclick='getAddressByCustomer(this)'>"+addressList[i].customerName+"</a>"+"</td>"+
+                        "</tr>");
+                }
+                $("#addressPage").show();
+                $.message({
+                    message:"当前是第"+start+"页",
+                    type:"success"
+                })
+            }
+        })
+
+    }
+
+    function getPreviousAddress() {
+        if(start > 1){
+            start = start - 1;
+            $.ajax({
+                type:"post",
+                data:{"start":start},
+                url:"findAddressByPage",
+                async:false,
+                success:function (data) {
+                    var addressList = data.allAddress;
+                    $("#dataforAddress").html("");
+                    for(var i = 0 ; i < addressList.length ; i++){
+                        $("#dataforAddress").append("<tr>"+
+                            "<td style='display: none;'>"+addressList[i].id+"</td>"+
+                            "<td>"+addressList[i].describe+"</td>"+
+                            "<td>"+addressList[i].address+"</td>"+
+                            "<td>"+addressList[i].contacts+"</td>"+
+                            "<td>"+addressList[i].phone+"</td>"+
+                            "<td style='display: none;'>"+addressList[i].customerCode+"</td>"+
+                            "<td>"+"<a href='#' data-toggle=\"modal\" data-target=\"#myModal\" onclick='getAddressByCustomer(this)'>"+addressList[i].customerName+"</a>"+"</td>"+
+                            "</tr>");
+                    }
+                    $("#addressPage").show();
+                    $.message({
+                        message:"当前是第"+start+"页",
+                        type:"success"
+                    })
+                }
+            })
+        }
+    }
+
+    function getNextAddress() {
+        if(start < pageSize){
+            start = start + 1;
+            $.ajax({
+                type:"post",
+                data:{"start":start},
+                url:"findAddressByPage",
+                async:false,
+                success:function (data) {
+                    var addressList = data.allAddress;
+                    $("#dataforAddress").html("");
+                    for(var i = 0 ; i < addressList.length ; i++){
+                        $("#dataforAddress").append("<tr>"+
+                            "<td style='display: none;'>"+addressList[i].id+"</td>"+
+                            "<td>"+addressList[i].describe+"</td>"+
+                            "<td>"+addressList[i].address+"</td>"+
+                            "<td>"+addressList[i].contacts+"</td>"+
+                            "<td>"+addressList[i].phone+"</td>"+
+                            "<td style='display: none;'>"+addressList[i].customerCode+"</td>"+
+                            "<td>"+"<a href='#' data-toggle=\"modal\" data-target=\"#myModal\" onclick='getAddressByCustomer(this)'>"+addressList[i].customerName+"</a>"+"</td>"+
+                            "</tr>");
+                    }
+                    $("#addressPage").show();
+                    $.message({
+                        message:"当前是第"+start+"页",
+                        type:"success"
+                    })
+                }
+            })
+        }
+    }
+
+    function getLastAddress() {
+        start = pageSize;
+        $.ajax({
+            type:"post",
+            data:{"start":start},
+            url:"findAddressByPage",
+            async:false,
+            success:function (data) {
+                var addressList = data.allAddress;
+                $("#dataforAddress").html("");
+                for(var i = 0 ; i < addressList.length ; i++){
+                    $("#dataforAddress").append("<tr>"+
+                        "<td style='display: none;'>"+addressList[i].id+"</td>"+
+                        "<td>"+addressList[i].describe+"</td>"+
+                        "<td>"+addressList[i].address+"</td>"+
+                        "<td>"+addressList[i].contacts+"</td>"+
+                        "<td>"+addressList[i].phone+"</td>"+
+                        "<td style='display: none;'>"+addressList[i].customerCode+"</td>"+
+                        "<td>"+"<a href='#' data-toggle=\"modal\" data-target=\"#myModal\" onclick='getAddressByCustomer(this)'>"+addressList[i].customerName+"</a>"+"</td>"+
+                        "</tr>");
+                }
+                $("#addressPage").show();
+                $.message({
+                    message:"当前是第"+start+"页",
+                    type:"success"
+                })
+            }
+        })
+    }
+
+    function findByCustomerNameOrAddress() {
+        var name = $("#addressSearch").val();
+        $.ajax({
+            type:"post",
+            data:{"name":name},
+            url:"findByCustomerNameOr",
+            async:false,
+            success:function (data) {
+                var addressList = data;
+                $("#dataforAddress").html("");
+                for(var i = 0 ; i < addressList.length ; i++){
+                    $("#dataforAddress").append("<tr>"+
+                        "<td style='display: none;'>"+addressList[i].id+"</td>"+
+                        "<td>"+addressList[i].describe+"</td>"+
+                        "<td>"+addressList[i].address+"</td>"+
+                        "<td>"+addressList[i].contacts+"</td>"+
+                        "<td>"+addressList[i].phone+"</td>"+
+                        "<td style='display: none;'>"+addressList[i].customerCode+"</td>"+
+                        "<td>"+"<a href='#' data-toggle=\"modal\" data-target=\"#myModal\" onclick='getAddressByCustomer(this)'>"+addressList[i].customerName+"</a>"+"</td>"+
+                        "</tr>");
+                }
+                $("#addressPage").hide();
+            }
+        })
+    }
+
+    function getAddressByCustomer(obj) {
+        var customerCode = obj.parentNode.parentNode.cells[5].innerText;
+        $("#customerCode").val(customerCode);
+        $.ajax({
+            type:"post",
+            data:{"customerCode":customerCode},
+            url:"loadAddressByCustomer",
+            async:false,
+            success:function (data) {
+                $("#customerCode").val(customerCode);
+                var customer = data.customer;
+                var allAddress = data.allAddress;
+                document.getElementById("customerName").innerText=customer.name;
+                document.getElementById("principalName").innerText=customer.principal;
+                document.getElementById("principalPhone").innerText=customer.phone;
+                $("#addressDetail").html("");
+                for(var i = 0 ; i < allAddress.length ; i++){
+                    $("#addressDetail").append("<tr>"+
+                        "<td style='display: none;'>"+allAddress[i].id+"</td>"+
+                        "<td>"+"<a href='#' onclick='getAddressDetail(this)' data-toggle=\"modal\" data-target=\"#myModal2\">"+allAddress[i].describe+"</a>"+"</td>"+
+                        "<td>"+allAddress[i].address+"</td>"+
+                        "<td>"+allAddress[i].area+"</td>"+
+                        "<td>"+allAddress[i].postcode+"</td>"+
+                        "<td>"+allAddress[i].contacts+"</td>"+
+                        "<td>"+allAddress[i].phone+"</td>"+
+                        "<td>"+allAddress[i].mainAddress+"</td>"+
+                        "</tr>");
+                }
+            }
+        })
+    }
+
+    function showUpdateAddress() {
+        var customerCode = $("#customerCode").val();
+        $.ajax({
+            type:"post",
+            data:{"customerCode":customerCode},
+            url:"loadAddressByCustomer",
+            async:false,
+            success:function (data) {
+                $("#customerCode").val(customerCode);
+                var customer = data.customer;
+                var allAddress = data.allAddress;
+                document.getElementById("customerName").innerText=customer.name;
+                document.getElementById("principalName").innerText=customer.principal;
+                document.getElementById("principalPhone").innerText=customer.phone;
+                $("#addressDetail").html("");
+                for(var i = 0 ; i < allAddress.length ; i++){
+                    $("#addressDetail").append("<tr>"+
+                        "<td style='display: none;'>"+allAddress[i].id+"</td>"+
+                        "<td>"+"<a href='#' onclick='getAddressDetail(this)' data-toggle=\"modal\" data-target=\"#myModal2\">"+allAddress[i].describe+"</a>"+"</td>"+
+                        "<td>"+allAddress[i].address+"</td>"+
+                        "<td>"+allAddress[i].area+"</td>"+
+                        "<td>"+allAddress[i].postcode+"</td>"+
+                        "<td>"+allAddress[i].contacts+"</td>"+
+                        "<td>"+allAddress[i].phone+"</td>"+
+                        "<td>"+allAddress[i].mainAddress+"</td>"+
+                        "</tr>");
+                }
+            }
+        })
+    }
+
+    function saveNewAddress() {
+        var customerCode = $("#customerCode").val();
+        var describe = $("#describe2").val();
+        var address = $("#address2").val();
+        var area = $("#area2 option:selected").val();
+        var postcode = $("#postcode2").val();
+        var contract = $("#contract2").val();
+        var contractWay = $("#contractWay2").val();
+        var mainAddress = $("input[name='mainAddress2']:checked").val();
+
+        var data={"customerCode":customerCode , "describe":describe , "address":address , "area":area , "postcode":postcode , "contract":contract , "contractWay":contractWay , "mainAddress":mainAddress};
+
+        $.ajax({
+            type:"post",
+            data:data,
+            url:"createNewAddress",
+            async:false,
+            success:function (data) {
+                if(data == "OK"){
+                    $.message({
+                        message:'数据保存成功',
+                        type:'success'
+                    });
+                    $("#myModal3").modal('hide');
+                    getAddressByPage();
+                    showUpdateAddress();
+                }else{
+                    $.message({
+                        message:data,
+                        type:'error'
+                    })
+                }
+            }
+        })
+    }
+
+    function getAddressDetail(obj) {
+        var aId = obj.parentNode.parentNode.cells[0].innerText;
+        $("#aId").val(aId);
+        $.ajax({
+            type:"post",
+            data:{"aId":aId},
+            url:"loadAddressDetail",
+            async:false,
+            success:function (data) {
+                $("#address").val(data.address);
+                $("#describe").val(data.describe);
+                $("#area").find("option").each(function(){
+                    if($(this).text() == data.area)	{
+                        $(this).attr("selected",true);
+                    }
+                });
+                $("#postcode").val(data.postcode);
+                $("#contract").val(data.contacts);
+                $("#contractWay").val(data.phone);
+                if(data.mainAddress=="N"){
+                    // $("#inc1").removeAttr("checked");
+                    // $("#inc0").attr("checked","checked");
+                    $("#inc0").prop("checked",true)
+                }else{
+                    // $("#inc0").removeAttr("checked");
+                    // $("#inc1").attr("checked","checked");
+                    $("#inc1").prop("checked",true)
+                }
+            }
+        })
+    }
+
+    function dropAddress() {
+        var aId = $("#aId").val();
+        $.ajax({
+            type:"post",
+            data:{"aId":aId},
+            url:"deleteAddress",
+            async:false,
+            success:function (data) {
+                if(data == "OK"){
+                    $.message({
+                        message:"地址已删除",
+                        type:'success'
+                    });
+                    $("#myModal2").modal('hide');
+                    getAddressByPage();
+                    showUpdateAddress();
+                }else{
+                    $.message({
+                        message:data,
+                        type:'error'
+                    });
+                }
+            }
+        })
+    }
+
+    function updateAddress() {
+        var aId = $("#aId").val();
+        var address = $("#address").val();
+        var describe = $("#describe").val();
+        var area = $("#area option:selected").val();
+        var postcode = $("#postcode").val();
+        var contract = $("#contract").val();
+        var contractWay = $("#contractWay").val();
+        var mainAddress = $("input[name='mainAddress']:checked").val();
+
+        var data = {"aId":aId , "address":address , "describe":describe , "area":area , "postcode":postcode , "contract":contract , "contractWay":contractWay , "mainAddress":mainAddress};
+
+        $.ajax({
+            type:"post",
+            data:data,
+            url:"updateOneAddress",
+            async:false,
+            success:function (data) {
+                if(data == "OK"){
+                    $.message({
+                        message:"地址已更新",
+                        type:'success'
+                    });
+                    $("#myModal2").modal('hide');
+                    getAddressByPage();
+                    showUpdateAddress();
+                }else{
+                    $.message({
+                        message:data,
+                        type:'error'
+                    });
+                }
+            }
+        })
+    }
+</script>
+
+</body>
+</html>

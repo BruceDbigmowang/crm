@@ -1,5 +1,6 @@
 package com.knowhy.crm.controller;
 
+import com.knowhy.crm.dao.CompanyInfoDAO;
 import com.knowhy.crm.entity.CustomerDetail;
 import com.knowhy.crm.pojo.CompanyInfo;
 import com.knowhy.crm.service.CompanyInfoService;
@@ -27,11 +28,15 @@ public class CustomerDetailController {
     CustomerDetailService customerDetailService;
     @Autowired
     CompanyInfoService companyInfoService;
+    @Autowired
+    CompanyInfoDAO companyInfoDAO;
 
     @RequestMapping("/downloadCustomerByExcel")
-    public String download(@RequestParam("cid")int cid , HttpServletResponse response) throws Exception {
+    public String download(String salePlanNum , HttpServletResponse response) throws Exception {
         String sheetProductName = "客户在线尽调明细.xls";
         String excelProductName = "客户在线尽调明细.xls";
+        List<CompanyInfo> companyInfoList = companyInfoDAO.findBySalePlanID(salePlanNum);
+        int cid = companyInfoList.get(0).getId();
         CustomerDetail customerDetail = customerDetailService.findDetailByCid(cid);
         List<CustomerDetail> customerDetailList = new ArrayList<>();
         customerDetailList.add(customerDetail);

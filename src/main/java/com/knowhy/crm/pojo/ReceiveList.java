@@ -19,6 +19,7 @@ public class ReceiveList {
     String model;
     String type;
     Integer receiveAmount;
+    @Column(name = "receivePrice")
     BigDecimal receivePice;
     BigDecimal receiveMoney;
     String receiveDept;

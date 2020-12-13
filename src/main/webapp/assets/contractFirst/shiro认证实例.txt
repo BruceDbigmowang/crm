@@ -1,0 +1,42 @@
+通过java项目实现用户登录认证实例：
+1、创建java maven项目  shiro-authen;
+2、在pom.xml中引入shiro-core的依赖
+3、创建shiro.ini配置文件，添加用户数据
+4、创建测试类，junit进行模拟登录测试
+
+
+自定义realm认证：
+1、自定义realm类继承AuthorizingRealm抽象类
+2、重写验证方法，连接数据库，获取数据
+3、自定义ini配置文件
+4、测试
+
+shiro框架提供的实现类：
+Md5Hash md5 = new Md5Hash(password , salt , hashIterations);
+password:密码明文
+salt：盐值（随机数）
+hashIterations：散列次数
+simpleHash sh = new SimpleHash("md5" , password , salt , hashIterations);
+"md5":加密方式
+password:密码明文
+salt:盐值（随机数）
+hashIterations:散列次数
+
+授权步骤：
+1、创建测试类和测试方法
+2、加载ini配置文件，创Factory建对象实例
+3、通过factory对象，创建securityManager对象实例
+4、将SecurityManager对象设置到SecurityUtils工具类中
+5、通过SecurityUtils工具类创建subject主体对象
+6、创建具有用户名和密码的令牌token对象，通过subject对象调用登录方法进行验证
+7、验证通过后，通过subject对象调用hasRole（“”）方法，判断主体是否属于指定角色权限
+8、通过subject对象调用isPermitted("user:create")方法，与配置文件中的配置进行对比，判断是否具有指定的权限资源
+
+
+SSM框架整合shiro：
+1、创建maven的web项目
+2、添加spring，springmvc ， Mybatis ， mysql ， shiro的依赖
+3、在web.xml文件中添加listener， filter等配置
+4、创建spring Mybatis shiro等配置文件
+5、创建开发用的包，dao，service...
+6、编写各类文件进行测试

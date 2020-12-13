@@ -1,0 +1,143 @@
+<div id="allContent" class="content" th:fragment="html">
+    <!-- START CONTAINER -->
+    <div id="mainContent" class="container-widget">
+
+        <div id="allCustomerData" style="width:100%;margin: 0px auto;">
+            <div>
+                <span style="font-size: 16px;">报表管理 / 客户查询</span>
+                <div style="background-color: white;"><br>
+                    <table style="width:100%;border: 0px;margin-top: 10px;">
+                        <tr>
+                            <td style="width: 400px">
+                                <input id="customerNameSearch" class="form-control" placeholder="请输入客户名称" autocomplete="off">
+                            </td>
+                            <td style="width: 100px;"><button class="btn btn-warning" onclick="getOneByCustomerName()">查询</button></td>
+                            <td></td>
+                        </tr>
+                    </table>
+                    <br>
+                    <div id="allCustomer" class="row">
+
+                        <div class="panel panel-default" style="box-shadow: 5px 5px 5px #888888;">
+                            <div class="panel-body">
+
+                                <table style="width: 100%;">
+                                    <tr>
+                                        <td>客户名称</td>
+                                        <td>苏州诺而为</td>
+                                        <td>客户编码</td>
+                                        <td colspan="2">knowhy202009110001</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="width: 70px;">决策者</td>
+                                        <td style="width: 150px;">xxx</td>
+                                        <td style="width: 105px;">地区</td>
+                                        <td>...</td>
+                                        <td style="width: 120px;"><button>展开详情</button></td>
+                                    </tr>
+                                    <tr>
+
+                                        <td>项目负责人</td>
+                                        <td>xxx</td>
+                                        <td>负责人联系方式</td>
+                                        <td colspan="2">xxx@123.com</td>
+                                    </tr>
+                                </table>
+                                <div id="customerTotal">
+                                <h4>客户信息</h4>
+                                <table id="customerDetail" class="table">
+                                    <tr>
+                                        <td>客户名称</td>
+                                        <td></td>
+                                        <td>地址</td>
+                                        <td></td>
+                                        <td>基本情况</td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td>企业性质</td>
+                                        <td></td>
+                                        <td>主营产品</td>
+                                        <td></td>
+                                        <td>竞争对手</td>
+                                        <td></td>
+                                    </tr>
+                                </table>
+                                <h4>联系人</h4>
+                                <table class="table">
+                                    <thead>
+                                    <tr>
+                                        <th>联系人姓名</th>
+                                        <th>联系人电话</th>
+                                        <th>邮箱</th>
+                                        <th>微信</th>
+                                        <th>性别</th>
+                                        <th>性格爱好</th>
+                                        <th>生日</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="pricipalList"></tbody>
+                                </table>
+                                <h4>地址</h4>
+                                <table class="table">
+                                    <thead>
+                                    <tr>
+                                        <th>地址说明</th>
+                                        <th>详细地址</th>
+                                        <th>所属地区</th>
+                                        <th>邮编</th>
+                                        <th>联系人</th>
+                                        <th>联系电话</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="addressList"></tbody>
+                                </table>
+                                <h4>文件附件</h4>
+                                <table class="table">
+                                    <thead>
+                                    <tr>
+                                        <th>保密协议</th>
+                                        <th>在线尽调</th>
+                                        <th>现场尽调</th>
+                                        <th>方案</th>
+                                        <th>合同</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <td id="secretCell"></td>
+                                        <td id="onlineCell"></td>
+                                        <td id="offlineCell"></td>
+                                        <td id="schemeCell"></td>
+                                        <td id="contractCell"></td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div id="poolPage" style="width:1050px;text-align: center">
+                        <a href="#" style="color: #ff6d0a;" onclick="loadAllCustomer()">首页</a>&nbsp&nbsp&nbsp<a href="#" style="color: #ff6d0a;" onclick="loadAllCustomerPreviouse()">上一页</a>&nbsp&nbsp&nbsp<a href="#" style="color: #ff6d0a;" onclick="loadAllCustomerNext()">下一页</a>&nbsp&nbsp&nbsp<a href="#" style="color: #ff6d0a;" onclick="loadAllCustomerLast()">末页</a>
+                    </div>
+                    <div id="poolPage2" style="width:1050px;text-align: center;display: none;">
+                        <a href="#" style="color: #ff6d0a;" onclick="getOneByCustomerName()">首页</a>&nbsp&nbsp&nbsp<a href="#" style="color: #ff6d0a;" onclick="getOneByCustomerNamePrevious()">上一页</a>&nbsp&nbsp&nbsp<a href="#" style="color: #ff6d0a;" onclick="getOneByCustomerNameNext()">下一页</a>&nbsp&nbsp&nbsp<a href="#" style="color: #ff6d0a;" onclick="getOneByCustomerNameLast()">末页</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="row footer">
+        <div class="col-md-6 text-left">
+            &nbsp;&nbsp;&nbsp;&nbsp;
+        </div>
+        <div class="col-md-6 text-right">
+            &nbsp;&nbsp;&nbsp;&nbsp;
+        </div>
+    </div>
+</div>
+

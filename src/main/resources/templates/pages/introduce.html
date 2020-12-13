@@ -11,45 +11,232 @@
 <script>
 
     $(function () {
+        judgeFunc();
         loadFirstPlan();
         getAllSaleMan();
     });
 
     laydate.render({
-        elem: '#travelDate' //指定元素
+        elem: '#travelDate', //指定元素
+        trigger: 'click'
     });
 
-    function loadFirstPlan() {
-        var status = "first";
+    // laydate.render({
+    //     elem: document.getElementsByTagName('birthday'),
+    //     trigger: 'click'
+    // });
+
+    function judgeFunc() {
         $.ajax({
             type:"post",
-            data:{"status":status},
-            url:"findCanOperate",
+            url:"getSaleRole",
             async:false,
             success:function (data) {
-                $("#allFirst").html("");
-                $("#customer").html("");
-                $("#customer").append("<option value='0'>"+"--请选择--"+"</option>");
-                $("#customer2").html("");
-                $("#customer2").append("<option value='0'>"+"--请选择--"+"</option>");
-                for(var i = 0 ; i < data.length ; i++){
-                    $("#allFirst").append("<tr>"+
-                    "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+data[i].id+"</td>"+
-                    "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+data[i].customerName+"</td>"+
-                    "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+data[i].describe+"</td>"+
-                    "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+data[i].principalName+"</td>"+
-                    "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+
-                        "<a href='#' data-toggle=\"modal\" data-target=\"#myModal2\" onclick=\"getRowId(this)\">完善信息</a>"+
-                        "<a href='#' style=\"margin-left: 10px;\" onclick=\"giveup(this)\">挂起</a>"+
-                     "</td>"
-                        +"</tr>");
-
-                    $("#customer").append('<option value="'+data[i].customerCode+'">'+data[i].customerName+"</option>");
-                    $("#customer2").append('<option value="'+data[i].customerCode+'">'+data[i].customerName+"</option>");
-
-                }
+                $("#funcInput").val(data);
             }
         })
+    }
+
+    function loadFirstPlan() {
+        var role = $("#funcInput").val();
+        if(role == "0"){
+            var status = "first";
+            $.ajax({
+                type:"post",
+                data:{"status":status},
+                url:"findCanOperateAndOperated",
+                async:false,
+                success:function (data) {
+                    var list1 = data.list1;
+                    var list2 = data.list2;
+                    $("#allFirst").html("");
+                    $("#customer").html("");
+                    $("#customer").append("<option value='0'>"+"--请选择--"+"</option>");
+                    $("#customer2").html("");
+                    $("#customer2").append("<option value='0'>"+"--请选择--"+"</option>");
+                    for(var i = 0 ; i < list1.length ; i++){
+                        $("#allFirst").append("<tr>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].id+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].customerName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].describe+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].deadline+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].principalName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+
+                            "<a href='#' data-toggle=\"modal\" data-target=\"#myModal2\" onclick=\"getRowId(this)\">完善信息</a>"+
+                            // "<a href='#' style=\"margin-left: 10px;\" onclick=\"giveup(this)\">挂起</a>"+
+                            "</td>"
+                            +"</tr>");
+
+                        $("#customer").append('<option value="'+list1[i].customerCode+'">'+list1[i].customerName+"</option>");
+                        $("#customer2").append('<option value="'+list1[i].customerCode+'">'+list1[i].customerName+"</option>");
+
+                    }
+                    $("#allSecond").html("");
+                    for(var i = 0 ; i < list2.length ; i++) {
+                        $("#allSecond").append("<tr>" +
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">" + list2[i].id + "</td>" +
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">" + list2[i].customerName + "</td>" +
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">" + list2[i].describe + "</td>" +
+                            // "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">" + list2[i].deadline + "</td>" +
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">" + list2[i].principalName + "</td>" +
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">" +
+                            // "<a href='#'>查看信息</a>" +
+                            "<a href='#' data-toggle=\"modal\" data-target=\"#myModal6\" onclick=\"getIntroduceDetail(this)\">查看信息</a>" +
+                            // "<a href='#' style=\"margin-left: 10px;\" onclick=\"giveup(this)\">挂起</a>"+
+                            "</td>"
+                            + "</tr>");
+                    }
+                }
+            })
+        }else{
+            var status = "first";
+            $.ajax({
+                type:"post",
+                data:{"status":status},
+                url:"findCanOperateAndOperatedByAdmin",
+                async:false,
+                success:function (data) {
+                    var list1 = data.list1;
+                    var list2 = data.list2;
+                    $("#allFirst").html("");
+                    $("#customer").html("");
+                    $("#customer").append("<option value='0'>"+"--请选择--"+"</option>");
+                    $("#customer2").html("");
+                    $("#customer2").append("<option value='0'>"+"--请选择--"+"</option>");
+                    for(var i = 0 ; i < list1.length ; i++){
+                        $("#allFirst").append("<tr>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].id+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].customerName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].describe+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].deadline+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].principalName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+
+                            "<a href='#' data-toggle=\"modal\" data-target=\"#myModal2\" onclick=\"getRowId(this)\">完善信息</a>"+
+                            // "<a href='#' style=\"margin-left: 10px;\" onclick=\"giveup(this)\">挂起</a>"+
+                            "</td>"
+                            +"</tr>");
+
+                        $("#customer").append('<option value="'+list1[i].customerCode+'">'+list1[i].customerName+"</option>");
+                        $("#customer2").append('<option value="'+list1[i].customerCode+'">'+list1[i].customerName+"</option>");
+
+                    }
+                    var trs = document.getElementById("firstData").rows;
+                    for(var i = 0 ; i < trs.length ; i++){
+                        var cell = trs[i].cells[5];
+                        cell.style.display = 'none';
+                    }
+                    $("#allSecond").html("");
+                    for(var i = 0 ; i < list2.length ; i++) {
+                        $("#allSecond").append("<tr>" +
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">" + list2[i].id + "</td>" +
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">" + list2[i].customerName + "</td>" +
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">" + list2[i].describe + "</td>" +
+                            // "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">" + list2[i].deadline + "</td>" +
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">" + list2[i].principalName + "</td>" +
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">" +
+                            // "<a href='#'>查看信息</a>" +
+                            "<a href='#' data-toggle=\"modal\" data-target=\"#myModal6\" onclick=\"getIntroduceDetail(this)\">查看信息</a>" +
+                            // "<a href='#' style=\"margin-left: 10px;\" onclick=\"giveup(this)\">挂起</a>"+
+                            "</td>"
+                            + "</tr>");
+                    }
+                }
+            })
+        }
+
+    }
+
+    function getOneByCustomer() {
+        var role = $("#funcInput").val();
+        if(role == "0"){
+            var customerName = $("#customerNameSearch").val();
+            $.ajax({
+                type:"post",
+                data:{"customerName":customerName , "status":"first"},
+                url:"findCanOperateByName",
+                async:false,
+                success:function (data) {
+                    var list1 = data.list1;
+                    var list2 = data.list2;
+                    $("#allFirst").html("");
+                    $("#allSecond").html("");
+                    for(var i = 0 ; i < list1.length ; i++){
+                        $("#allFirst").append("<tr>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].id+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].customerName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].describe+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].deadline+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].principalName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+
+                            "<a href='#' data-toggle=\"modal\" data-target=\"#myModal2\" onclick=\"getRowId(this)\">完善信息</a>"+
+                            // "<a href='#' style=\"margin-left: 10px;\" onclick=\"giveup(this)\">挂起</a>"+
+                            "</td>"
+                            +"</tr>");
+                    }
+                    for(var i = 0 ; i < list2.length ; i++) {
+                        $("#allSecond").append("<tr>" +
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">" + list2[i].id + "</td>" +
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">" + list2[i].customerName + "</td>" +
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">" + list2[i].describe + "</td>" +
+                            // "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">" + list2[i].deadline + "</td>" +
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">" + list2[i].principalName + "</td>" +
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">" +
+                            // "<a href='#'>查看信息</a>" +
+                            "<a href='#' data-toggle=\"modal\" data-target=\"#myModal6\" onclick=\"getIntroduceDetail(this)\">查看信息</a>" +
+                            // "<a href='#' style=\"margin-left: 10px;\" onclick=\"giveup(this)\">挂起</a>"+
+                            "</td>"
+                            + "</tr>");
+                    }
+                }
+            })
+        }else{
+            var customerName = $("#customerNameSearch").val();
+            $.ajax({
+                type:"post",
+                data:{"customerName":customerName , "status":"first"},
+                url:"findCanOperateByNameAndAdmin",
+                async:false,
+                success:function (data) {
+                    var list1 = data.list1;
+                    var list2 = data.list2;
+                    $("#allFirst").html("");
+                    $("#allSecond").html("");
+                    for(var i = 0 ; i < list1.length ; i++){
+                        $("#allFirst").append("<tr>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].id+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].customerName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].describe+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].deadline+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].principalName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+
+                            "<a href='#' data-toggle=\"modal\" data-target=\"#myModal2\" onclick=\"getRowId(this)\">完善信息</a>"+
+                            // "<a href='#' style=\"margin-left: 10px;\" onclick=\"giveup(this)\">挂起</a>"+
+                            "</td>"
+                            +"</tr>");
+                    }
+                    var trs = document.getElementById("firstData").rows;
+                    for(var i = 0 ; i < trs.length ; i++){
+                        var cell = trs[i].cells[5];
+                        cell.style.display = 'none';
+                    }
+                    for(var i = 0 ; i < list2.length ; i++) {
+                        $("#allSecond").append("<tr>" +
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">" + list2[i].id + "</td>" +
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">" + list2[i].customerName + "</td>" +
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">" + list2[i].describe + "</td>" +
+                            // "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">" + list2[i].deadline + "</td>" +
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">" + list2[i].principalName + "</td>" +
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">" +
+                            // "<a href='#'>查看信息</a>" +
+                            "<a href='#' data-toggle=\"modal\" data-target=\"#myModal6\" onclick=\"getIntroduceDetail(this)\">查看信息</a>" +
+                            // "<a href='#' style=\"margin-left: 10px;\" onclick=\"giveup(this)\">挂起</a>"+
+                            "</td>"
+                            + "</tr>");
+                    }
+                }
+            })
+        }
+
     }
     function giveup(obj) {
         var i = obj.parentNode.parentNode.rowIndex;
@@ -134,6 +321,7 @@
                         type:'success'
                     });
                     $("#myModal").modal('hide');
+                    cleanUpPage();
                 }else{
                     $.message({
                         message:data,
@@ -177,6 +365,7 @@
                     });
                     $("#myModal3").modal('hide');
                     $("#myModal4").modal('hide');
+                    cleanUpPage();
                 }else{
                     $.message({
                         message:data,
@@ -215,30 +404,119 @@
 
     function saveIntroduce() {
         var salePlanID = $("#customerID").val();
-        var address = $("#address").val();
         var condition = $("#condition").val();
         var nature = $("#nature").val();
         var product = $("#product").val();
         var competitor = $("#competitor").val();
         var useAmount = $("#useAmount").val();
-        var contract = $("#contract").val();
-        var phone = $("#phone").val();
-        var email = $("#email").val();
-        var wechat = $("#wechat").val();
-        var sex = $("#sex").val();
-        var position = $("#position").val();
-        var hobby = $("#hobby").val();
-        var relation = $("#relation").val();
-        var birthday = $("#birthday").val();
+        var principalNames = [];
+        var names = document.getElementsByName("principalName");
+        for(var i = 0 ; i < names.length ; i++){
+            principalNames.push(names[i].value);
+        }
+        var phones = [];
+        var princiaplPhones = document.getElementsByName("phone");
+        for(var i = 0 ; i < princiaplPhones.length ; i++){
+            phones.push(princiaplPhones[i].value);
+        }
 
-        var data = {"salePlanID":salePlanID , "address":address , "condition":condition , "bussinessNature":nature , "product":product , "competitor":competitor , "useAmount":useAmount , "contract":contract , "phone":phone , "email":email , "wechat":wechat ,
-        "sex":sex , "position":position , "hobby":hobby , "relation":relation , "birthday":birthday};
+        var emails = [];
+        var principalEmails = document.getElementsByName("email");
+        for(var i = 0 ; i < principalEmails.length ; i++){
+            emails.push(principalEmails[i].value);
+        }
+        var wechats = [];
+        var principalWechats = document.getElementsByName("wechat");
+        for(var i = 0 ; i < principalWechats.length ; i++){
+            wechats.push(principalWechats[i].value);
+        }
+        var sexs = [];
+        var principalSexs = document.getElementsByName("sex");
+        for(var i = 0 ; i < principalSexs.length ; i++){
+            sexs.push(principalSexs[i].value);
+        }
+        var positions = [];
+        var principalPositions = document.getElementsByName("position");
+        for(var i = 0 ; i < principalPositions.length ; i++){
+            positions.push(principalPositions[i].value);
+        }
+        var hobbies = [];
+        var principalHobby = document.getElementsByName("hobby");
+        for(var i = 0 ; i < principalHobby.length ; i++){
+            hobbies.push(principalHobby[i].value);
+        }
+        var relations = [];
+        var principaRelation = document.getElementsByName("relationship");
+        for(var i = 0 ; i < principaRelation.length ; i++){
+            relations.push(principaRelation[i].value);
+        }
+        var birthdays = [];
+        var principalBirth = document.getElementsByName("birthday");
+        for(var i = 0 ; i < principalBirth.length ; i++){
+            birthdays.push(principalBirth[i].value);
+        }
+
+        var mainPrincipal = []
+        var radio = document.getElementsByName("mainPrincipal");
+        for (i=0; i<radio.length; i++) {
+            if (radio[i].checked) {
+                mainPrincipal.push("Y");
+            }else{
+                mainPrincipal.push("N");
+            }
+        }
+
+        var address = [];
+        var addressInput = document.getElementsByName("address");
+        for(var i = 0 ; i < addressInput.length ; i++){
+            address.push(addressInput[i].value);
+        }
+        var describes = [];
+        var describeInput = document.getElementsByName("describe");
+        for(var i = 0 ; i < describeInput.length ; i++){
+            describes.push(describeInput[i].value);
+        }
+        var areas = [];
+        var area = document.getElementsByName("area");
+        for(var i = 0 ; i < area.length ; i++){
+            areas.push(area[i].value);
+        }
+        var postcodes = [];
+        var postcode = document.getElementsByName("postcode");
+        for(var i = 0 ; i < postcode.length ; i++){
+            postcodes.push(postcode[i].value);
+        }
+        var principals = [];
+        var principal = document.getElementsByName("principal");
+        for(var i = 0 ; i < principal.length ; i++){
+            principals.push(principal[i].value);
+        }
+        var principalTels = [];
+        var principalTel = document.getElementsByName("principalPhone");
+        for(var i = 0 ; i < principalTel.length ; i++){
+            principalTels.push(principalTel[i].value);
+        }
+
+        var mainAddress = []
+        var radio2 = document.getElementsByName("mainAddress");
+        for (i=0; i<radio2.length; i++) {
+            if (radio2[i].checked) {
+                mainAddress.push("Y");
+            }else{
+                mainAddress.push("N");
+            }
+        }
+
+        var data = {"salePlanID":salePlanID , "condition":condition , "bussinessNature":nature , "product":product , "competitor":competitor , "useAmount":useAmount ,
+        "names":principalNames , "phones":phones , "emails":emails , "wechats":wechats , "sexs":sexs , "positions":positions , "hobbies":hobbies , "relations":relations , "birthdays":birthdays , "mainPrincipal":mainPrincipal,
+            "address":address , "describes":describes , "areas":areas , "postcodes":postcodes , "principals":principals , "principalTels":principalTels , "mainAddress":mainAddress};
 
         $.ajax({
             type:"post",
             data:data,
             url:"saveIntroduceTask",
             async:false,
+            traditional:true,
             success:function (data) {
                 if(data == "OK"){
                     $.message({
@@ -247,6 +525,7 @@
                     });
                     $("#myModal2").modal('hide');
                     loadFirstPlan();
+                    cleanUpPage();
                 }else{
                     $.message({
                         message:data,
@@ -256,7 +535,279 @@
             }
         })
     }
+    function addPrincipalTr() {
+        //var trid=0;
+        var tab = document.getElementById("principalListBody");
+        //添加行
+        var newTR = tab.insertRow(tab.rows.length);
+        //trid++;
+        var xuhao = newTR.rowIndex.toString();
+        newTR.id = "tr" + xuhao;
+        //获取序号=行索引
+        var check = '<input type="checkbox" name="choose" value="'+"tr"+xuhao+'">';
+        //第一列是设备
+        var tdone = newTR.insertCell(0);
+        tdone.innerHTML = check;
+        //第二列是费用类型
+        var tdtwo = newTR.insertCell(1);
+        tdtwo.innerHTML = '<input name="principalName" class="form-control" placeholder="请输入" style="width: 100%;height: 100%;border: 0px;">';
+        //第三列是费用金额
+        var tdthree = newTR.insertCell(2);
+        tdthree.innerHTML = '<input name="phone" class="form-control" placeholder="请输入" style="width: 100%;height: 100%;border: 0px;">';
 
+        //第四列是费用说明
+        var tdfour = newTR.insertCell(3);
+        tdfour.innerHTML = '<input name="email" class="form-control" placeholder="请输入" style="width: 100%;height: 100%;border: 0px;">';
+
+        var tdfive = newTR.insertCell(4);
+        tdfive.innerHTML ='<input name="wechat" class="form-control" placeholder="请输入" style="width: 100%;height: 100%;border: 0px;">';
+
+        var tdsix = newTR.insertCell(5);
+        tdsix.innerHTML ='<select name="sex" class="form-control">\n' +
+            '                                        <option value="0">--请选择--</option>\n' +
+            '                                        <option value="男">男</option>\n' +
+            '                                        <option value="女">女</option>\n' +
+            '                                    </select>';
+
+        var tdseven = newTR.insertCell(6);
+        tdseven.innerHTML ='<input name="position" class="form-control" placeholder="请输入" style="width: 100%;height: 100%;border: 0px;">';
+
+        var tdeight = newTR.insertCell(7);
+        tdeight.innerHTML ='<input name="hobby" class="form-control" placeholder="请输入" style="width: 100%;height: 100%;border: 0px;">';
+
+        var tdnine = newTR.insertCell(8);
+        tdnine.innerHTML ='<input name="relationship" class="form-control" placeholder="请输入" style="width: 100%;height: 100%;border: 0px;">';
+
+        var tdten = newTR.insertCell(9);
+        tdten.innerHTML ='<input name="birthday" class="form-control" placeholder="请输入" style="width: 100%;height: 100%;border: 0px;">';
+
+        var tdeleven = newTR.insertCell(10);
+        tdeleven.innerHTML ='<input name="mainPrincipal" type="radio">';
+    }
+
+    function delAssetTr() { //alert(trid);
+        var obj = document.getElementsByName("choose");
+        var check_val = [];
+        for (k in obj) {
+            if (obj[k].checked)
+                check_val.push(obj[k].value);
+        }
+        for(var i = 0; i < check_val.length ; i++){
+            var trid = check_val[i];
+            var tab = document.getElementById("principalList");
+            var row = document.getElementById(trid);
+            var index = row.rowIndex; //rowIndex属性为tr的索引值，从0开始
+            tab.deleteRow(index); //从table中删除
+        }
+    }
+
+    function addAddressTr() {
+        //var trid=0;
+        var tab = document.getElementById("addressListBody");
+        //添加行
+        var newTR = tab.insertRow(tab.rows.length);
+        //trid++;
+        var xuhao = newTR.rowIndex.toString();
+        newTR.id = "tr" + xuhao;
+        //获取序号=行索引
+        var check = '<input type="checkbox" name="choose" value="'+"tr"+xuhao+'">';
+        //第一列是设备
+        var tdone = newTR.insertCell(0);
+        tdone.innerHTML = check;
+        //第二列是费用类型
+        var tdtwo = newTR.insertCell(1);
+        tdtwo.innerHTML = '<input name="address" class="form-control" placeholder="请输入" style="width: 100%;height: 100%;border: 0px;">';
+        //第三列是费用金额
+        var tdthree = newTR.insertCell(2);
+        tdthree.innerHTML = '<input name="describe" class="form-control" placeholder="请输入" style="width: 100%;height: 100%;border: 0px;">';
+
+        //第四列是费用说明
+        var tdfour = newTR.insertCell(3);
+        tdfour.innerHTML = '<select name="area" class="form-control">\n' +
+            '                                        <option value="0">--请选择--</option>\n' +
+            '                                        <option value="华北">华北</option>\n' +
+            '                                        <option value="东北">东北</option>\n' +
+            '                                        <option value="华东">华东</option>\n' +
+            '                                        <option value="华中">华中</option>\n' +
+            '                                        <option value="华南">华南</option>\n' +
+            '                                        <option value="西南">西南</option>\n' +
+            '                                        <option value="西北">西北</option>\n' +
+            '                                    </select>';
+
+        var tdfive = newTR.insertCell(4);
+        tdfive.innerHTML ='<input name="postcode" class="form-control" placeholder="请输入" style="width: 100%;height: 100%;border: 0px;">';
+
+        var tdsix = newTR.insertCell(5);
+        tdsix.innerHTML ='<input name="principal" class="form-control" placeholder="请输入" style="width: 100%;height: 100%;border: 0px;">';
+
+        var tdseven = newTR.insertCell(6);
+        tdseven.innerHTML ='<input name="principalPhone" class="form-control" placeholder="请输入" style="width: 100%;height: 100%;border: 0px;">';
+
+        var tdeight = newTR.insertCell(7);
+        tdeight.innerHTML ='<input name="mainAddress" type="radio">';
+    }
+
+    // var radio = document.getElementsByName("DoorCt");
+    // for (i=0; i<radio.length; i++) {
+    //     if (radio[i].checked) {
+    //         alert(radio[i].value)
+    //     }
+    // }
+
+    function delAddressTr() { //alert(trid);
+        var obj = document.getElementsByName("choose");
+        var check_val = [];
+        for (k in obj) {
+            if (obj[k].checked)
+                check_val.push(obj[k].value);
+        }
+        for(var i = 0; i < check_val.length ; i++){
+            var trid = check_val[i];
+            var tab = document.getElementById("addressList");
+            var row = document.getElementById(trid);
+            var index = row.rowIndex; //rowIndex属性为tr的索引值，从0开始
+            tab.deleteRow(index); //从table中删除
+        }
+    }
+
+    function getMain() {
+        var data = [];
+        var radio = document.getElementsByName("mainPrincipal");
+        for (i=0; i<radio.length; i++) {
+            if (radio[i].checked) {
+                data.push("Y");
+            }else{
+                data.push("N");
+            }
+        }
+        alert(data);
+    }
+    function cleanUpPage() {
+        $("#customerName").val("");
+        $("#condition").val("");
+        $("#nature").val("");
+        $("#product").val("");
+        $("#competitor").val("");
+        $("#useAmount").val("");
+        $("#travelDate").val("");
+        $("#travelTarget").val("");
+        $("#supportPerson").val("");
+        $("#spend").val("");
+        $("#costCenter").val("");
+        $("#other").val("");
+        $("#travelSum").val("");
+        $("#needSupport").val("");
+        $("#trouble").val("");
+        $("#oppose").val("");
+        $("#nextPlan").val("");
+        $("#travelCost").val("");
+        $("#eattingCost").val("");
+        $("#serverCost").val("");
+        $("#otherCost").val("");
+        $("#voucher").val("");
+        $("#principalListBody").html("");
+        $("#principalListBody").append('<tr>\n' +
+            '                                    <td></td>\n' +
+            '                                    <td><input name="principalName" class="form-control" placeholder="请输入" style="width: 100%;height: 100%;border: 0px;"></td>\n' +
+            '                                    <td><input name="phone" class="form-control" placeholder="请输入" style="width: 100%;height: 100%;border: 0px;"></td>\n' +
+            '                                    <td><input name="email" class="form-control" placeholder="请输入" style="width: 100%;height: 100%;border: 0px;"></td>\n' +
+            '                                    <td><input name="wechat" class="form-control" placeholder="请输入" style="width: 100%;height: 100%;border: 0px;"></td>\n' +
+            '                                    <td><select name="sex" class="form-control">\n' +
+            '                                        <option value="0">--请选择--</option>\n' +
+            '                                        <option value="男">男</option>\n' +
+            '                                        <option value="女">女</option>\n' +
+            '                                    </select></td>\n' +
+            '                                    <td><input name="position" class="form-control" placeholder="请输入" style="width: 100%;height: 100%;border: 0px;"></td>\n' +
+            '                                    <td><input name="hobby" class="form-control" placeholder="请输入" style="width: 100%;height: 100%;border: 0px;"></td>\n' +
+            '                                    <td><input name="relationship" class="form-control" placeholder="请输入" style="width: 100%;height: 100%;border: 0px;"></td>\n' +
+            '                                    <td><input name="birthday" class="form-control" placeholder="请输入" style="width: 100%;height: 100%;border: 0px;"></td>\n' +
+            '                                    <td><input name="mainPrincipal" type="radio"></td>\n' +
+            '                                </tr>');
+        $("#addressListBody").html("");
+        $("#addressListBody").append('<tr>\n' +
+            '                                    <td></td>\n' +
+            '                                    <td><input name="address" class="form-control" placeholder="请输入" style="width: 100%;height: 100%;border: 0px;"></td>\n' +
+            '                                    <td><input name="describe" class="form-control" placeholder="请输入" style="width: 100%;height: 100%;border: 0px;"></td>\n' +
+            '                                    <td><select name="area" class="form-control">\n' +
+            '                                        <option value="0">--请选择--</option>\n' +
+            '                                        <option value="华北">华北</option>\n' +
+            '                                        <option value="东北">东北</option>\n' +
+            '                                        <option value="华东">华东</option>\n' +
+            '                                        <option value="华中">华中</option>\n' +
+            '                                        <option value="华南">华南</option>\n' +
+            '                                        <option value="西南">西南</option>\n' +
+            '                                        <option value="西北">西北</option>\n' +
+            '                                    </select></td>\n' +
+            '                                    <td><input name="postcode" class="form-control" placeholder="请输入" style="width: 100%;height: 100%;border: 0px;"></td>\n' +
+            '                                    <td><input name="principal" class="form-control" placeholder="请输入" style="width: 100%;height: 100%;border: 0px;"></td>\n' +
+            '                                    <td><input name="principalPhone" class="form-control" placeholder="请输入" style="width: 100%;height: 100%;border: 0px;"></td>\n' +
+            '                                    <td><input name="mainAddress" type="radio"></td>\n' +
+            '                                </tr>');
+    }
+
+    function getIntroduceDetail(obj) {
+        var salePlanID = obj.parentNode.parentNode.cells[0].innerText;
+        $.ajax({
+            type:"post",
+            data:{"salePlanID":salePlanID},
+            url:"getIntroduction",
+            async:false,
+            success:function (data) {
+                var customer = data.customer;
+                var list1 = data.list1;
+                var list2 = data.list2;
+                document.getElementById("customerName2").innerText = customer.customerName;
+                document.getElementById("condition2").innerText = customer.condition;
+                document.getElementById("industry").innerText = customer.nature;
+                document.getElementById("product2").innerText = customer.product;
+                document.getElementById("compititor").innerText = customer.competitor;
+                document.getElementById("knifeAmount").innerText = customer.useAmount;
+                $("#principalSum").html("");
+                for(var i = 0 ; i < list1.length ; i++){
+                    $("#principalSum").append("<tr>"+
+                        "<td>"+list1[i].name+"</td>"+
+                        "<td>"+list1[i].phone+"</td>"+
+                        "<td>"+list1[i].email+"</td>"+
+                        "<td>"+list1[i].wechat+"</td>"+
+                        "<td>"+list1[i].sex+"</td>"+
+                        "<td>"+list1[i].mainPrincipal+"</td>"+
+                        "</tr>");
+                }
+                $("#addressSum").html("");
+                for(var i = 0 ; i < list2.length ; i++){
+                    $("#addressSum").append("<tr>"+
+                        "<td>"+list2[i].describe+"</td>"+
+                        "<td>"+list2[i].address+"</td>"+
+                        "<td>"+list2[i].area+"</td>"+
+                        "<td>"+list2[i].contacts+"</td>"+
+                        "<td>"+list2[i].phone+"</td>"+
+                        "<td>"+list2[i].mainAddress+"</td>"+
+                        "</tr>");
+                }
+            }
+        })
+    }
 </script>
+
+<style>
+    #mainContent{
+        overflow:hidden;
+        width:100%;
+    }
+
+    #myTabContent2{
+        width:calc(100% + 15px);/*使滚动条超出当前元素的父元素边界，而父元素设置了overflow为hidden，使溢出内容隐藏，即隐藏了滚动条*/
+        height:550px;
+        padding-right:15px;
+        box-sizing:content-box;/*兼容ie，使盒模型为w3c盒模型*/
+        overflow-y:scroll;/*控制能沿y轴滚动*/
+    }
+    #firstData{
+        width:100%;
+    }
+    #secondData{
+        width:100%;
+    }
+</style>
 </body>
 </html>

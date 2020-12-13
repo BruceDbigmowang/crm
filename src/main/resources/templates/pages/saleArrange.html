@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<title>销售过程——销售排成</title>
+<head th:include="include/fore/newHeader::html" ></head>
+<body>
+<div id="workingArea">
+    <div th:replace="include/fore/top::html" ></div>
+    <div th:replace="include/fore/leftMenu::html" ></div>
+    <div th:replace="include/fore/homePages/saleProcessManage/saleArrangePage::html" ></div>
+</div>
+
+<script>
+    laydate.render({
+        elem: '#firstBdate', //指定元素
+        min:0,
+        trigger: 'click'
+    });
+    laydate.render({
+        elem: '#secondBdate', //指定元素
+        min:0,
+        trigger: 'click'
+    });
+    laydate.render({
+        elem: '#thirdBdate', //指定元素
+        min:0,
+        trigger: 'click'
+    });
+    laydate.render({
+        elem: '#fourthBdate', //指定元素
+        min:0,
+        trigger: 'click'
+    });laydate.render({
+        elem: '#fifthBdate', //指定元素
+        min:0,
+        trigger: 'click'
+    });
+    laydate.render({
+        elem: '#sixthBdate', //指定元素
+        min:0,
+        trigger: 'click'
+    });
+    laydate.render({
+        elem: '#seventhBdate', //指定元素
+        min:0,
+        trigger: 'click'
+    });
+
+
+    laydate.render({
+        elem: '#firstBdate2', //指定元素
+        min:0,
+        trigger: 'click',
+        done:function () {
+            changeFirstBdate();
+        }
+    });
+    laydate.render({
+        elem: '#secondBdate2', //指定元素
+        min:0,
+        trigger: 'click',
+        done:function () {
+            changeSecondBdate();
+        }
+    });
+    laydate.render({
+        elem: '#thirdBdate2', //指定元素
+        min:0,
+        trigger: 'click',
+        done:function () {
+            changeThirdBdate();
+        }
+    });
+    laydate.render({
+        elem: '#fourthBdate2', //指定元素
+        min:0,
+        trigger: 'click',
+        done:function () {
+            changeFourthBdate();
+        }
+    });
+    laydate.render({
+        elem: '#fifthBdate2', //指定元素
+        min:0,
+        trigger: 'click',
+        done:function () {
+            changeFifthBdate();
+        }
+    });
+    laydate.render({
+        elem: '#sixthBdate2', //指定元素
+        min:0,
+        trigger: 'click',
+        done:function () {
+            changeSixthBdate();
+        }
+    });
+    laydate.render({
+        elem: '#seventhBdate2', //指定元素
+        min:0,
+        trigger: 'click'
+    });
+
+
+    $(function () {
+        judgeFunc();
+        loadAll();
+    });
+
+    var city = "";
+    var city2 = "";
+
+    function judgeFunc() {
+        $.ajax({
+            type:"post",
+            url:"getSaleRole",
+            async:false,
+            success:function (data) {
+                $("#funcInput").val(data);
+            }
+        })
+    }
+
+    function loadAll() {
+        var role = $("#funcInput").val();
+        if(role == "0"){
+            $.ajax({
+                type:"post",
+                url:"getAllSaleArrange",
+                async:false,
+                success:function (data) {
+                    $("#allFirst").html("");
+                    $("#allFirst2").html("");
+                    var arranged = data.arranged;
+                    var notArrange = data.notArrange;
+                    for(var i = 0 ; i < notArrange.length ; i++){
+                        $("#allFirst").append("<tr>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+notArrange[i].id+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+notArrange[i].customerName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+notArrange[i].describe+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+notArrange[i].deadline+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+notArrange[i].principalName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+
+                            "<a href='#' data-toggle=\"modal\" data-target=\"#myModal\" onclick='loadSomeInfo(this)'>排程</a>"+
+                            "</td>"
+                            +"</tr>");
+                    }
+                    for(var i = 0 ; i < arranged.length ; i++){
+                        $("#allFirst2").append("<tr>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+arranged[i].id+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+arranged[i].customerName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+arranged[i].describe+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+arranged[i].deadline+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+arranged[i].principalName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+
+                            "<a href='#' data-toggle=\"modal\" data-target=\"#myModal2\" onclick='getSaleArrangeDetail(this)'>查看排程</a>"+
+                            "</td>"
+                            +"</tr>");
+                    }
+                }
+            })
+        }else{
+            $.ajax({
+                type:"post",
+                url:"getAllSaleArrangeByAdmin",
+                async:false,
+                success:function (data) {
+                    $("#allFirst").html("");
+                    $("#allFirst2").html("");
+                    var arranged = data.arranged;
+                    var notArrange = data.notArrange;
+                    for(var i = 0 ; i < notArrange.length ; i++){
+                        $("#allFirst").append("<tr>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+notArrange[i].id+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+notArrange[i].customerName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+notArrange[i].describe+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+notArrange[i].deadline+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+notArrange[i].principalName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+
+                            "<a href='#' data-toggle=\"modal\" data-target=\"#myModal\" onclick='loadSomeInfo(this)'>排程</a>"+
+                            "</td>"
+                            +"</tr>");
+                    }
+
+                    var trs = document.getElementById("firstData").rows;
+                    for(var i = 0 ; i < trs.length ; i++){
+                        var cell = trs[i].cells[5];
+                        cell.style.display = 'none';
+                    }
+                    for(var i = 0 ; i < arranged.length ; i++){
+                        $("#allFirst2").append("<tr>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+arranged[i].id+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+arranged[i].customerName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+arranged[i].describe+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+arranged[i].deadline+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+arranged[i].principalName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+
+                            "<a href='#' data-toggle=\"modal\" data-target=\"#myModal2\" onclick='getSaleArrangeDetail(this)'>查看排程</a>"+
+                            "</td>"
+                            +"</tr>");
+                    }
+                }
+            })
+        }
+
+    }
+
+    function getSalePlanByCustomerName() {
+        var role = $("#funcInput").val();
+        if(role == "0"){
+            var customerName = $("#arrangeSearch").val();
+            $.ajax({
+                type:"post",
+                data:{"customerName":customerName},
+                url:"showSalePlanByName",
+                async:false,
+                success:function (data) {
+                    $("#allFirst").html("");
+                    $("#allFirst2").html("");
+                    var arranged = data.arranged;
+                    var notArrange = data.notArrange;
+                    for(var i = 0 ; i < notArrange.length ; i++){
+                        $("#allFirst").append("<tr>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+notArrange[i].id+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+notArrange[i].customerName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+notArrange[i].describe+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+notArrange[i].deadline+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+notArrange[i].principalName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+
+                            "<a href='#' data-toggle=\"modal\" data-target=\"#myModal\" onclick='loadSomeInfo(this)'>排程</a>"+
+                            "</td>"
+                            +"</tr>");
+                    }
+                    for(var i = 0 ; i < arranged.length ; i++){
+                        $("#allFirst2").append("<tr>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+arranged[i].id+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+arranged[i].customerName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+arranged[i].describe+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+arranged[i].deadline+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+arranged[i].principalName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+
+                            "<a href='#' data-toggle=\"modal\" data-target=\"#myModal2\" onclick='getSaleArrangeDetail(this)'>查看排程</a>"+
+                            "</td>"
+                            +"</tr>");
+                    }
+                }
+            })
+        }else{
+            var customerName = $("#arrangeSearch").val();
+            $.ajax({
+                type:"post",
+                data:{"customerName":customerName},
+                url:"showSalePlanByNameAndAdmin",
+                async:false,
+                success:function (data) {
+                    $("#allFirst").html("");
+                    $("#allFirst2").html("");
+                    var arranged = data.arranged;
+                    var notArrange = data.notArrange;
+                    for(var i = 0 ; i < notArrange.length ; i++){
+                        $("#allFirst").append("<tr>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+notArrange[i].id+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+notArrange[i].customerName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+notArrange[i].describe+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+notArrange[i].deadline+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+notArrange[i].principalName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+
+                            "<a href='#' data-toggle=\"modal\" data-target=\"#myModal\" onclick='loadSomeInfo(this)'>排程</a>"+
+                            "</td>"
+                            +"</tr>");
+                    }
+                    var trs = document.getElementById("firstData").rows;
+                    for(var i = 0 ; i < trs.length ; i++){
+                        var cell = trs[i].cells[5];
+                        cell.style.display = 'none';
+                    }
+                    for(var i = 0 ; i < arranged.length ; i++){
+                        $("#allFirst2").append("<tr>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+arranged[i].id+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+arranged[i].customerName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+arranged[i].describe+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+arranged[i].deadline+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+arranged[i].principalName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+
+                            "<a href='#' data-toggle=\"modal\" data-target=\"#myModal2\" onclick='getSaleArrangeDetail(this)'>查看排程</a>"+
+                            "</td>"
+                            +"</tr>");
+                    }
+                }
+            })
+        }
+
+    }
+
+    function loadSomeInfo(obj) {
+        var salePlanID = obj.parentNode.parentNode.cells[0].innerText;
+        var customerName = obj.parentNode.parentNode.cells[1].innerText;
+        $("#customerID").val(salePlanID);
+        $("#customerName").val(customerName);
+        loadYearMonth();
+        showCandidate();
+        var tab = document.getElementById("tab");
+        tab.rows[1].cells[1].append='2<span class="badge" style="background-color: red">上海</span>';
+    }
+
+    //计划排成的模态框中加载年月
+    function loadYearMonth() {
+        var today = new Date();
+        var year = today.getFullYear();
+        var month = today.getMonth()+1;
+        for(var i = 0 ; i < 6 ; i++){
+            var newMonth = month + i;
+            if(newMonth > 12){
+                var newYear = year + 1;
+                newMonth = newMonth - 12;
+                $("#yearMonth").append('<option value="'+newYear+"-"+newMonth+'">'+newYear+"-"+"0"+newMonth+"</option>");
+            }else{
+                $("#yearMonth").append('<option value="'+year+"-"+newMonth+'">'+year+"-"+newMonth+"</option>");
+            }
+
+        }
+    }
+
+    //计划排成修改的模态框中加载年月
+    function loadYearMonthTwo() {
+        var today = new Date();
+        var year = today.getFullYear();
+        var month = today.getMonth()+1;
+        for(var i = 0 ; i < 6 ; i++){
+            var newMonth = month + i;
+            if(newMonth > 12){
+                var newYear = year + 1;
+                newMonth = newMonth - 12;
+                $("#yearMonth2").append('<option value="'+newYear+"-"+newMonth+'">'+newYear+"-"+"0"+newMonth+"</option>");
+            }else{
+                $("#yearMonth2").append('<option value="'+year+"-"+newMonth+'">'+year+"-"+newMonth+"</option>");
+            }
+
+        }
+    }
+
+    //计划排成新增的模态框中显示日历
+    function showCandidate() {
+        $("#calendar").html("");
+        var choosedTime = $("#yearMonth").val();
+        var first = choosedTime+"-"+1;
+        var cur_date= new Date(Date.parse(first.replace(/-/g,   "/")));
+        var cur_month = cur_date.getMonth();
+        var str = "";
+        str = str+'<table id="tab" cellpadding=3 cellspacing=0 class="table" style="background-color: lightgrey;">';
+
+        str = str+'<td align="center">日</td>';
+        str = str+'<td align="center">一</td>';
+        str = str+'<td align="center">二</td>';
+        str = str+'<td align="center">三</td>'
+        str = str+'<td align="center">四</td>';
+        str = str+'<td align="center">五</td>'
+        str = str+'<td align="center">六</td>';
+        str = str+"</tr>";
+
+        if (cur_date.getDay() != 0) {//如果1号不是星期天
+            str = str+"<tr>";
+            for (i = 0; i < cur_date.getDay(); i++) {//输出1号前面空白的星期
+                str = str+"<td>&nbsp;</td>";
+            }
+        }
+
+        while (cur_date.getMonth()== cur_month) {
+
+            if (cur_date.getDay == 0) {//星期天时换行<tr>
+                str = str+"<tr>";
+            }
+            getTaskByDate(cur_date);
+            if( city == ""){
+                str = str+'<td align="center">'+ cur_date.getDate();
+            }else{
+                str = str+'<td align="center">'+ cur_date.getDate() +"<br>" +'<span class="badge" style="background-color: red;">'+city+'</span>';
+            }
+            if(city2 == ""){
+
+            }else{
+                str = str+"<br>"+'<span class="badge" style="background-color: #151cff;">'+city2+'</span>';
+            }
+            for(var a = 0 ; a < starts.length ; a++){
+                var bdate = cur_date.getFullYear()+"-"+(cur_date.getMonth()+1)+"-"+cur_date.getDate();
+                var no = a + 1;
+                if(cur_date.getMonth()+1 < 10){
+                    //月份需要添加0
+                    if(cur_date.getDate() < 10){
+                        bdate = cur_date.getFullYear()+"-"+"0"+(cur_date.getMonth()+1)+"-"+"0"+cur_date.getDate();
+                    }else{
+                        bdate = cur_date.getFullYear()+"-"+"0"+(cur_date.getMonth()+1)+"-"+cur_date.getDate();
+                    }
+                }else{
+                    //月份不需要添加0
+                    if(cur_date.getDate() < 10){
+                        bdate = cur_date.getFullYear()+"-"+(cur_date.getMonth()+1)+"-"+"0"+cur_date.getDate();
+                    }else{
+                        bdate = cur_date.getFullYear()+"-"+(cur_date.getMonth()+1)+"-"+cur_date.getDate();
+                    }
+                }
+                if(bdate == starts[a]){
+                    str = str+"<br>"+'<span class="badge" style="background-color: #1bff6e;">'+ no +'</span>';
+                    break;
+                }
+            }
+            str = str +"</td>";
+
+            if (cur_date.getDay() == 6) {//星期六时换行结束</tr>
+                str = str+"</tr>";
+            }
+            cur_date.setDate(cur_date.getDate() + 1);
+            city = "";
+            city2 = "";
+        }
+
+        for(var i=cur_date.getDay() ; i<=6 ; i++){//输出月最后一天后面空白的星期
+            str = str+"<td>&nbsp;</td>";
+        }
+        str = str+"</table>";
+        $("#calendar").append(str);
+    }
+
+    //计划排成修改的模态框中显示日历
+    function showCandidateTwo() {
+        $("#calendar2").html("");
+        var choosedTime = $("#yearMonth2").val();
+        var first = choosedTime+"-"+1;
+        var cur_date= new Date(Date.parse(first.replace(/-/g,   "/")));
+        var cur_month = cur_date.getMonth();
+        var str = "";
+        str = str+'<table id="tab" cellpadding=3 cellspacing=0 class="table" style="background-color: lightgrey;">';
+
+        str = str+'<td align="center">日</td>';
+        str = str+'<td align="center">一</td>';
+        str = str+'<td align="center">二</td>';
+        str = str+'<td align="center">三</td>'
+        str = str+'<td align="center">四</td>';
+        str = str+'<td align="center">五</td>'
+        str = str+'<td align="center">六</td>';
+        str = str+"</tr>";
+
+        if (cur_date.getDay() != 0) {//如果1号不是星期天
+            str = str+"<tr>";
+            for (i = 0; i < cur_date.getDay(); i++) {//输出1号前面空白的星期
+                str = str+"<td>&nbsp;</td>";
+            }
+        }
+
+        while (cur_date.getMonth()== cur_month) {
+
+            if (cur_date.getDay == 0) {//星期天时换行<tr>
+                str = str+"<tr>";
+            }
+            getTaskByDate(cur_date);
+            if( city == ""){
+                str = str+'<td align="center">'+ cur_date.getDate();
+            }else{
+                str = str+'<td align="center">'+ cur_date.getDate() +"<br>" +'<span class="badge" style="background-color: red;">'+city+'</span>';
+            }
+            if(city2 == ""){
+
+            }else{
+                str = str+"<br>"+'<span class="badge" style="background-color: #151cff;">'+city2+'</span>';
+            }
+            for(var a = 0 ; a < starts.length ; a++){
+                var bdate = cur_date.getFullYear()+"-"+(cur_date.getMonth()+1)+"-"+cur_date.getDate();
+                var no = a + 1;
+                if(cur_date.getMonth()+1 < 10){
+                    //月份需要添加0
+                    if(cur_date.getDate() < 10){
+                        bdate = cur_date.getFullYear()+"-"+"0"+(cur_date.getMonth()+1)+"-"+"0"+cur_date.getDate();
+                    }else{
+                        bdate = cur_date.getFullYear()+"-"+"0"+(cur_date.getMonth()+1)+"-"+cur_date.getDate();
+                    }
+                }else{
+                    //月份不需要添加0
+                    if(cur_date.getDate() < 10){
+                        bdate = cur_date.getFullYear()+"-"+(cur_date.getMonth()+1)+"-"+"0"+cur_date.getDate();
+                    }else{
+                        bdate = cur_date.getFullYear()+"-"+(cur_date.getMonth()+1)+"-"+cur_date.getDate();
+                    }
+                }
+                if(bdate == starts[a]){
+                    str = str+"<br>"+'<span class="badge" style="background-color: #1bff6e;">'+ no +'</span>';
+                    break;
+                }
+            }
+            str = str +"</td>";
+
+            if (cur_date.getDay() == 6) {//星期六时换行结束</tr>
+                str = str+"</tr>";
+            }
+            cur_date.setDate(cur_date.getDate() + 1);
+            city = "";
+            city2 = "";
+        }
+
+        for(var i=cur_date.getDay() ; i<=6 ; i++){//输出月最后一天后面空白的星期
+            str = str+"<td>&nbsp;</td>";
+        }
+        str = str+"</table>";
+        $("#calendar2").append(str);
+    }
+
+    function getTaskByDate(date) {
+        var salePlanID = $("#customerID").val();
+        $.ajax({
+            type:"post",
+            data:{"time":date , "salePlanID":salePlanID},
+            url:"showOnCalendar",
+            async:false,
+            success:function (data) {
+                var result = data.info;
+                if(result == "OK"){
+                    city = data.city;
+                    city2 = data.city2;
+                }else{
+                    // alert(data.info);
+                }
+
+            }
+        })
+    }
+
+    function saveSaleArrange() {
+        var salePlanID = $("#customerID").val();
+
+        var data = {"salePlanID":salePlanID , "bdates":starts};
+
+        $.ajax({
+            type:"post",
+            data:data,
+            url:"saveSaleTask",
+            async:false,
+            traditional:true,
+            success:function (data) {
+                if(data == "OK"){
+                    $.message({
+                        message:'数据保存成功',
+                        type:'success'
+                    });
+                    $("#myModal").modal('hide');
+                    loadAll();
+                    starts = [];
+                }else{
+                    $.message({
+                        message:data,
+                        type:'error'
+                    });
+                }
+            }
+        })
+    }
+
+    function getSaleArrangeDetail(obj) {
+        var salePlanID = obj.parentNode.parentNode.cells[0].innerText;
+        var customerName = obj.parentNode.parentNode.cells[1].innerText;
+        $("#customerName").val(customerName);
+        $("#customerID").val(salePlanID);
+        $("#customerName2").val(customerName);
+        $("#customerID2").val(salePlanID);
+        $.ajax({
+            type:"post",
+            data:{"salePlanID":salePlanID},
+            url:"getSaleArrange",
+            async:false,
+            success:function (data) {
+                $("#allRecord").html("");
+                for(var i = 0 ; i < data.length ; i++){
+                    $("#allRecord").append("<tr>"+
+                        "<td>"+data[i].customerName+"</td>"+
+                    "<td>"+data[i].step+"</td>"+
+                    "<td>"+data[i].bdate+"</td>"+
+                    "<td>"+data[i].spendTime+"</td>"+
+                    "<td>"+data[i].createDate+"</td>"+
+                        "</tr>");
+                    if(data[i].completeStatus == "O"){
+                        $("#footPart").html("");
+                        $("#footPart").append(
+                            '            <button data-dismiss="modal" class="btn btn-default" type="button">关闭</button>\n' +
+                            '            <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#myModal3" onclick="getArrangeOnModel()">修改</button>\n');
+                    }
+                }
+            }
+        })
+
+    }
+
+    function afterDate(date,n){
+        var mTimes = new Date(date);
+        var endTimes = mTimes.valueOf() + n*24*60*60*1000;
+        var endDate = new Date(endTimes);
+        if(endDate.getDate() < 10){
+            if(endDate.getMonth()+1 < 10){
+                return  endDate.getFullYear()+"-"+"0"+(endDate.getMonth()+1)+"-"+"0"+endDate.getDate();
+            }else{
+                return  endDate.getFullYear()+"-"+(endDate.getMonth()+1)+"-"+"0"+endDate.getDate();
+            }
+
+        }else{
+            if( endDate.getMonth()+1 < 10){
+                return  endDate.getFullYear()+"-"+"0"+(endDate.getMonth()+1)+"-"+endDate.getDate();
+            }else{
+                return  endDate.getFullYear()+"-"+(endDate.getMonth()+1)+"-"+endDate.getDate();
+            }
+
+        }
+
+    }
+
+    var starts = [];
+
+    function generateDate() {
+        starts = [];
+        //介绍交流开始时间
+        var firstBdate = $("#firstBdate").val();
+        if(firstBdate == ""){
+            $.message({
+                message:"请选择介绍交流的开始时间",
+                type:'error'
+            });
+        }else{
+            starts.push(firstBdate);
+            //保密协议签订开始时间
+            var secondBdate = $("#secondBdate").val();
+            if(secondBdate == ""){
+                secondBdate = afterDate(firstBdate , 7);
+            }
+            starts.push(secondBdate);
+            //在线尽调开始时间
+            var thirdBdate = $("#thirdBdate").val();
+            if(thirdBdate == ""){
+                thirdBdate = afterDate( secondBdate , 7);
+            }
+            starts.push(thirdBdate);
+            //现场尽调开始时间
+            var fourthBdate = $("#fourthBdate").val();
+            if(fourthBdate == ""){
+                fourthBdate = afterDate(thirdBdate , 7);
+            }
+            starts.push(fourthBdate);
+            //方案交流开始时间
+            var fifthBdate = $("#fifthBdate").val();
+            if(fifthBdate == ""){
+                fifthBdate = afterDate(fourthBdate , 7);
+            }
+            starts.push(fifthBdate);
+            //合同交流开始时间
+            var sixthBdate = $("#sixthBdate").val();
+            if(sixthBdate == ""){
+                sixthBdate = afterDate(fifthBdate , 14);
+            }
+            starts.push(sixthBdate);
+            //合同签订开始时间
+            var seventhBdate = $("#seventhBdate").val();
+            if(seventhBdate == ""){
+                seventhBdate = afterDate(sixthBdate , 14);
+            }
+            starts.push(seventhBdate);
+            showCandidate();
+        }
+
+    }
+
+    function getArrangeOnModel() {
+        loadYearMonthTwo();
+        showCandidateTwo();
+        $("#myModal2").modal('hide');
+        var salePlanID = $("#customerID").val();
+        $.ajax({
+            type:"post",
+            data:{"salePlanID":salePlanID},
+            url:"getShowAllArrangeTime",
+            async:false,
+            success:function (data) {
+                $("#firstBdate2").val(data[0].bdate);
+                if(data[0].completeStatus == "C"){
+                    document.getElementById("firstBdate2").disabled=true;
+                }else{
+                    document.getElementById("firstBdate2").disabled=false;
+                }
+                $("#secondBdate2").val(data[1].bdate);
+                if(data[1].completeStatus == "C"){
+                    document.getElementById("secondBdate2").disabled=true;
+                }else{
+                    document.getElementById("secondBdate2").disabled=false;
+                }
+                $("#thirdBdate2").val(data[2].bdate);
+                if(data[2].completeStatus == "C"){
+                    document.getElementById("thirdBdate2").disabled=true;
+                }else{
+                    document.getElementById("thirdBdate2").disabled=false;
+                }
+                $("#fourthBdate2").val(data[3].bdate);
+                if(data[3].completeStatus == "C"){
+                    document.getElementById("fourthBdate2").disabled=true;
+                }else{
+                    document.getElementById("fourthBdate2").disabled=false;
+                }
+                $("#fifthBdate2").val(data[4].bdate);
+                if(data[4].completeStatus == "C"){
+                    document.getElementById("fifthBdate2").disabled=true;
+                }else{
+                    document.getElementById("fifthBdate2").disabled=false;
+                }
+                $("#sixthBdate2").val(data[5].bdate);
+                if(data[5].completeStatus == "C"){
+                    document.getElementById("sixthBdate2").disabled=true;
+                }else{
+                    document.getElementById("sixthBdate2").disabled=false;
+                }
+                $("#seventhBdate2").val(data[6].bdate);
+                if(data[6].completeStatus == "C"){
+                    document.getElementById("seventhBdate2").disabled=true;
+                }else{
+                    document.getElementById("seventhBdate2").disabled=false;
+                }
+            }
+        })
+    }
+    
+    function changeFirstBdate() {
+        var firstBdate = $("#firstBdate2").val();
+        var secondBdate = afterDate(firstBdate , 7);
+        $("#secondBdate2").val(secondBdate);
+        var thirdBdate = afterDate(secondBdate , 7);
+        $("#thirdBdate2").val(thirdBdate);
+        var fourthBdate = afterDate(thirdBdate , 7);
+        $("#fourthBdate2").val(fourthBdate);
+        var fifthBdate = afterDate(fourthBdate , 7);
+        $("#fifthBdate2").val(fifthBdate);
+        var sixthBdate = afterDate(fifthBdate , 14);
+        $("#sixthBdate2").val(sixthBdate);
+        var seventhBdate = afterDate(sixthBdate , 14);
+        $("#seventhBdate2").val(secondBdate);
+    }
+
+    function changeSecondBdate() {
+        var secondBdate = $("#secondBdate2").val();
+        var thirdBdate = afterDate(secondBdate , 7);
+        $("#thirdBdate2").val(thirdBdate);
+        var fourthBdate = afterDate(thirdBdate , 7);
+        $("#fourthBdate2").val(fourthBdate);
+        var fifthBdate = afterDate(fourthBdate , 7);
+        $("#fifthBdate2").val(fifthBdate);
+        var sixthBdate = afterDate(fifthBdate , 14);
+        $("#sixthBdate2").val(sixthBdate);
+        var seventhBdate = afterDate(sixthBdate , 14);
+        $("#seventhBdate2").val(secondBdate);
+    }
+
+    function changeThirdBdate() {
+        var thirdBdate = $("#thirdBdate2").val();
+        var fourthBdate = afterDate(thirdBdate , 7);
+        $("#fourthBdate2").val(fourthBdate);
+        var fifthBdate = afterDate(fourthBdate , 7);
+        $("#fifthBdate2").val(fifthBdate);
+        var sixthBdate = afterDate(fifthBdate , 14);
+        $("#sixthBdate2").val(sixthBdate);
+        var seventhBdate = afterDate(sixthBdate , 14);
+        $("#seventhBdate2").val(secondBdate);
+    }
+    function changeFourthBdate() {
+        var fourthBdate = $("#fourthBdate2").val();
+        var fifthBdate = afterDate(fourthBdate , 7);
+        $("#fifthBdate2").val(fifthBdate);
+        var sixthBdate = afterDate(fifthBdate , 14);
+        $("#sixthBdate2").val(sixthBdate);
+        var seventhBdate = afterDate(sixthBdate , 14);
+        $("#seventhBdate2").val(secondBdate);
+    }
+
+    function changeFifthBdate() {
+        var fifthBdate = $("#fifthBdate2").val();
+        var sixthBdate = afterDate(fifthBdate , 14);
+        $("#sixthBdate2").val(sixthBdate);
+        var seventhBdate = afterDate(sixthBdate , 14);
+        $("#seventhBdate2").val(secondBdate);
+    }
+    function changeSixthBdate() {
+        var sixthBdate = $("#sixthBdate2").val();
+        var seventhBdate = afterDate(sixthBdate , 14);
+        $("#seventhBdate2").val(secondBdate);
+    }
+
+    function saveChangeArrange() {
+        var bdate = [];
+        if($("#firstBdate2").prop("disabled") == true){
+            bdate.push("0");
+        }else{
+            var firstBdate = $("#firstBdate2").val();
+            bdate.push(firstBdate)
+        }
+        if($("#secondBdate2").prop("disabled") == true){
+            bdate.push("0");
+        }else{
+            var secondBdate = $("#secondBdate2").val();
+            bdate.push(secondBdate);
+        }
+        if($("#thirdBdate2").prop("disabled") == true){
+            bdate.push("0");
+        }else{
+            var thirdBdate = $("#thirdBdate2").val();
+            bdate.push(thirdBdate);
+        }
+        if($("#fourthBdate2").prop("disabled") == true){
+            bdate.push("0");
+        }else{
+            var fourthBdate = $("#fourthBdate2").val();
+            bdate.push(fourthBdate);
+        }
+        if($("#fifthBdate2").prop("disabled") == true){
+            bdate.push("0");
+        }else{
+            var fifthBdate = $("#fifthBdate2").val();
+            bdate.push(fifthBdate);
+        }
+        if($("#sixthBdate2").prop("disabled") == true){
+            bdate.push("0");
+        }else{
+            var sixthBdate = $("#sixthBdate2").val();
+            bdate.push(sixthBdate);
+        }
+        if($("#seventhBdate2").prop("disabled") == true){
+            bdate.push("0");
+        }else{
+            var seventhBdate = $("#seventhBdate2").val();
+            bdate.push(seventhBdate);
+        }
+        var salePlanID = $("#customerID2").val();
+        $.ajax({
+            type:"post",
+            data:{"bdates":bdate , "salePlanID":salePlanID},
+            url:"updateArrangeRecord",
+            traditional:true,
+            async:false,
+            success:function (data) {
+                if(data == "OK"){
+                    $.message({
+                        message:'已修改',
+                        type:'success'
+                    });
+                    $("#myModal3").modal('hide');
+                }else{
+                    $.message({
+                        message:data,
+                        type:'error'
+                    })
+                }
+            }
+        })
+    }
+</script>
+
+<style>
+    #mainContent{
+        overflow:hidden;
+        width:100%;
+    }
+
+    #allArrange{
+        width:calc(100% + 15px);/*使滚动条超出当前元素的父元素边界，而父元素设置了overflow为hidden，使溢出内容隐藏，即隐藏了滚动条*/
+        height:550px;
+        padding-right:15px;
+        box-sizing:content-box;/*兼容ie，使盒模型为w3c盒模型*/
+        overflow-y:scroll;/*控制能沿y轴滚动*/
+    }
+    #myTabContent{
+        width:100%;
+    }
+</style>
+</body>
+</html>

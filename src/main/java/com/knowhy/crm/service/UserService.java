@@ -207,6 +207,42 @@ public class UserService {
 
     public List<IUser> getInnerUser(){
         String note = "inner";
-        return iUserDAO.findByNote(note);
+        List<IUser> userList = iUserDAO.findByNote(note);
+        for(int i = 0 ; i < userList.size() ; i++){
+            IUser user = userList.get(i);
+            String account = user.getAccount();
+            List<UserRole> userRoleList = userRoleDAO.findByAccount(account);
+            Roles roles = rolesDAO.getOne(userRoleList.get(0).getId());
+            user.setJob(roles.getRoleName());
+        }
+        return userList;
+    }
+
+    public List<String> findAllFunc(String account){
+        List<String> perms = new ArrayList<>();
+        //根据用户id获取权限类别
+        List<Func> funcList = findPermsByAccount(account);
+        if(funcList != null){
+            for(Func func:funcList){
+                perms.add(func.getCode());
+            }
+        }
+        return perms;
+    }
+
+    public List<String> findFinanceAccount(){
+        String func = "concludeAdd";
+        int funcId = funcDAO.findByCode(func).get(0).getId();
+        List<RoleFunc> roleFuncList = roleFuncDAO.findByFid(funcId);
+        List<String> accountList = new ArrayList<>();
+        for(RoleFunc roleFunc : roleFuncList){
+            int roleId = roleFunc.getRid();
+            List<UserRole> userRoleList = userRoleDAO.findById(roleId);
+            for(UserRole userRole : userRoleList){
+                String account = userRole.getAccount();
+                accountList.add(account);
+            }
+        }
+        return accountList;
     }
 }

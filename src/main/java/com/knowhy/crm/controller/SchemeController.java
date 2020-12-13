@@ -1,11 +1,9 @@
 package com.knowhy.crm.controller;
 
-import com.knowhy.crm.dao.SalesPlanDAO;
-import com.knowhy.crm.dao.SchemeDAO;
-import com.knowhy.crm.dao.SchemeFlowDAO;
-import com.knowhy.crm.dao.TravelReqDAO;
+import com.knowhy.crm.dao.*;
 import com.knowhy.crm.pojo.*;
 import com.knowhy.crm.service.CodeService;
+import com.knowhy.crm.service.TaskService;
 import com.knowhy.crm.service.TravelReqService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,7 +12,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpSession;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 public class SchemeController {
@@ -30,6 +30,16 @@ public class SchemeController {
     CodeService codeService;
     @Autowired
     TravelReqService reqService;
+    @Autowired
+    TaskDAO taskDAO;
+    @Autowired
+    TaskSumDAO taskSumDAO;
+    @Autowired
+    TaskService taskService;
+    @Autowired
+    SchemeRecordDAO schemeRecordDAO;
+    @Autowired
+    ArrangeRecordDAO arrangeRecordDAO;
 
     /**
      * 制定初步方案之后，上传初步方案
@@ -42,6 +52,9 @@ public class SchemeController {
         String maker = user.getAccount();
         String makerName = user.getName();
 
+        if(fileName == null || "".equals(fileName)){
+            return "请选择文件";
+        }
         SchemeFlow flow = new SchemeFlow();
         String schemenID = codeService.generateSchemeFlowID();
         flow.setSchemeId(schemenID);
@@ -132,7 +145,18 @@ public class SchemeController {
                         scheme.setFirstMakeDate(LocalDate.now());
                         schemeDAO.save(scheme);
                     }
-
+                    /**
+                     * 将数据写入到SchemeRecord表中
+                     */
+                    SchemeRecord record = new SchemeRecord();
+                    record.setSalePlanID(salePlanNum);
+                    record.setCustomerCode(customerCode);
+                    record.setCustomerName(customerName);
+                    record.setFileName(fileName);
+                    record.setFileType("初步方案");
+                    record.setCreater(maker);
+                    record.setCreateDate(LocalDate.now());
+                    schemeRecordDAO.save(record);
                     break;
                 case 0:
                     break;
@@ -156,11 +180,17 @@ public class SchemeController {
     }
 
     @RequestMapping("/setSchemeFirstRefuse")
-    public String setFirstSchemeRefuse(String reqNum ){
+    public String setFirstSchemeRefuse(String reqNum , String note){
         TravelReq req = reqDAO.getOne(reqNum);
         req.setStatus("refuse");
         req.setStatusName("已退回");
+        req.setNote(note);
         reqDAO.save(req);
+        String schemeId = req.getLeafId();
+        SchemeFlow schemeFlow = flowDAO.getOne(schemeId);
+        schemeFlow.setSchemeStatus("refuse");
+        schemeFlow.setReason(note);
+        flowDAO.save(schemeFlow);
         return "OK";
     }
 
@@ -178,6 +208,10 @@ public class SchemeController {
         List<Scheme> schemeList = schemeDAO.findByReqNum(reqNum);
         if(schemeList == null || schemeList.size() == 0){
             return "请先上传初步方案";
+        }
+
+        if(fileName == null || "".equals(fileName)){
+            return "请选择文件";
         }
 
         SchemeFlow flow = new SchemeFlow();
@@ -266,9 +300,40 @@ public class SchemeController {
                         scheme.setReduceChange(note3);
                     }
                     schemeDAO.save(scheme);
+                    List<TaskSum> sumList = taskSumDAO.findBySalePlanIDAndTask(salePlanID , "合同交流");
                     SalesPlan plan = planDAO.getOne(salePlanID);
                     plan.setPlanStatus("sixth");
+                    plan.setUpdateDate(LocalDate.now());
+                    plan.setSpendTime(21);
+                    plan.setDeadline(sumList.get(0).getDeadline());
                     planDAO.save(plan);
+
+                    List<ArrangeRecord> arrangeRecordList = arrangeRecordDAO.findBySalePlanIDAndStepAndType(salePlanID , "方案交流" , "sale");
+                    if(arrangeRecordList != null && arrangeRecordList.size() != 0){
+                        ArrangeRecord arrangeRecord = arrangeRecordList.get(0);
+                        arrangeRecord.setCompleteStatus("C");
+                        arrangeRecordDAO.save(arrangeRecord);
+                    }
+
+                    taskDAO.deleteBySalePlanIDAndJobName(salePlanID , "方案交流");
+                    taskSumDAO.deleteBySalePlanIDAndTask(salePlanID , "方案交流");
+//                    taskService.saveTask(salePlanID , "合同交流" , "foreContractPrevious" , LocalDate.now().plusDays(14) , 3);
+
+                    /**
+                     * 将数据写入到SchemeRecord表中
+                     */
+                    SchemeRecord record = new SchemeRecord();
+                    record.setSalePlanID(salePlanID);
+                    record.setCustomerCode(flow.getCustomerCode());
+                    record.setCustomerName(flow.getCustomerName());
+                    record.setFileName(fileName);
+                    record.setFileType("最终方案");
+                    record.setPersonChange(flow.getNote());
+                    record.setAssetChange(flow.getNote2());
+                    record.setReduceChange(flow.getNote3());
+                    record.setCreater(maker);
+                    record.setCreateDate(LocalDate.now());
+                    schemeRecordDAO.save(record);
                     break;
                 case 0:
                     break;
@@ -294,12 +359,33 @@ public class SchemeController {
     }
 
     @RequestMapping("/setSchemeSecondRefuse")
-    public String refuseSecondScheme(String reqNum){
+    public String refuseSecondScheme(String reqNum , String note){
         TravelReq req = reqDAO.getOne(reqNum);
         req.setStatus("refuse");
         req.setStatusName("已退回");
         reqDAO.save(req);
+        String schemeId = req.getLeafId();
+        SchemeFlow schemeFlow = flowDAO.getOne(schemeId);
+        schemeFlow.setSchemeStatus("refuse");
+        schemeFlow.setReason(note);
+        flowDAO.save(schemeFlow);
         return "OK";
     }
+
+    @RequestMapping("/getSchemeHistory")
+    public List<SchemeRecord> getHistory(String salePlanID){
+        List<SchemeRecord> recordList = schemeRecordDAO.findBySalePlanID(salePlanID);
+        return recordList;
+    }
+
+//    @RequestMapping("/getAllScheme")
+//    public Map<String, Object> getAllHistory(String salePlanID){
+//        Map<String , Object> map = new HashMap<>();
+//        List<SchemeRecord> recordList = schemeRecordDAO.findBySalePlanID(salePlanID);
+//        map.put("record" , recordList);
+//        List<Scheme> schemeList = schemeDAO.findByReqNum(salePlanID);
+//        map.put("scheme" , schemeList.get(0));
+//        return map;
+//    }
 
 }

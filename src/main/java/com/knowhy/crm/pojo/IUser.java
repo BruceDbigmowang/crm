@@ -1,6 +1,7 @@
 package com.knowhy.crm.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.hibernate.annotations.Proxy;
 
 
 import javax.persistence.*;
@@ -9,7 +10,7 @@ import java.util.Date;
 @Entity
 @Table(name = "CRM_Account")
 @JsonIgnoreProperties({"handler" , "hibernateLazyInitializer"})
-//@IdClass(PrimaryKeyAccount.class)
+@Proxy(lazy = false)
 public class IUser{
 //    @Id
 //    @Column(name = "id")

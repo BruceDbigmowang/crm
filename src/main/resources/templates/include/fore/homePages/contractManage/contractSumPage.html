@@ -1,0 +1,210 @@
+<div id="allContent" class="content" th:fragment="html">
+    <!-- START CONTAINER -->
+    <div id="mainContent" class="container-widget">
+
+        <div style="width:100%;margin: 0px auto;">
+            <div>
+                <span style="font-size: 16px;">合同管理 / 合同查询</span>
+                <div style="background-color: white;height:617px"><br>
+                    <table style="width:100%;border: 0px;margin-top: 10px;">
+                        <tr>
+                            <td style="width: 400px">
+                                <input id="contractSearch" class="form-control" placeholder="请输入客户名称" autocomplete="off">
+                            </td>
+                            <td style="width: 100px;"><button class="btn btn-warning" onclick="findContractByCustomer()">查询</button></td>
+                            <td></td>
+                        </tr>
+                    </table>
+                    <div id="tableBody">
+                        <table id="firstData" style="width:100%;margin: 0px auto;margin-top: 10px;" class="table table-striped table-bordered table-hover  table-condensed">
+                            <thead style="background-color: #dde5e5;font-size: 14px;text-align: left;vertical-align: inherit;">
+                            <tr>
+                                <th style="width: 200px;display: none;">客户编号</th>
+                                <th style="width: 200px;">客户名称</th>
+                                <th style="width: 200px;">合同编号</th>
+                                <th style="width: 120px;">合同</th>
+                                <th>补充合同</th>
+                                <th style="width: 120px;">销售人员</th>
+                                <th style="width: 100px;"></th>
+                            </tr>
+                            </thead>
+                            <tbody id="allFirst"></tbody>
+                        </table>
+                    </div>
+                    <div id="poolPage" style="width:1050px;display: none;text-align: center">
+                        <a style="color: #ff6d0a;">首页</a>&nbsp&nbsp&nbsp<a style="color: #ff6d0a;">上一页</a>&nbsp&nbsp&nbsp<a style="color: #ff6d0a;">下一页</a>&nbsp&nbsp&nbsp<a style="color: #ff6d0a;">末页</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="modal fade" id="myModal"  data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button data-dismiss="modal" class="close" type="button"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title">合同详情</h4>
+                </div>
+                <div class="modal-body">
+                    <input id="customerID" type="hidden">
+                    <table class="table" >
+                        <tr style="height: 47px;">
+                            <td  style="text-align: left;vertical-align: inherit;font-size: 14px;width: 110px;" >客户名称</td>
+                            <td  style="vertical-align: inherit;"><input id="customerName" class="form-control" readonly></td>
+                        </tr>
+                        <tr style="height: 47px;">
+                            <td  style="text-align: left;vertical-align: inherit;font-size: 14px;width: 110px;" >合同编号</td>
+                            <td  style="vertical-align: inherit;"><input id="contractFileCode" class="form-control" readonly></td>
+                        </tr>
+                        <tr style="height: 47px;">
+                            <td  style="text-align: left;vertical-align: inherit;font-size: 14px;width: 110px;" >合同名称</td>
+                            <td  style="vertical-align: inherit;"><input id="contractFileName" class="form-control" readonly></td>
+                        </tr>
+                        <tr style="height: 47px;">
+                            <td  style="text-align: left;vertical-align: inherit;font-size: 14px;width: 110px;" >服务产品代码</td>
+                            <td  style="vertical-align: inherit;"><input id="produceCode" class="form-control" readonly></td>
+                        </tr>
+                        <tr style="height: 47px;">
+                            <td  style="text-align: left;vertical-align: inherit;font-size: 14px;width: 110px;" >服务产品名称</td>
+                            <td  style="vertical-align: inherit;"><input id="productName" class="form-control" readonly></td>
+                        </tr><tr style="height: 47px;">
+                        <td  style="text-align: left;vertical-align: inherit;font-size: 14px;width: 110px;" >服务内容</td>
+                        <td  style="vertical-align: inherit;">
+                            <select id="serverContent" class="form-control" disabled="disabled">
+                                <option value="0">--请选择--</option>
+                                <option value="驻场" selected>驻场</option>
+                                <option value="模式输出">模式输出</option>
+                            </select>
+                        </td>
+                    </tr><tr style="height: 47px;">
+                        <td  style="text-align: left;vertical-align: inherit;font-size: 14px;width: 110px;" >结算方式</td>
+                        <td  style="vertical-align: inherit;">
+                            <select id="clearWay" class="form-control" disabled="disabled">
+                                <option value="0">--请选择--</option>
+                                <option value="领用结算">领用结算</option>
+                                <option value="单件结算" selected>单件结算</option>
+                            </select>
+                        </td>
+                    </tr>
+                        <tr style="height: 47px;">
+                            <td  style="text-align: left;vertical-align: inherit;font-size: 14px;width: 110px;" >币别</td>
+                            <td  style="vertical-align: inherit;"><input id="currency" class="form-control" readonly></td>
+                        </tr>
+                        <tr style="height: 47px;">
+                            <td  style="text-align: left;vertical-align: inherit;font-size: 14px;width: 110px;" >汇率</td>
+                            <td  style="vertical-align: inherit;"><input id="parities" class="form-control" readonly></td>
+                        </tr>
+                        <tr style="height: 47px;">
+                            <td  style="text-align: left;vertical-align: inherit;font-size: 14px;width: 110px;" >合同年度金额</td>
+                            <td  style="vertical-align: inherit;"><input id="annualMoney" class="form-control" readonly></td>
+                        </tr>
+                        <tr style="height: 47px;">
+                            <td  style="text-align: left;vertical-align: inherit;font-size: 14px;width: 110px;" >签订日期</td>
+                            <td  style="vertical-align: inherit;"><input id="concludeDate" class="form-control" readonly></td>
+                        </tr>
+                        <tr style="height: 47px;">
+                            <td  style="text-align: left;vertical-align: inherit;font-size: 14px;width: 110px;" >生效日期</td>
+                            <td  style="vertical-align: inherit;"><input id="effectiveDate" class="form-control" readonly></td>
+                        </tr>
+                        <tr style="height: 47px;">
+                            <td  style="text-align: left;vertical-align: inherit;font-size: 14px;width: 110px;" >合同截止日期</td>
+                            <td  style="vertical-align: inherit;"><input id="deadline" class="form-control" readonly></td>
+                        </tr>
+                        <tr style="height: 47px;">
+                            <td  style="text-align: left;vertical-align: inherit;font-size: 14px;width: 110px;" >合同说明</td>
+                            <td  style="vertical-align: inherit;"><input id="contractExplain" class="form-control" readonly></td>
+                        </tr>
+                        <tr style="height: 47px;">
+                            <td  style="text-align: left;vertical-align: inherit;font-size: 14px;width: 110px;" >价格约定</td>
+                            <td  style="vertical-align: inherit;"><input id="price" class="form-control" readonly></td>
+                        </tr>
+                        <tr style="height: 47px;">
+                            <td  style="text-align: left;vertical-align: inherit;font-size: 14px;width: 110px;" >技术服务要求</td>
+                            <td  style="vertical-align: inherit;"><input id="serverAsk" class="form-control" readonly></td>
+                        </tr>
+                        <tr style="height: 47px;">
+                            <td  style="text-align: left;vertical-align: inherit;font-size: 14px;width: 110px;" >供应链管家</td>
+                            <td  style="vertical-align: inherit;">
+                                <input id="steward" class="form-control" readonly>
+                            </td>
+                        </tr>
+                        <tr style="height: 47px;">
+                            <td  style="text-align: left;vertical-align: inherit;font-size: 14px;width: 110px;" >技术人员</td>
+                            <td  style="vertical-align: inherit;">
+                                <input id="technist" class="form-control" readonly>
+                            </td>
+                        </tr>
+                        <tr style="height: 47px;">
+                            <td  style="text-align: left;vertical-align: inherit;font-size: 14px;width: 110px;" >运营人员</td>
+                            <td  style="vertical-align: inherit;">
+                                <input id="operator" class="form-control" readonly>
+                            </td>
+                        </tr>
+                        <tr style="height: 47px;">
+                            <td  style="text-align: left;vertical-align: inherit;font-size: 14px;width: 110px;" >销售助理</td>
+                            <td  style="vertical-align: inherit;">
+                                <input id="assistant" class="form-control" readonly>
+                            </td>
+                        </tr>
+                        <tr style="height: 47px;">
+                            <td  style="text-align: left;vertical-align: inherit;font-size: 14px;width: 110px;" >刀具柜</td>
+                            <td  style="vertical-align: inherit;"><input id="cabinetAmount" class="form-control" style="width: 90%;" readonly><span style="margin-left: 10px;font-size: 16px;">台</span></td>
+                        </tr>
+                        <tr style="height: 47px;">
+                            <td  style="text-align: left;vertical-align: inherit;font-size: 14px;width: 110px;" >刀具柜编号</td>
+                            <td  style="vertical-align: inherit;"><input id="cabinetNum" class="form-control" readonly></td>
+                        </tr>
+                        <tr style="height: 47px;">
+                            <td  style="text-align: left;vertical-align: inherit;font-size: 14px;width: 110px;" >刀具柜费用</td>
+                            <td  style="vertical-align: inherit;"><input id="cabinetSpend" class="form-control" readonly></td>
+                        </tr>
+                        <tr style="height: 47px;">
+                            <td  style="text-align: left;vertical-align: inherit;font-size: 14px;width: 110px;" >是否使用TDMP</td>
+                            <td  style="vertical-align: inherit;">
+                                <input id="inc0" name="useTDMP" type="radio" style="vertical-align:middle; margin-top:0;" value="是"onclick="return false;" >是
+                                <input id="inc1" name="useTDMP" type="radio" style="vertical-align:middle; margin-top:0;margin-left: 20px;" value="否" onclick="return false;">否
+                            </td>
+                        </tr>
+                        <tr style="height: 47px;">
+                            <td  style="text-align: left;vertical-align: inherit;font-size: 14px;width: 110px;" >TDMP费用</td>
+                            <td  style="vertical-align: inherit;"><input id="TDMPSpend" class="form-control" readonly></td>
+                        </tr>
+                        <tr style="height: 47px;">
+                            <td  style="text-align: left;vertical-align: inherit;font-size: 14px;width: 110px;" >账期</td>
+                            <td  style="vertical-align: inherit;"><input id="payment" class="form-control" readonly></td>
+                        </tr>
+                        <tr style="height: 47px;">
+                            <td  style="text-align: left;vertical-align: inherit;font-size: 14px;width: 110px;" >其他服务</td>
+                            <td  style="vertical-align: inherit;"><input id="otherServer" class="form-control" readonly></td>
+                        </tr>
+                        <tr style="height: 47px;">
+                            <td  style="text-align: left;vertical-align: inherit;font-size: 14px;width: 110px;" >合同续签提醒</td>
+                            <td  style="vertical-align: inherit;"><input id="remind" class="form-control" style="width: 89%;" readonly><span style="margin-left: 10px;font-size: 16px;">个月</span></td>
+                        </tr>
+                        <tr style="height: 47px;">
+                            <td  style="text-align: left;vertical-align: inherit;font-size: 14px;width: 110px;" >呆滞品处理</td>
+                            <td  style="vertical-align: inherit;"><span style="margin-right: 10px;font-size: 16px;">超期</span><input id="dispose" class="form-control" style="width: 79%;" readonly><span style="margin-left: 10px;font-size: 16px;">个月</span></td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button data-dismiss="modal" class="btn btn-default" type="button">关闭</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div>
+
+
+
+    <div class="row footer">
+        <div class="col-md-6 text-left">
+            &nbsp;&nbsp;&nbsp;&nbsp;
+        </div>
+        <div class="col-md-6 text-right">
+            &nbsp;&nbsp;&nbsp;&nbsp;
+        </div>
+    </div>
+</div>
+

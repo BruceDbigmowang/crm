@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<title>商机管理——营销费用</title>
+<head th:include="include/fore/newHeader::html" ></head>
+<body>
+<div id="workingArea">
+    <div th:replace="include/fore/top::html" ></div>
+    <div th:replace="include/fore/leftMenu::html" ></div>
+    <div th:replace="include/fore/homePages/businessManage/marketOpportunities/marketSpendPage::html" ></div>
+</div>
+<script>
+
+    $(function () {
+        loadAllActivity();
+    })
+
+    function loadAllActivity() {
+        $.ajax({
+            type:"post",
+            url:"selectAllMarketing",
+            async:false,
+            success:function (data) {
+                $("#marketOnline").html("");
+                for(var i = 0 ; i < data.length ; i++){
+                    $("#marketOnline").append("<tr>"
+                        +"<td style='display: none;'>"+data[i].id+"</td>"
+                        +"<td>"+data[i].type+"</td>"
+                        +"<td>"+data[i].theme+"</td>"
+                        +"<td>"+data[i].activity+"</td>"
+                        +"<td>"+data[i].describe+"</td>"
+                        +"<td>"+data[i].spend+"</td>"
+                        +"<td>"+data[i].isPlan+"</td>"
+                        +"<td>"+data[i].createrName+"</td>"
+                        +"<td>"+"<a data-toggle=\"modal\" data-target=\"#myModal\" onclick='getMID(this)'>"+"填报费用"+"</a>"+"</td>"
+                        +"</tr>")
+                }
+            }
+        })
+    }
+
+    function getMID(obj) {
+        var mId = obj.parentNode.parentNode.cells[0].innerText;
+        $("#mId").val(mId);
+    }
+
+    function saveSpend() {
+        var mId = $("#mId").val();
+        var budget = $("#budget").val();
+        var category = $("#category").val();
+        var project = $("#project").val();
+        var amount = $("#amount").val();
+
+        var data = {"mId":mId , "budget":budget , "category":category , "project":project , "amount":amount};
+        $.ajax({
+            type:"post",
+            data:data,
+            url:"saveMarketSpend",
+            async:false,
+            success:function (data) {
+                if(data == "OK"){
+                    $.message({
+                        message:'数据保存成功',
+                        type:'success'
+                    });
+                    $("#myModal").modal('hide');
+                    loadAllActivity();
+                }else{
+                    $.message({
+                        message:data,
+                        type:'error'
+                    });
+                }
+            }
+        })
+    }
+</script>
+</body>
+</html>

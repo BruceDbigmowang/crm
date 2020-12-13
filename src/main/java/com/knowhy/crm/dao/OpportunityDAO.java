@@ -10,4 +10,6 @@ public interface OpportunityDAO extends JpaRepository<Opportunity , Integer> {
     List<Opportunity> findByAddressLike(String address);
 
     List<Opportunity> findByResourceLike(String resource);
+
+    List<Opportunity> findByProvinceAndCityAndArea(String province , String city , String area);
 }

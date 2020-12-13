@@ -3,6 +3,7 @@ package com.knowhy.crm.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.knowhy.crm.dao.OpportunityDAO;
 import com.knowhy.crm.entity.CrmOpportunity;
 import com.knowhy.crm.entity.CrmSalecost;
 import com.knowhy.crm.mapper.CrmOpportunityMapper;
@@ -29,13 +30,15 @@ public class OpportunityController {
     OpportunityService opportunityService;
     @Resource
     CrmOpportunityMapper crmOpportunityMapper;
+    @Autowired
+    OpportunityDAO opportunityDAO;
 
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
     DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     @RequestMapping("/createOpportunity")
-    public String saveOppo(HttpSession session , String name , String fax , String companyName , String email , String source , String principal , String body , String dept , String contract , String maker ,
-                           String phone , String makeDate , String mobile , String leafType , String address , String leafNum){
+    public String saveOppo(HttpSession session , String fax , String companyName , String email , String source , String principal , String body , String dept , String contract ,
+                           String phone , String mobile , String province , String city , String area , String address){
 
         IUser user = (IUser)session.getAttribute("user");
         String account = user.getAccount();
@@ -44,90 +47,88 @@ public class OpportunityController {
         Opportunity opportunity = new Opportunity();
         opportunity.setCreater(account);
         opportunity.setCreateDate(now);
-        if(name == null || "".equals(name)){
-            return "请输入名称";
+        if(body == null || "".equals(body)){
+            return "请输入线索主题";
         }else{
-            opportunity.setName(name);
+            opportunity.setBody(body);
         }
         if(fax == null || "".equals(fax)){
             return "请输入传真";
         }else{
             opportunity.setFax(fax);
         }
-        if(companyName == null || "".equals(companyName)){
-            return "请输入公司名称";
+        if(source == null || "0".equals(source)){
+            return "请输入线索来源";
         }else{
-            opportunity.setCompanyName(companyName);
+            opportunity.setResource(source);
         }
         if(email == null || "".equals(email)){
             return "请输入邮箱";
         }else{
             opportunity.setEmail(email);
         }
-        if(source == null || "".equals(source)){
-            return "请输入线索来源";
+        if(companyName == null || "".equals(companyName)){
+            return "请输入客户名称";
         }else{
-            opportunity.setResource(source);
+            opportunity.setCompanyName(companyName);
         }
         if(principal == null || "".equals(principal)){
             return "请输入负责人";
         }else{
             opportunity.setPrincipal(principal);
         }
-        if(body == null || "".equals(body)){
-            return "请输入线索主体";
+        if(contract == null || "".equals(contract)){
+            return "请输入联系人";
         }else{
-            opportunity.setBody(body);
+            opportunity.setContract(contract);
         }
         if(dept == null || "".equals(dept)){
             return "请输入负责部门";
         }else{
             opportunity.setDept(dept);
         }
-        if(contract == null || "".equals(contract)){
-            return "请输入联系人";
-        }else{
-            opportunity.setContract(contract);
-        }
-        if(maker == null || "".equals(maker)){
-            return "请输入制单人";
-        }else{
-            opportunity.setMaker(maker);
-        }
-        if(phone == null || "".equals(phone)){
-            return "请填写电话";
-        }else{
-            opportunity.setPhone(phone);
-        }
-        if(makeDate == null || "".equals(makeDate)){
-            return "请选择制单日期";
-        }else{
-            try{
-                LocalDate md = LocalDate.parse(makeDate , fmt);
-                opportunity.setMakeDate(md);
-            }catch (Exception e){
-                return e.getMessage();
-            }
-        }
+        opportunity.setMaker(user.getAccount());
         if(mobile == null || "".equals(mobile)){
-            return "请填写手机号";
+            return "请填写移动电话";
         }else{
             opportunity.setMobile(mobile);
         }
-        if(leafType == null || "".equals(leafType)){
-            return "请填写源单类型";
+        if(phone == null || "".equals(phone)){
+            return "请填写办公电话";
         }else{
-            opportunity.setLeafType(leafType);
+            opportunity.setPhone(phone);
+        }
+        opportunity.setMakeDate(LocalDate.now());
+//        if(leafType == null || "".equals(leafType)){
+//            return "请填写源单类型";
+//        }else{
+//            opportunity.setLeafType(leafType);
+//        }
+//
+//        if(leafNum == null || "".equals(leafNum)){
+//            return "请输入源单编号";
+//        }else{
+//            opportunity.setLeafNum(leafNum);
+//        }
+        if(province != null){
+            opportunity.setProvince(province);
+        }else{
+            return "程序出错";
+        }
+        if(city == null){
+            return "程序出错";
+        }else{
+            opportunity.setCity(city);
+        }
+        if(area == null){
+            return "程序出错";
+        }else{
+            opportunity.setArea(area);
         }
         if(address == null || "".equals(address)){
             return "请输入地址";
         }else{
             opportunity.setAddress(address);
-        }
-        if(leafNum == null || "".equals(leafNum)){
-            return "请输入源单编号";
-        }else{
-            opportunity.setLeafNum(leafNum);
         }
         try{
             opportunityService.saveOpportunity(opportunity);
@@ -161,9 +162,9 @@ public class OpportunityController {
     }
 
     @RequestMapping("/findOppoByAddress")
-    public Map<String , Object> getByAddress(String address){
+    public Map<String , Object> getByAddress(String province , String city , String area){
         Map<String , Object>map = new HashMap<>();
-        List<Opportunity> opportunityList = opportunityService.getByAddress(address);
+        List<Opportunity> opportunityList = opportunityService.getByAddress(province , city , area);
         map.put("oppos" , opportunityList);
         return map;
     }
@@ -174,5 +175,49 @@ public class OpportunityController {
         List<Opportunity> opportunityList = opportunityService.getByResource(resource);
         map.put("oppos" , opportunityList);
         return map;
+    }
+
+    @RequestMapping("/getOpportunityDetail")
+    public Opportunity findOppDetail(int opId){
+        return opportunityDAO.getOne(opId);
+    }
+
+    @RequestMapping("/updateOpportunity")
+    public String changeOppo(Integer opId , String contract , String mobile , String phone , String email , String fax , String principal , String dept , String leafType , String leafNum){
+        Opportunity opportunity = opportunityDAO.getOne(opId);
+        if(contract != null && !"".equals(contract)){
+            opportunity.setContract(contract);
+        }
+        if(mobile != null && !"".equals(mobile)){
+            opportunity.setMobile(mobile);
+        }
+        if(phone != null && !"".equals(phone)){
+            opportunity.setPhone(phone);
+        }
+        if(email != null && !"".equals(email)){
+            opportunity.setEmail(email);
+        }
+        if(fax != null && !"".equals(fax)){
+            opportunity.setFax(fax);
+        }
+        if(principal != null && !"".equals(principal)){
+            opportunity.setPrincipal(principal);
+        }
+        if(dept != null && !"".equals(dept)){
+            opportunity.setDept(dept);
+        }
+        if(leafType != null && !"".equals(leafType)){
+            opportunity.setLeafType(leafType);
+        }
+        if(leafNum != null && !"".equals(leafNum)){
+            opportunity.setLeafNum(leafNum);
+        }
+        opportunityDAO.save(opportunity);
+        return "OK";
+    }
+
+    @RequestMapping("/getAllOpportunity")
+    public List<Opportunity> findAll(){
+        return opportunityDAO.findAll();
     }
 }

@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface ContractFileDAO extends JpaRepository<ContractFile , Integer> {
     List<ContractFile> findByReqNum(String reqNum);
+
+    List<ContractFile> findByCustomerNameLike(String customerName);
 }

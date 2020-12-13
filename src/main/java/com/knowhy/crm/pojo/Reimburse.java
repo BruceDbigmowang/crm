@@ -23,6 +23,8 @@ public class Reimburse {
     String maker;
     String makerName;
     LocalDate makeDate;
+    String reimburseStatus;
+    String note;
 
     public String getId() {
         return id;
@@ -102,5 +104,21 @@ public class Reimburse {
 
     public void setMakeDate(LocalDate makeDate) {
         this.makeDate = makeDate;
+    }
+
+    public String getReimburseStatus() {
+        return reimburseStatus;
+    }
+
+    public void setReimburseStatus(String reimburseStatus) {
+        this.reimburseStatus = reimburseStatus;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
     }
 }

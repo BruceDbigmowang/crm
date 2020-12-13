@@ -10,6 +10,7 @@
 </div>
 <script>
     $(function () {
+        judgeFunc();
         loadFirstPlan();
         getAllSaleMan();
     });
@@ -18,30 +19,799 @@
         elem: '#travelDate' //指定元素
     });
 
-    function loadFirstPlan() {
-        var status = "fourth";
+    function judgeFunc() {
         $.ajax({
             type:"post",
-            data:{"status":status},
-            url:"findCanOperate",
+            url:"getSaleRole",
             async:false,
             success:function (data) {
-                $("#allFirst").html("");
-                for(var i = 0 ; i < data.length ; i++){
-                    $("#allFirst").append("<tr>"+
-                        "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+data[i].id+"</td>"+
-                        "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+data[i].customerName+"</td>"+
-                        "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+data[i].describe+"</td>"+
-                        "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+data[i].principalName+"</td>"+
-                        "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a href='#' data-toggle=\"modal\" data-target=\"#myModal2\" onclick=\"getRowId(this)\">现场尽调</a>"+
-                        "<a href='#' style=\"margin-left: 10px;\" onclick=\"giveup(this)\">挂起</a>"+
-                        "</td>"
-                        +"</tr>");
-                    $("#customer").append('<option value="'+data[i].customerCode+'">'+data[i].customerName+"</option>");
-                    $("#customer2").append('<option value="'+data[i].customerCode+'">'+data[i].customerName+"</option>");
+                $("#funcInput").val(data);
+            }
+        })
+    }
+
+    function loadFirstPlan() {
+        var role = $("#funcInput").val();
+        if(role == "0"){
+            var status = "fourth";
+            $.ajax({
+                type:"post",
+                data:{"status":status},
+                url:"findCanOperateAndOperated",
+                async:false,
+                success:function (data) {
+                    var list1 = data.list1;
+                    $("#allFirst").html("");
+                    $("#customer").html("");
+                    $("#customer2").html("");
+                    for(var i = 0 ; i < list1.length ; i++){
+                        $("#allFirst").append("<tr>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].id+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].customerName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].describe+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].deadline+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].principalName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a href='#' data-toggle=\"modal\" data-target=\"#myModal2\" onclick=\"getRowId(this)\">现场尽调</a>"+
+                            // "<a href='#' style=\"margin-left: 10px;\" onclick=\"giveup(this)\">挂起</a>"+
+                            "</td>"
+                            +"</tr>");
+                        $("#customer").append('<option value="'+list1[i].customerCode+'">'+list1[i].customerName+"</option>");
+                        $("#customer2").append('<option value="'+list1[i].customerCode+'">'+list1[i].customerName+"</option>");
+                    }
+                    var list2 = data.list2;
+                    $("#allSecond").html("");
+                    for(var i = 0 ; i < list2.length ; i++){
+                        $("#allSecond").append("<tr>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].id+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].customerName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].describe+"</td>"+
+                            // "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].deadline+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].principalName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a href='#' data-toggle=\"modal\" data-target=\"#myModal2\" onclick=\"showRowData(this)\" >查看</a>"+
+                            // "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a href='#' data-toggle="modal" data-target="#myModal2" onclick="getRowId(this)">现场尽调</a>"+
+                            // "<a href='#' style=\"margin-left: 10px;\" onclick=\"giveup(this)\">挂起</a>"+
+                            "</td>"
+                            +"</tr>");
+                    }
+                }
+            })
+        }else{
+            var status = "fourth";
+            $.ajax({
+                type:"post",
+                data:{"status":status},
+                url:"findCanOperateAndOperatedByAdmin",
+                async:false,
+                success:function (data) {
+                    var list1 = data.list1;
+                    $("#allFirst").html("");
+                    $("#customer").html("");
+                    $("#customer2").html("");
+                    for(var i = 0 ; i < list1.length ; i++){
+                        $("#allFirst").append("<tr>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].id+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].customerName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].describe+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].deadline+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].principalName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a href='#' data-toggle=\"modal\" data-target=\"#myModal2\" onclick=\"getRowId(this)\">现场尽调</a>"+
+                            // "<a href='#' style=\"margin-left: 10px;\" onclick=\"giveup(this)\">挂起</a>"+
+                            "</td>"
+                            +"</tr>");
+                        $("#customer").append('<option value="'+list1[i].customerCode+'">'+list1[i].customerName+"</option>");
+                        $("#customer2").append('<option value="'+list1[i].customerCode+'">'+list1[i].customerName+"</option>");
+                    }
+                    var trs = document.getElementById("firstData").rows;
+                    for(var i = 0 ; i < trs.length ; i++){
+                        var cell = trs[i].cells[5];
+                        cell.style.display = 'none';
+                    }
+                    var list2 = data.list2;
+                    $("#allSecond").html("");
+                    for(var i = 0 ; i < list2.length ; i++){
+                        $("#allSecond").append("<tr>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].id+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].customerName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].describe+"</td>"+
+                            // "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].deadline+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].principalName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a href='#' data-toggle=\"modal\" data-target=\"#myModal2\" onclick=\"showRowData(this)\" >查看</a>"+
+                            // "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a href='#' data-toggle="modal" data-target="#myModal2" onclick="getRowId(this)">现场尽调</a>"+
+                            // "<a href='#' style=\"margin-left: 10px;\" onclick=\"giveup(this)\">挂起</a>"+
+                            "</td>"
+                            +"</tr>");
+                    }
+                }
+            })
+        }
+
+    }
+
+    function saveExcelFile() {
+        var type = $("#offlineType").val();
+        if(type == "pay"){
+            var payCycle = $("#payCycle option:selected").val();
+            var payWay = $("#payWay option:selected").val();
+            var salePlanID = $("#customerID").val();
+            var data = {"type":type , "payCycle":payCycle , "payWay":payWay , "salePlanID":salePlanID};
+            $.ajax({
+                type:"post",
+                data:data,
+                url:"savePayment",
+                async:false,
+                success:function(data){
+                    if(data == "OK"){
+                        loadNextPage();
+                    }else{
+                        $.message({
+                            message:data,
+                            type:'error'
+                        })
+                    }
+                }
+            })
+        }else{
+            var file = $("#offlineExcel").val();
+            if(file == ""){
+                loadNextPage();
+            }else{
+                $.ajaxFileUpload({
+                    type:"post",
+                    data:{"type":type},
+                    fileElementId:"offlineExcel",
+                    url:"saveOfflineExcel",
+                    async:false,
+                    dataType:'text',
+                    success:function(data){
+                        var filename = data;
+                        if(filename.includes(".xls") || filename.includes(".xlsx")){
+                            writeOfflineRecord(filename);
+                        }else{
+                            $.message({
+                                message:'必须上传Excel文件',
+                                type:'error'
+                            })
+                        }
+                    }
+                })
+            }
+        }
+
+    }
+
+    function writeOfflineRecord(filename) {
+        var salePlanID = $("#customerID").val();
+        var type = $("#offlineType").val();
+        if(type == "receive"){
+            $.ajax({
+                type:"post",
+                data:{"salePlanID":salePlanID , "type":type , "fileName":filename},
+                url:"saveOfflineDataFile",
+                async:false,
+                success:function (data) {
+                    if(data == "OK"){
+                        $.message({
+                            message:'数据已保存',
+                            type:'success'
+                        });
+                        $("#myModal2").modal('hide');
+                    }else{
+                        $.message({
+                            message:data,
+                            type:'error'
+                        })
+                    }
+                }
+            })
+        }else{
+            $.ajax({
+                type:"post",
+                data:{"salePlanID":salePlanID , "type":type , "fileName":filename},
+                url:"saveOfflineDataFile",
+                async:false,
+                success:function (data) {
+                    if(data == "OK"){
+                        loadNextPage();
+                    }else{
+                        $.message({
+                            message:data,
+                            type:'error'
+                        })
+                    }
+                }
+            })
+        }
+    }
+
+    function getRowId(obj) {
+        var orderID = obj.parentNode.parentNode.cells[0].innerHTML;
+        $("#customerID").val(orderID);
+        var customerName = obj.parentNode.parentNode.cells[1].innerText;
+        $("#customerName2").val(customerName);
+        $.ajax({
+            type:"post",
+            data:{"salePlanID":orderID},
+            url:"loadSurveyDetail",
+            async:false,
+            success:function (data) {
+                // loadEmployeeList();
+                switch (data) {
+                    case 1:
+                        loadAssetList();
+                        break;
+                    case 2:
+                        loadEmployeeList();
+                        break;
+                    case 3:
+                        loadStockTime();
+                        break;
+                    case 4:
+                        loadPayCycle();
+                        break;
+                    case 5:
+                        loadProduction();
+                        break;
+                    case 6:
+                        loadSaleList();
+                        break;
+
                 }
             }
         })
+    }
+
+    function showRowData(obj) {
+        var orderID =obj.parentNode.parentNode.cells[0].innerText;
+        $("#customerID").val(orderID);
+        var customerName = obj.parentNode.parentNode.cells[1].innerText;
+        $("#customerName2").val(customerName);
+        $.ajax({
+            type:"post",
+            data:{"salePlanID":orderID},
+            url:"loadSurveyDetail",
+            async:false,
+            success:function (data) {
+                loadAssetList();
+            }
+        })
+    }
+
+    function loadPreviousPage() {
+        var type = $("#offlineType").val();
+        if(type == "employee"){
+            loadAssetList();
+        }else if(type == "stock"){
+            loadEmployeeList();
+        }else if(type == "pay"){
+            loadStockTime();
+        }else if(type == "production"){
+            loadPayCycle();
+        }else if(type == "saleList"){
+            loadProduction();
+        }else if(type == "part"){
+            loadSaleList();
+        }else if(type == "knife"){
+            loadPartList();
+        }else if(type == "supplier"){
+            loadKnifeList();
+        }else if(type == "buy"){
+            loadSupplierList();
+        }else if(type == "receive"){
+            loadBuyList();
+        }
+    }
+    function loadNextPage() {
+        var type = $("#offlineType").val();
+        if(type == "asset"){
+            loadEmployeeList();
+        }else if(type == "employee"){
+            loadStockTime();
+        }else if(type == "stock"){
+            loadPayCycle();
+        }else if(type == "pay"){
+            loadProduction();
+        }else if(type == "production"){
+            loadSaleList();
+        }else if(type == "saleList"){
+            loadPartList();
+        }else if(type == "part"){
+            loadKnifeList();
+        }else if(type == "knife"){
+            loadSupplierList();
+        }else if(type == "supplier"){
+            loadBuyList();
+        }else if(type == "buy"){
+            loadReceiveList();
+        }else if(type == "receive"){
+            saveExcelFile();
+        }
+    }
+
+    function getAssetList() {
+        var salePlanID = $("#customerID").val();
+        var type = $("#offlineType").val();
+        $.ajax({
+            type:"post",
+            data:{"salePlanID":salePlanID , "type":type},
+            url:"getHistoryFile",
+            async:false,
+            success:function (data) {
+                $("#assetList").html("");
+                for(var i = 0 ; i < data.length ; i++){
+                    var no = i + 1;
+                    $("#assetList").append("<tr>"+
+                        "<td style='display: none;'>"+data[i].id+"</td>"+
+                        "<td>"+no+"</td>"+
+                        "<td>"+"<a href='downloadOfflineFile?filename="+data[i].fileName+"'>"+data[i].fileName+"</a>"+"</td>"+
+                        "<td>"+data[i].createDate+"</td>"+
+                        "</tr>"
+                    );
+                }
+            }
+        })
+    }
+
+    function loadAssetList() {
+        $("#offlineType").val("asset")
+        $("#mainData").html("");
+        $("#footPart").html("");
+        $("#mainData").append('<h3>现场尽调——固定资产清单</h3>\n' +
+            '                    <table id="survey" class="table">\n' +
+            '                        <tr>\n' +
+            '                            <td style="width: 100px;">客户名称</td><td><input id="customerName" class="form-control" readonly></td>\n' +
+            '                        </tr>\n' +
+            '                        <tr>\n' +
+            '                            <td>上传附件</td><td><input id="offlineExcel" name="offlineExcel" type="file" class="form-control"></td>\n' +
+            '                        </tr>\n' +
+            '                    </table>\n' +
+            '                    <h4 id="part1">固定资产历史记录</h4>\n' +
+            '                    <table class="table" style="width: 600px;">\n' +
+            '                        <thead>\n' +
+            '                        <tr>\n' +
+            '<th style="display: none">编号</th>\n'+
+            '                            <th style="width: 80px;">序号</th>\n' +
+            '                            <th>文件名称</th>\n' +
+            '                            <th style="width: 150px;">上传时间</th>\n' +
+            '                        </tr>\n' +
+            '                        </thead>\n' +
+            '<tbody id="assetList">'+'</tbody>'+
+            '                    </table>');
+        var customerName = $("#customerName2").val();
+        $("#customerName").val(customerName);
+        $("#footPart").append("<button data-dismiss=\"modal\" class=\"btn btn-default\" type=\"button\">关闭</button>\n" +
+            "                    <button class=\"btn btn-primary\" type=\"button\" onclick=\"saveExcelFile()\">下一页</button>");
+
+        getAssetList();
+    }
+
+    function loadEmployeeList() {
+        $("#offlineType").val("employee")
+        $("#mainData").html("");
+        $("#footPart").html("");
+        $("#mainData").append('<h3>现场尽调——员工花名册</h3>\n' +
+            '                    <table id="survey" class="table">\n' +
+            '                        <tr>\n' +
+            '                            <td style="width: 100px;">客户名称</td><td><input id="customerName" class="form-control" readonly></td>\n' +
+            '                        </tr>\n' +
+            '                        <tr>\n' +
+            '                            <td>上传附件</td><td><input id="offlineExcel" name="offlineExcel" type="file" class="form-control"></td>\n' +
+            '                        </tr>\n' +
+            '                    </table>\n' +
+            '                    <h4 id="part1" >员工花名册历史记录</h4>\n' +
+            '                    <table " class="table" style="width: 600px;">\n' +
+            '                        <thead>\n' +
+            '                        <tr>\n' +
+            '                            <th style="width: 80px;">序号</th>\n' +
+            '                            <th>文件名称</th>\n' +
+            '                            <th style="width: 150px;">上传时间</th>\n' +
+            '                        </tr>\n' +
+            '                        </thead>\n' +
+            '<tbody id="assetList"></tbody>'+
+            '                    </table>');
+        var customerName = $("#customerName2").val();
+        $("#customerName").val(customerName);
+        $("#footPart").append("<button class=\"btn btn-primary\" type=\"button\" onclick='loadPreviousPage()'>上一页</button>\n" +
+            "<button data-dismiss=\"modal\" class=\"btn btn-default\" type=\"button\">关闭</button>\n" +
+            "                    <button class=\"btn btn-primary\" type=\"button\" onclick=\"saveExcelFile()\">下一页</button>");
+        getAssetList();
+    }
+
+    function loadStockTime() {
+        $("#offlineType").val("stock");
+        $("#mainData").html("");
+        $("#footPart").html("");
+        $("#mainData").append('<h3>现场尽调——库龄分析</h3>\n' +
+            '                    <table id="survey" class="table">\n' +
+            '                        <tr>\n' +
+            '                            <td style="width: 100px;">客户名称</td><td><input id="customerName" class="form-control" readonly></td>\n' +
+            '                        </tr>\n' +
+            '                        <tr>\n' +
+            '                            <td>上传附件</td><td><input id="offlineExcel" name="offlineExcel" type="file" class="form-control"></td>\n' +
+            '                        </tr>\n' +
+            '                    </table>\n' +
+            '                    <h4 id="part1">库龄分析历史记录</h4>\n' +
+            '                    <table class="table" style="width: 600px;">\n' +
+            '                        <thead>\n' +
+            '                        <tr>\n' +
+            '<th style="display: none">编号</th>\n'+
+            '                            <th style="width: 80px;">序号</th>\n' +
+            '                            <th>文件名称</th>\n' +
+            '                            <th style="width: 150px;">上传时间</th>\n' +
+            '                        </tr>\n' +
+            '                        </thead>\n' +
+            '<tbody id="assetList">'+'</tbody>'+
+            '                    </table>');
+        var customerName = $("#customerName2").val();
+        $("#customerName").val(customerName);
+        $("#footPart").append("<button class=\"btn btn-primary\" type=\"button\" onclick='loadPreviousPage()'>上一页</button>\n" +
+            "<button data-dismiss=\"modal\" class=\"btn btn-default\" type=\"button\">关闭</button>\n" +
+            "                    <button class=\"btn btn-primary\" type=\"button\" onclick=\"saveExcelFile()\">下一页</button>");
+
+        getAssetList();
+    }
+
+    function loadPayCycle() {
+        $("#offlineType").val("pay");
+        $("#mainData").html("");
+        $("#footPart").html("");
+        $("#mainData").append('<h3>现场尽调——付款账期</h3>\n' +
+            '<table id="survey" class="table" >\n' +
+            '                        <tr>\n' +
+            '                            <td>客户名称</td><td><input id="customerName" class="form-control"></td>\n' +
+            '                        </tr>\n' +
+            '                        <tr>\n' +
+            '                            <td>付款周期</td>\n' +
+            '                            <td>\n' +
+            '                                <select id="payCycle" class="form-control">\n' +
+            '                                    <option value="预付款">预付款</option>\n' +
+            '                                    <option value="30天">30天</option>\n' +
+            '                                    <option value="60天">60天</option>\n' +
+            '                                    <option value="90天">90天</option>\n' +
+            '                                </select>\n' +
+            '                            </td>\n' +
+            '                        </tr>\n' +
+            '                        <tr>\n' +
+            '                            <td>付款方式</td>\n' +
+            '                            <td>\n' +
+            '                                <select id="payWay" class="form-control">\n' +
+            '                                    <option value="现金">现金</option>\n' +
+            '                                    <option value="电子承兑">电子承兑</option>\n' +
+            '                                </select>\n' +
+            '                            </td>\n' +
+            '                        </tr>\n' +
+            '                    </table>');
+        var customerName = $("#customerName2").val();
+        $("#customerName").val(customerName);
+        $("#footPart").append("<button class=\"btn btn-primary\" type=\"button\" onclick='loadPreviousPage()'>上一页</button>\n" +
+            "<button data-dismiss=\"modal\" class=\"btn btn-default\" type=\"button\">关闭</button>\n" +
+            "                    <button class=\"btn btn-primary\" type=\"button\" onclick=\"saveExcelFile()\">下一页</button>");
+
+    }
+
+    function loadProduction() {
+        $("#offlineType").val("production")
+        $("#mainData").html("");
+        $("#footPart").html("");
+        $("#mainData").append('<h3>现场尽调——生产产量</h3>\n' +
+            '                    <table id="survey" class="table">\n' +
+            '                        <tr>\n' +
+            '                            <td style="width: 100px;">客户名称</td><td><input id="customerName" class="form-control" readonly></td>\n' +
+            '                        </tr>\n' +
+            '                        <tr>\n' +
+            '                            <td>上传附件</td><td><input id="offlineExcel" name="offlineExcel" type="file" class="form-control"></td>\n' +
+            '                        </tr>\n' +
+            '                    </table>\n' +
+            '                    <h4 id="part1">生产产量历史记录</h4>\n' +
+            '                    <table class="table" style="width: 600px;">\n' +
+            '                        <thead>\n' +
+            '                        <tr>\n' +
+            '<th style="display: none">编号</th>\n'+
+            '                            <th style="width: 80px;">序号</th>\n' +
+            '                            <th>文件名称</th>\n' +
+            '                            <th style="width: 150px;">上传时间</th>\n' +
+            '                        </tr>\n' +
+            '                        </thead>\n' +
+            '<tbody id="assetList">'+'</tbody>'+
+            '                    </table>');
+        var customerName = $("#customerName2").val();
+        $("#customerName").val(customerName);
+        $("#footPart").append("<button class=\"btn btn-primary\" type=\"button\" onclick='loadPreviousPage()'>上一页</button>\n" +
+            "<button data-dismiss=\"modal\" class=\"btn btn-default\" type=\"button\">关闭</button>\n" +
+            "                    <button class=\"btn btn-primary\" type=\"button\" onclick=\"saveExcelFile()\">下一页</button>");
+
+        getAssetList();
+    }
+
+    function loadSaleList() {
+        $("#offlineType").val("saleList")
+        $("#mainData").html("");
+        $("#footPart").html("");
+        $("#mainData").append('<h3>现场尽调——销售额</h3>\n' +
+            '                    <table id="survey" class="table">\n' +
+            '                        <tr>\n' +
+            '                            <td style="width: 100px;">客户名称</td><td><input id="customerName" class="form-control" readonly></td>\n' +
+            '                        </tr>\n' +
+            '                        <tr>\n' +
+            '                            <td>上传附件</td><td><input id="offlineExcel" name="offlineExcel" type="file" class="form-control"></td>\n' +
+            '                        </tr>\n' +
+            '                    </table>\n' +
+            '                    <h4 id="part1">销售额历史记录</h4>\n' +
+            '                    <table class="table" style="width: 600px;">\n' +
+            '                        <thead>\n' +
+            '                        <tr>\n' +
+            '<th style="display: none">编号</th>\n'+
+            '                            <th style="width: 80px;">序号</th>\n' +
+            '                            <th>文件名称</th>\n' +
+            '                            <th style="width: 150px;">上传时间</th>\n' +
+            '                        </tr>\n' +
+            '                        </thead>\n' +
+            '<tbody id="assetList">'+'</tbody>'+
+            '                    </table>');
+        var customerName = $("#customerName2").val();
+        $("#customerName").val(customerName);
+        $("#footPart").append("<button class=\"btn btn-primary\" type=\"button\" onclick='loadPreviousPage()'>上一页</button>\n" +
+            "<button data-dismiss=\"modal\" class=\"btn btn-default\" type=\"button\">关闭</button>\n" +
+            "                    <button class=\"btn btn-primary\" type=\"button\" onclick=\"saveExcelFile()\">下一页</button>");
+        getAssetList();
+    }
+
+    function loadPartList() {
+        $("#offlineType").val("part")
+        $("#mainData").html("");
+        $("#footPart").html("");
+        $("#mainData").append('<h3>现场尽调——零件清单</h3>\n' +
+            '                    <table id="survey" class="table">\n' +
+            '                        <tr>\n' +
+            '                            <td style="width: 100px;">客户名称</td><td><input id="customerName" class="form-control" readonly></td>\n' +
+            '                        </tr>\n' +
+            '                        <tr>\n' +
+            '                            <td>上传附件</td><td><input id="offlineExcel" name="offlineExcel" type="file" class="form-control"></td>\n' +
+            '                        </tr>\n' +
+            '                    </table>\n' +
+            '                    <h4 id="part1">零件清单历史记录</h4>\n' +
+            '                    <table class="table" style="width: 600px;">\n' +
+            '                        <thead>\n' +
+            '                        <tr>\n' +
+            '<th style="display: none">编号</th>\n'+
+            '                            <th style="width: 80px;">序号</th>\n' +
+            '                            <th>文件名称</th>\n' +
+            '                            <th style="width: 150px;">上传时间</th>\n' +
+            '                        </tr>\n' +
+            '                        </thead>\n' +
+            '<tbody id="assetList">'+'</tbody>'+
+            '                    </table>');
+        var customerName = $("#customerName2").val();
+        $("#customerName").val(customerName);
+        $("#footPart").append("<button class=\"btn btn-primary\" type=\"button\" onclick='loadPreviousPage()'>上一页</button>\n" +
+            "<button data-dismiss=\"modal\" class=\"btn btn-default\" type=\"button\">关闭</button>\n" +
+            "                    <button class=\"btn btn-primary\" type=\"button\" onclick=\"saveExcelFile()\">下一页</button>");
+        getAssetList();
+    }
+
+    function loadKnifeList() {
+        $("#offlineType").val("knife")
+        $("#mainData").html("");
+        $("#footPart").html("");
+        $("#mainData").append('<h3>现场尽调——刀具BOM清单</h3>\n' +
+            '                    <table id="survey" class="table">\n' +
+            '                        <tr>\n' +
+            '                            <td style="width: 100px;">客户名称</td><td><input id="customerName" class="form-control" readonly></td>\n' +
+            '                        </tr>\n' +
+            '                        <tr>\n' +
+            '                            <td>上传附件</td><td><input id="offlineExcel" name="offlineExcel" type="file" class="form-control"></td>\n' +
+            '                        </tr>\n' +
+            '                    </table>\n' +
+            '                    <h4 id="part1">刀具BOM清单历史记录</h4>\n' +
+            '                    <table class="table" style="width: 600px;">\n' +
+            '                        <thead>\n' +
+            '                        <tr>\n' +
+            '<th style="display: none">编号</th>\n'+
+            '                            <th style="width: 80px;">序号</th>\n' +
+            '                            <th>文件名称</th>\n' +
+            '                            <th style="width: 150px;">上传时间</th>\n' +
+            '                        </tr>\n' +
+            '                        </thead>\n' +
+            '<tbody id="assetList">'+'</tbody>'+
+            '                    </table>');
+        var customerName = $("#customerName2").val();
+        $("#customerName").val(customerName);
+        $("#footPart").append("<button class=\"btn btn-primary\" type=\"button\" onclick='loadPreviousPage()'>上一页</button>\n" +
+            "<button data-dismiss=\"modal\" class=\"btn btn-default\" type=\"button\">关闭</button>\n" +
+            "                    <button class=\"btn btn-primary\" type=\"button\" onclick=\"saveExcelFile()\">下一页</button>");
+        getAssetList();
+    }
+
+    function loadSupplierList() {
+        $("#offlineType").val("supplier")
+        $("#mainData").html("");
+        $("#footPart").html("");
+        $("#mainData").append('<h3>现场尽调——供应商名录</h3>\n' +
+            '                    <table id="survey" class="table">\n' +
+            '                        <tr>\n' +
+            '                            <td style="width: 100px;">客户名称</td><td><input id="customerName" class="form-control" readonly></td>\n' +
+            '                        </tr>\n' +
+            '                        <tr>\n' +
+            '                            <td>上传附件</td><td><input id="offlineExcel" name="offlineExcel" type="file" class="form-control"></td>\n' +
+            '                        </tr>\n' +
+            '                    </table>\n' +
+            '                    <h4 id="part1">供应商名录历史记录</h4>\n' +
+            '                    <table class="table" style="width: 600px;">\n' +
+            '                        <thead>\n' +
+            '                        <tr>\n' +
+            '<th style="display: none">编号</th>\n'+
+            '                            <th style="width: 80px;">序号</th>\n' +
+            '                            <th>文件名称</th>\n' +
+            '                            <th style="width: 150px;">上传时间</th>\n' +
+            '                        </tr>\n' +
+            '                        </thead>\n' +
+            '<tbody id="assetList">'+'</tbody>'+
+            '                    </table>');
+        var customerName = $("#customerName2").val();
+        $("#customerName").val(customerName);
+        $("#footPart").append("<button class=\"btn btn-primary\" type=\"button\" onclick='loadPreviousPage()'>上一页</button>\n" +
+            "<button data-dismiss=\"modal\" class=\"btn btn-default\" type=\"button\">关闭</button>\n" +
+            "                    <button class=\"btn btn-primary\" type=\"button\" onclick=\"saveExcelFile()\">下一页</button>");
+        getAssetList();
+    }
+    
+    function loadBuyList() {
+        $("#offlineType").val("buy")
+        $("#mainData").html("");
+        $("#footPart").html("");
+        $("#mainData").append('<h3>现场尽调——刀具采购清单</h3>\n' +
+            '                    <table id="survey" class="table">\n' +
+            '                        <tr>\n' +
+            '                            <td style="width: 100px;">客户名称</td><td><input id="customerName" class="form-control" readonly></td>\n' +
+            '                        </tr>\n' +
+            '                        <tr>\n' +
+            '                            <td>上传附件</td><td><input id="offlineExcel" name="offlineExcel" type="file" class="form-control"></td>\n' +
+            '                        </tr>\n' +
+            '                    </table>\n' +
+            '                    <h4 id="part1">刀具采购清单历史记录</h4>\n' +
+            '                    <table class="table" style="width: 600px;">\n' +
+            '                        <thead>\n' +
+            '                        <tr>\n' +
+            '<th style="display: none">编号</th>\n'+
+            '                            <th style="width: 80px;">序号</th>\n' +
+            '                            <th>文件名称</th>\n' +
+            '                            <th style="width: 150px;">上传时间</th>\n' +
+            '                        </tr>\n' +
+            '                        </thead>\n' +
+            '<tbody id="assetList">'+'</tbody>'+
+            '                    </table>');
+        var customerName = $("#customerName2").val();
+        $("#customerName").val(customerName);
+        $("#footPart").append("<button class=\"btn btn-primary\" type=\"button\" onclick='loadPreviousPage()'>上一页</button>\n" +
+            "<button data-dismiss=\"modal\" class=\"btn btn-default\" type=\"button\">关闭</button>\n" +
+            "                    <button class=\"btn btn-primary\" type=\"button\" onclick=\"saveExcelFile()\">下一页</button>");
+        getAssetList();
+    }
+
+    function loadReceiveList() {
+        $("#offlineType").val("receive")
+        $("#mainData").html("");
+        $("#footPart").html("");
+        $("#mainData").append('<h3>现场尽调——刀具领用清单</h3>\n' +
+            '                    <table id="survey" class="table">\n' +
+            '                        <tr>\n' +
+            '                            <td style="width: 100px;">客户名称</td><td><input id="customerName" class="form-control" readonly></td>\n' +
+            '                        </tr>\n' +
+            '                        <tr>\n' +
+            '                            <td>上传附件</td><td><input id="offlineExcel" name="offlineExcel" type="file" class="form-control"></td>\n' +
+            '                        </tr>\n' +
+            '                    </table>\n' +
+            '                    <h4 id="part1">刀具领用清单历史记录</h4>\n' +
+            '                    <table class="table" style="width: 600px;">\n' +
+            '                        <thead>\n' +
+            '                        <tr>\n' +
+            '<th style="display: none">编号</th>\n'+
+            '                            <th style="width: 80px;">序号</th>\n' +
+            '                            <th>文件名称</th>\n' +
+            '                            <th style="width: 150px;">上传时间</th>\n' +
+            '                        </tr>\n' +
+            '                        </thead>\n' +
+            '<tbody id="assetList">'+'</tbody>'+
+            '                    </table>');
+        var customerName = $("#customerName2").val();
+        $("#customerName").val(customerName);
+        $("#footPart").append("<button class=\"btn btn-primary\" type=\"button\" onclick='loadPreviousPage()'>上一页</button>\n" +
+            "<button data-dismiss=\"modal\" class=\"btn btn-default\" type=\"button\">关闭</button>\n" +
+            "                    <button class=\"btn btn-primary\" type=\"button\" onclick='loadNextPage()' >完成</button>");
+        getAssetList();
+    }
+
+
+
+
+    function getOneByCustomer() {
+        var role = $("#funcInput").val();
+        if(role == "0"){
+            var customerName = $("#customerNameSearch").val();
+            var status = "fourth";
+            $.ajax({
+                type:"post",
+                data:{"customerName":customerName , "status":status},
+                url:"findCanOperateByName",
+                async:false,
+                success:function (data) {
+                    var list1 = data.list1;
+                    $("#allFirst").html("");
+                    for(var i = 0 ; i < list1.length ; i++){
+                        $("#allFirst").append("<tr>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].id+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].customerName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].describe+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].deadline+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].principalName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a href='#' data-toggle=\"modal\" data-target=\"#myModal2\" onclick=\"getRowId(this)\">现场尽调</a>"+
+                            // "<a href='#' style=\"margin-left: 10px;\" onclick=\"giveup(this)\">挂起</a>"+
+                            "</td>"
+                            +"</tr>");
+                    }
+                    var list2 = data.list2;
+                    $("#allSecond").html("");
+                    for(var i = 0 ; i < list2.length ; i++){
+                        $("#allSecond").append("<tr>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].id+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].customerName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].describe+"</td>"+
+                            // "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].deadline+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].principalName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a href='#' data-toggle=\"modal\" data-target=\"#myModal2\" onclick=\"showRowData(this)\" >查看</a>"+
+                            // "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a href='#' data-toggle="modal" data-target="#myModal2" onclick="getRowId(this)">现场尽调</a>"+
+                            // "<a href='#' style=\"margin-left: 10px;\" onclick=\"giveup(this)\">挂起</a>"+
+                            "</td>"
+                            +"</tr>");
+                    }
+                }
+            })
+        }else{
+            var customerName = $("#customerNameSearch").val();
+            var status = "fourth";
+            $.ajax({
+                type:"post",
+                data:{"customerName":customerName , "status":status},
+                url:"findCanOperateByNameAndAdmin",
+                async:false,
+                success:function (data) {
+                    var list1 = data.list1;
+                    $("#allFirst").html("");
+                    for(var i = 0 ; i < list1.length ; i++){
+                        $("#allFirst").append("<tr>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].id+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].customerName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].describe+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].deadline+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].principalName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a href='#' data-toggle=\"modal\" data-target=\"#myModal2\" onclick=\"getRowId(this)\">现场尽调</a>"+
+                            // "<a href='#' style=\"margin-left: 10px;\" onclick=\"giveup(this)\">挂起</a>"+
+                            "</td>"
+                            +"</tr>");
+                    }
+                    var trs = document.getElementById("firstData").rows;
+                    for(var i = 0 ; i < trs.length ; i++){
+                        var cell = trs[i].cells[5];
+                        cell.style.display = 'none';
+                    }
+                    var list2 = data.list2;
+                    $("#allSecond").html("");
+                    for(var i = 0 ; i < list2.length ; i++){
+                        $("#allSecond").append("<tr>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].id+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].customerName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].describe+"</td>"+
+                            // "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].deadline+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].principalName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a href='#' data-toggle=\"modal\" data-target=\"#myModal2\" onclick=\"showRowData(this)\" >查看</a>"+
+                            // "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a href='#' data-toggle="modal" data-target="#myModal2" onclick="getRowId(this)">现场尽调</a>"+
+                            // "<a href='#' style=\"margin-left: 10px;\" onclick=\"giveup(this)\">挂起</a>"+
+                            "</td>"
+                            +"</tr>");
+                    }
+                }
+            })
+        }
+
     }
 
     function giveup(obj) {
@@ -76,125 +846,7 @@
         }
     }
 
-    function getRowId(obj) {
-        var i = obj.parentNode.parentNode.rowIndex;
-        var tab = document.getElementById("firstData");
-        var orderID = tab.rows[i].cells[0].innerHTML;
-        $("#customerID").val(orderID);
-        $.ajax({
-            type:"post",
-            data:{"salePlanID":orderID},
-            url:"loadSurveyDetail",
-            async:false,
-            success:function (data) {
-                switch (data) {
-                    case 1:
-                        loadAssetList();
-                        break;
-                    case 2:
-                        loadEmployeeList();
-                        break;
-                    case 3:
-                        loadStockTime();
-                        break;
-                    case 4:
-                        loadPayCycle();
-                        break;
-                    case 5:
-                        loadProduction();
-                        break;
-                    case 6:
-                        loadSaleList();
-                        break;
 
-                }
-            }
-            })
-    }
-
-    function loadAssetList() {
-        $("#mainData").html("");
-        $("#footPart").html("");
-        $("#mainData").append("<h4>固定资产清单</h4>\n" +
-            "<table id=\"survey\" class=\"table\" style=\"width: 3300px;\">\n" +
-            "                        <thead>\n" +
-            "                        <tr>\n" +
-            "                            <th><span style=\"color: red;\">*</span>资产类别</th>\n" +
-            "                            <th><span style=\"color: red;\">*</span>资产编号</th>\n" +
-            "                            <th><span style=\"color: red;\">*</span>资产名称</th>\n" +
-            "                            <th>规格型号</th>\n" +
-            "                            <th>品牌</th>\n" +
-            "                            <th>供应商</th>\n" +
-            "                            <th>资产位置</th>\n" +
-            "                            <th>数量</th>\n" +
-            "                            <th>预计残值</th>\n" +
-            "                            <th>状态</th>\n" +
-            "                            <th>刀柄接口</th>\n" +
-            "                            <th>冷却方式</th>\n" +
-            "                            <th>备注</th>\n" +
-            "                            <th>操作</th>\n" +
-            "                        </tr>\n" +
-            "                        </thead>\n" +
-            "                        <tbody id=\"surveyBody\">\n" +
-            "                        <tr>\n" +
-            "                            <td>\n" +
-            "                                <select name=\"assetType\" class=\"form-control\" style=\"border: 0px;\">\n" +
-            "                                    <option value=\"机器设备\">机器设备</option>\n" +
-            "                                    <option value=\"电子设备\">电子设备</option>\n" +
-            "                                    <option value=\"工装夹具\">工装夹具</option>\n" +
-            "                                    <option value=\"其它设备\">其它设备</option>\n" +
-            "                                </select>\n" +
-            "                            </td>\n" +
-            "                            <td>\n" +
-            "                                <input name=\"assetNum\" class=\"form-control\" placeholder=\"请输入资产编号\" style=\"border: 0px;\">\n" +
-            "                            </td>\n" +
-            "                            <td>\n" +
-            "                                <input name=\"assetName\" class=\"form-control\" placeholder=\"请输入资产名称\" style=\"border: 0px;\">\n" +
-            "                            </td>\n" +
-            "                            <td>\n" +
-            "                                <input name=\"model\" class=\"form-control\" placeholder=\"请输入规格型号\" style=\"border: 0px;\">\n" +
-            "                            </td>\n" +
-            "                            <td>\n" +
-            "                                <input name=\"brand\" class=\"form-control\" placeholder=\"请输入品牌\" style=\"border: 0px;\">\n" +
-            "                            </td>\n" +
-            "                            <td>\n" +
-            "                                <input name=\"supplier\" class=\"form-control\" placeholder=\"请输入供应商\" style=\"border: 0px;\">\n" +
-            "                            </td>\n" +
-            "                            <td>\n" +
-            "                                <input name=\"position\" class=\"form-control\" placeholder=\"请输入资产位置\" style=\"border: 0px;\">\n" +
-            "                            </td>\n" +
-            "                            <td>\n" +
-            "                                <input name=\"amount\" class=\"form-control\" placeholder=\"请输入数量\" style=\"border: 0px;\">\n" +
-            "                            </td>\n" +
-            "                            <td>\n" +
-            "                                <input name=\"residual\" class=\"form-control\" placeholder=\"请输入预计残值\" style=\"border: 0px;\">\n" +
-            "                            </td>\n" +
-            "                            <td>\n" +
-            "                                <input name=\"status\" class=\"form-control\" placeholder=\"请输入状态\" style=\"border: 0px;\">\n" +
-            "                            </td>\n" +
-            "                            <td>\n" +
-            "                                <input name=\"port\" class=\"form-control\" placeholder=\"请输入刀柄接口\" style=\"border: 0px;\">\n" +
-            "                            </td>\n" +
-            "                            <td>\n" +
-            "                                <input name=\"coolWay\" class=\"form-control\" placeholder=\"请输入冷却方式\" style=\"border: 0px;\">\n" +
-            "                            </td>\n" +
-            "                            <td>\n" +
-            "                                <input name=\"note\" class=\"form-control\" placeholder=\"请输入备注\" style=\"border: 0px;\">\n" +
-            "                            </td>\n" +
-            "                            <td></td>\n" +
-            "                        </tr>\n" +
-            "                        </tbody>\n" +
-            "                    </table>\n" +
-            "                    <table class=\"table\" style=\"width: 1700px;\">\n" +
-            "                        <tr>\n" +
-            "                            <td>\n" +
-            "                                <button onclick=\"addAssetTr()\" style=\"background: #FFFFFF;border-radius: 2px;border: 1px solid #FF9502;color: orange;outline: none;\">新增一行</button>\n" +
-            "                            </td>\n" +
-            "                        </tr>\n" +
-            "                    </table>");
-        $("#footPart").append("<button data-dismiss=\"modal\" class=\"btn btn-default\" type=\"button\">关闭</button>\n" +
-            "                    <button class=\"btn btn-primary\" type=\"button\" onclick=\"saveAssetList()\">下一页</button>");
-    }
 
     function addAssetTr() {
         //var trid=0;
@@ -264,6 +916,8 @@
         var index = row.rowIndex; //rowIndex属性为tr的索引值，从0开始
         tab.deleteRow(index); //从table中删除
     }
+
+
 
     function saveAssetList() {
         var assetTypes =new Array();
@@ -339,84 +993,7 @@
 
     }
 
-    function loadEmployeeList() {
-        $("#mainData").html("");
-        $("#footPart").html("");
-        $("#mainData").append("<h4>员工花名册</h4>\n" +
-            "<table id=\"survey\" class=\"table\" style=\"width: 3300px;\">\n" +
-            "                        <thead>\n" +
-            "                        <tr>\n" +
-            "                            <th><span style=\"color: red;\">*</span>员工工号</th>\n" +
-            "                            <th><span style=\"color: red;\">*</span>员工姓名</th>\n" +
-            "                            <th>身份证号</th>\n" +
-            "                            <th>学历</th>\n" +
-            "                            <th>专业</th>\n" +
-            "                            <th>入职时间</th>\n" +
-            "                            <th>性别</th>\n" +
-            "                            <th>所属部门</th>\n" +
-            "                            <th>职务</th>\n" +
-            "                            <th>联系方式</th>\n" +
-            "                            <th>关联固定资产</th>\n" +
-            "                            <th>关联零件号</th>\n" +
-            "                            <th>其他说明</th>\n" +
-            "                            <th>操作</th>\n" +
-            "                        </tr>\n" +
-            "                        </thead>\n" +
-            "                        <tbody id=\"surveyBody\">\n" +
-            "                        <tr>\n" +
-            "                            <td>\n" +
-            "                                <input name=\"account\" class=\"form-control\" placeholder=\"请输入员工工号\" style=\"border: 0px;\">\n" +
-            "                            </td>\n" +
-            "                            <td>\n" +
-            "                                <input name=\"EmployeeName\" class=\"form-control\" placeholder=\"请输入员工姓名\" style=\"border: 0px;\">\n" +
-            "                            </td>\n" +
-            "                            <td>\n" +
-            "                                <input name=\"identityID\" class=\"form-control\" placeholder=\"请输入身份证号\" style=\"border: 0px;\">\n" +
-            "                            </td>\n" +
-            "                            <td>\n" +
-            "                                <input name=\"education\" class=\"form-control\" placeholder=\"请输入学历\" style=\"border: 0px;\">\n" +
-            "                            </td>\n" +
-            "                            <td>\n" +
-            "                                <input name=\"major\" class=\"form-control\" placeholder=\"请输入专业\" style=\"border: 0px;\">\n" +
-            "                            </td>\n" +
-            "                            <td>\n" +
-            "                                <input name=\"enter\" class=\"form-control\" placeholder=\"请输入入职时间\" style=\"border: 0px;\">\n" +
-            "                            </td>\n" +
-            "                            <td>\n" +
-            "                                <input name=\"sex\" class=\"form-control\" placeholder=\"请输入性别\" style=\"border: 0px;\">\n" +
-            "                            </td>\n" +
-            "                            <td>\n" +
-            "                                <input name=\"dept\" class=\"form-control\" placeholder=\"请输入所属部门\" style=\"border: 0px;\">\n" +
-            "                            </td>\n" +
-            "                            <td>\n" +
-            "                                <input name=\"duty\" class=\"form-control\" placeholder=\"请输入职务\" style=\"border: 0px;\">\n" +
-            "                            </td>\n" +
-            "                            <td>\n" +
-            "                                <input name=\"contact\" class=\"form-control\" placeholder=\"请输入联系方式\" style=\"border: 0px;\">\n" +
-            "                            </td>\n" +
-            "                            <td>\n" +
-            "                                <input name=\"relevanceAsset\" class=\"form-control\" placeholder=\"请输入关联固定资产\" style=\"border: 0px;\">\n" +
-            "                            </td>\n" +
-            "                            <td>\n" +
-            "                                <input name=\"relevancePart\" class=\"form-control\" placeholder=\"请输入关联零件号\" style=\"border: 0px;\">\n" +
-            "                            </td>\n" +
-            "                            <td>\n" +
-            "                                <input name=\"note\" class=\"form-control\" placeholder=\"请输入相关说明\" style=\"border: 0px;\">\n" +
-            "                            </td>\n" +
-            "                            <td></td>\n" +
-            "                        </tr>\n" +
-            "                        </tbody>\n" +
-            "                    </table>\n" +
-            "                    <table class=\"table\" style=\"width: 1700px;\">\n" +
-            "                        <tr>\n" +
-            "                            <td>\n" +
-            "                                <button onclick=\"addEmployeeTr()\" style=\"background: #FFFFFF;border-radius: 2px;border: 1px solid #FF9502;color: orange;outline: none;\">新增一行</button>\n" +
-            "                            </td>\n" +
-            "                        </tr>\n" +
-            "                    </table>");
-        $("#footPart").append("<button data-dismiss=\"modal\" class=\"btn btn-default\" type=\"button\">关闭</button>\n" +
-            "                    <button class=\"btn btn-primary\" type=\"button\" onclick=\"saveEmployeeList()\">下一页</button>");
-    }
+
 
     function addEmployeeTr() {
         //var trid=0;
@@ -529,7 +1106,7 @@
         });
         var salePlanID = $("#customerID").val();
         var data = {"salePlanID":salePlanID , "accounts":accounts , "employeeNames":EmployeeNames , "identityIDs":identityIDs , "educations":educations , "majors":majors , "enters":enters,
-        "sexs":sexs , "depts":depts , "contacts":contacts , "relevanceAssets":relevanceAssets , "relevanceParts":relevanceParts , "notes":notes};
+        "sexs":sexs , "depts":depts , "dutys":dutys , "contacts":contacts , "relevanceAssets":relevanceAssets , "relevanceParts":relevanceParts , "notes":notes};
         $.ajax({
             type:"post",
             data:data,
@@ -551,30 +1128,7 @@
         
     }
 
-    function loadStockTime() {
-        $("#mainData").html("");
-        $("#footPart").html("");
-        $("#mainData").append("<h4>刀具即时库龄</h4>\n" +
-            "<table id=\"survey\" class=\"table\" style='width: 1200px;'>\n" +
-            "                        <tr>\n" +
-            "                            <td>库龄期间</td><td>0 < D ≤ 30天</td><td>31 ≤ D ≤ 120天</td><td>121 ≤ D ≤ 360天</td><td>361 ≤ D ≤ 720天</td><td>D > 720天</td>\n" +
-            "                        </tr>\n" +
-            "                        <tr>\n" +
-            "                            <td>工装模具配件</td><td><input id=\"frockone\" style=\"border: 0px;\" placeholder=\"请输入\"></td><td><input id=\"frocktwo\" style=\"border: 0px;\" placeholder=\"请输入\"></td><td><input id=\"frockthree\" style=\"border: 0px;\" placeholder=\"请输入\"></td><td><input id=\"frockfour\" style=\"border: 0px;\" placeholder=\"请输入\"></td><td><input id=\"frockfive\" style=\"border: 0px;\" placeholder=\"请输入\"></td>\n" +
-            "                        </tr>\n" +
-            "                        <tr>\n" +
-            "                            <td>备品备件</td><td><input id=\"spareone\" style=\"border: 0px;\" placeholder=\"请输入\"></td><td><input id=\"sparetwo\" style=\"border: 0px;\" placeholder=\"请输入\"></td><td><input id=\"sparethree\" style=\"border: 0px;\" placeholder=\"请输入\"></td><td><input id=\"sparefour\" style=\"border: 0px;\" placeholder=\"请输入\"></td><td><input id=\"sparefive\" style=\"border: 0px;\" placeholder=\"请输入\"></td>\n" +
-            "                        </tr>\n" +
-            "                        <tr>\n" +
-            "                            <td>化学品</td><td><input id=\"chemicalone\" style=\"border: 0px;\" placeholder=\"请输入\"></td><td><input id=\"chemicaltwo\" style=\"border: 0px;\" placeholder=\"请输入\"></td><td><input id=\"chemicalthree\" style=\"border: 0px;\" placeholder=\"请输入\"></td><td><input id=\"chemicalfour\" style=\"border: 0px;\" placeholder=\"请输入\"></td><td><input id=\"chemicalfive\" style=\"border: 0px;\" placeholder=\"请输入\"></td>\n" +
-            "                        </tr>\n" +
-            "                        <tr>\n" +
-            "                            <td>辅料</td><td><input id=\"trimone\" style=\"border: 0px;\" placeholder=\"请输入\"></td><td><input id=\"trimtwo\" style=\"border: 0px;\" placeholder=\"请输入\"></td><td><input id=\"trimthree\" style=\"border: 0px;\" placeholder=\"请输入\"></td><td><input id=\"trimfour\" style=\"border: 0px;\" placeholder=\"请输入\"></td><td><input id=\"trimfive\" style=\"border: 0px;\" placeholder=\"请输入\"></td>\n" +
-            "                        </tr>\n" +
-            "                    </table>");
-        $("#footPart").append("<button data-dismiss=\"modal\" class=\"btn btn-default\" type=\"button\">关闭</button>\n" +
-            "                    <button class=\"btn btn-primary\" type=\"button\" onclick=\"saveStock()\">下一页</button>");
-    }
+
 
     function saveStock() {
         var frock = new Array();
@@ -647,34 +1201,37 @@
 
     }
 
-    function loadPayCycle() {
-        $("#mainData").html("");
-        $("#footPart").html("");
-        $("#mainData").append("<h4>付款账期</h4>\n" +
-            "<table id=\"survey\" class=\"table\" style=\"width: 600px;margin:0px auto;\">\n" +
-            "                        <thead>\n" +
-            "                        <tr>\n" +
-            "                            <th>付款周期</th><th>付款金额</th>\n" +
-            "                        </tr>\n" +
-            "                        </thead>\n" +
-            "                        <tbody>\n" +
-            "                        <tr>\n" +
-            "                            <td>预付款</td><td><input id=\"payone\" class=\"form-control\" placeholder=\"请输入\"></td>\n" +
-            "                        </tr>\n" +
-            "                        <tr>\n" +
-            "                            <td>30天</td><td><input id=\"paytwo\" class=\"form-control\" placeholder=\"请输入\"></td>\n" +
-            "                        </tr>\n" +
-            "                        <tr>\n" +
-            "                            <td>60天</td><td><input id=\"paythree\" class=\"form-control\" placeholder=\"请输入\"></td>\n" +
-            "                        </tr>\n" +
-            "                        <tr>\n" +
-            "                            <td>90天</td><td><input id=\"payfour\" class=\"form-control\" placeholder=\"请输入\"></td>\n" +
-            "                        </tr>\n" +
-            "                        </tbody>\n" +
-            "                    </table>");
-        $("#footPart").append("<button data-dismiss=\"modal\" class=\"btn btn-default\" type=\"button\">关闭</button>\n" +
-            "                    <button class=\"btn btn-primary\" type=\"button\" onclick=\"savePayCycle()\">下一页</button>");
-    }
+    // function loadPayCycle() {
+    //     $("#offlineType").val("stock");
+    //     $("#mainData").html("");
+    //     $("#footPart").html("");
+    //     $("#mainData").append('<h3>现场尽调——付款账期</h3>\n' +
+    //         '<table id="survey" class="table" >\n' +
+    //         '                        <tr>\n' +
+    //         '                            <td>客户名称</td><td><input id="customerName" class="form-control"></td>\n' +
+    //         '                        </tr>\n' +
+    //         '                        <tr>\n' +
+    //         '                            <td>付款周期</td>\n' +
+    //         '                            <td>\n' +
+    //         '                                <select id="payCycle" class="form-control">\n' +
+    //         '                                    <option value="预付款">预付款</option>\n' +
+    //         '                                    <option value="30天">30天</option>\n' +
+    //         '                                    <option value="60天">60天</option>\n' +
+    //         '                                    <option value="90天">90天</option>\n' +
+    //         '                                </select>\n' +
+    //         '                            </td>\n' +
+    //         '                        </tr>\n' +
+    //         '                        <tr>\n' +
+    //         '                            <td>付款方式</td>\n' +
+    //         '                            <td>\n' +
+    //         '                                <select id="payWay" class="form-control">\n' +
+    //         '                                    <option value="现金">现金</option>\n' +
+    //         '                                    <option value="电子承兑">电子承兑</option>\n' +
+    //         '                                </select>\n' +
+    //         '                            </td>\n' +
+    //         '                        </tr>\n' +
+    //         '                    </table>');
+    // }
     
     function savePayCycle() {
         var payone = $("#payone").val();
@@ -700,40 +1257,40 @@
         })
     }
 
-    function loadProduction() {
-        $("#mainData").html("");
-        $("#footPart").html("");
-        $("#mainData").append("<h4>生产产量报表</h4>\n" +
-            '<table id="survey" class="table" style="width: 1500px;">\n' +
-            '                        <thead>\n' +
-            '                        <tr>\n' +
-            '                            <th><span style="color: red;">*</span>投产日期</th><th><span style="color: red;">*</span>零件编号</th><th<span style="color: red;">*</span>>零件名称</th><th>投产数量</th><th>合格数量</th><th>让步接收数量</th><th>报废数量</th><th>备注</th><th style="width: 50px;">操作</th>\n' +
-            '                        </tr>\n' +
-            '                        </thead>\n' +
-            '                        <tbody id="surveyBody">\n' +
-            '                            <tr>\n' +
-            '                                <td><input name="productDate" class="form-control" style="border: 0px;" placeholder="请输入投产日期"></td>\n' +
-            '                                <td><input name="partNum" class="form-control" style="border: 0px;" placeholder="请输入零件编号"></td>\n' +
-            '                                <td><input name="partName" class="form-control" style="border: 0px;" placeholder="请输入零件名称"></td>\n' +
-            '                                <td><input name="allAmount" class="form-control" style="border: 0px;" placeholder="请输入投产数量"></td>\n' +
-            '                                <td><input name="amountOne" class="form-control" style="border: 0px;" placeholder="请输入合格数量"></td>\n' +
-            '                                <td><input name="amountTwo" class="form-control" style="border: 0px;" placeholder="请输入让步接收数量"></td>\n' +
-            '                                <td><input name="amountThree" class="form-control" style="border: 0px;" placeholder="请输入报废数量"></td>\n' +
-            '                                <td><input name="note" class="form-control" style="border: 0px;" placeholder="请输入备注"></td>\n' +
-            '                                <td></td>\n' +
-            '                            </tr>\n' +
-            '                        </tbody>\n' +
-            '                    </table>\n' +
-            '                    <table class="table" style="width: 1500px;">\n' +
-            '                        <tr>\n' +
-            '                            <td>\n' +
-            '                                <button onclick="addProduction()" style="background: #FFFFFF;border-radius: 2px;border: 1px solid #FF9502;color: orange;outline: none;">新增一行</button>\n' +
-            '                            </td>\n' +
-            '                        </tr>\n' +
-            '                    </table>');
-        $("#footPart").append('<button data-dismiss="modal" class="btn btn-default" type="button">关闭</button>\n' +
-            '                    <button class="btn btn-primary" type="button" onclick="saveProduction()">下一页</button>');
-    }
+    // function loadProduction() {
+    //     $("#mainData").html("");
+    //     $("#footPart").html("");
+    //     $("#mainData").append("<h4>生产产量报表</h4>\n" +
+    //         '<table id="survey" class="table" style="width: 1500px;">\n' +
+    //         '                        <thead>\n' +
+    //         '                        <tr>\n' +
+    //         '                            <th><span style="color: red;">*</span>投产日期</th><th><span style="color: red;">*</span>零件编号</th><th><span style="color: red;">*</span>零件名称</th><th>投产数量</th><th>合格数量</th><th>让步接收数量</th><th>报废数量</th><th>备注</th><th style="width: 50px;">操作</th>\n' +
+    //         '                        </tr>\n' +
+    //         '                        </thead>\n' +
+    //         '                        <tbody id="surveyBody">\n' +
+    //         '                            <tr>\n' +
+    //         '                                <td><input name="productDate" class="form-control" style="border: 0px;" placeholder="请输入投产日期"></td>\n' +
+    //         '                                <td><input name="partNum" class="form-control" style="border: 0px;" placeholder="请输入零件编号"></td>\n' +
+    //         '                                <td><input name="partName" class="form-control" style="border: 0px;" placeholder="请输入零件名称"></td>\n' +
+    //         '                                <td><input name="allAmount" class="form-control" style="border: 0px;" placeholder="请输入投产数量"></td>\n' +
+    //         '                                <td><input name="amountOne" class="form-control" style="border: 0px;" placeholder="请输入合格数量"></td>\n' +
+    //         '                                <td><input name="amountTwo" class="form-control" style="border: 0px;" placeholder="请输入让步接收数量"></td>\n' +
+    //         '                                <td><input name="amountThree" class="form-control" style="border: 0px;" placeholder="请输入报废数量"></td>\n' +
+    //         '                                <td><input name="note" class="form-control" style="border: 0px;" placeholder="请输入备注"></td>\n' +
+    //         '                                <td></td>\n' +
+    //         '                            </tr>\n' +
+    //         '                        </tbody>\n' +
+    //         '                    </table>\n' +
+    //         '                    <table class="table" style="width: 1500px;">\n' +
+    //         '                        <tr>\n' +
+    //         '                            <td>\n' +
+    //         '                                <button onclick="addProduction()" style="background: #FFFFFF;border-radius: 2px;border: 1px solid #FF9502;color: orange;outline: none;">新增一行</button>\n' +
+    //         '                            </td>\n' +
+    //         '                        </tr>\n' +
+    //         '                    </table>');
+    //     $("#footPart").append('<button data-dismiss="modal" class="btn btn-default" type="button">关闭</button>\n' +
+    //         '                    <button class="btn btn-primary" type="button" onclick="saveProduction()">下一页</button>');
+    // }
 
     function addProduction() {
         //var trid=0;
@@ -829,35 +1386,35 @@
 
     }
 
-    function loadSaleList() {
-        $("#mainData").html("");
-        $("#footPart").html("");
-        $("#mainData").append("<h4>销售额数据</h4>\n" +
-            "<table id=\"survey\" class=\"table\" style=\"width: 600px;margin:0px auto;\">\n" +
-            "                        <thead>\n" +
-            "                        <tr>\n" +
-            "                            <th><span style=\"color: red;\">*</span>年份</th><th><span style=\"color: red;\">*</span>销售收入（未税）</th><th>备注</th><th style=\"width: 50px;\">操作</th>\n" +
-            "                        </tr>\n" +
-            "                        </thead>\n" +
-            "                        <tbody id=\"surveyBody\">\n" +
-            "                            <tr>\n" +
-            "                                <td><input name=\"year\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入年份\"></td>\n" +
-            "                                <td><input name=\"saleMoney\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入销售输入\"></td>\n" +
-            "                                <td><input name=\"note\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入备注\"></td>\n" +
-            "                                <td></td>\n" +
-            "                            </tr>\n" +
-            "                        </tbody>\n" +
-            "                    </table>\n" +
-            "                    <table class=\"table\" style=\"width: 600px;margin:0px auto;\">\n" +
-            "                        <tr>\n" +
-            "                            <td>\n" +
-            "                                <button onclick=\"addSaleList()\" style=\"background: #FFFFFF;border-radius: 2px;border: 1px solid #FF9502;color: orange;outline: none;\">新增一行</button>\n" +
-            "                            </td>\n" +
-            "                        </tr>\n" +
-            "                    </table>");
-        $("#footPart").append("<button data-dismiss=\"modal\" class=\"btn btn-default\" type=\"button\">关闭</button>\n" +
-            "                    <button class=\"btn btn-primary\" type=\"button\" onclick=\"saveSaleList()\">下一页</button>");
-    }
+    // function loadSaleList() {
+    //     $("#mainData").html("");
+    //     $("#footPart").html("");
+    //     $("#mainData").append("<h4>销售额数据</h4>\n" +
+    //         "<table id=\"survey\" class=\"table\" style=\"width: 600px;margin:0px auto;\">\n" +
+    //         "                        <thead>\n" +
+    //         "                        <tr>\n" +
+    //         "                            <th><span style=\"color: red;\">*</span>年份</th><th><span style=\"color: red;\">*</span>销售收入（未税）</th><th>备注</th><th style=\"width: 50px;\">操作</th>\n" +
+    //         "                        </tr>\n" +
+    //         "                        </thead>\n" +
+    //         "                        <tbody id=\"surveyBody\">\n" +
+    //         "                            <tr>\n" +
+    //         "                                <td><input name=\"year\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入年份\"></td>\n" +
+    //         "                                <td><input name=\"saleMoney\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入销售输入\"></td>\n" +
+    //         "                                <td><input name=\"note\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入备注\"></td>\n" +
+    //         "                                <td></td>\n" +
+    //         "                            </tr>\n" +
+    //         "                        </tbody>\n" +
+    //         "                    </table>\n" +
+    //         "                    <table class=\"table\" style=\"width: 600px;margin:0px auto;\">\n" +
+    //         "                        <tr>\n" +
+    //         "                            <td>\n" +
+    //         "                                <button onclick=\"addSaleList()\" style=\"background: #FFFFFF;border-radius: 2px;border: 1px solid #FF9502;color: orange;outline: none;\">新增一行</button>\n" +
+    //         "                            </td>\n" +
+    //         "                        </tr>\n" +
+    //         "                    </table>");
+    //     $("#footPart").append("<button data-dismiss=\"modal\" class=\"btn btn-default\" type=\"button\">关闭</button>\n" +
+    //         "                    <button class=\"btn btn-primary\" type=\"button\" onclick=\"saveSaleList()\">下一页</button>");
+    // }
 
     function addSaleList() {
         //var trid=0;
@@ -926,47 +1483,47 @@
         })
     }
 
-    function loadPartList() {
-        $("#mainData").html("");
-        $("#footPart").html("");
-        $("#mainData").append("<h4>零件清单</h4>\n" +
-            "<table id=\"survey\" class=\"table\" style=\"width: 3000px;\">\n" +
-            "                        <thead>\n" +
-            "                        <tr>\n" +
-            "                            <th><span style=\"color: red;\">*</span>零件号</th><th><span style=\"color: red;\">*</span>零件名称</th><th><span style=\"color: red;\">*</span>零件类型</th>\n" +
-            "                            <th>零件材料</th><th>材料硬度</th><th>材料产地</th>\n" +
-            "                            <th>月产量</th><th>测试标准</th><th>报废率</th>\n" +
-            "                            <th>图纸编号</th><th>图纸审核时间</th><th>标准工时</th><th style=\"width: 50px;\">操作</th>\n" +
-            "                        </tr>\n" +
-            "                        </thead>\n" +
-            "                        <tbody id=\"surveyBody\">\n" +
-            "                            <tr>\n" +
-            "                                <td><input name=\"partNum\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入零件编号\"></td>\n" +
-            "                                <td><input name=\"partName\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入零件名称\"></td>\n" +
-            "                                <td><input name=\"partType\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入零件类型\"></td>\n" +
-            "                                <td><input name=\"material\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入零件材料\"></td>\n" +
-            "                                <td><input name=\"hardness\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入材料硬度\"></td>\n" +
-            "                                <td><input name=\"origin\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入材料产地\"></td>\n" +
-            "                                <td><input name=\"yield\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入月产量\"></td>\n" +
-            "                                <td><input name=\"standard\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入测试标准\"></td>\n" +
-            "                                <td><input name=\"scrap\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入报废率\"></td>\n" +
-            "                                <td><input name=\"pageNum\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入图纸编号\"></td>\n" +
-            "                                <td><input name=\"approveDate\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入图纸审核时间\"></td>\n" +
-            "                                <td><input name=\"spendTime\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入标准工时\"></td>\n" +
-            "                                <td></td>\n" +
-            "                            </tr>\n" +
-            "                        </tbody>\n" +
-            "                    </table>\n" +
-            "                    <table class=\"table\" style=\"width: 600px;\">\n" +
-            "                        <tr>\n" +
-            "                            <td>\n" +
-            "                                <button onclick=\"addPartList()\" style=\"background: #FFFFFF;border-radius: 2px;border: 1px solid #FF9502;color: orange;outline: none;\">新增一行</button>\n" +
-            "                            </td>\n" +
-            "                        </tr>\n" +
-            "                    </table>");
-        $("#footPart").append("<button data-dismiss=\"modal\" class=\"btn btn-default\" type=\"button\">关闭</button>\n" +
-            "                    <button class=\"btn btn-primary\" type=\"button\" onclick=\"savePartList()\">下一页</button>");
-    }
+    // function loadPartList() {
+    //     $("#mainData").html("");
+    //     $("#footPart").html("");
+    //     $("#mainData").append("<h4>零件清单</h4>\n" +
+    //         "<table id=\"survey\" class=\"table\" style=\"width: 3000px;\">\n" +
+    //         "                        <thead>\n" +
+    //         "                        <tr>\n" +
+    //         "                            <th><span style=\"color: red;\">*</span>零件号</th><th><span style=\"color: red;\">*</span>零件名称</th><th><span style=\"color: red;\">*</span>零件类型</th>\n" +
+    //         "                            <th>零件材料</th><th>材料硬度</th><th>材料产地</th>\n" +
+    //         "                            <th>月产量</th><th>测试标准</th><th>报废率</th>\n" +
+    //         "                            <th>图纸编号</th><th>图纸审核时间</th><th>标准工时</th><th style=\"width: 50px;\">操作</th>\n" +
+    //         "                        </tr>\n" +
+    //         "                        </thead>\n" +
+    //         "                        <tbody id=\"surveyBody\">\n" +
+    //         "                            <tr>\n" +
+    //         "                                <td><input name=\"partNum\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入零件编号\"></td>\n" +
+    //         "                                <td><input name=\"partName\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入零件名称\"></td>\n" +
+    //         "                                <td><input name=\"partType\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入零件类型\"></td>\n" +
+    //         "                                <td><input name=\"material\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入零件材料\"></td>\n" +
+    //         "                                <td><input name=\"hardness\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入材料硬度\"></td>\n" +
+    //         "                                <td><input name=\"origin\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入材料产地\"></td>\n" +
+    //         "                                <td><input name=\"yield\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入月产量\"></td>\n" +
+    //         "                                <td><input name=\"standard\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入测试标准\"></td>\n" +
+    //         "                                <td><input name=\"scrap\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入报废率\"></td>\n" +
+    //         "                                <td><input name=\"pageNum\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入图纸编号\"></td>\n" +
+    //         "                                <td><input name=\"approveDate\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入图纸审核时间\"></td>\n" +
+    //         "                                <td><input name=\"spendTime\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入标准工时\"></td>\n" +
+    //         "                                <td></td>\n" +
+    //         "                            </tr>\n" +
+    //         "                        </tbody>\n" +
+    //         "                    </table>\n" +
+    //         "                    <table class=\"table\" style=\"width: 600px;\">\n" +
+    //         "                        <tr>\n" +
+    //         "                            <td>\n" +
+    //         "                                <button onclick=\"addPartList()\" style=\"background: #FFFFFF;border-radius: 2px;border: 1px solid #FF9502;color: orange;outline: none;\">新增一行</button>\n" +
+    //         "                            </td>\n" +
+    //         "                        </tr>\n" +
+    //         "                    </table>");
+    //     $("#footPart").append("<button data-dismiss=\"modal\" class=\"btn btn-default\" type=\"button\">关闭</button>\n" +
+    //         "                    <button class=\"btn btn-primary\" type=\"button\" onclick=\"savePartList()\">下一页</button>");
+    // }
 
     function addPartList() {
         //var trid=0;
@@ -1092,54 +1649,54 @@
         })
     }
 
-    function loadKnifeList() {
-        $("#mainData").html("");
-        $("#footPart").html("");
-        $("#mainData").append("<h4>刀具BOM清单</h4>\n" +
-            "<table id=\"survey\" class=\"table\" style=\"width: 3600px;\">\n" +
-            "                        <thead>\n" +
-            "                        <tr>\n" +
-            "                            <th><span style=\"color: red;\">*</span>工件</th><th><span style=\"color: red;\">*</span>工序号</th><th><span style=\"color: red;\">*</span>工序名</th>\n" +
-            "                            <th>刀具物料代码</th><th>品牌</th><th>种类</th>\n" +
-            "                            <th>规格</th><th>刃数</th><th>装刀数</th>\n" +
-            "                            <th>夹具编号</th><th>夹具品牌</th><th>冷却方式</th>\n" +
-            "                            <th>转速</th><th>给进</th><th>单刃加工数</th>\n" +
-            "                            <th>刀具寿命</th><th>设备</th><th style=\"width: 50px;\">操作</th>\n" +
-            "                        </tr>\n" +
-            "                        </thead>\n" +
-            "                        <tbody id=\"surveyBody\">\n" +
-            "                            <tr>\n" +
-            "                                <td><input name=\"workpiece\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入工件\"></td>\n" +
-            "                                <td><input name=\"processCode\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入工序号\"></td>\n" +
-            "                                <td><input name=\"processName\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入工序名\"></td>\n" +
-            "                                <td><input name=\"materialCode\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入刀具物料代码\"></td>\n" +
-            "                                <td><input name=\"brand\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入品牌\"></td>\n" +
-            "                                <td><input name=\"type\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入种类\"></td>\n" +
-            "                                <td><input name=\"model\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入规格\"></td>\n" +
-            "                                <td><input name=\"bladeNum\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入刃数\"></td>\n" +
-            "                                <td><input name=\"knifeNum\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入装刀数\"></td>\n" +
-            "                                <td><input name=\"fixtureCode\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入夹具编号\"></td>\n" +
-            "                                <td><input name=\"fixtureBrand\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入夹具品牌\"></td>\n" +
-            "                                <td><input name=\"coolWay\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入冷却方式\"></td>\n" +
-            "                                <td><input name=\"rotateSpeed\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入转速\"></td>\n" +
-            "                                <td><input name=\"aoligei\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入给进\"></td>\n" +
-            "                                <td><input name=\"machineNum\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入单刃加工数\"></td>\n" +
-            "                                <td><input name=\"life\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入刀具寿命\"></td>\n" +
-            "                                <td><input name=\"asset\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入设备\"></td>\n" +
-            "                                <td></td>\n" +
-            "                            </tr>\n" +
-            "                        </tbody>\n" +
-            "                    </table>\n" +
-            "                    <table class=\"table\" style=\"width: 600px;\">\n" +
-            "                        <tr>\n" +
-            "                            <td>\n" +
-            "                                <button onclick=\"addKnifeList()\" style=\"background: #FFFFFF;border-radius: 2px;border: 1px solid #FF9502;color: orange;outline: none;\">新增一行</button>\n" +
-            "                            </td>\n" +
-            "                        </tr>\n" +
-            "                    </table>");
-        $("#footPart").append("<button data-dismiss=\"modal\" class=\"btn btn-default\" type=\"button\">关闭</button>\n" +
-            "                    <button class=\"btn btn-primary\" type=\"button\" onclick=\"saveKnifList()\">下一页</button>");
-    }
+    // function loadKnifeList() {
+    //     $("#mainData").html("");
+    //     $("#footPart").html("");
+    //     $("#mainData").append("<h4>刀具BOM清单</h4>\n" +
+    //         "<table id=\"survey\" class=\"table\" style=\"width: 3600px;\">\n" +
+    //         "                        <thead>\n" +
+    //         "                        <tr>\n" +
+    //         "                            <th><span style=\"color: red;\">*</span>工件</th><th><span style=\"color: red;\">*</span>工序号</th><th><span style=\"color: red;\">*</span>工序名</th>\n" +
+    //         "                            <th>刀具物料代码</th><th>品牌</th><th>种类</th>\n" +
+    //         "                            <th>规格</th><th>刃数</th><th>装刀数</th>\n" +
+    //         "                            <th>夹具编号</th><th>夹具品牌</th><th>冷却方式</th>\n" +
+    //         "                            <th>转速</th><th>给进</th><th>单刃加工数</th>\n" +
+    //         "                            <th>刀具寿命</th><th>设备</th><th style=\"width: 50px;\">操作</th>\n" +
+    //         "                        </tr>\n" +
+    //         "                        </thead>\n" +
+    //         "                        <tbody id=\"surveyBody\">\n" +
+    //         "                            <tr>\n" +
+    //         "                                <td><input name=\"workpiece\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入工件\"></td>\n" +
+    //         "                                <td><input name=\"processCode\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入工序号\"></td>\n" +
+    //         "                                <td><input name=\"processName\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入工序名\"></td>\n" +
+    //         "                                <td><input name=\"materialCode\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入刀具物料代码\"></td>\n" +
+    //         "                                <td><input name=\"brand\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入品牌\"></td>\n" +
+    //         "                                <td><input name=\"type\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入种类\"></td>\n" +
+    //         "                                <td><input name=\"model\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入规格\"></td>\n" +
+    //         "                                <td><input name=\"bladeNum\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入刃数\"></td>\n" +
+    //         "                                <td><input name=\"knifeNum\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入装刀数\"></td>\n" +
+    //         "                                <td><input name=\"fixtureCode\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入夹具编号\"></td>\n" +
+    //         "                                <td><input name=\"fixtureBrand\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入夹具品牌\"></td>\n" +
+    //         "                                <td><input name=\"coolWay\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入冷却方式\"></td>\n" +
+    //         "                                <td><input name=\"rotateSpeed\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入转速\"></td>\n" +
+    //         "                                <td><input name=\"aoligei\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入给进\"></td>\n" +
+    //         "                                <td><input name=\"machineNum\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入单刃加工数\"></td>\n" +
+    //         "                                <td><input name=\"life\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入刀具寿命\"></td>\n" +
+    //         "                                <td><input name=\"asset\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入设备\"></td>\n" +
+    //         "                                <td></td>\n" +
+    //         "                            </tr>\n" +
+    //         "                        </tbody>\n" +
+    //         "                    </table>\n" +
+    //         "                    <table class=\"table\" style=\"width: 600px;\">\n" +
+    //         "                        <tr>\n" +
+    //         "                            <td>\n" +
+    //         "                                <button onclick=\"addKnifeList()\" style=\"background: #FFFFFF;border-radius: 2px;border: 1px solid #FF9502;color: orange;outline: none;\">新增一行</button>\n" +
+    //         "                            </td>\n" +
+    //         "                        </tr>\n" +
+    //         "                    </table>");
+    //     $("#footPart").append("<button data-dismiss=\"modal\" class=\"btn btn-default\" type=\"button\">关闭</button>\n" +
+    //         "                    <button class=\"btn btn-primary\" type=\"button\" onclick=\"saveKnifList()\">下一页</button>");
+    // }
 
     function addKnifeList() {
         //var trid=0;
@@ -1301,68 +1858,68 @@
         })
     }
     
-    function loadSupplierList() {
-        $("#mainData").html("");
-        $("#footPart").html("");
-        $("#mainData").append("<h4>刀具供应商名录</h4>\n" +
-            "<table id=\"survey\" class=\"table\" style=\"width: 3600px;\">\n" +
-            "                        <thead>\n" +
-            "                        <tr>\n" +
-            "                            <th><span style=\"color: red;\">*</span>供应商代码</th>\n" +
-            "                            <th><span style=\"color: red;\">*</span>供应商名称</th>\n" +
-            "                            <th>所在地区</th>\n" +
-            "                            <th>邮政编码</th>\n" +
-            "                            <th>通讯地址</th>\n" +
-            "                            <th>公司网址</th>\n" +
-            "                            <th>所属行业</th>\n" +
-            "                            <th>供应商性质</th>\n" +
-            "                            <th>代理品牌</th>\n" +
-            "                            <th>付款方式</th>\n" +
-            "                            <th>付款条件</th>\n" +
-            "                            <th>主要联系人</th>\n" +
-            "                            <th>电话</th>\n" +
-            "                            <th>供应商类别</th>\n" +
-            "                            <th>供应商等级</th>\n" +
-            "                            <th>对接负责人</th>\n" +
-            "                            <th>前年采购金额</th>\n" +
-            "                            <th>去年采购金额</th>\n" +
-            "                            <th style=\"width: 50px;\">操作</th>\n" +
-            "                        </tr>\n" +
-            "                        </thead>\n" +
-            "                        <tbody id=\"surveyBody\">\n" +
-            "                            <tr>\n" +
-            "                                <td><input name=\"supplierCode\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入供应商编码\"></td>\n" +
-            "                                <td><input name=\"supplierName\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入供应商名称\"></td>\n" +
-            "                                <td><input name=\"area\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入所在地区\"></td>\n" +
-            "                                <td><input name=\"postal\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入邮政编码\"></td>\n" +
-            "                                <td><input name=\"address\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入通讯地址\"></td>\n" +
-            "                                <td><input name=\"website\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入公司网址\"></td>\n" +
-            "                                <td><input name=\"industry\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入所属行业\"></td>\n" +
-            "                                <td><input name=\"nature\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入供应商性质\"></td>\n" +
-            "                                <td><input name=\"brand\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入代理品牌\"></td>\n" +
-            "                                <td><input name=\"payWay\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入付款方式\"></td>\n" +
-            "                                <td><input name=\"payCondition\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入付款条件\"></td>\n" +
-            "                                <td><input name=\"contract\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入主要联系人\"></td>\n" +
-            "                                <td><input name=\"phone\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入电话\"></td>\n" +
-            "                                <td><input name=\"supplierType\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入供应商类别\"></td>\n" +
-            "                                <td><input name=\"supplierLevel\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入供应商等级\"></td>\n" +
-            "                                <td><input name=\"principal\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入对接负责人\"></td>\n" +
-            "                                <td><input name=\"buymoneyOne\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入去年的采购金额\"></td>\n" +
-            "                                <td><input name=\"buymoneyTwo\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入前年的采购金额\"></td>\n" +
-            "                                <td></td>\n" +
-            "                            </tr>\n" +
-            "                        </tbody>\n" +
-            "                    </table>\n" +
-            "                    <table class=\"table\" style=\"width: 600px;\">\n" +
-            "                        <tr>\n" +
-            "                            <td>\n" +
-            "                                <button onclick=\"addSupplierList()\" style=\"background: #FFFFFF;border-radius: 2px;border: 1px solid #FF9502;color: orange;outline: none;\">新增一行</button>\n" +
-            "                            </td>\n" +
-            "                        </tr>\n" +
-            "                    </table>");
-        $("#footPart").append("<button data-dismiss=\"modal\" class=\"btn btn-default\" type=\"button\">关闭</button>\n" +
-            "                    <button class=\"btn btn-primary\" type=\"button\" onclick=\"saveSupplierList()\">下一页</button>");
-    }
+    // function loadSupplierList() {
+    //     $("#mainData").html("");
+    //     $("#footPart").html("");
+    //     $("#mainData").append("<h4>刀具供应商名录</h4>\n" +
+    //         "<table id=\"survey\" class=\"table\" style=\"width: 3600px;\">\n" +
+    //         "                        <thead>\n" +
+    //         "                        <tr>\n" +
+    //         "                            <th><span style=\"color: red;\">*</span>供应商代码</th>\n" +
+    //         "                            <th><span style=\"color: red;\">*</span>供应商名称</th>\n" +
+    //         "                            <th>所在地区</th>\n" +
+    //         "                            <th>邮政编码</th>\n" +
+    //         "                            <th>通讯地址</th>\n" +
+    //         "                            <th>公司网址</th>\n" +
+    //         "                            <th>所属行业</th>\n" +
+    //         "                            <th>供应商性质</th>\n" +
+    //         "                            <th>代理品牌</th>\n" +
+    //         "                            <th>付款方式</th>\n" +
+    //         "                            <th>付款条件</th>\n" +
+    //         "                            <th>主要联系人</th>\n" +
+    //         "                            <th>电话</th>\n" +
+    //         "                            <th>供应商类别</th>\n" +
+    //         "                            <th>供应商等级</th>\n" +
+    //         "                            <th>对接负责人</th>\n" +
+    //         "                            <th>前年采购金额</th>\n" +
+    //         "                            <th>去年采购金额</th>\n" +
+    //         "                            <th style=\"width: 50px;\">操作</th>\n" +
+    //         "                        </tr>\n" +
+    //         "                        </thead>\n" +
+    //         "                        <tbody id=\"surveyBody\">\n" +
+    //         "                            <tr>\n" +
+    //         "                                <td><input name=\"supplierCode\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入供应商编码\"></td>\n" +
+    //         "                                <td><input name=\"supplierName\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入供应商名称\"></td>\n" +
+    //         "                                <td><input name=\"area\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入所在地区\"></td>\n" +
+    //         "                                <td><input name=\"postal\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入邮政编码\"></td>\n" +
+    //         "                                <td><input name=\"address\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入通讯地址\"></td>\n" +
+    //         "                                <td><input name=\"website\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入公司网址\"></td>\n" +
+    //         "                                <td><input name=\"industry\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入所属行业\"></td>\n" +
+    //         "                                <td><input name=\"nature\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入供应商性质\"></td>\n" +
+    //         "                                <td><input name=\"brand\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入代理品牌\"></td>\n" +
+    //         "                                <td><input name=\"payWay\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入付款方式\"></td>\n" +
+    //         "                                <td><input name=\"payCondition\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入付款条件\"></td>\n" +
+    //         "                                <td><input name=\"contract\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入主要联系人\"></td>\n" +
+    //         "                                <td><input name=\"phone\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入电话\"></td>\n" +
+    //         "                                <td><input name=\"supplierType\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入供应商类别\"></td>\n" +
+    //         "                                <td><input name=\"supplierLevel\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入供应商等级\"></td>\n" +
+    //         "                                <td><input name=\"principal\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入对接负责人\"></td>\n" +
+    //         "                                <td><input name=\"buymoneyOne\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入去年的采购金额\"></td>\n" +
+    //         "                                <td><input name=\"buymoneyTwo\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入前年的采购金额\"></td>\n" +
+    //         "                                <td></td>\n" +
+    //         "                            </tr>\n" +
+    //         "                        </tbody>\n" +
+    //         "                    </table>\n" +
+    //         "                    <table class=\"table\" style=\"width: 600px;\">\n" +
+    //         "                        <tr>\n" +
+    //         "                            <td>\n" +
+    //         "                                <button onclick=\"addSupplierList()\" style=\"background: #FFFFFF;border-radius: 2px;border: 1px solid #FF9502;color: orange;outline: none;\">新增一行</button>\n" +
+    //         "                            </td>\n" +
+    //         "                        </tr>\n" +
+    //         "                    </table>");
+    //     $("#footPart").append("<button data-dismiss=\"modal\" class=\"btn btn-default\" type=\"button\">关闭</button>\n" +
+    //         "                    <button class=\"btn btn-primary\" type=\"button\" onclick=\"saveSupplierList()\">下一页</button>");
+    // }
 
     function addSupplierList() {
         //var trid=0;
@@ -1530,54 +2087,54 @@
 
     }
 
-    function loadBuyList() {
-        $("#mainData").html("");
-        $("#footPart").html("");
-        $("#mainData").append("<h4>刀具采购清单</h4>\n" +
-            "<table id=\"survey\" class=\"table\" style=\"width: 3000px;\">\n" +
-            "                        <thead>\n" +
-            "                        <tr>\n" +
-            "                            <th><span style=\"color: red;\">*</span>固定资产编号</th>\n" +
-            "                            <th><span style=\"color: red;\">*</span>零件编号</th>\n" +
-            "                            <th><span style=\"color: red;\">*</span>刀具物料号</th>\n" +
-            "                            <th>刀具名称</th>\n" +
-            "                            <th>刀具品类</th>\n" +
-            "                            <th>规格型号</th>\n" +
-            "                            <th>刀具品牌</th>\n" +
-            "                            <th>刀具寿命</th>\n" +
-            "                            <th>年领用数量</th>\n" +
-            "                            <th>最近领用日期</th>\n" +
-            "                            <th>备注</th>\n" +
-            "                            <th style=\"width: 50px;\">操作</th>\n" +
-            "                        </tr>\n" +
-            "                        </thead>\n" +
-            "                        <tbody id=\"surveyBody\">\n" +
-            "                            <tr>\n" +
-            "                                <td><input name=\"assetCode\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入固定资产编号\"></td>\n" +
-            "                                <td><input name=\"partCode\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入零件编号\"></td>\n" +
-            "                                <td><input name=\"materialCode\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入刀具物料号\"></td>\n" +
-            "                                <td><input name=\"knifeName\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入刀具名称\"></td>\n" +
-            "                                <td><input name=\"type\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入刀具品类\"></td>\n" +
-            "                                <td><input name=\"model\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入规格型号\"></td>\n" +
-            "                                <td><input name=\"brand\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入刀具品牌\"></td>\n" +
-            "                                <td><input name=\"life\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入刀具寿命\"></td>\n" +
-            "                                <td><input name=\"receiveAmount\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入年领用数量\"></td>\n" +
-            "                                <td><input name=\"receiveDate\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入最近领用日期\"></td>\n" +
-            "                                <td><input name=\"note\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入备注\"></td>\n" +
-            "                                <td></td>\n" +
-            "                            </tr>\n" +
-            "                        </tbody>\n" +
-            "                    </table>\n" +
-            "                    <table class=\"table\" style=\"width: 600px;\">\n" +
-            "                        <tr>\n" +
-            "                            <td>\n" +
-            "                                <button onclick=\"addBuyList()\" style=\"background: #FFFFFF;border-radius: 2px;border: 1px solid #FF9502;color: orange;outline: none;\">新增一行</button>\n" +
-            "                            </td>\n" +
-            "                        </tr>\n" +
-            "                    </table>");
-        $("#footPart").append("<button data-dismiss=\"modal\" class=\"btn btn-default\" type=\"button\">关闭</button>\n" +
-            "                    <button class=\"btn btn-primary\" type=\"button\" onclick=\"saveBuyList()\">下一页</button>");
-    }
+    // function loadBuyList() {
+    //     $("#mainData").html("");
+    //     $("#footPart").html("");
+    //     $("#mainData").append("<h4>刀具采购清单</h4>\n" +
+    //         "<table id=\"survey\" class=\"table\" style=\"width: 3000px;\">\n" +
+    //         "                        <thead>\n" +
+    //         "                        <tr>\n" +
+    //         "                            <th><span style=\"color: red;\">*</span>固定资产编号</th>\n" +
+    //         "                            <th><span style=\"color: red;\">*</span>零件编号</th>\n" +
+    //         "                            <th><span style=\"color: red;\">*</span>刀具物料号</th>\n" +
+    //         "                            <th>刀具名称</th>\n" +
+    //         "                            <th>刀具品类</th>\n" +
+    //         "                            <th>规格型号</th>\n" +
+    //         "                            <th>刀具品牌</th>\n" +
+    //         "                            <th>刀具寿命</th>\n" +
+    //         "                            <th>年领用数量</th>\n" +
+    //         "                            <th>最近领用日期</th>\n" +
+    //         "                            <th>备注</th>\n" +
+    //         "                            <th style=\"width: 50px;\">操作</th>\n" +
+    //         "                        </tr>\n" +
+    //         "                        </thead>\n" +
+    //         "                        <tbody id=\"surveyBody\">\n" +
+    //         "                            <tr>\n" +
+    //         "                                <td><input name=\"assetCode\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入固定资产编号\"></td>\n" +
+    //         "                                <td><input name=\"partCode\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入零件编号\"></td>\n" +
+    //         "                                <td><input name=\"materialCode\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入刀具物料号\"></td>\n" +
+    //         "                                <td><input name=\"knifeName\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入刀具名称\"></td>\n" +
+    //         "                                <td><input name=\"type\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入刀具品类\"></td>\n" +
+    //         "                                <td><input name=\"model\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入规格型号\"></td>\n" +
+    //         "                                <td><input name=\"brand\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入刀具品牌\"></td>\n" +
+    //         "                                <td><input name=\"life\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入刀具寿命\"></td>\n" +
+    //         "                                <td><input name=\"receiveAmount\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入年领用数量\"></td>\n" +
+    //         "                                <td><input name=\"receiveDate\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入最近领用日期\"></td>\n" +
+    //         "                                <td><input name=\"note\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入备注\"></td>\n" +
+    //         "                                <td></td>\n" +
+    //         "                            </tr>\n" +
+    //         "                        </tbody>\n" +
+    //         "                    </table>\n" +
+    //         "                    <table class=\"table\" style=\"width: 600px;\">\n" +
+    //         "                        <tr>\n" +
+    //         "                            <td>\n" +
+    //         "                                <button onclick=\"addBuyList()\" style=\"background: #FFFFFF;border-radius: 2px;border: 1px solid #FF9502;color: orange;outline: none;\">新增一行</button>\n" +
+    //         "                            </td>\n" +
+    //         "                        </tr>\n" +
+    //         "                    </table>");
+    //     $("#footPart").append("<button data-dismiss=\"modal\" class=\"btn btn-default\" type=\"button\">关闭</button>\n" +
+    //         "                    <button class=\"btn btn-primary\" type=\"button\" onclick=\"saveBuyList()\">下一页</button>");
+    // }
 
     function addBuyList() {
         var tab = document.getElementById("surveyBody");
@@ -1694,52 +2251,52 @@
         })
     }
 
-    function loadReceiveList() {
-        $("#mainData").html("");
-        $("#footPart").html("");
-        $("#mainData").append("<h4>刀具领用清单</h4>\n" +
-            "                    <table id=\"survey\" class=\"table\" style=\"width: 3000px;\">\n" +
-            "                        <thead>\n" +
-            "                        <tr>\n" +
-            "                            <th><span style=\"color: red;\">*</span>物料编号</th>\n" +
-            "                            <th><span style=\"color: red;\">*</span>物料名称</th>\n" +
-            "                            <th>规格型号</th>\n" +
-            "                            <th>品类名称</th>\n" +
-            "                            <th>领用数量</th>\n" +
-            "                            <th>领用单价</th>\n" +
-            "                            <th>领用金额</th>\n" +
-            "                            <th>领用部门</th>\n" +
-            "                            <th>最后一次领用时间</th>\n" +
-            "                            <th>备注</th>\n" +
-            "                            <th style=\"width: 50px;\">操作</th>\n" +
-            "                        </tr>\n" +
-            "                        </thead>\n" +
-            "                        <tbody id=\"surveyBody\">\n" +
-            "                            <tr>\n" +
-            "                                <td><input name=\"materialCode\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入物料编号\"></td>\n" +
-            "                                <td><input name=\"materialName\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入物料名称\"></td>\n" +
-            "                                <td><input name=\"model\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入规格型号\"></td>\n" +
-            "                                <td><input name=\"type\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入品类名称\"></td>\n" +
-            "                                <td><input name=\"receiveAmount\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入领用数量\"></td>\n" +
-            "                                <td><input name=\"receivePrice\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入领用单价\"></td>\n" +
-            "                                <td><input name=\"receiveMoney\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入领用金额\"></td>\n" +
-            "                                <td><input name=\"receiveDept\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入领用部门\"></td>\n" +
-            "                                <td><input name=\"receiveDate\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入最后一次领用时间\"></td>\n" +
-            "                                <td><input name=\"note\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入备注\"></td>\n" +
-            "                                <td></td>\n" +
-            "                            </tr>\n" +
-            "                        </tbody>\n" +
-            "                    </table>\n" +
-            "                    <table class=\"table\" style=\"width: 600px;\">\n" +
-            "                        <tr>\n" +
-            "                            <td>\n" +
-            "                                <button onclick=\"addReceiveList()\" style=\"background: #FFFFFF;border-radius: 2px;border: 1px solid #FF9502;color: orange;outline: none;\">新增一行</button>\n" +
-            "                            </td>\n" +
-            "                        </tr>\n" +
-            "                    </table>");
-        $("#footPart").append("<button data-dismiss=\"modal\" class=\"btn btn-default\" type=\"button\">关闭</button>\n" +
-            "                    <button class=\"btn btn-primary\" type=\"button\" onclick=\"saveReceiveList()\">完成</button>");
-    }
+    // function loadReceiveList() {
+    //     $("#mainData").html("");
+    //     $("#footPart").html("");
+    //     $("#mainData").append("<h4>刀具领用清单</h4>\n" +
+    //         "                    <table id=\"survey\" class=\"table\" style=\"width: 3000px;\">\n" +
+    //         "                        <thead>\n" +
+    //         "                        <tr>\n" +
+    //         "                            <th><span style=\"color: red;\">*</span>物料编号</th>\n" +
+    //         "                            <th><span style=\"color: red;\">*</span>物料名称</th>\n" +
+    //         "                            <th>规格型号</th>\n" +
+    //         "                            <th>品类名称</th>\n" +
+    //         "                            <th>领用数量</th>\n" +
+    //         "                            <th>领用单价</th>\n" +
+    //         "                            <th>领用金额</th>\n" +
+    //         "                            <th>领用部门</th>\n" +
+    //         "                            <th>最后一次领用时间</th>\n" +
+    //         "                            <th>备注</th>\n" +
+    //         "                            <th style=\"width: 50px;\">操作</th>\n" +
+    //         "                        </tr>\n" +
+    //         "                        </thead>\n" +
+    //         "                        <tbody id=\"surveyBody\">\n" +
+    //         "                            <tr>\n" +
+    //         "                                <td><input name=\"materialCode\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入物料编号\"></td>\n" +
+    //         "                                <td><input name=\"materialName\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入物料名称\"></td>\n" +
+    //         "                                <td><input name=\"model\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入规格型号\"></td>\n" +
+    //         "                                <td><input name=\"type\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入品类名称\"></td>\n" +
+    //         "                                <td><input name=\"receiveAmount\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入领用数量\"></td>\n" +
+    //         "                                <td><input name=\"receivePrice\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入领用单价\"></td>\n" +
+    //         "                                <td><input name=\"receiveMoney\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入领用金额\"></td>\n" +
+    //         "                                <td><input name=\"receiveDept\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入领用部门\"></td>\n" +
+    //         "                                <td><input name=\"receiveDate\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入最后一次领用时间\"></td>\n" +
+    //         "                                <td><input name=\"note\" class=\"form-control\" style=\"border: 0px;\" placeholder=\"请输入备注\"></td>\n" +
+    //         "                                <td></td>\n" +
+    //         "                            </tr>\n" +
+    //         "                        </tbody>\n" +
+    //         "                    </table>\n" +
+    //         "                    <table class=\"table\" style=\"width: 600px;\">\n" +
+    //         "                        <tr>\n" +
+    //         "                            <td>\n" +
+    //         "                                <button onclick=\"addReceiveList()\" style=\"background: #FFFFFF;border-radius: 2px;border: 1px solid #FF9502;color: orange;outline: none;\">新增一行</button>\n" +
+    //         "                            </td>\n" +
+    //         "                        </tr>\n" +
+    //         "                    </table>");
+    //     $("#footPart").append("<button data-dismiss=\"modal\" class=\"btn btn-default\" type=\"button\">关闭</button>\n" +
+    //         "                    <button class=\"btn btn-primary\" type=\"button\" onclick=\"saveReceiveList()\">完成</button>");
+    // }
 
     function addReceiveList() {
         var tab = document.getElementById("surveyBody");
@@ -1975,5 +2532,26 @@
     }
 
 </script>
+<style>
+    #mainContent{
+        overflow:hidden;
+        width:100%;
+    }
+
+    #myTabContent{
+        width:calc(100% + 15px);/*使滚动条超出当前元素的父元素边界，而父元素设置了overflow为hidden，使溢出内容隐藏，即隐藏了滚动条*/
+        height:550px;
+        padding-right:15px;
+        box-sizing:content-box;/*兼容ie，使盒模型为w3c盒模型*/
+        overflow-y:scroll;/*控制能沿y轴滚动*/
+    }
+    #firstData{
+        width:100%;
+    }
+    #secondData{
+        width:100%;
+    }
+
+</style>
 </body>
 </html>

@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<title>系统配置——角色功能</title>
+<head th:include="include/fore/newHeader::html" ></head>
+<body>
+<div id="workingArea">
+    <div th:replace="include/fore/top::html" ></div>
+    <div th:replace="include/fore/leftMenu::html" ></div>
+    <div th:replace="include/fore/homePages/systemConfigManage/rolesPage::html" ></div>
+</div>
+<script>
+    $(function () {
+        getAllRoles();
+    });
+
+
+function getAllRoles() {
+    $.ajax({
+        type:"post",
+        url:"selectAllRoles",
+        async:false,
+        success:function (data) {
+            $("#allFirst").html("");
+            for(var i = 0 ; i < data.length ; i++){
+                $("#allFirst").append("<tr>"
+                    +"<td>"+data[i].id+"</td>"
+                    +"<td>"+data[i].roleName+"</td>"
+                    +"<td>"+formatDate(data[i].createTime)+"</td>"
+                    +"<td>"+"<a href='#' data-toggle=\"modal\" data-target=\"#myModal\" onclick='showFunc(this)'>"+"查询权限"+"</a>"+"&nbsp;&nbsp;"+"<a href='#' onclick='deleteRole(this)'>"+"删除"+"</a>"+"</td>"
+                    +"</tr>");
+            }
+        }
+    })
+}
+
+function deleteRole(obj) {
+
+    var msg = "确定删除该角色？";
+    if (confirm(msg)==true){
+        var roleId = obj.parentNode.parentNode.cells[0].innerText;
+        $.ajax({
+            type:"post",
+            data:{"roleId":roleId},
+            url:"deleteRole",
+            async:false,
+            success:function (data) {
+                if(data == "OK"){
+                    $.message({
+                        message:'角色已删除',
+                        type:'success'
+                    });
+                    getAllRoles();
+                }else{
+                    $.message({
+                        message:data,
+                        type:'error'
+                    })
+                }
+            }
+        })
+    }else{
+        return false;
+    }
+}
+
+function showFunc(obj) {
+    var roleId = obj.parentNode.parentNode.cells[0].innerText;
+    $("#roleId").val(roleId);
+    $.ajax({
+        type:"post",
+        data:{"roleId":roleId},
+        url:"getFunc",
+        async:false,
+        success:function (data) {
+            var has = data.has;
+            var hasnot = data.hasnot;
+            $("#has").html("");
+            for(var i= 0 ; i < has.length ; i++){
+                $("#has").append("<input type='checkbox' name='has' style='vertical-align:middle; margin-top:0;' value='"+has[i].id+"'>"+"<span style='margin-left: 12px;'>"+has[i].name+"</span>"+"<br>");
+            }
+            $("#hasnot").html("");
+            for(var i= 0 ; i < hasnot.length ; i++){
+                $("#hasnot").append("<input type='checkbox' name='hasnot' style='vertical-align:middle; margin-top:0;' value='"+hasnot[i].id+"'>"+"<span style='margin-left: 12px;'>"+hasnot[i].name+"</span>"+"<br>");
+            }
+        }
+    })
+}
+
+    function showFunc2(roleId) {
+        $.ajax({
+            type:"post",
+            data:{"roleId":roleId},
+            url:"getFunc",
+            async:false,
+            success:function (data) {
+                var has = data.has;
+                var hasnot = data.hasnot;
+                $("#has").html("");
+                for(var i= 0 ; i < has.length ; i++){
+                    $("#has").append("<input type='checkbox' name='has' style='vertical-align:middle; margin-top:0;' value='"+has[i].id+"'>"+"<span style='margin-left: 12px;'>"+has[i].name+"</span>"+"<br>");
+                }
+                $("#hasnot").html("");
+                for(var i= 0 ; i < hasnot.length ; i++){
+                    $("#hasnot").append("<input type='checkbox' name='hasnot' style='vertical-align:middle; margin-top:0;' value='"+hasnot[i].id+"'>"+"<span style='margin-left: 12px;'>"+hasnot[i].name+"</span>"+"<br>");
+                }
+            }
+        })
+    }
+
+function deleteFunc() {
+    var obj = document.getElementsByName("has");
+    var check_val = [];
+    for (k in obj) {
+        if (obj[k].checked)
+            check_val.push(obj[k].value);
+    }
+    var roleId = $("#roleId").val();
+    $.ajax({
+        type:"post",
+        data:{"roleId":roleId , "funcs":check_val},
+        url:"deleteFuncs",
+        async:false,
+        traditional:true,
+        success:function (data) {
+            if(data == "OK"){
+                $.message({
+                    message:'功能权限已删除',
+                    type:'success'
+                });
+                showFunc2(roleId);
+            }else{
+                $.message({
+                    message:data,
+                    type:'error'
+                })
+            }
+        }
+    })
+}
+
+    function insertFunc() {
+        var obj = document.getElementsByName("hasnot");
+        var check_val = [];
+        for (k in obj) {
+            if (obj[k].checked)
+                check_val.push(obj[k].value);
+        }
+        var roleId = $("#roleId").val();
+        $.ajax({
+            type:"post",
+            data:{"roleId":roleId , "funcs":check_val},
+            url:"addFuncs",
+            async:false,
+            traditional:true,
+            success:function (data) {
+                if(data == "OK"){
+                    $.message({
+                        message:'功能权限已增加',
+                        type:'success'
+                    });
+                    showFunc2(roleId);
+                }else{
+                    $.message({
+                        message:data,
+                        type:'error'
+                    })
+                }
+            }
+        })
+    }
+</script>
+</body>
+</html>

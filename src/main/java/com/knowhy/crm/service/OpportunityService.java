@@ -16,9 +16,8 @@ public class OpportunityService {
         opportunityDAO.save(opportunity);
     }
 
-    public List<Opportunity> getByAddress(String address){
-        String newAddress = "%"+address+"%";
-        List<Opportunity> opportunityList = opportunityDAO.findByAddressLike(newAddress);
+    public List<Opportunity> getByAddress(String province , String city , String area){
+        List<Opportunity> opportunityList = opportunityDAO.findByProvinceAndCityAndArea(province , city , area);
         return opportunityList;
     }
 

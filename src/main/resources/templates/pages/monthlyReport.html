@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<title>运营服务——月度汇报</title>
+<head th:include="include/fore/newHeader::html" ></head>
+<body>
+<div id="workingArea">
+    <div th:replace="include/fore/top::html" ></div>
+    <div th:replace="include/fore/leftMenu::html" ></div>
+    <div th:replace="include/fore/homePages/saleProcessManage/operateServer/monthlyReportPage::html" ></div>
+</div>
+
+<script>
+    $(function () {
+        judgeFunc();
+        loadFirstPlan();
+    });
+
+    function judgeFunc() {
+        $.ajax({
+            type:"post",
+            url:"getReportRole",
+            async:false,
+            success:function (data) {
+                $("#funcInput").val(data);
+            }
+        })
+    }
+
+    function loadFirstPlan() {
+        var role = $("#funcInput").val();
+        if(role == "0"){
+            var status = "eleventh";
+            $.ajax({
+                type:"post",
+                data:{"status":status},
+                url:"findSalePlanByOperatorReport",
+                async:false,
+                success:function (data) {
+                    var list1 = data.list1;
+                    var list2 = data.list2;
+                    $("#allFirst").html("");
+                    // $("#customer").html("");
+                    // $("#customer").append("<option value='0'>"+"--请选择--"+"</option>");
+                    // $("#customer2").html("");
+                    // $("#customer2").append("<option value='0'>"+"--请选择--"+"</option>");
+                    for(var i = 0 ; i < list1.length ; i++){
+                        $("#allFirst").append("<tr>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].id+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a data-toggle=\"modal\" data-target=\"#myModal2\" onclick='getReportByCustomer(this)'>"+list1[i].customerName+"</a>"+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].describe+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].lastTime+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].principalName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a href='#' data-toggle=\"modal\" data-target=\"#myModal\" onclick=\"getRowId(this)\">上传文件</a>"+
+                            // "<a href='#' style=\"margin-left: 10px;\" onclick=\"giveup(this)\">挂起</a>"+
+                            "</td>"
+                            +"</tr>");
+
+                        // $("#customer").append('<option value="'+data[i].customerCode+'">'+data[i].customerName+"</option>");
+                        // $("#customer2").append('<option value="'+data[i].customerCode+'">'+data[i].customerName+"</option>");
+                    }
+                    $("#allSecond").html("");
+                    for(var i = 0 ; i < list2.length ; i++){
+                        $("#allSecond").append("<tr>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].id+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a data-toggle=\"modal\" data-target=\"#myModal2\" onclick='getReportByCustomer(this)'>"+list2[i].customerName+"</a>"+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].describe+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].lastTime+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].principalName+"</td>"+
+                            // "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a href='#' data-toggle=\"modal\" data-target=\"#myModal\" onclick=\"getRowId(this)\">上传文件</a>"+
+                            // "<a href='#' style=\"margin-left: 10px;\" onclick=\"giveup(this)\">挂起</a>"+
+                            "</td>"
+                            +"</tr>");
+                    }
+                }
+            })
+        }else if(role == "1"){
+            var status = "eleventh";
+            $.ajax({
+                type:"post",
+                data:{"status":status},
+                url:"findRelatedSalePlanByOperatorReport",
+                async:false,
+                success:function (data) {
+                    var list1 = data.list1;
+                    var list2 = data.list2;
+                    $("#allFirst").html("");
+                    // $("#customer").html("");
+                    // $("#customer").append("<option value='0'>"+"--请选择--"+"</option>");
+                    // $("#customer2").html("");
+                    // $("#customer2").append("<option value='0'>"+"--请选择--"+"</option>");
+                    for(var i = 0 ; i < list1.length ; i++){
+                        $("#allFirst").append("<tr>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].id+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a data-toggle=\"modal\" data-target=\"#myModal2\" onclick='getReportByCustomer(this)'>"+list1[i].customerName+"</a>"+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].describe+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].lastTime+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].principalName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a href='#' data-toggle=\"modal\" data-target=\"#myModal\" onclick=\"getRowId(this)\">上传文件</a>"+
+                            // "<a href='#' style=\"margin-left: 10px;\" onclick=\"giveup(this)\">挂起</a>"+
+                            "</td>"
+                            +"</tr>");
+
+                        // $("#customer").append('<option value="'+data[i].customerCode+'">'+data[i].customerName+"</option>");
+                        // $("#customer2").append('<option value="'+data[i].customerCode+'">'+data[i].customerName+"</option>");
+                    }
+                    var trs = document.getElementById("firstData").rows;
+                    for(var i = 0 ; i < trs.length ; i++){
+                        var cell = trs[i].cells[5];
+                        cell.style.display = 'none';
+                    }
+                    $("#allSecond").html("");
+                    for(var i = 0 ; i < list2.length ; i++){
+                        $("#allSecond").append("<tr>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].id+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a data-toggle=\"modal\" data-target=\"#myModal2\" onclick='getReportByCustomer(this)'>"+list2[i].customerName+"</a>"+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].describe+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].lastTime+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].principalName+"</td>"+
+                            // "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a href='#' data-toggle=\"modal\" data-target=\"#myModal\" onclick=\"getRowId(this)\">上传文件</a>"+
+                            // "<a href='#' style=\"margin-left: 10px;\" onclick=\"giveup(this)\">挂起</a>"+
+                            "</td>"
+                            +"</tr>");
+                    }
+                }
+            })
+        }else{
+            var status = "eleventh";
+            $.ajax({
+                type:"post",
+                data:{"status":status},
+                url:"findOperateReportByAdmin",
+                async:false,
+                success:function (data) {
+                    var list1 = data.list1;
+                    var list2 = data.list2;
+                    $("#allFirst").html("");
+                    // $("#customer").html("");
+                    // $("#customer").append("<option value='0'>"+"--请选择--"+"</option>");
+                    // $("#customer2").html("");
+                    // $("#customer2").append("<option value='0'>"+"--请选择--"+"</option>");
+                    for(var i = 0 ; i < list1.length ; i++){
+                        $("#allFirst").append("<tr>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].id+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a data-toggle=\"modal\" data-target=\"#myModal2\" onclick='getReportByCustomer(this)'>"+list1[i].customerName+"</a>"+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].describe+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].lastTime+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].principalName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a href='#' data-toggle=\"modal\" data-target=\"#myModal\" onclick=\"getRowId(this)\">上传文件</a>"+
+                            // "<a href='#' style=\"margin-left: 10px;\" onclick=\"giveup(this)\">挂起</a>"+
+                            "</td>"
+                            +"</tr>");
+
+                        // $("#customer").append('<option value="'+data[i].customerCode+'">'+data[i].customerName+"</option>");
+                        // $("#customer2").append('<option value="'+data[i].customerCode+'">'+data[i].customerName+"</option>");
+                    }
+                    var trs = document.getElementById("firstData").rows;
+                    for(var i = 0 ; i < trs.length ; i++){
+                        var cell = trs[i].cells[5];
+                        cell.style.display = 'none';
+                    }
+                    $("#allSecond").html("");
+                    for(var i = 0 ; i < list2.length ; i++){
+                        $("#allSecond").append("<tr>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].id+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a data-toggle=\"modal\" data-target=\"#myModal2\" onclick='getReportByCustomer(this)'>"+list2[i].customerName+"</a>"+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].describe+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].lastTime+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].principalName+"</td>"+
+                            // "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a href='#' data-toggle=\"modal\" data-target=\"#myModal\" onclick=\"getRowId(this)\">上传文件</a>"+
+                            // "<a href='#' style=\"margin-left: 10px;\" onclick=\"giveup(this)\">挂起</a>"+
+                            "</td>"
+                            +"</tr>");
+                    }
+                }
+            })
+        }
+
+    }
+
+    function loadFirstPlanByName() {
+        var role = $("#funcInput").val();
+        if(role == "0"){
+            var status = "eleventh";
+            var customerName = $("#customerSearch").val();
+            $.ajax({
+                type:"post",
+                data:{"status":status , "customerName":customerName},
+                url:"findSalePlanByOperatorReportAndName",
+                async:false,
+                success:function (data) {
+                    var list1 = data.list1;
+                    var list2 = data.list2;
+                    $("#allFirst").html("");
+                    // $("#customer").html("");
+                    // $("#customer").append("<option value='0'>"+"--请选择--"+"</option>");
+                    // $("#customer2").html("");
+                    // $("#customer2").append("<option value='0'>"+"--请选择--"+"</option>");
+                    for(var i = 0 ; i < list1.length ; i++){
+                        $("#allFirst").append("<tr>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].id+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a data-toggle=\"modal\" data-target=\"#myModal2\" onclick='getReportByCustomer(this)'>"+list1[i].customerName+"</a>"+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].describe+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].lastTime+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].principalName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a href='#' data-toggle=\"modal\" data-target=\"#myModal\" onclick=\"getRowId(this)\">上传文件</a>"+
+                            // "<a href='#' style=\"margin-left: 10px;\" onclick=\"giveup(this)\">挂起</a>"+
+                            "</td>"
+                            +"</tr>");
+
+                        // $("#customer").append('<option value="'+data[i].customerCode+'">'+data[i].customerName+"</option>");
+                        // $("#customer2").append('<option value="'+data[i].customerCode+'">'+data[i].customerName+"</option>");
+                    }
+                    $("#allSecond").html("");
+                    for(var i = 0 ; i < list2.length ; i++){
+                        $("#allSecond").append("<tr>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].id+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a data-toggle=\"modal\" data-target=\"#myModal2\" onclick='getReportByCustomer(this)'>"+list2[i].customerName+"</a>"+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].describe+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].lastTime+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].principalName+"</td>"+
+                            // "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a href='#' data-toggle=\"modal\" data-target=\"#myModal\" onclick=\"getRowId(this)\">上传文件</a>"+
+                            // "<a href='#' style=\"margin-left: 10px;\" onclick=\"giveup(this)\">挂起</a>"+
+                            "</td>"
+                            +"</tr>");
+                    }
+                }
+            })
+        }else if(role == "1"){
+            var status = "eleventh";
+            var customerName = $("#customerSearch").val();
+            $.ajax({
+                type:"post",
+                data:{"status":status , "customerName":customerName},
+                url:"findRelatedSalePlanByOperatorReportAndName",
+                async:false,
+                success:function (data) {
+                    var list1 = data.list1;
+                    var list2 = data.list2;
+                    $("#allFirst").html("");
+                    // $("#customer").html("");
+                    // $("#customer").append("<option value='0'>"+"--请选择--"+"</option>");
+                    // $("#customer2").html("");
+                    // $("#customer2").append("<option value='0'>"+"--请选择--"+"</option>");
+                    for(var i = 0 ; i < list1.length ; i++){
+                        $("#allFirst").append("<tr>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].id+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a data-toggle=\"modal\" data-target=\"#myModal2\" onclick='getReportByCustomer(this)'>"+list1[i].customerName+"</a>"+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].describe+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].lastTime+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].principalName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a href='#' data-toggle=\"modal\" data-target=\"#myModal\" onclick=\"getRowId(this)\">上传文件</a>"+
+                            // "<a href='#' style=\"margin-left: 10px;\" onclick=\"giveup(this)\">挂起</a>"+
+                            "</td>"
+                            +"</tr>");
+
+                        // $("#customer").append('<option value="'+data[i].customerCode+'">'+data[i].customerName+"</option>");
+                        // $("#customer2").append('<option value="'+data[i].customerCode+'">'+data[i].customerName+"</option>");
+                    }
+                    var trs = document.getElementById("firstData").rows;
+                    for(var i = 0 ; i < trs.length ; i++){
+                        var cell = trs[i].cells[5];
+                        cell.style.display = 'none';
+                    }
+                    $("#allSecond").html("");
+                    for(var i = 0 ; i < list2.length ; i++){
+                        $("#allSecond").append("<tr>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].id+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a data-toggle=\"modal\" data-target=\"#myModal2\" onclick='getReportByCustomer(this)'>"+list2[i].customerName+"</a>"+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].describe+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].lastTime+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].principalName+"</td>"+
+                            // "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a href='#' data-toggle=\"modal\" data-target=\"#myModal\" onclick=\"getRowId(this)\">上传文件</a>"+
+                            // "<a href='#' style=\"margin-left: 10px;\" onclick=\"giveup(this)\">挂起</a>"+
+                            "</td>"
+                            +"</tr>");
+                    }
+                }
+            })
+        }else{
+            var status = "eleventh";
+            var customerName = $("#customerSearch").val();
+            $.ajax({
+                type:"post",
+                data:{"status":status , "customerName":customerName},
+                url:"findOperateReportByAdminAndName",
+                async:false,
+                success:function (data) {
+                    var list1 = data.list1;
+                    var list2 = data.list2;
+                    $("#allFirst").html("");
+                    // $("#customer").html("");
+                    // $("#customer").append("<option value='0'>"+"--请选择--"+"</option>");
+                    // $("#customer2").html("");
+                    // $("#customer2").append("<option value='0'>"+"--请选择--"+"</option>");
+                    for(var i = 0 ; i < list1.length ; i++){
+                        $("#allFirst").append("<tr>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].id+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a data-toggle=\"modal\" data-target=\"#myModal2\" onclick='getReportByCustomer(this)'>"+list1[i].customerName+"</a>"+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].describe+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].lastTime+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].principalName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a href='#' data-toggle=\"modal\" data-target=\"#myModal\" onclick=\"getRowId(this)\">上传文件</a>"+
+                            // "<a href='#' style=\"margin-left: 10px;\" onclick=\"giveup(this)\">挂起</a>"+
+                            "</td>"
+                            +"</tr>");
+
+                        // $("#customer").append('<option value="'+data[i].customerCode+'">'+data[i].customerName+"</option>");
+                        // $("#customer2").append('<option value="'+data[i].customerCode+'">'+data[i].customerName+"</option>");
+                    }
+                    var trs = document.getElementById("firstData").rows;
+                    for(var i = 0 ; i < trs.length ; i++){
+                        var cell = trs[i].cells[5];
+                        cell.style.display = 'none';
+                    }
+                    $("#allSecond").html("");
+                    for(var i = 0 ; i < list2.length ; i++){
+                        $("#allSecond").append("<tr>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].id+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a data-toggle=\"modal\" data-target=\"#myModal2\" onclick='getReportByCustomer(this)'>"+list2[i].customerName+"</a>"+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].describe+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].lastTime+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].principalName+"</td>"+
+                            // "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a href='#' data-toggle=\"modal\" data-target=\"#myModal\" onclick=\"getRowId(this)\">上传文件</a>"+
+                            // "<a href='#' style=\"margin-left: 10px;\" onclick=\"giveup(this)\">挂起</a>"+
+                            "</td>"
+                            +"</tr>");
+                    }
+                }
+            })
+        }
+
+    }
+
+    function getRowId(obj) {
+        var salePlanID = obj.parentNode.parentNode.cells[0].innerText;
+        $("#customerID").val(salePlanID);
+    }
+
+    function saveImage() {
+        $.ajaxFileUpload({
+            type:"post",
+            fileElementId:"reportFile",
+            url:"saveReport",
+            async:false,
+            dataType:'text',
+            success:function(data){
+                if(data == "文件上传成功"){
+                    // $.message({
+                    //     message:'文件上传成功',
+                    //     type:'success'
+                    // });
+                }else{
+                    $.message({
+                        message:data,
+                        type:'error'
+                    });
+                }
+            },
+            error:function(){
+                alert("设备类型文件上传出错");
+            }
+        })
+    }
+    
+    function saveReportFile() {
+        var salePlanID = $("#customerID").val();
+
+        var name = $("#reportFile").val();
+        var picNames = name.split("\\");
+        var le = picNames.length - 1;
+        var fileName = picNames[le];
+
+        var note = $("#note").val();
+        var data = {"salePlanID":salePlanID , "fileName":fileName , "note":note};
+
+        $.ajax({
+            type:"post",
+            data:data,
+            url:"saveReportFile",
+            async:false,
+            success:function (data) {
+                if(data == "OK"){
+                    $.message({
+                        message:"数据已保存",
+                        type:'success'
+                    });
+                    $("#myModal").modal('hide');
+                    loadFirstPlan();
+                }else{
+                    $.message({
+                        message:data,
+                        type:'error'
+                    });
+                }
+            }
+        })
+    }
+
+    function getReportByCustomer(obj){
+        var salePlanID = obj.parentNode.parentNode.cells[0].innerText;
+        $.ajax({
+            type:"post",
+            data:{"salePlanID":salePlanID},
+            url:"showReportFileByCustomer",
+            async:false,
+            success:function (data) {
+                var salePlan = data.salePlan;
+                var reports = data.files;
+                document.getElementById("customerName").innerText=salePlan.customerName;
+                document.getElementById("operator").innerText = salePlan.operator;
+                $("#technicalRecord").html("");
+                for(var i = 0 ; i < reports.length ; i++){
+                    var no = i + 1;
+                    $("#technicalRecord").append("<tr>"+
+                        "<td style='display: none;'>"+reports[i].id+"</td>"+
+                        "<td>"+no+"</td>"+
+                        "<td>"+"<a href='downLoadReportFile?filename="+reports[i].fileName+"'>"+reports[i].fileName+"</a>"+"</td>"+
+                        "<td>"+reports[i].createDate+"</td>"+
+                        "</tr>");
+                }
+            }
+        })
+    }
+</script>
+</body>
+</html>

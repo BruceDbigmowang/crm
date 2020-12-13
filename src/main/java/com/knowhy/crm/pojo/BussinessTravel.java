@@ -33,6 +33,7 @@ public class BussinessTravel {
     String makeName;
     LocalDate makeDate;
     String travelStatus;
+    String note;
 
     public String getId() {
         return id;
@@ -192,5 +193,13 @@ public class BussinessTravel {
 
     public void setTravelStatus(String travelStatus) {
         this.travelStatus = travelStatus;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
     }
 }

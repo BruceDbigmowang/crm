@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<title>客户信息查询</title>
+<head th:include="include/fore/newHeader::html" ></head>
+<body>
+<div id="workingArea">
+    <div th:replace="include/fore/top::html" ></div>
+    <div th:replace="include/fore/leftMenu::html" ></div>
+    <div th:replace="include/fore/homePages/reportManage/CustomerInfoPage::html" ></div>
+</div>
+<!--<style type="text/css">-->
+<!--    a:hover { color: #fff; text-decoration: underline; }/* 鼠标移动到链接上 */-->
+<!--</style>-->
+<script>
+
+    $(function(){
+        getHeadPic();
+        loadAllCustomer();
+
+    });
+    window.onload = function(){
+        changeHeight();
+    }
+
+
+    function changeHeight() {
+        var len = $("#allCustomer").height();
+        var totalHeight = document.getElementById('allCustomerData').offsetHeight;
+        if(totalHeight > 776){
+            // var height = totalHeight -60;
+            // // $("#allContent").css('height' , totalHeight);
+            // $("#leftMenu").css('height' , height);
+
+            $("#mainContent").css('height' , 'auto');
+            $("#leftMenu").css('height' , 'auto');
+        }else{
+            $("#mainContent").css('height' , 653+'px');
+            $("#leftMenu").css('height' , 716+'px')
+        }
+    }
+
+    var start = 1;
+    var pageNum = 0;
+
+    function loadAllCustomer() {
+        start = 1;
+        $.ajax({
+            type:"post",
+            data:{"start":start},
+            url:"selectCustomerByPage",
+            async:false,
+            success:function (data) {
+                $("#allCustomer").html("");
+                pageNum = data.pages;
+                var customers = data.customers;
+                for(var i = 0 ; i < customers.length ; i++){
+                    $("#allCustomer").append('<div class="panel panel-default" style="box-shadow: 5px 5px 5px #888888;">\n' +
+                        '                            <div class="panel-body">\n' +
+                        '                                <table style="width: 100%;margin-bottom: 20px;">\n' +
+                        '                                    <tr>\n' +
+                        '                                        <td>客户名称</td>\n' +
+                        '                                        <td>'+customers[i].name+'</td>\n' +
+                        '                                        <td>客户编码</td>\n' +
+                        '                                        <td colspan="2">'+customers[i].id+'</td>\n' +
+                        '                                    </tr>\n' +
+                        '                                    <tr>\n' +
+                        '                                        <td style="width: 70px;">决策者</td>\n' +
+                        '                                        <td style="width: 150px;">'+customers[i].decisionMaker+'</td>\n' +
+                        '                                        <td style="width: 105px;">地区</td>\n' +
+                        '                                        <td>'+customers[i].area+"地区"+'</td>\n' +
+                        '                                        <td style="width: 120px;"><button onclick="getCustomerCode(this)">展开详情</button></td>\n' +
+                        '                                    </tr>\n' +
+                        '                                    <tr>\n' +
+                        '\n' +
+                        '                                        <td>项目负责人</td>\n' +
+                        '                                        <td>'+customers[i].principal+'</td>\n' +
+                        '                                        <td>负责人联系方式</td>\n' +
+                        '                                        <td colspan="2">'+customers[i].phone+'</td>\n' +
+                        '                                    </tr>\n' +
+                        '                                </table>\n' +
+                        '                            </div>\n' +
+                        '                        </div>\n' +
+                        '                    </div>');
+                }
+
+            }
+        })
+    };
+
+    function loadAllCustomerPreviouse() {
+        if(start > 1){
+            start = start - 1;
+
+            $.ajax({
+                type:"post",
+                data:{"start":start},
+                url:"selectCustomerByPage",
+                async:false,
+                success:function (data) {
+                    $("#allCustomer").html("");
+                    pageNum = data.pages;
+                    var customers = data.customers;
+                    for(var i = 0 ; i < customers.length ; i++){
+                        $("#allCustomer").append('<div class="panel panel-default" style="box-shadow: 5px 5px 5px #888888;">\n' +
+                            '                            <div class="panel-body">\n' +
+                            '                                <table style="width: 100%;margin-bottom: 20px;">\n' +
+                            '                                    <tr>\n' +
+                            '                                        <td>客户名称</td>\n' +
+                            '                                        <td>'+customers[i].name+'</td>\n' +
+                            '                                        <td>客户编码</td>\n' +
+                            '                                        <td colspan="2">'+customers[i].id+'</td>\n' +
+                            '                                    </tr>\n' +
+                            '                                    <tr>\n' +
+                            '                                        <td style="width: 70px;">决策者</td>\n' +
+                            '                                        <td style="width: 150px;">'+customers[i].decisionMaker+'</td>\n' +
+                            '                                        <td style="width: 105px;">地区</td>\n' +
+                            '                                        <td>'+customers[i].area+"地区"+'</td>\n' +
+                            '                                        <td style="width: 120px;"><button onclick="getCustomerCode(this)">展开详情</button></td>\n' +
+                            '                                    </tr>\n' +
+                            '                                    <tr>\n' +
+                            '\n' +
+                            '                                        <td>项目负责人</td>\n' +
+                            '                                        <td>'+customers[i].principal+'</td>\n' +
+                            '                                        <td>负责人联系方式</td>\n' +
+                            '                                        <td colspan="2">'+customers[i].phone+'</td>\n' +
+                            '                                    </tr>\n' +
+                            '                                </table>\n' +
+                            '                            </div>\n' +
+                            '                        </div>\n' +
+                            '                    </div>');
+                    }
+                }
+            })
+        }else{
+            $.message({
+                message:"当前已是第一页",
+                type:'warning'
+            })
+        }
+    };
+
+    function loadAllCustomerNext() {
+        if(start < pageNum){
+            start = start + 1;
+
+            $.ajax({
+                type:"post",
+                data:{"start":start},
+                url:"selectCustomerByPage",
+                async:false,
+                success:function (data) {
+                    $("#allCustomer").html("");
+                    pageNum = data.pages;
+                    var customers = data.customers;
+                    for(var i = 0 ; i < customers.length ; i++){
+                        $("#allCustomer").append('<div class="panel panel-default" style="box-shadow: 5px 5px 5px #888888;">\n' +
+                            '                            <div class="panel-body">\n' +
+                            '                                <table style="width: 100%;margin-bottom: 20px;">\n' +
+                            '                                    <tr>\n' +
+                            '                                        <td>客户名称</td>\n' +
+                            '                                        <td>'+customers[i].name+'</td>\n' +
+                            '                                        <td>客户编码</td>\n' +
+                            '                                        <td colspan="2">'+customers[i].id+'</td>\n' +
+                            '                                    </tr>\n' +
+                            '                                    <tr>\n' +
+                            '                                        <td style="width: 70px;">决策者</td>\n' +
+                            '                                        <td style="width: 150px;">'+customers[i].decisionMaker+'</td>\n' +
+                            '                                        <td style="width: 105px;">地区</td>\n' +
+                            '                                        <td>'+customers[i].area+"地区"+'</td>\n' +
+                            '                                        <td style="width: 120px;"><button onclick="getCustomerCode(this)">展开详情</button></td>\n' +
+                            '                                    </tr>\n' +
+                            '                                    <tr>\n' +
+                            '\n' +
+                            '                                        <td>项目负责人</td>\n' +
+                            '                                        <td>'+customers[i].principal+'</td>\n' +
+                            '                                        <td>负责人联系方式</td>\n' +
+                            '                                        <td colspan="2">'+customers[i].phone+'</td>\n' +
+                            '                                    </tr>\n' +
+                            '                                </table>\n' +
+                            '                            </div>\n' +
+                            '                        </div>\n' +
+                            '                    </div>');
+                    }
+                }
+            })
+        }else{
+            $.message({
+                message:"当前已是最后一页",
+                type:'warning'
+            })
+        }
+    }
+
+    function loadAllCustomerLast() {
+        start = pageNum;
+
+        $.ajax({
+            type:"post",
+            data:{"start":start},
+            url:"selectCustomerByPage",
+            async:false,
+            success:function (data) {
+                $("#allCustomer").html("");
+                pageNum = data.pages;
+                var customers = data.customers;
+                for(var i = 0 ; i < customers.length ; i++){
+                    $("#allCustomer").append('<div class="panel panel-default" style="box-shadow: 5px 5px 5px #888888;">\n' +
+                        '                            <div class="panel-body">\n' +
+                        '                                <table style="width: 100%;margin-bottom: 20px;">\n' +
+                        '                                    <tr>\n' +
+                        '                                        <td>客户名称</td>\n' +
+                        '                                        <td>'+customers[i].name+'</td>\n' +
+                        '                                        <td>客户编码</td>\n' +
+                        '                                        <td colspan="2">'+customers[i].id+'</td>\n' +
+                        '                                    </tr>\n' +
+                        '                                    <tr>\n' +
+                        '                                        <td style="width: 70px;">决策者</td>\n' +
+                        '                                        <td style="width: 150px;">'+customers[i].decisionMaker+'</td>\n' +
+                        '                                        <td style="width: 105px;">地区</td>\n' +
+                        '                                        <td>'+customers[i].area+"地区"+'</td>\n' +
+                        '                                        <td style="width: 120px;"><button onclick="getCustomerCode(this)">展开详情</button></td>\n' +
+                        '                                    </tr>\n' +
+                        '                                    <tr>\n' +
+                        '\n' +
+                        '                                        <td>项目负责人</td>\n' +
+                        '                                        <td>'+customers[i].principal+'</td>\n' +
+                        '                                        <td>负责人联系方式</td>\n' +
+                        '                                        <td colspan="2">'+customers[i].phone+'</td>\n' +
+                        '                                    </tr>\n' +
+                        '                                </table>\n' +
+                        '                            </div>\n' +
+                        '                        </div>\n' +
+                        '                    </div>');
+                }
+            }
+        })
+    }
+
+    function getOneByCustomerName() {
+        var customerName = $("#customerNameSearch").val();
+        start = 1;
+        $.ajax({
+            type:"post",
+            data:{"start":start , "customerName":customerName},
+            url:"selectCustomerByNameAndPage",
+            async:false,
+            success:function (data) {
+                $("#allCustomer").html("");
+                pageNum = data.pages;
+                var customers = data.customers;
+                for(var i = 0 ; i < customers.length ; i++){
+                    $("#allCustomer").append('<div class="panel panel-default" style="box-shadow: 5px 5px 5px #888888;">\n' +
+                        '                            <div class="panel-body">\n' +
+                        '                                <table style="width: 100%;margin-bottom: 20px;">\n' +
+                        '                                    <tr>\n' +
+                        '                                        <td>客户名称</td>\n' +
+                        '                                        <td>'+customers[i].name+'</td>\n' +
+                        '                                        <td>客户编码</td>\n' +
+                        '                                        <td colspan="2">'+customers[i].id+'</td>\n' +
+                        '                                    </tr>\n' +
+                        '                                    <tr>\n' +
+                        '                                        <td style="width: 70px;">决策者</td>\n' +
+                        '                                        <td style="width: 150px;">'+customers[i].decisionMaker+'</td>\n' +
+                        '                                        <td style="width: 105px;">地区</td>\n' +
+                        '                                        <td>'+customers[i].area+"地区"+'</td>\n' +
+                        '                                        <td style="width: 120px;"><button onclick="getCustomerCode(this)">展开详情</button></td>\n' +
+                        '                                    </tr>\n' +
+                        '                                    <tr>\n' +
+                        '\n' +
+                        '                                        <td>项目负责人</td>\n' +
+                        '                                        <td>'+customers[i].principal+'</td>\n' +
+                        '                                        <td>负责人联系方式</td>\n' +
+                        '                                        <td colspan="2">'+customers[i].phone+'</td>\n' +
+                        '                                    </tr>\n' +
+                        '                                </table>\n' +
+                        '                            </div>\n' +
+                        '                        </div>\n' +
+                        '                    </div>');
+                }
+                $("#poolPage").hide();
+                $("#poolPage2").show();
+            }
+        })
+    }
+
+    function getOneByCustomerNamePrevious() {
+        if(start > 1){
+            start = start - 1;
+            var customerName = $("#customerNameSearch").val();
+            $.ajax({
+                type:"post",
+                data:{"start":start , "customerName":customerName},
+                url:"selectCustomerByNameAndPage",
+                async:false,
+                success:function (data) {
+                    $("#allCustomer").html("");
+                    pageNum = data.pages;
+                    var customers = data.customers;
+                    for(var i = 0 ; i < customers.length ; i++){
+                        $("#allCustomer").append('<div class="panel panel-default" style="box-shadow: 5px 5px 5px #888888;">\n' +
+                            '                            <div class="panel-body">\n' +
+                            '                                <table style="width: 100%;margin-bottom: 20px;">\n' +
+                            '                                    <tr>\n' +
+                            '                                        <td>客户名称</td>\n' +
+                            '                                        <td>'+customers[i].name+'</td>\n' +
+                            '                                        <td>客户编码</td>\n' +
+                            '                                        <td colspan="2">'+customers[i].id+'</td>\n' +
+                            '                                    </tr>\n' +
+                            '                                    <tr>\n' +
+                            '                                        <td style="width: 70px;">决策者</td>\n' +
+                            '                                        <td style="width: 150px;">'+customers[i].decisionMaker+'</td>\n' +
+                            '                                        <td style="width: 105px;">地区</td>\n' +
+                            '                                        <td>'+customers[i].area+"地区"+'</td>\n' +
+                            '                                        <td style="width: 120px;"><button onclick="getCustomerCode(this)">展开详情</button></td>\n' +
+                            '                                    </tr>\n' +
+                            '                                    <tr>\n' +
+                            '\n' +
+                            '                                        <td>项目负责人</td>\n' +
+                            '                                        <td>'+customers[i].principal+'</td>\n' +
+                            '                                        <td>负责人联系方式</td>\n' +
+                            '                                        <td colspan="2">'+customers[i].phone+'</td>\n' +
+                            '                                    </tr>\n' +
+                            '                                </table>\n' +
+                            '                            </div>\n' +
+                            '                        </div>\n' +
+                            '                    </div>');
+                    }
+                    $("#poolPage").hide();
+                    $("#poolPage2").show();
+                }
+            })
+        }else{
+            $.message({
+                message:"当前已是第一页",
+                type:'warning'
+            })
+        }
+    }
+
+    function getOneByCustomerNameNext() {
+        if(start < pageNum){
+            start = start + 1;
+            var customerName = $("#customerNameSearch").val();
+            $.ajax({
+                type:"post",
+                data:{"start":start , "customerName":customerName},
+                url:"selectCustomerByNameAndPage",
+                async:false,
+                success:function (data) {
+                    $("#allCustomer").html("");
+                    pageNum = data.pages;
+                    var customers = data.customers;
+                    for(var i = 0 ; i < customers.length ; i++){
+                        $("#allCustomer").append('<div class="panel panel-default" style="box-shadow: 5px 5px 5px #888888;">\n' +
+                            '                            <div class="panel-body">\n' +
+                            '                                <table style="width: 100%;margin-bottom: 20px;">\n' +
+                            '                                    <tr>\n' +
+                            '                                        <td>客户名称</td>\n' +
+                            '                                        <td>'+customers[i].name+'</td>\n' +
+                            '                                        <td>客户编码</td>\n' +
+                            '                                        <td colspan="2">'+customers[i].id+'</td>\n' +
+                            '                                    </tr>\n' +
+                            '                                    <tr>\n' +
+                            '                                        <td style="width: 70px;">决策者</td>\n' +
+                            '                                        <td style="width: 150px;">'+customers[i].decisionMaker+'</td>\n' +
+                            '                                        <td style="width: 105px;">地区</td>\n' +
+                            '                                        <td>'+customers[i].area+"地区"+'</td>\n' +
+                            '                                        <td style="width: 120px;"><button onclick="getCustomerCode(this)">展开详情</button></td>\n' +
+                            '                                    </tr>\n' +
+                            '                                    <tr>\n' +
+                            '\n' +
+                            '                                        <td>项目负责人</td>\n' +
+                            '                                        <td>'+customers[i].principal+'</td>\n' +
+                            '                                        <td>负责人联系方式</td>\n' +
+                            '                                        <td colspan="2">'+customers[i].phone+'</td>\n' +
+                            '                                    </tr>\n' +
+                            '                                </table>\n' +
+                            '                            </div>\n' +
+                            '                        </div>\n' +
+                            '                    </div>');
+                    }
+                    $("#poolPage").hide();
+                    $("#poolPage2").show();
+                }
+            })
+        }else{
+            $.message({
+                message:"当前已是最后一页",
+                type:'warning'
+            })
+        }
+    }
+
+    function getOneByCustomerNameLast() {
+        start = pageNum;
+        var customerName = $("#customerNameSearch").val();
+        $.ajax({
+            type:"post",
+            data:{"start":start , "customerName":customerName},
+            url:"selectCustomerByNameAndPage",
+            async:false,
+            success:function (data) {
+                $("#allCustomer").html("");
+                pageNum = data.pages;
+                var customers = data.customers;
+                for(var i = 0 ; i < customers.length ; i++){
+                    $("#allCustomer").append('<div class="panel panel-default" style="box-shadow: 5px 5px 5px #888888;">\n' +
+                        '                            <div class="panel-body">\n' +
+                        '                                <table style="width: 100%;margin-bottom: 20px;">\n' +
+                        '                                    <tr>\n' +
+                        '                                        <td>客户名称</td>\n' +
+                        '                                        <td>'+customers[i].name+'</td>\n' +
+                        '                                        <td>客户编码</td>\n' +
+                        '                                        <td colspan="2">'+customers[i].id+'</td>\n' +
+                        '                                    </tr>\n' +
+                        '                                    <tr>\n' +
+                        '                                        <td style="width: 70px;">决策者</td>\n' +
+                        '                                        <td style="width: 150px;">'+customers[i].decisionMaker+'</td>\n' +
+                        '                                        <td style="width: 105px;">地区</td>\n' +
+                        '                                        <td>'+customers[i].area+"地区"+'</td>\n' +
+                        '                                        <td style="width: 120px;"><button onclick="getCustomerCode(this)">展开详情</button></td>\n' +
+                        '                                    </tr>\n' +
+                        '                                    <tr>\n' +
+                        '\n' +
+                        '                                        <td>项目负责人</td>\n' +
+                        '                                        <td>'+customers[i].principal+'</td>\n' +
+                        '                                        <td>负责人联系方式</td>\n' +
+                        '                                        <td colspan="2">'+customers[i].phone+'</td>\n' +
+                        '                                    </tr>\n' +
+                        '                                </table>\n' +
+                        '                            </div>\n' +
+                        '                        </div>\n' +
+                        '                    </div>');
+                }
+                $("#poolPage").hide();
+                $("#poolPage2").show();
+            }
+        })
+    }
+
+    function getCustomerCode(obj) {
+
+        if($("#customerDetail").length>0){
+            deleteDetail();
+        }
+        var customerCode = obj.parentNode.parentNode.parentNode.parentNode.rows[0].cells[3].innerHTML;
+        $.ajax({
+            type:"post",
+            data:{"customerCode":customerCode},
+            url:"getCustomerAllInfo",
+            async:false,
+            success:function (data) {
+                var result = data.result;
+                if(result == "OK"){
+                    var button = obj.parentNode.parentNode.parentNode.parentNode.rows[1].cells[4];
+                    var divBody = obj.parentNode.parentNode.parentNode.parentNode.parentElement;
+                    obj.parentNode.parentNode.parentNode.parentNode.rows[1].cells[4].innerHTML = "";
+                    button.innerHTML="<button onclick='deleteDetail()'>"+"收起详情"+"</button>";
+                    $("<div id=\"customerTotal\">\n" +
+                        "                                <h4>客户信息</h4>\n" +
+                        "                                <table id=\"customerDetail\" class=\"table\">\n" +
+                        "                                    <tr>\n" +
+                        "                                        <td>客户名称</td>\n" +
+                        "                                        <td></td>\n" +
+                        "                                        <td>地址</td>\n" +
+                        "                                        <td></td>\n" +
+                        "                                        <td>基本情况</td>\n" +
+                        "                                        <td></td>\n" +
+                        "                                    </tr>\n" +
+                        "                                    <tr>\n" +
+                        "                                        <td>企业性质</td>\n" +
+                        "                                        <td></td>\n" +
+                        "                                        <td>主营产品</td>\n" +
+                        "                                        <td></td>\n" +
+                        "                                        <td>竞争对手</td>\n" +
+                        "                                        <td></td>\n" +
+                        "                                    </tr>\n" +
+                        "                                </table>\n" +
+                        "                                <h4>联系人</h4>\n" +
+                        "                                <table class=\"table\">\n" +
+                        "                                    <thead>\n" +
+                        "                                    <tr>\n" +
+                        "                                        <th>联系人姓名</th>\n" +
+                        "                                        <th>联系人电话</th>\n" +
+                        "                                        <th>邮箱</th>\n" +
+                        "                                        <th>微信</th>\n" +
+                        "                                        <th>性别</th>\n" +
+                        "                                        <th>性格爱好</th>\n" +
+                        "                                        <th>生日</th>\n" +
+                        "                                    </tr>\n" +
+                        "                                    </thead>\n" +
+                        "                                    <tbody id=\"pricipalList\"></tbody>\n" +
+                        "                                </table>\n" +
+                        "                                <h4>地址</h4>\n" +
+                        "                                <table class=\"table\">\n" +
+                        "                                    <thead>\n" +
+                        "                                    <tr>\n" +
+                        "                                        <th>地址说明</th>\n" +
+                        "                                        <th>详细地址</th>\n" +
+                        "                                        <th>所属地区</th>\n" +
+                        "                                        <th>邮编</th>\n" +
+                        "                                        <th>联系人</th>\n" +
+                        "                                        <th>联系电话</th>\n" +
+                        "                                    </tr>\n" +
+                        "                                    </thead>\n" +
+                        "                                    <tbody id=\"addressList\"></tbody>\n" +
+                        "                                </table>\n" +
+                        "                                <h4>文件附件</h4>\n" +
+                        "                                <table class=\"table\">\n" +
+                        "                                    <thead>\n" +
+                        "                                    <tr>\n" +
+                        "                                        <th>保密协议</th>\n" +
+                        "                                        <th>在线尽调</th>\n" +
+                        "                                        <th>现场尽调</th>\n" +
+                        "                                        <th>方案</th>\n" +
+                        "                                        <th>合同</th>\n" +
+                        "                                    </tr>\n" +
+                        "                                    </thead>\n" +
+                        "                                    <tbody>\n" +
+                        "                                    <tr>\n" +
+                        "                                        <td id=\"secretCell\"></td>\n" +
+                        "                                        <td id=\"onlineCell\"></td>\n" +
+                        "                                        <td id=\"offlineCell\"></td>\n" +
+                        "                                        <td id=\"schemeCell\"></td>\n" +
+                        "                                        <td id=\"contractCell\"></td>\n" +
+                        "                                    </tr>\n" +
+                        "                                    </tbody>\n" +
+                        "                                </table>\n" +
+                        "                                </div>").appendTo(divBody);
+
+                    changeHeight();
+                    var infoDetail = data.infoDetail;
+                    var target = document.getElementById("customerDetail");
+                    if(infoDetail != "no"){
+                        target.rows[0].cells[1].innerText=infoDetail.customerName;
+                        target.rows[0].cells[3].innerText=infoDetail.address;
+                        target.rows[0].cells[5].innerText=infoDetail.condition;
+                        target.rows[1].cells[1].innerText=infoDetail.nature;
+                        target.rows[1].cells[3].innerText=infoDetail.product;
+                        target.rows[1].cells[5].innerText=infoDetail.competitor;
+
+                    }
+                    var principals = data.principals;
+                    $("#pricipalList").html("");
+                    for(var i = 0 ; i < principals.length ; i++){
+                        $("#pricipalList").append("<tr>"
+                            +"<td>"+principals[i].name+"</td>"
+                        +"<td>"+principals[i].phone+"</td>"
+                        +"<td>"+principals[i].email+"</td>"
+                        +"<td>"+principals[i].wechat+"</td>"
+                        +"<td>"+principals[i].sex+"</td>"
+                        +"<td>"+principals[i].position+"</td>"
+                        +"<td>"+principals[i].hobby+"</td>"
+                            +"<td>"+principals[i].birthday+"</td>"
+                            +"</tr>");
+                    }
+                    var addresses = data.addresses;
+                    $("#addressList").html("");
+                    for(var i = 0 ; i < addresses.length ; i++){
+                        $("#addressList").append("<tr>"
+                            +"<td>"+addresses[i].describe+"</td>"
+                        +"<td>"+addresses[i].address+"</td>"
+                        +"<td>"+addresses[i].area+"</td>"
+                        +"<td>"+addresses[i].postcode+"</td>"
+                        +"<td>"+addresses[i].contacts+"</td>"
+                        +"<td>"+addresses[i].phone+"</td>"
+                            +"</tr>");
+                    }
+                    var secretFile = data.secretFile;
+                    if(secretFile != "no"){
+                        var secretTd = "<a href='downLoadSecretFile?filename="+secretFile+"'>"+secretFile+"</a>";
+                        $("#secretCell").html("");
+                        $("#secretCell").append(secretTd);
+                    }
+
+                    var online = data.online;
+                   if(online != "no"){
+                       var onlineTd = "<a href='downloadCustomerByExcel?salePlanNum="+online+"'>"+"下载"+"</a>";
+                       $("#onlineCell").html("");
+                       $("#onlineCell").append(onlineTd);
+                   }
+                    $("#offlineCell").html("");
+                    var assetList = data.assetList;
+                    if(assetList != "no"){
+                        for(var i = 0 ; i < assetList.length ; i++){
+                            $("#offlineCell").append("<a href='downloadOfflineFile?filename="+assetList[i].fileName+"'>"+assetList[i].fileName+"</a>"+"<br>")
+                        }
+                    }
+                    var scheme = data.scheme;
+                    if(scheme != "no") {
+                        var schemeTd = "<a href='downLoadSchemeS?filename=" + scheme + "'>" + scheme + "</a>";
+                        $("#schemeCell").html("");
+                        $("#schemeCell").append(schemeTd);
+                    }
+                    var contractFile = data.contractFile;
+                    if(contractFile != "no") {
+                        var contractTd = "<a href='downLoadContractS?filename=" + contractFile + "'>" + contractFile + "</a>";
+                        $("#contractCell").html("");
+                        $("#contractCell").append(contractTd);
+                    }
+                    // downLoadSecretFile
+                    // var secretFile = data.secretFile;
+                    // if(scheme != "no"){
+                    //     target.rows[5].cells[3].innerHTML="<a href='downLoadSecretFile?filename="+secretFile+"'>"+"下载"+"</a>";
+                    // }
+                    // var online = data.online;
+                    // if(online != "no"){
+                    //     target.rows[5].cells[5].innerHTML="<a href='downloadCustomerByExcel?salePlanNum="+online+"'>"+"下载"+"</a>";
+                    // }
+                    // var scheme = data.scheme;
+                    // if(scheme != "no"){
+                    //     target.rows[6].cells[1].innerHTML="<a href='downLoadSchemeS?filename="+scheme+"'>"+"下载"+"</a>";
+                    // }
+                    // var contractFile = data.contractFile;
+                    // if(contractFile != "no"){
+                    //     target.rows[6].cells[3].innerHTML="<a href='downLoadContractS?filename="+contractFile+"'>"+"下载"+"</a>";
+                    // }
+                }else{
+                    $.message({
+                        message:"未找到有效数据",
+                        type:"error"
+                    })
+                }
+            }
+        });
+        $('#mainContent').css("height","auto");
+    }
+
+    function deleteDetail() {
+        var box = document.getElementById("customerDetail");
+        box.parentNode.parentNode.childNodes[1].rows[1].cells[4].innerHTML="<button onclick='getCustomerCode(this)'>"+"获取详情"+"</button>";
+        // box.parentNode.removeChild(box);
+        var box2 = document.getElementById("customerTotal");
+        box2.parentNode.removeChild(box2);
+        changeHeight();
+    }
+
+</script>
+</body>
+</html>

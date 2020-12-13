@@ -7,9 +7,9 @@
     <div th:replace="include/fore/leftMenu::html" ></div>
     <div th:replace="include/fore/body::html" ></div>
 </div>
-<style type="text/css">
-    a:hover { color: #fff; text-decoration: underline; }/* 鼠标移动到链接上 */
-</style>
+<!--<style type="text/css">-->
+<!--    a:hover { color: #fff; text-decoration: underline; }/* 鼠标移动到链接上 */-->
+<!--</style>-->
 <script>
     $(function() {
 
@@ -92,6 +92,7 @@
         changeHeight();
         getHeadPic();
         findAllMyApprove();
+        getAllTask();
     })
 
     //第三页：上传图片 保存内容
@@ -145,10 +146,10 @@
     }
 
     function changeHeight() {
-        var totalHeight = document.documentElement.clientHeight;
+        var totalHeight = 2000;
         if(totalHeight > 776){
             var height = totalHeight -60;
-            $("#allContent").css('height' , totalHeight);
+            $("#mainContent").css('height' , totalHeight);
             $("#leftMenu").css('height' , height)
         }
     }
@@ -655,6 +656,12 @@
                 $("#costType").val(data.costType);
                 $("#costCenter").val(data.costCenter);
                 $("#other").val(data.other);
+                $("#note1").val(data.note);
+                if(data.travelStatus == "refuse"){
+                    $("#refusePart1").show();
+                }else{
+                    $("#refusePart1").hide();
+                }
             }
         })
     }
@@ -681,6 +688,12 @@
                 if(data.fileName == null){
                     $("#reimbursePic").hide();
                 }
+                $("#note6").val(data.note);
+                if(data.reimburseStatus == "refuse"){
+                    $("#refusePart6").show();
+                }else{
+                    $("#refusePart6").hide();
+                }
             }
         })
     }
@@ -701,6 +714,12 @@
                 $("#schemeF").append("<a href='downLoadSchemeF?filename="+data.fileName+"'>"+data.fileName+"</a>");
                 $("#applySF").val(data.makerName);
                 $("#applyDateSF").val(data.makeDate);
+                $("#note2").val(data.reason);
+                if(data.schemeStatus == "refuse"){
+                    $("#refusePart2").show();
+                }else{
+                    $("#refusePart2").hide();
+                }
             }
         })
     }
@@ -725,6 +744,12 @@
                 $("#reduceChange").val(data.note3);
                 $("#applySS").val(data.makerName);
                 $("#applyDateSS").val(data.makeDate);
+                $("#note3").val(data.reason);
+                if(data.schemeStatus == "refuse"){
+                    $("#refusePart3").show();
+                }else{
+                    $("#refusePart3").hide();
+                }
             }
         })
     }
@@ -745,6 +770,12 @@
                 $("#contractF").append("<a href='downLoadContractF?filename="+data.fileName+"'>"+data.fileName+"</a>");
                 $("#applyCF").val(data.makerName);
                 $("#applyDateCF").val(data.makeDate);
+                $("#note4").val(data.note);
+                if(data.contractStatus == "refuse"){
+                    $("#refusePart4").show();
+                }else{
+                    $("#refusePart4").hide();
+                }
             }
         })
     }
@@ -766,6 +797,12 @@
                 $("#note").val(data.note);
                 $("#applyCS").val(data.makerName);
                 $("#applyDateCS").val(data.makeDate);
+                $("#note5").val(data.note);
+                if(data.contractStatus){
+                    $("#refusePart5").show();
+                }else{
+                    $("#refusePart5").hide();
+                }
             }
         })
     }
@@ -797,9 +834,10 @@
 
     function refuseTravelReq() {
         var reqNum = $("#reqNum").val();
+        var note = $("#refuseReason").val();
         $.ajax({
             type:"post",
-            data:{"reqNum":reqNum},
+            data:{"reqNum":reqNum , "note":note},
             url:"setTravelRefuse",
             async:false,
             success:function (data) {
@@ -809,6 +847,7 @@
                         type:'success'
                     });
                     $("#myModal").modal('hide');
+                    $("#myModal1").modal('hide');
                 }else{
                     $.message({
                         message:data,
@@ -847,6 +886,7 @@
 
     function refuseReimburseReq() {
         var reqNum = $("#reqReimburse").val();
+        var note = $("#refuseReason6").val();
         $.ajax({
             type:"post",
             data:{"reqNum":reqNum},
@@ -859,6 +899,7 @@
                         type:'success'
                     });
                     $("#myModal2").modal('hide');
+                    $("#myModal12").modal('hide');
                 }else{
                     $.message({
                         message:data,
@@ -897,9 +938,10 @@
 
     function refuseSchemeF() {
         var reqNum = $("#reqSchemeF").val();
+        var note = $("#refuseReason2").val();
         $.ajax({
             type:"post",
-            data:{"reqNum":reqNum},
+            data:{"reqNum":reqNum , "note":note},
             url:"setSchemeFirstRefuse",
             async:false,
             success:function (data) {
@@ -909,6 +951,7 @@
                         type:'success'
                     });
                     $("#myModal4").modal('hide');
+                    $("#myModal8").modal('hide');
                 }else{
                     $.message({
                         message:data,
@@ -947,9 +990,10 @@
 
     function refuseSchemeS() {
         var reqNum = $("#reqSchemeS").val();
+        var note = $("#refuseReason3").val();
         $.ajax({
             type:"post",
-            data:{"reqNum":reqNum},
+            data:{"reqNum":reqNum , "note":note},
             url:"setSchemeSecondRefuse",
             async:false,
             success:function (data) {
@@ -959,6 +1003,7 @@
                         type:'success'
                     });
                     $("#myModal5").modal('hide');
+                    $("#myModal9").modal('hide');
                 }else{
                     $.message({
                         message:data,
@@ -998,9 +1043,10 @@
 
     function refuseContractF() {
         var reqNum = $("#reqContractF").val();
+        var note = $("#refuseReason4").val();
         $.ajax({
             type:"post",
-            data:{"reqNum":reqNum},
+            data:{"reqNum":reqNum , "note":note},
             url:"setContractFirstPass",
             async:false,
             success:function (data) {
@@ -1010,6 +1056,7 @@
                         type:'success'
                     });
                     $("#myModal6").modal('hide');
+                    $("#myModal10").modal('hide');
                 }else{
                     $.message({
                         message:data,
@@ -1048,9 +1095,10 @@
 
     function refuseContractS() {
         var reqNum = $("#reqContractS").val();
+        var note = $("#refuseReason5").val();
         $.ajax({
             type:"post",
-            data:{"reqNum":reqNum},
+            data:{"reqNum":reqNum , "note":note},
             url:"setContractSecondRefuse",
             async:false,
             success:function (data) {
@@ -1060,6 +1108,7 @@
                         type:'success'
                     });
                     $("#myModal7").modal('hide');
+                    $("#myModal11").modal('hide');
                 }else{
                     $.message({
                         message:data,
@@ -1106,6 +1155,88 @@
             }
         })
     }
+
+    function getAllTask() {
+        $.ajax({
+            type:"post",
+            url:"loadAllTask",
+            async:false,
+            success:function (data) {
+                $("#task1").html("");
+                $("#task2").html("");
+                $("#task3").html("");
+                var task1 = data.listThree;
+                for(var i = 0 ; i < task1.length ; i++){
+                    $("#task1").append("<tr>"
+                        +"<td>"+task1[i].salePlanID+"</td>"
+                        +"<td>"+task1[i].customerName+"</td>"
+                        +"<td>"+task1[i].task+"</td>"
+                        +"<td>"+task1[i].deadline+"</td>"
+                        +"<td>"+'<a href="'+task1[i].jobUrl+'">'+"去处理"+"</a>"+"</td>"
+                        +"</tr>");
+                }
+                var task2 = data.listTwo;
+                for(var i = 0 ; i < task2.length ; i++){
+                    $("#task2").append("<tr>"
+                        +"<td>"+task2[i].salePlanID+"</td>"
+                        +"<td>"+task2[i].customerName+"</td>"
+                        +"<td>"+task2[i].task+"</td>"
+                        +"<td>"+task2[i].deadline+"</td>"
+                        +"<td>"+'<a href="'+task2[i].jobUrl+'">'+"去处理"+"</a>"+"</td>"
+                        +"</tr>");
+                }
+                var task3 = data.listOne;
+                for(var i = 0 ; i < task3.length ; i++){
+                    $("#task3").append("<tr>"
+                        +"<td>"+task3[i].salePlanID+"</td>"
+                        +"<td>"+task3[i].customerName+"</td>"
+                        +"<td>"+task3[i].task+"</td>"
+                        +"<td>"+task3[i].deadline+"</td>"
+                        +"<td>"+'<a href="'+task3[i].jobUrl+'">'+"去处理"+"</a>"+"</td>"
+                        +"</tr>");
+                }
+            }
+        })
+    }
+
+    // function sendMessage() {
+    //     $.ajax({
+    //         type:"post",
+    //         url:"foreSendEmail",
+    //         async:false,
+    //         success:function(data){
+    //                 alert(data);
+    //
+    //         }
+    //     })
+    // }
 </script>
+<style>
+    #mainContent{
+        overflow:hidden;
+        width:100%;
+    }
+    #flows{
+        width:calc(100% + 15px);/*使滚动条超出当前元素的父元素边界，而父元素设置了overflow为hidden，使溢出内容隐藏，即隐藏了滚动条*/
+        height:400px;
+        padding-right:15px;
+        box-sizing:content-box;/*兼容ie，使盒模型为w3c盒模型*/
+        overflow-y:scroll;/*控制能沿y轴滚动*/
+    }
+    #allApprove{
+        width:100%;
+    }
+
+    #tasks{
+        width:calc(100% + 15px);/*使滚动条超出当前元素的父元素边界，而父元素设置了overflow为hidden，使溢出内容隐藏，即隐藏了滚动条*/
+        height:400px;
+        padding-right:15px;
+        box-sizing:content-box;/*兼容ie，使盒模型为w3c盒模型*/
+        overflow-y:scroll;/*控制能沿y轴滚动*/
+    }
+    #taskSum{
+        width:100%;
+    }
+</style>
 </body>
 </html>

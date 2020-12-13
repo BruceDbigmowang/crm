@@ -1,15 +1,10 @@
 package com.knowhy.crm.controller;
 
-import com.knowhy.crm.dao.CompanyInfoDAO;
-import com.knowhy.crm.dao.DataDetailDAO;
-import com.knowhy.crm.dao.ManufactureDAO;
-import com.knowhy.crm.dao.SalesPlanDAO;
-import com.knowhy.crm.pojo.CompanyInfo;
-import com.knowhy.crm.pojo.DataDetail;
-import com.knowhy.crm.pojo.Manufacture;
-import com.knowhy.crm.pojo.SalesPlan;
+import com.knowhy.crm.dao.*;
+import com.knowhy.crm.pojo.*;
 import com.knowhy.crm.service.SalePlanService;
 import com.knowhy.crm.service.SaveDataService;
+import com.knowhy.crm.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,6 +18,7 @@ import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -40,7 +36,17 @@ public class OnlineSurveyController {
     @Autowired
     CompanyInfoDAO companyInfoDAO;
     @Autowired
+    KnowMoreDAO knowMoreDAO;
+    @Autowired
     ManufactureDAO manufactureDAO;
+    @Autowired
+    TaskDAO taskDAO;
+    @Autowired
+    TaskSumDAO taskSumDAO;
+    @Autowired
+    TaskService taskService;
+    @Autowired
+    ArrangeRecordDAO arrangeRecordDAO;
 
     @RequestMapping("/getVcode")
     public String getCode(HttpSession session){
@@ -703,7 +709,9 @@ public class OnlineSurveyController {
     }
 
     @RequestMapping("/saveDataFive")
+    @Transactional
     public String saveFifth(HttpServletRequest request , HttpSession session){
+        IUser user = (IUser)session.getAttribute("user");
         String salePlanID = request.getParameter("salePlanID");
         int cid = companyInfoDAO.findBySalePlanID(salePlanID).get(0).getId();
         int did = dataDetailDAO.findByCid(cid).get(0).getId();
@@ -735,20 +743,93 @@ public class OnlineSurveyController {
             return "请选择主要诉求";
         }
         dataDetail.setAppeal(appeal);
-        try{
+//        try{
             saveDataService.saveOrUpdate(dataDetail);
+            List<TaskSum> sumList = taskSumDAO.findBySalePlanIDAndTask(salePlanID , "现场尽调");
             SalesPlan salesPlan = planService.findById(salePlanID);
             salesPlan.setPlanStatus("fourth");
             salesPlan.setStep(1);
+            salesPlan.setSpendTime(7);
+            salesPlan.setUpdateDate(LocalDate.now());
+            salesPlan.setDeadline(sumList.get(0).getDeadline());
             planDAO.save(salesPlan);
-        }catch (Exception e){
-            return e.getMessage();
+
+        List<ArrangeRecord> arrangeRecordList = arrangeRecordDAO.findBySalePlanIDAndStepAndType(salePlanID , "线上尽调" , "sale");
+        if(arrangeRecordList != null && arrangeRecordList.size() != 0){
+            ArrangeRecord arrangeRecord = arrangeRecordList.get(0);
+            arrangeRecord.setCompleteStatus("C");
+            arrangeRecordDAO.save(arrangeRecord);
         }
+
+            taskDAO.deleteBySalePlanIDAndJobName(salePlanID , "线上尽调");
+            taskSumDAO.deleteBySalePlanIDAndTask(salePlanID , "线上尽调");
+
+//        }catch (Exception e){
+//            return e.getMessage();
+//        }
         return "OK";
     }
 
     @RequestMapping("/loadSurveyDetail")
     public int getStep(String salePlanID){
         return planService.getStep(salePlanID);
+    }
+
+    @RequestMapping("/loadCompanyDataOnline")
+    public CompanyInfo findCompanyData(String salePlanID){
+        List<CompanyInfo> companyInfoList = companyInfoDAO.findBySalePlanID(salePlanID);
+        if(companyInfoList == null || companyInfoList.size() == 0){
+            return null;
+        }else{
+            return companyInfoList.get(0);
+        }
+    }
+
+    @RequestMapping("/loadKnowMoreOnline")
+    public KnowMore findKnowMoreData(String salePlanID){
+        List<CompanyInfo> companyInfoList = companyInfoDAO.findBySalePlanID(salePlanID);
+        if(companyInfoList == null || companyInfoList.size() == 0){
+            return null;
+        }else{
+            int cid = companyInfoList.get(0).getId();
+            List<KnowMore> knowMoreList = knowMoreDAO.findByCid(cid);
+            if(knowMoreList == null || knowMoreList.size() == 0){
+                return null;
+            }else{
+                return knowMoreList.get(0);
+            }
+        }
+    }
+
+    @RequestMapping("/loadManufactureOnline")
+    public Manufacture findManufactureData(String salePlanID){
+        List<CompanyInfo> companyInfoList = companyInfoDAO.findBySalePlanID(salePlanID);
+        if(companyInfoList == null || companyInfoList.size() == 0){
+            return null;
+        }else{
+            int cid = companyInfoList.get(0).getId();
+            List<Manufacture> manufactureList = manufactureDAO.findByCid(cid);
+            if(manufactureList == null || manufactureList.size() == 0){
+                return null;
+            }else{
+                return manufactureList.get(0);
+            }
+        }
+    }
+
+    @RequestMapping("/loadDataDetailOnline")
+    public DataDetail findDataDetailData(String salePlanID){
+        List<CompanyInfo> companyInfoList = companyInfoDAO.findBySalePlanID(salePlanID);
+        if(companyInfoList == null || companyInfoList.size() == 0){
+            return null;
+        }else{
+            int cid = companyInfoList.get(0).getId();
+            List<DataDetail> dataDetailList = dataDetailDAO.findByCid(cid);
+            if(dataDetailList == null || dataDetailList.size() == 0){
+                return null;
+            }else{
+                return dataDetailList.get(0);
+            }
+        }
     }
 }

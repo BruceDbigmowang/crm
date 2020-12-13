@@ -25,6 +25,11 @@
                 for(var i = 0 ; i < data.length ; i++){
                     $("#role").append('<option value="'+data[i].id+'">'+data[i].roleName+"</option>");
                 }
+                $("#userRole").html("");
+                $("#userRole").append('<option value="0">'+"--请选择--"+"</option>");
+                for(var i = 0 ; i < data.length ; i++){
+                    $("#userRole").append('<option value="'+data[i].id+'">'+data[i].roleName+"</option>");
+                }
             }
         })
     }
@@ -43,7 +48,37 @@
                         +"<td>"+data[i].phone+"</td>"
                         +"<td>"+data[i].email+"</td>"
                         +"<td>"+data[i].job+"</td>"
+                        +"<td>"+"<a data-toggle=\"modal\" data-target=\"#myModal2\" onclick='getUserInfo(this)'>修改</a>"+"</td>"
                         +"</tr>")
+                }
+            }
+        })
+    }
+
+    function getUserInfo(obj) {
+        var account = obj.parentNode.parentNode.cells[0].innerText;
+        var name = obj.parentNode.parentNode.cells[1].innerText;
+        $("#userAccount").val(account);
+        $("#userName").val(name);
+    }
+
+    function changeRole() {
+        var account = $("#userAccount").val();
+        var role = $("#userRole option:selected").val();
+        $.ajax({
+            type:"post",
+            data:{"account":account , "role":role},
+            url:"changeUserRole",
+            async:false,
+            success:function (data) {
+                if(data == "OK"){
+                    $("#myModal2").modal('hide');
+                    showInnerUser();
+                }else{
+                    $.message({
+                        message:data,
+                        type:'error'
+                    })
                 }
             }
         })
@@ -56,7 +91,9 @@
         var email = $("#email").val();
         var wechat = $("#wechat").val();
         var roleId = $("#role option:selected").val();
-        var data = {"account":account , "name":name , "phone":phone , "email":email , "wechatNum":wechat , "roleId":roleId};
+        var roleName = $("#role option:selected").text();
+        var group = $("#group option:selected").val();
+        var data = {"account":account , "name":name , "phone":phone , "email":email , "wechatNum":wechat , "roleId":roleId , "roleName":roleName , "group":group};
         $.ajax({
             type:"post",
             data:data,
@@ -69,6 +106,7 @@
                         type:'success'
                     });
                     showInnerUser();
+                    $("#myModal").modal('hide');
                 }else{
                     $.message({
                         message:data,
@@ -78,6 +116,107 @@
             }
         })
     }
+
+    function chooseRole() {
+        var role = $("#role option:selected").text();
+        if(role == "销售"){
+            $("#groupTr").show();
+            showSaleGroup();
+        }else if(role == "销售助理"){
+            $("#groupTr").show();
+            showSaleGroup();
+        }else if(role == "技术人员"){
+            $("#groupTr").show();
+            showTechnicalGroup();
+        }else if(role == "运营"){
+            $("#groupTr").show();
+            showOperateGroup();
+        }else if(role == "供应链人员"){
+            $("#groupTr").show();
+            showSupplyGroup();
+        }else{
+            $("#groupTr").hide();
+            $("#group").append('<option value="0">'+"--请选择--"+"</option>");
+        }
+    }
+    
+    function showSaleGroup() {
+        var deptName = "市场部";
+        $.ajax({
+            type:"post",
+            data:{"deptName":deptName},
+            url:"getGroupByDept",
+            async:false,
+            success:function (data) {
+                $("#group").html("");
+                for(var i = 0 ; i < data.length ; i++){
+                    $("#group").append('<option value="'+data[i].groupCode+'">'+data[i].groupName+"</option>");
+                }
+            }
+        })
+    }
+    function showTechnicalGroup() {
+        var deptName = "技术部";
+        $.ajax({
+            type:"post",
+            data:{"deptName":deptName},
+            url:"getGroupByDept",
+            async:false,
+            success:function (data) {
+                $("#group").html("");
+                for(var i = 0 ; i < data.length ; i++){
+                    $("#group").append('<option value="'+data[i].groupCode+'">'+data[i].groupName+"</option>");
+                }
+            }
+        })
+    }
+    function showOperateGroup() {
+        var deptName = "运营部";
+        $.ajax({
+            type:"post",
+            data:{"deptName":deptName},
+            url:"getGroupByDept",
+            async:false,
+            success:function (data) {
+                $("#group").html("");
+                for(var i = 0 ; i < data.length ; i++){
+                    $("#group").append('<option value="'+data[i].groupCode+'">'+data[i].groupName+"</option>");
+                }
+            }
+        })
+    }
+
+    function showSupplyGroup() {
+        var deptName = "供应链";
+        $.ajax({
+            type:"post",
+            data:{"deptName":deptName},
+            url:"getGroupByDept",
+            async:false,
+            success:function (data) {
+                $("#group").html("");
+                for(var i = 0 ; i < data.length ; i++){
+                    $("#group").append('<option value="'+data[i].groupCode+'">'+data[i].groupName+"</option>");
+                }
+            }
+        })
+    }
 </script>
+<style>
+    #mainContent{
+        overflow:hidden;
+        width:100%;
+    }
+    #allAccount{
+        width:calc(100% + 15px);/*使滚动条超出当前元素的父元素边界，而父元素设置了overflow为hidden，使溢出内容隐藏，即隐藏了滚动条*/
+        height:500px;
+        padding-right:15px;
+        box-sizing:content-box;/*兼容ie，使盒模型为w3c盒模型*/
+        overflow-y:scroll;/*控制能沿y轴滚动*/
+    }
+    #accountList{
+        width:100%;
+    }
+</style>
 </body>
 </html>

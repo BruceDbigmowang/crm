@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<title>商机管理——线上推广</title>
+<head th:include="include/fore/newHeader::html" ></head>
+<body>
+<div id="workingArea">
+    <div th:replace="include/fore/top::html" ></div>
+    <div th:replace="include/fore/leftMenu::html" ></div>
+    <div th:replace="include/fore/homePages/businessManage/marketOpportunities/marketingOnlinePage::html" ></div>
+</div>
+<script>
+
+    $(function () {
+        getAllOpportunity();
+        loadAllOnline();
+    })
+
+    function getAllOpportunity() {
+        $.ajax({
+            type:"post",
+            url:"getAllOpportunity",
+            async:false,
+            success:function (data) {
+                $("#opportunity").html("");
+                for(var i = 0 ; i < data.length ; i++){
+                    $("#opportunity").append('<option value="'+data[i].id+'">'+data[i].body+"</option>");
+                }
+            }
+        })
+    }
+
+    function chooseActivity() {
+        var target = $("#activity option:selected").val();
+        if(target == "其它"){
+            $("#activityDetail").show();
+        }else{
+            $("#activityDetail").hide();
+        }
+    }
+
+    function saveOnlineData() {
+        var opId = $("#opportunity option:selected").val();
+        var theme = $("#opportunity option:selected").text();
+        var activity = $("#activity option:selected").val();
+        var describe = $("#describe").val();
+        var spend = $("#spend").val();
+        var isPlan = $("input[name='isPlan']:checked").val();
+        var contractAmount = $("#contractAmount").val();
+        
+        var name = $("#contractFile").val();
+        var picNames = name.split("\\");
+        var le = picNames.length - 1;
+        var targetFile = picNames[le];
+        
+        var note = $("#other").val();
+        
+        var data = {"opId":opId , "theme":theme , "activity":activity , "describe":describe , "spend":spend , "isPlan":isPlan , "contractAmount":contractAmount , "contractFile":targetFile , "note":note};
+        $.ajax({
+            type:"post",
+            data:data,
+            url:"saveMarketingOnline",
+            async:false,
+            success:function (data) {
+                if(data == "OK"){
+                    $.message({
+                        message:"数据保存成功",
+                        type:'success'
+                    });
+                    $("#myModal").modal('hide');
+                    loadAllOnline();
+                }else{
+                    $.message({
+                        message:data,
+                        type:'error'
+                    })
+                }
+            }
+        })
+    }
+
+    function saveImage() {
+        $.ajaxFileUpload({
+            type:"post",
+            fileElementId:"contractFile",
+            url:"saveMarketingFile",
+            async:false,
+            dataType:'text',
+            success:function(data){
+                if(data == "文件上传成功"){
+                    // $.message({
+                    //     message:'文件上传成功',
+                    //     type:'success'
+                    // });
+                }else{
+                    $.message({
+                        message:data,
+                        type:'error'
+                    });
+                }
+            },
+            error:function(){
+                alert("设备类型文件上传出错");
+            }
+        })
+    }
+    
+    function loadAllOnline() {
+        $.ajax({
+            type:"post",
+            url:"selectAllMarketingOnOrOff",
+            async:false,
+            success:function (data) {
+                $("#marketOnline").html("");
+                for(var i = 0 ; i < data.length ; i++){
+                    $("#marketOnline").append("<tr>"
+                        +"<td style='display: none;'>"+data[i].id+"</td>"
+                        +"<td>"+data[i].theme+"</td>"
+                        +"<td>"+data[i].type+"</td>"
+                        +"<td>"+data[i].activity+"</td>"
+                        +"<td>"+data[i].describe+"</td>"
+                        +"<td>"+data[i].spend+"</td>"
+                        +"<td>"+data[i].isPlan+"</td>"
+                        +"<td>"+data[i].createrName+"</td>"
+                        +"<td>"+"<a data-toggle=\"modal\" data-target=\"#myModal2\" onclick='getMid(this)'>"+"维护"+"</a>"+"</td>"
+                        +"</tr>")
+                }
+            }
+        })
+    }
+
+    function getMid(obj) {
+        var mId = obj.parentNode.parentNode.cells[0].innerText;
+        $("#mId").val(mId);
+        var mTheme = obj.parentNode.parentNode.cells[1].innerText;
+        $("#mTheme").val(mTheme);
+    }
+
+    function saveActivityData() {
+        var mId = $("#mId").val();
+
+        var name = $("#activityFile").val();
+        var picNames = name.split("\\");
+        var le = picNames.length - 1;
+        var activityFile = picNames[le];
+
+        var name2 = $("#customerFile").val();
+        var picNames2 = name2.split("\\");
+        var le2 = picNames2.length - 1;
+        var customerFile = picNames2[le2];
+
+        var customerOne = $("#customerOne").val();
+        var customerTwo = $("#customerTwo").val();
+        var customerMoney = $("#customerMoney").val();
+
+        var data = {"mId":mId , "activityFile":activityFile , "customerFile":customerFile , "customerOne":customerOne , "customerTwo":customerTwo , "customerMoney":customerMoney};
+        $.ajax({
+            type:"post",
+            data:data,
+            url:"saveActivityData",
+            async:false,
+            success:function (data) {
+                if(data == "OK"){
+                    $.message({
+                        message:"数据保存成功",
+                        type:'success'
+                    });
+                    $("#myModal2").modal('hide');
+                    loadAllOnline();
+                }else{
+                    $.message({
+                        message:data,
+                        type:'error'
+                    })
+                }
+            }
+        })
+    }
+
+    function saveActivityFile() {
+        $.ajaxFileUpload({
+            type:"post",
+            fileElementId:"activityFile",
+            url:"saveActivityFile",
+            async:false,
+            dataType:'text',
+            success:function(data){
+                if(data == "文件上传成功"){
+                    // $.message({
+                    //     message:'文件上传成功',
+                    //     type:'success'
+                    // });
+                }else{
+                    $.message({
+                        message:data,
+                        type:'error'
+                    });
+                }
+            },
+            error:function(){
+                alert("设备类型文件上传出错");
+            }
+        })
+    }
+
+    function saveCustomerFile() {
+        var mId = $("#mId").val();
+        $.ajaxFileUpload({
+            type:"post",
+            fileElementId:"customerFile",
+            data:{"mId":mId},
+            url:"saveCustomerFiles",
+            async:false,
+            dataType:'text',
+            success:function(data){
+                if(data == "文件上传成功"){
+                    // $.message({
+                    //     message:'文件上传成功',
+                    //     type:'success'
+                    // });
+                    uploadCustomer();
+                }else{
+                    $.message({
+                        message:data,
+                        type:'error'
+                    });
+                }
+            },
+            error:function(){
+                alert("设备类型文件上传出错");
+            }
+        })
+    }
+
+    function uploadCustomer() {
+        var path = "线上推广"+$("#mTheme").val();
+        var mId = $("#mId").val();
+        $.ajaxFileUpload({
+            type:"post",
+            fileElementId:"customerFile",
+            url:"uploadMarktingOnline",
+            data:{"path":path , "mId":mId},
+            async:false,
+            dataType:'text',
+            success:function(data){
+                if(data.includes("成功")){
+                    $.message({
+                        message:data,
+                        type:'success'
+                    });
+                }else{
+                    $.message({
+                        message:data,
+                        type:'error'
+                    });
+                }
+            },
+            error:function(){
+                alert("设备类型文件上传出错");
+            }
+        })
+    }
+</script>
+</body>
+</html>

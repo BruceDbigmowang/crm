@@ -1,0 +1,24 @@
+springboot + sql server 使用IDEA进行开发
+首先jdbc版本不应太高 使用sqljdbc4即可
+pom文件：
+ <dependency>
+    <groupId>com.microsoft.sqlserver</groupId>
+    <artifactId>sqljdbc4</artifactId>
+    <version>4.0</version>
+</dependency>
+
+若无法下载则在pom中添加
+<repositories>
+    <repository>
+    	<id>clojars</id>
+    	<url>http://clojars.org/repo/</url>
+    	</repository>
+</repositories>
+
+此时 仍会存在问题：
+org.hibernate.HibernateException: Access to DialectResolutionInfo cannot be null when 'hibernate.dialect' not se
+或 SQL Server不支持‘...’数据类型
+解决此处错误：
+application中添加 
+spring.jpa.database-platform=org.hibernate.dialect.SQLServerDialect
+参考：https://blog.csdn.net/boling_cavalry/article/details/79342319

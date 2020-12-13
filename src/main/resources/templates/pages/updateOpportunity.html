@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<title>商机管理——商机/线索更新</title>
+<head th:include="include/fore/newHeader::html" ></head>
+<body>
+<div id="workingArea">
+    <div th:replace="include/fore/top::html" ></div>
+    <div th:replace="include/fore/leftMenu::html" ></div>
+    <div th:replace="include/fore/homePages/businessManage/marketOpportunities/opportunitiesBase::html" ></div>
+</div>
+<script>
+    $("#distpicker").distpicker();
+    $("#distpicker2").distpicker();
+
+    window.onload = getOppoByPageLoad;
+
+    function loadDetail(obj) {
+        var opId = obj.parentNode.parentNode.childNodes[0].innerText;
+        $("#opId").val(opId);
+        $.ajax({
+            type:"post",
+            data:{"opId":opId},
+            url:"getOpportunityDetail",
+            async:false,
+            success:function (data) {
+                $("#body").val(data.body);
+                var select = document.getElementById("source");
+                for (var i = 0; i < select.options.length; i++){
+                    if (select.options[i].value == data.resource){
+                        select.options[i].selected = true;
+                        break;  
+                    }  
+                }
+                $("#companyName").val(data.companyName);
+                $("#contract").val(data.contract);
+                $("#principal").val(data.principal);
+                $("#mobile").val(data.mobile);
+                $("#phone").val(data.phone);
+                $("#email").val(data.email);
+                $("#fax").val(data.fax);
+                // $("#dept").val(data.dept);
+                // $("#leafType").val(data.leafType);
+                // $("#leafNum").val(data.leafNum);
+                $("#address").val(data.province+data.city+data.area+"-"+data.address);
+            }
+        })
+    }
+
+    function updateDetail() {
+        var opId = $("#opId").val();
+        var contract = $("#contract").val();
+        var mobile = $("#mobile").val();
+        var phone = $("#phone").val();
+        var email = $("#email").val();
+        var fax = $("#fax").val();
+        var principal = $("#principal").val();
+        var dept = $("#dept").val();
+        var leafType = $("#leafType").val();
+        var leafNum = $("#leafNum").val();
+        var data={"opId":opId , "contract":contract , "mobile":mobile , "phone":phone , "email":email , "fax":fax , "principal":principal , "dept":dept , "leafType":leafType , "leafNum":leafNum};
+        $.ajax({
+            type:"post",
+            data:data,
+            url:"updateOpportunity",
+            async:false,
+            success:function (data) {
+                if(data == "OK"){
+                    $.message({
+                        message:"数据修改成功",
+                        type:'success'
+                    });
+                    getOppoByPageLoad();
+                    $("#myModal").modal('hide');
+                }else{
+                    $.message({
+                        message:data,
+                        type:'error'
+                    });
+                }
+            }
+        })
+    }
+
+    function chooseActivityType() {
+        var type = $("#opportunityType option:selected").val();
+        if(type == "0"){
+            $("#activity").html("");
+            $("#channelTd").hide();
+            $("#activityDetail").hide();
+        }else if(type == "线上推广"){
+            $("#activity").html("");
+            $("#activity").append('<option value="抖音">抖音</option>\n' +
+                '                                    <option value="线上尽调系统">线上尽调系统</option>\n' +
+                '                                    <option value="今日头条">今日头条</option>\n' +
+                '                                    <option value="微信公众号">微信公众号</option>\n' +
+                '                                    <option value="微博">微博</option>\n' +
+                '                                    <option value="工业平台">工业平台</option>\n' +
+                '                                    <option value="其它">其它</option>');
+            $("#channelTd").hide();
+            $("#activityDetail").hide();
+        }else if(type == "线下推广"){
+            $("#activity").html("");
+            $("#activity").append('<option value="论坛">论坛</option>\n' +
+                '                                    <option value="展会">展会</option>\n' +
+                '                                    <option value="广告">广告</option>\n' +
+                '                                    <option value="协会活动">协会活动</option>\n' +
+                '                                    <option value="其它">其它</option>');
+            $("#channelTd").show();
+            $("#activityDetail").hide();
+        }
+    }
+
+    function chooseActivity() {
+        var target = $("#activity option:selected").val();
+        if(target == "其它"){
+            $("#activityDetail").show();
+        }else{
+            $("#activityDetail").hide();
+        }
+    }
+
+    function createActivity(obj) {
+        var oppId = obj.parentNode.parentNode.cells[0].innerText;
+        var theme = obj.parentNode.parentNode.cells[2].innerText;
+        $("#oppId").val(oppId);
+        $("#theme").val(theme);
+    }
+
+    function saveImage() {
+        $.ajaxFileUpload({
+            type:"post",
+            fileElementId:"contractFile",
+            url:"saveMarketingFile",
+            async:false,
+            dataType:'text',
+            success:function(data){
+                if(data == "文件上传成功"){
+                    // $.message({
+                    //     message:'文件上传成功',
+                    //     type:'success'
+                    // });
+                }else{
+                    $.message({
+                        message:data,
+                        type:'error'
+                    });
+                }
+            },
+            error:function(){
+                alert("设备类型文件上传出错");
+            }
+        })
+    }
+
+    function saveActivityData() {
+        var oppId = $("#oppId").val();
+        var theme = $("#theme").val();
+        var type = $("#opportunityType option:selected").val();
+        var activity = $("#activity option:selected").val();
+        var detail = $("#activityDetail").val();
+        var describe = $("#describe").val();
+        var spend = $("#spend").val();
+        var isPlan = $("input[name='isPlan']:checked").val();
+        var contractAmount = $("#contractAmount").val();
+
+        var name = $("#contractFile").val();
+        var picNames = name.split("\\");
+        var le = picNames.length - 1;
+        var targetFile = picNames[le];
+
+        var channel = $("#channel").val();
+
+        var data = {"oppId":oppId , "theme":theme , "type":type , "activity":activity , "detail":detail , "describe":describe , "spend":spend , "isPlan":isPlan , "contractAmount":contractAmount , "contractFile":targetFile , "channel":channel};
+
+        $.ajax({
+            type:"post",
+            data:data,
+            url:"saveMarketingActivity",
+            async:false,
+            success:function (data) {
+                if(data == "OK"){
+                    $.message({
+                        message:"数据保存成功",
+                        type:'success'
+                    });
+                    $("#myModal2").modal('hide');
+                }else{
+                    $.message({
+                        message:data,
+                        type:'error'
+                    })
+                }
+            }
+        })
+    }
+</script>
+</body>
+</html>

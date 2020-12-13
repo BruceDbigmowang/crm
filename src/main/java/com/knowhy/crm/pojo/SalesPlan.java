@@ -31,6 +31,16 @@ public class SalesPlan {
     String allOperator;
     @Nullable
     Integer step;
+    LocalDate updateDate;
+    Integer spendTime;
+    LocalDate deadline;
+    String assistant;
+    String operator;
+    LocalDate lastTime;
+    String saleArrange;
+    String operateArrange;
+    String serviceWrite;
+    String reportWrite;
 
     public String getId() {
         return id;
@@ -126,5 +136,85 @@ public class SalesPlan {
 
     public void setStep(Integer step) {
         this.step = step;
+    }
+
+    public LocalDate getUpdateDate() {
+        return updateDate;
+    }
+
+    public void setUpdateDate(LocalDate updateDate) {
+        this.updateDate = updateDate;
+    }
+
+    public Integer getSpendTime() {
+        return spendTime;
+    }
+
+    public void setSpendTime(Integer spendTime) {
+        this.spendTime = spendTime;
+    }
+
+    public LocalDate getDeadline() {
+        return deadline;
+    }
+
+    public void setDeadline(LocalDate deadline) {
+        this.deadline = deadline;
+    }
+
+    public String getAssistant() {
+        return assistant;
+    }
+
+    public void setAssistant(String assistant) {
+        this.assistant = assistant;
+    }
+
+    public String getOperator() {
+        return operator;
+    }
+
+    public void setOperator(String operator) {
+        this.operator = operator;
+    }
+
+    public LocalDate getLastTime() {
+        return lastTime;
+    }
+
+    public void setLastTime(LocalDate lastTime) {
+        this.lastTime = lastTime;
+    }
+
+    public String getSaleArrange() {
+        return saleArrange;
+    }
+
+    public void setSaleArrange(String saleArrange) {
+        this.saleArrange = saleArrange;
+    }
+
+    public String getOperateArrange() {
+        return operateArrange;
+    }
+
+    public void setOperateArrange(String operateArrange) {
+        this.operateArrange = operateArrange;
+    }
+
+    public String getServiceWrite() {
+        return serviceWrite;
+    }
+
+    public void setServiceWrite(String serviceWrite) {
+        this.serviceWrite = serviceWrite;
+    }
+
+    public String getReportWrite() {
+        return reportWrite;
+    }
+
+    public void setReportWrite(String reportWrite) {
+        this.reportWrite = reportWrite;
     }
 }

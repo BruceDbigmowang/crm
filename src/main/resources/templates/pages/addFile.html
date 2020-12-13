@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<title>合同管理——合同归档</title>
+<head th:include="include/fore/newHeader::html" ></head>
+<body>
+<div id="workingArea">
+    <div th:replace="include/fore/top::html" ></div>
+    <div th:replace="include/fore/leftMenu::html" ></div>
+    <div th:replace="include/fore/homePages/contractManage/addFilePage::html" ></div>
+</div>
+<script>
+
+    $(function () {
+        judgeFunc();
+        loadFirstPlan();
+        getAllSaleMan();
+        loadAllExchange();
+    });
+
+    laydate.render({
+        elem: '#travelDate', //指定元素
+        trigger: 'click'
+    });
+
+    laydate.render({
+        elem: '#concludeDate', //指定元素
+        trigger: 'click'
+    });
+    laydate.render({
+        elem: '#effectiveDate', //指定元素
+        trigger: 'click'
+    });
+    laydate.render({
+        elem: '#deadline', //指定元素
+        trigger: 'click'
+    });
+
+    function judgeFunc() {
+        $.ajax({
+            type:"post",
+            url:"getFileConcludeRole",
+            async:false,
+            success:function (data) {
+                $("#funcInput").val(data);
+            }
+        })
+    }
+
+    function loadAllExchange() {
+        $.ajax({
+            type:"post",
+            url:"getAllExchange",
+            async:false,
+            success:function (data) {
+                $("#currency").html("");
+                for(var i = 0 ; i < data.length ; i++){
+                    $("#currency").append('<option value="'+data[i].exchangeRate+'">'+data[i].currency+"</option>");
+                }
+            }
+        })
+    }
+
+    function loadFirstPlan() {
+        var role = $("#funcInput").val();
+        if (role == "0") {
+            var status = "eighth";
+            $.ajax({
+                type: "post",
+                data: {"status": status},
+                url: "findCanOperateAndOperated",
+                async: false,
+                success: function (data) {
+                    var list1 = data.list1;
+                    $("#allFirst").html("");
+                    $("#customer").html("");
+                    $("#customer").append("<option value='0'>" + "--请选择--" + "</option>");
+                    $("#customer2").html("");
+                    $("#customer2").append("<option value='0'>" + "--请选择--" + "</option>");
+                    for (var i = 0; i < list1.length; i++) {
+                        $("#allFirst").append("<tr>" +
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">" + list1[i].id + "</td>" +
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">" + list1[i].customerName + "</td>" +
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">" + list1[i].describe + "</td>" +
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">" + list1[i].deadline + "</td>" +
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">" + list1[i].principalName + "</td>" +
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">" +
+                            "<a href='#' data-toggle=\"modal\" data-target=\"#myModal2\" onclick=\"getRowId(this)\">合同归档</a>" +
+                            // "<a href='#' style=\"margin-left: 10px;\" onclick=\"giveup(this)\">挂起</a>"+
+                            "</td>"
+                            + "</tr>");
+
+                        $("#customer").append('<option value="' + list1[i].customerCode + '">' + list1[i].customerName + "</option>");
+                        $("#customer2").append('<option value="' + list1[i].customerCode + '">' + list1[i].customerName + "</option>");
+
+                    }
+                    var list2 = data.list2;
+                    $("#allSecond").html("");
+                    for (var i = 0; i < list2.length; i++) {
+                        $("#allSecond").append("<tr>" +
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">" + list2[i].id + "</td>" +
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">" + list2[i].customerName + "</td>" +
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">" + list2[i].describe + "</td>" +
+                            // "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].deadline+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">" + list2[i].principalName + "</td>" +
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">" +
+                            "<a href='#' data-toggle=\"modal\" data-target=\"#myModal11\" onclick='getDetail(this)'>查看</a>" +
+                            // "<a href='#' data-toggle=\"modal\" data-target=\"#myModal2\" onclick=\"getRowId(this)\">合同归档</a>"+
+                            // "<a href='#' style=\"margin-left: 10px;\" onclick=\"giveup(this)\">挂起</a>"+
+                            "</td>"
+                            + "</tr>");
+                    }
+                }
+            })
+        } else {
+            var status = "eighth";
+            $.ajax({
+                type: "post",
+                data: {"status": status},
+                url: "findCanOperateAndOperatedByAdmin",
+                async: false,
+                success: function (data) {
+                    var list1 = data.list1;
+                    $("#allFirst").html("");
+                    $("#customer").html("");
+                    $("#customer").append("<option value='0'>" + "--请选择--" + "</option>");
+                    $("#customer2").html("");
+                    $("#customer2").append("<option value='0'>" + "--请选择--" + "</option>");
+                    for (var i = 0; i < list1.length; i++) {
+                        $("#allFirst").append("<tr>" +
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">" + list1[i].id + "</td>" +
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">" + list1[i].customerName + "</td>" +
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">" + list1[i].describe + "</td>" +
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">" + list1[i].deadline + "</td>" +
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">" + list1[i].principalName + "</td>" +
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">" +
+                            "<a href='#' data-toggle=\"modal\" data-target=\"#myModal2\" onclick=\"getRowId(this)\">合同归档</a>" +
+                            // "<a href='#' style=\"margin-left: 10px;\" onclick=\"giveup(this)\">挂起</a>"+
+                            "</td>"
+                            + "</tr>");
+
+                        $("#customer").append('<option value="' + list1[i].customerCode + '">' + list1[i].customerName + "</option>");
+                        $("#customer2").append('<option value="' + list1[i].customerCode + '">' + list1[i].customerName + "</option>");
+
+                    }
+                    var trs = document.getElementById("firstData").rows;
+                    for(var i = 0 ; i < trs.length ; i++){
+                        var cell = trs[i].cells[5];
+                        cell.style.display = 'none';
+                    }
+                    var list2 = data.list2;
+                    $("#allSecond").html("");
+                    for (var i = 0; i < list2.length; i++) {
+                        $("#allSecond").append("<tr>" +
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">" + list2[i].id + "</td>" +
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">" + list2[i].customerName + "</td>" +
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">" + list2[i].describe + "</td>" +
+                            // "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].deadline+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">" + list2[i].principalName + "</td>" +
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">" +
+                            "<a href='#' data-toggle=\"modal\" data-target=\"#myModal11\" onclick='getDetail(this)'>查看</a>" +
+                            // "<a href='#' data-toggle=\"modal\" data-target=\"#myModal2\" onclick=\"getRowId(this)\">合同归档</a>"+
+                            // "<a href='#' style=\"margin-left: 10px;\" onclick=\"giveup(this)\">挂起</a>"+
+                            "</td>"
+                            + "</tr>");
+                    }
+                }
+            })
+        }
+    }
+
+    function getOneByCustomer() {
+        var role = $("#funcInput").val();
+        if(role == "0"){
+            var customerName = $("#customerNameSearch").val();
+            var status = "eighth";
+            $.ajax({
+                type:"post",
+                data:{"customerName":customerName , "status":status},
+                url:"findCanOperateByName",
+                async:false,
+                success:function (data) {
+                    var list1 = data.list1;
+                    $("#allFirst").html("");
+                    for(var i = 0 ; i < list1.length ; i++) {
+                        $("#allFirst").append("<tr>" +
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">" + list1[i].id + "</td>" +
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">" + list1[i].customerName + "</td>" +
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">" + list1[i].describe + "</td>" +
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">" + list1[i].deadline + "</td>" +
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">" + list1[i].principalName + "</td>" +
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">" + "<a href='#' data-toggle=\"modal\" data-target=\"#myModal2\" onclick=\"getRowId(this)\">在线尽调</a>" +
+                            // "<a href='#' style=\"margin-left: 10px;\" onclick=\"giveup(this)\">挂起</a>"+
+                            "</td>"
+                            + "</tr>");
+                    }
+                    var list2 = data.list2;
+                    $("#allSecond").html("");
+                    for(var i = 0 ; i < list2.length ; i++){
+                        $("#allSecond").append("<tr>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].id+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].customerName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].describe+"</td>"+
+                            // "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].deadline+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].principalName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a href='#' data-toggle=\"modal\" data-target=\"#myModal11\" onclick='getDetail(this)'>查看</a>"+
+                            // "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a href='#' data-toggle=\"modal\" data-target=\"#myModal2\" onclick=\"getRowId(this)\">在线尽调</a>"+
+                            // "<a href='#' style=\"margin-left: 10px;\" onclick=\"giveup(this)\">挂起</a>"+
+                            "</td>"
+                            +"</tr>");
+                    }
+                }
+            })
+        }else{
+            var customerName = $("#customerNameSearch").val();
+            var status = "eighth";
+            $.ajax({
+                type:"post",
+                data:{"customerName":customerName , "status":status},
+                url:"findCanOperateByNameAndAdmin",
+                async:false,
+                success:function (data) {
+                    var list1 = data.list1;
+                    $("#allFirst").html("");
+                    for(var i = 0 ; i < list1.length ; i++) {
+                        $("#allFirst").append("<tr>" +
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">" + list1[i].id + "</td>" +
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">" + list1[i].customerName + "</td>" +
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">" + list1[i].describe + "</td>" +
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">" + list1[i].deadline + "</td>" +
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">" + list1[i].principalName + "</td>" +
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">" + "<a href='#' data-toggle=\"modal\" data-target=\"#myModal2\" onclick=\"getRowId(this)\">在线尽调</a>" +
+                            // "<a href='#' style=\"margin-left: 10px;\" onclick=\"giveup(this)\">挂起</a>"+
+                            "</td>"
+                            + "</tr>");
+                    }
+                    var trs = document.getElementById("firstData").rows;
+                    for(var i = 0 ; i < trs.length ; i++){
+                        var cell = trs[i].cells[5];
+                        cell.style.display = 'none';
+                    }
+                    var list2 = data.list2;
+                    $("#allSecond").html("");
+                    for(var i = 0 ; i < list2.length ; i++){
+                        $("#allSecond").append("<tr>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].id+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].customerName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].describe+"</td>"+
+                            // "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].deadline+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].principalName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a href='#' data-toggle=\"modal\" data-target=\"#myModal11\" onclick='getDetail(this)'>查看</a>"+
+                            // "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a href='#' data-toggle=\"modal\" data-target=\"#myModal2\" onclick=\"getRowId(this)\">在线尽调</a>"+
+                            // "<a href='#' style=\"margin-left: 10px;\" onclick=\"giveup(this)\">挂起</a>"+
+                            "</td>"
+                            +"</tr>");
+                    }
+                }
+            })
+        }
+
+    }
+
+    function giveup(obj) {
+        var i = obj.parentNode.parentNode.rowIndex;
+        var tab = document.getElementById("firstData");
+        var orderID = tab.rows[i].cells[0].innerHTML;
+        var d = confirm("是否挂起"+orderID+"该销售订单");
+        if(d == true){
+            $.ajax({
+                type:"post",
+                data:{"salePlanID":orderID},
+                url:"giveUpSalePlan",
+                async:false,
+                success:function (data) {
+                    if(data == "OK"){
+                        $.message({
+                            message:"销售订单已挂起",
+                            type:'success'
+                        });
+                        loadFirstPlan();
+                    }else{
+                        $.message({
+                            message:data,
+                            type:'error'
+                        })
+                    }
+                }
+
+            })
+        }else{
+
+        }
+    }
+
+    function getAllSaleMan() {
+        $.ajax({
+            type:"post",
+            url:"loadAllSaleMan",
+            async:false,
+            success:function (data) {
+                $("#applyer").html("");
+                $("#applyer").append("<option value='0'>"+"--请选择--"+"</option>");
+                for(var i = 0 ; i < data.length ; i++){
+                    $("#applyer").append('<option value="'+data[i].account+'">'+data[i].name+"</option>");
+                }
+            }
+        })
+    }
+
+    function getRowId(obj) {
+        var i = obj.parentNode.parentNode.rowIndex;
+        var tab = document.getElementById("firstData");
+        var orderID = tab.rows[i].cells[0].innerHTML;
+        var customerName = tab.rows[i].cells[1].innerHTML;
+        $("#customerName").val(customerName);
+        $("#customerID").val(orderID);
+
+        $.ajax({
+            type:"post",
+            data:{"salePlanID":orderID},
+            url:"getContract",
+            async:false,
+            success:function (data){
+                $("#contractFile").html("");
+               if(data != null){
+                   $("#contractFile").append("<a href='downLoadContractS?filename="+data+"'>"+data+"</a>");
+               }
+            }
+        })
+    }
+
+    function showSpends() {
+        $("#spends").show();
+    }
+
+    function hideSpends() {
+        $("#spends").hide();
+    }
+
+    function saveTravel() {
+        var customerCode = $("#customer option:selected").val();
+        var customerName = $("#customer option:selected").text();
+        var applyAccount = $("#applyer option:selected").val();
+        var applyName = $("#applyer option:selected").text();
+        var travelDate = $("#travelDate").val();
+        var travelTarget = $("#travelTarget").val();
+        var supportPerson = $("#supportPerson").val();
+        var spend = $("#spend").val();
+        var costType = $("#costType option:selected").val();
+        var costCenter = $("#costCenter").val();
+        var other = $("#other").val();
+        var processCode = "PC0001";
+        var processName = "介绍交流";
+        var data = {"customerCode":customerCode , "customerName":customerName , "applyAccount":applyAccount , "applyName":applyName , "travelDate":travelDate , "travelTarget":travelTarget , "supportPerson":supportPerson , "spend":spend , "costType":costType , "costCenter":costCenter , "other":other , "processCode":processCode , "processName":processName};
+        $.ajax({
+            type:"post",
+            data:data,
+            url:"createTravel",
+            async:false,
+            success:function (data) {
+                if(data == "OK"){
+                    $.message({
+                        message:"出差申请已提交,请等待审批",
+                        type:'success'
+                    });
+                    $("#myModal").modal('hide');
+                }else{
+                    $.message({
+                        message:data,
+                        type:'error'
+                    })
+                }
+            },
+        })
+    }
+
+    function saveTravelSum() {
+        var customer = $("#customer2 option:selected").val();
+        var travelSum = $("#travelSum").val();
+        var needSupport = $("#needSupport").val();
+        var trouble = $("#trouble").val();
+        var oppose = $("#oppose").val();
+        var nextPlan = $("#nextPlan").val();
+        var travel = $("#travelCost").val();
+        var eatting = $("#eattingCost").val();
+        var server = $("#serverCost").val();
+        var other = $("#otherCost").val();
+
+        var name = $("#voucher").val();
+        var picNames = name.split("\\");
+        var le = picNames.length - 1;
+        var targetFile = picNames[le];
+
+        var processCode = "PC0001";
+
+        var data = {"customer":customer , "travelSum":travelSum , "needSupport":needSupport , "trouble":trouble , "oppose":oppose , "nextPlan":nextPlan , "travelSpend":travel , "eatting":eatting , "server":server , "other":other , "fileName":targetFile , "processCode":processCode };
+        $.ajax({
+            type:"post",
+            data:data,
+            url:"saveTravelSum",
+            async:false,
+            success:function (data) {
+                if(data == "OK"){
+                    $.message({
+                        message:'报销申请已提交，请等待审批',
+                        type:'success'
+                    });
+                    $("#myModal3").modal('hide');
+                    $("#myModal4").modal('hide');
+                }else{
+                    $.message({
+                        message:data,
+                        type:'error'
+                    })
+                }
+            }
+        })
+    }
+
+    function saveImage() {
+        $.ajaxFileUpload({
+            type:"post",
+            fileElementId:"voucher",
+            url:"saveVoucher",
+            async:false,
+            dataType:'text',
+            success:function(data){
+                if(data == "文件上传成功"){
+                    // $.message({
+                    //     message:'文件上传成功',
+                    //     type:'success'
+                    // });
+                }else{
+                    $.message({
+                        message:data,
+                        type:'error'
+                    });
+                }
+            },
+            error:function(){
+                alert("设备类型文件上传出错");
+            }
+        })
+    }
+
+    function addFile() {
+        var salePlanID = $("#customerID").val();
+        var contractFileID = $("#contractFileCode").val();
+        var contractFileName = $("#contractFileName").val();
+        var fileName = $("#contractFile")[0].childNodes[0].innerText;
+        var productCode = $("#produceCode").val();
+        var productName = $("#productName").val();
+        var serverContent = $("#serverContent option:selected").val();
+        var trainAsk = $("#trainAsk option:selected").val();
+        var serverAsk = $("#serverAsk option:selected").val();
+        var clearWay = $("#clearWay option:selected").val();
+        var currency = $("#currency").text();
+        var parities = $("#currency").val();
+        var annualMoney = $("#annualMoney").val();
+        var concludeDate = $("#concludeDate").val();
+        var effectiveDate = $("#effectiveDate").val();
+        var deadline = $("#deadline").val();
+        var contractExplain = $("#contractExplain").val();
+        var price = $("#price").val();
+        var stewards = $("#steward").val();
+        var technicist = $("#technicist").val();
+        var operator = $("#operator").val();
+        var servers = $("#assistant").val();
+        var principals = $("#principal").val();
+        var cabinetAmount = $("#cabinetAmount").val();
+        var cabinetNum = $("#cabinetNum").val();
+        var cabinetSpend = $("#cabinetSpend").val();
+        var useTDMP = $("input[name='useTDMP']:checked").val();
+        var TDMPSpend = $("#TDMPSpend").val();
+        var payment = $("#payment").val();
+        var otherServer = $("#otherServer").val();
+        var remind = $("#remind").val();
+        var dispose = $("#dispose").val();
+
+        var data = {"salePlanID":salePlanID , "contractFileID":contractFileID , "contractFileName":contractFileName , "fileName":fileName , "productCode":productCode , "productName":productName , "serverContent":serverContent , "trainAsk":trainAsk , "serverAsk":serverAsk , "clearWay":clearWay , "currency":currency , "parities":parities , "annualMoney":annualMoney ,
+        "concludeDate":concludeDate , "effectiveDate":effectiveDate , "deadline":deadline , "contractExplain":contractExplain , "price":price , "stewards":stewards  , "technicist":technicist , "operator":operator, "servers":servers , "principals":principals , "cabinetAmount":cabinetAmount , "cabinetNum":cabinetNum , "cabinetSpend":cabinetSpend , "useTDMP":useTDMP , "TDMPSpend":TDMPSpend , "payment":payment , "otherServer":otherServer , "remind":remind , "dispose":dispose};
+        $.ajax({
+            type:"post",
+            data:data,
+            url:"saveAddFile",
+            async:false,
+            traditional: true,
+            success:function (data) {
+                if(data == "OK"){
+                    $.message({
+                        message:"合同已归档",
+                        type:'success'
+                    });
+                    $("#myModal2").modal('hide');
+                    loadFirstPlan();
+                }else{
+                    $.message({
+                        message:data,
+                        type:'error'
+                    })
+                }
+            }
+
+        })
+    }
+
+    function saveFile() {
+        $.ajaxFileUpload({
+            type:"post",
+            fileElementId:"contractFile",
+            url:"saveFileContract",
+            async:false,
+            dataType:'text',
+            success:function(data){
+                if(data == "文件上传成功"){
+                    // $.message({
+                    //     message:'文件上传成功',
+                    //     type:'success'
+                    // });
+                }else{
+                    $.message({
+                        message:data,
+                        type:'error'
+                    });
+                }
+            },
+            error:function(){
+                alert("设备类型文件上传出错");
+            }
+        })
+    }
+    
+    function showEmployeeBySteward() {
+        $("#myModal6").modal('show');
+        var deptName = "供应链";
+        $.ajax({
+            type:"post",
+            data:{"deptName":deptName},
+            url:"getGroupByDept",
+            async:false,
+            success:function (data) {
+                $("#groupList").html("");
+                for(var i = 0 ; i < data.length ; i++){
+                    var no = i + 1;
+                    $("#groupList").append("<tr>"
+                        +"<td style='display: none;'>"+data[i].groupCode+"</td>"
+                    +"<td>"+no+"</td>"
+                    +"<td>"+"<a href='#' onclick='getAllEmployee(this)'>"+data[i].groupName+"</a>"+"</td>"
+                        +"</tr>");
+                }
+            }
+        })
+    }
+
+    function getAllEmployee(obj) {
+        var deptName = "供应链";
+        var groupCode = obj.parentNode.parentNode.cells[0].innerText;
+        $.ajax({
+            type:"post",
+            data:{"deptName":deptName , "groupCode":groupCode},
+            url:"getEmployeeByDeptGroup",
+            async:false,
+            success:function (data) {
+                $("#employeeList").html("");
+                for(var i = 0 ; i < data.length ; i++){
+                    var no = i + 1;
+                    $("#employeeList").append("<tr>"
+                        +"<td style='display: none;'>"+data[i].account+"</td>"
+                    +"<td>"+no+"</td>"
+                    +"<td>"+data[i].name+"</td>"
+                    +"<td>"+"<a href='#' onclick='shooseSteward(this)'>选择</a>"+"</td>"
+                        +"</tr>");
+                }
+            }
+        })
+    }
+
+    function shooseSteward(obj) {
+        var stewardAccount = obj.parentNode.parentNode.cells[0].innerText;
+        var stewardName = obj.parentNode.parentNode.cells[2].innerText;
+        $("#steward").val(stewardAccount);
+        $("#steward2").val(stewardName);
+        $("#myModal6").modal('hide');
+    }
+
+    function showEmployeeByTechnicist() {
+        $("#myModal7").modal('show');
+        var deptName = "技术部";
+        $.ajax({
+            type:"post",
+            data:{"deptName":deptName},
+            url:"getGroupByDept",
+            async:false,
+            success:function (data) {
+                $("#groupList2").html("");
+                for(var i = 0 ; i < data.length ; i++){
+                    var no = i + 1;
+                    $("#groupList2").append("<tr>"
+                        +"<td style='display: none;'>"+data[i].groupCode+"</td>"
+                        +"<td>"+no+"</td>"
+                        +"<td>"+"<a href='#' onclick='getAllEmployee2(this)'>"+data[i].groupName+"</a>"+"</td>"
+                        +"</tr>");
+                }
+            }
+        })
+    }
+
+    function getAllEmployee2(obj) {
+        var deptName = "技术部";
+        var groupCode = obj.parentNode.parentNode.cells[0].innerText;
+        $.ajax({
+            type:"post",
+            data:{"deptName":deptName , "groupCode":groupCode},
+            url:"getEmployeeByDeptGroup",
+            async:false,
+            success:function (data) {
+                $("#employeeList2").html("");
+                for(var i = 0 ; i < data.length ; i++){
+                    var no = i + 1;
+                    $("#employeeList2").append("<tr>"
+                        +"<td style='display: none;'>"+data[i].account+"</td>"
+                        +"<td>"+no+"</td>"
+                        +"<td>"+data[i].name+"</td>"
+                        +"<td>"+"<a href='#' onclick='chooseTechnicist(this)'>选择</a>"+"</td>"
+                        +"</tr>");
+                }
+            }
+        })
+    }
+
+    function chooseTechnicist(obj) {
+        var stewardAccount = obj.parentNode.parentNode.cells[0].innerText;
+        var stewardName = obj.parentNode.parentNode.cells[2].innerText;
+        $("#technicist").val(stewardAccount);
+        $("#technicist2").val(stewardName);
+        $("#myModal7").modal('hide');
+    }
+
+    function showEmployeeByOperator() {
+        $("#myModal8").modal('show');
+        var deptName = "运营部";
+        $.ajax({
+            type:"post",
+            data:{"deptName":deptName},
+            url:"getGroupByDept",
+            async:false,
+            success:function (data) {
+                $("#groupList3").html("");
+                for(var i = 0 ; i < data.length ; i++){
+                    var no = i + 1;
+                    $("#groupList3").append("<tr>"
+                        +"<td style='display: none;'>"+data[i].groupCode+"</td>"
+                        +"<td>"+no+"</td>"
+                        +"<td>"+"<a href='#' onclick='getAllEmployee3(this)'>"+data[i].groupName+"</a>"+"</td>"
+                        +"</tr>");
+                }
+            }
+        })
+    }
+
+    function getAllEmployee3(obj) {
+        var deptName = "运营部";
+        var groupCode = obj.parentNode.parentNode.cells[0].innerText;
+        $.ajax({
+            type:"post",
+            data:{"deptName":deptName , "groupCode":groupCode},
+            url:"getEmployeeByDeptGroup",
+            async:false,
+            success:function (data) {
+                $("#employeeList3").html("");
+                for(var i = 0 ; i < data.length ; i++){
+                    var no = i + 1;
+                    $("#employeeList3").append("<tr>"
+                        +"<td style='display: none;'>"+data[i].account+"</td>"
+                        +"<td>"+no+"</td>"
+                        +"<td>"+data[i].name+"</td>"
+                        +"<td>"+"<a href='#' onclick='chooseOperator(this)'>选择</a>"+"</td>"
+                        +"</tr>");
+                }
+            }
+        })
+    }
+
+    function chooseOperator(obj) {
+        var stewardAccount = obj.parentNode.parentNode.cells[0].innerText;
+        var stewardName = obj.parentNode.parentNode.cells[2].innerText;
+        $("#operator").val(stewardAccount);
+        $("#operator2").val(stewardName);
+        $("#myModal8").modal('hide');
+    }
+
+    function showEmployeeByAssistant() {
+        $("#myModal9").modal('show');
+        var deptName = "市场部";
+        $.ajax({
+            type:"post",
+            data:{"deptName":deptName},
+            url:"getGroupByDept",
+            async:false,
+            success:function (data) {
+                $("#groupList4").html("");
+                for(var i = 0 ; i < data.length ; i++){
+                    var no = i + 1;
+                    $("#groupList4").append("<tr>"
+                        +"<td style='display: none;'>"+data[i].groupCode+"</td>"
+                        +"<td>"+no+"</td>"
+                        +"<td>"+"<a href='#' onclick='getAllEmployee4(this)'>"+data[i].groupName+"</a>"+"</td>"
+                        +"</tr>");
+                }
+            }
+        })
+    }
+
+    function getAllEmployee4(obj) {
+        var deptName = "市场部";
+        var role = "assistant";
+        var groupCode = obj.parentNode.parentNode.cells[0].innerText;
+        $.ajax({
+            type:"post",
+            data:{"deptName":deptName , "groupCode":groupCode , "role":role},
+            url:"getEmployeeByDeptGroupRole",
+            async:false,
+            success:function (data) {
+                $("#employeeList4").html("");
+                for(var i = 0 ; i < data.length ; i++){
+                    var no = i + 1;
+                    $("#employeeList4").append("<tr>"
+                        +"<td style='display: none;'>"+data[i].account+"</td>"
+                        +"<td>"+no+"</td>"
+                        +"<td>"+data[i].name+"</td>"
+                        +"<td>"+"<a href='#' onclick='chooseAssistant(this)'>选择</a>"+"</td>"
+                        +"</tr>");
+                }
+            }
+        })
+    }
+
+    function chooseAssistant(obj) {
+        var stewardAccount = obj.parentNode.parentNode.cells[0].innerText;
+        var stewardName = obj.parentNode.parentNode.cells[2].innerText;
+        $("#assistant").val(stewardAccount);
+        $("#assistant2").val(stewardName);
+        $("#myModal9").modal('hide');
+    }
+
+    function showEmployeeByManager() {
+        $("#myModal10").modal('show');
+        var deptName = "市场部";
+        $.ajax({
+            type:"post",
+            data:{"deptName":deptName},
+            url:"getGroupByDept",
+            async:false,
+            success:function (data) {
+                $("#groupList5").html("");
+                for(var i = 0 ; i < data.length ; i++){
+                    var no = i + 1;
+                    $("#groupList5").append("<tr>"
+                        +"<td style='display: none;'>"+data[i].groupCode+"</td>"
+                        +"<td>"+no+"</td>"
+                        +"<td>"+"<a href='#' onclick='getAllEmployee5(this)'>"+data[i].groupName+"</a>"+"</td>"
+                        +"</tr>");
+                }
+            }
+        })
+    }
+
+    function getAllEmployee5(obj) {
+        var deptName = "市场部";
+        var role = "manager";
+        var groupCode = obj.parentNode.parentNode.cells[0].innerText;
+        $.ajax({
+            type:"post",
+            data:{"deptName":deptName , "groupCode":groupCode , "role":role},
+            url:"getEmployeeByDeptGroupRole",
+            async:false,
+            success:function (data) {
+                $("#employeeList5").html("");
+                for(var i = 0 ; i < data.length ; i++){
+                    var no = i + 1;
+                    $("#employeeList5").append("<tr>"
+                        +"<td style='display: none;'>"+data[i].account+"</td>"
+                        +"<td>"+no+"</td>"
+                        +"<td>"+data[i].name+"</td>"
+                        +"<td>"+"<a href='#' onclick='chooseManager(this)'>选择</a>"+"</td>"
+                        +"</tr>");
+                }
+            }
+        })
+    }
+
+    function chooseManager(obj) {
+        var stewardAccount = obj.parentNode.parentNode.cells[0].innerText;
+        var stewardName = obj.parentNode.parentNode.cells[2].innerText;
+        $("#principal").val(stewardAccount);
+        $("#principal2").val(stewardName);
+        $("#myModal10").modal('hide');
+    }
+
+    function getDetail(obj) {
+        var salePlanID =  obj.parentNode.parentNode.cells[0].innerHTML;
+        $.ajax({
+            type:"post",
+            data:{"salePlanID":salePlanID},
+            url:"showAllContractInfo",
+            async:false,
+            success:function (data) {
+                $("#customerName3").val(data.customerName);
+                $("#contractFileCode3").val(data.contractFileID);
+                $("#contractFileName3").val(data.contractFileName);
+                $("#produceCode3").val(data.productCode);
+                $("#productName3").val(data.productName);
+                var selectid = document.getElementById("serverContent3");
+                for(i=0;i<selectid.length;i++){
+                    if(selectid[i].value==data.serverContent)
+                        selectid[i].selected = true;
+                }
+                var selectid2 = document.getElementById("clearWay3");
+                for(i=0;i<selectid2.length;i++){
+                    if(selectid2[i].value==data.clearWay)
+                        selectid2[i].selected = true;
+                }
+                $("#currency3").val(data.currency);
+                $("#parities3").val(data.parities);
+                $("#annualMoney3").val(data.annualMoney);
+                $("#concludeDate3").val(data.concludeDate);
+                $("#effectiveDate3").val(data.effectiveDate);
+                $("#deadline3").val(data.deadline);
+                $("#contractExplain3").val(data.contractExplain);
+                $("#price3").val(data.price);
+                $("#serverAsk3").val(data.serverAsk);
+                $("#steward3").val(data.operator);
+                $("#technist3").val(data.technicist);
+                $("#assistant3").val(data.server);
+                $("#operator3").val(data.steward);
+                $("#cabinetAmount3").val(data.cabineAmount);
+                $("#cabinetNum3").val(data.cabineNum);
+                $("#cabinetSpend3").val(data.cabineSpend);
+                if(data.useTDMP=="是"){
+                    $("#inc1").removeAttr("checked");
+                    $("#inc0").attr("checked","checked");
+                }else{
+                    $("#inc0").removeAttr("checked");
+                    $("#inc1").attr("checked","checked");
+                }
+                $("#TDMPSpend3").val(data.tdmpSpend);
+                $("#payment3").val(data.payment);
+                $("#otherServer3").val(data.otherServer);
+                $("#remind3").val(data.remind);
+                $("#dispose3").val(data.dispose);
+
+            }
+        })
+    }
+
+</script>
+<style>
+    #mainContent{
+        overflow:hidden;
+        width:100%;
+    }
+
+    #myTabContent{
+        width:calc(100% + 15px);/*使滚动条超出当前元素的父元素边界，而父元素设置了overflow为hidden，使溢出内容隐藏，即隐藏了滚动条*/
+        height:550px;
+        padding-right:15px;
+        box-sizing:content-box;/*兼容ie，使盒模型为w3c盒模型*/
+        overflow-y:scroll;/*控制能沿y轴滚动*/
+    }
+    #firstData{
+        width:100%;
+    }
+    #secondData{
+        width: 100%;
+    }
+</style>
+</body>
+</html>

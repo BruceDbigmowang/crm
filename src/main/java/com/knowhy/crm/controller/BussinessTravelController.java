@@ -196,17 +196,25 @@ public class BussinessTravelController {
     }
 
     @RequestMapping("/setTravelRefuse")
-    public String refuseTravel(HttpSession session , String reqNum){
+    public String refuseTravel(HttpSession session , String reqNum , String note){
         IUser user = (IUser)session.getAttribute("user");
         String account = user.getAccount();
         int next = reqService.getNextNode(account);
         TravelReq req = reqDAO.getOne(reqNum);
         String travelID = req.getLeafId();
         BussinessTravel travel = travelDAO.getOne(travelID);
+        if(note == null || "".equals(note)){
+            return "请填写退回原因";
+        }else{
+            req.setNote(note);
+            travel.setNote(note);
+        }
         try{
             req.setStatus("refuse");
+            travel.setTravelStatus("refuse");
             req.setStatusName("已退回");
             reqDAO.save(req);
+            travelDAO.save(travel);
         }catch (Exception e){
             return e.getMessage();
         }
@@ -375,7 +383,7 @@ public class BussinessTravelController {
 
     @RequestMapping("/setReimburseRefuse")
     @Transactional
-    public String refuseReimburse(String reqNum , HttpSession session){
+    public String refuseReimburse(String reqNum , String note , HttpSession session){
         IUser user = (IUser)session.getAttribute("user");
         String account = user.getAccount();
         try{
@@ -383,10 +391,18 @@ public class BussinessTravelController {
 
             req.setStatus("refuse");
             req.setStatusName("已退回");
+            if(note == null || "".equals(note)){
+                return "请填写退回原因";
+            }else{
+                req.setNote(note);
+            }
             reqDAO.save(req);
 
             String rId = req.getLeafId();
             Reimburse reimburse = reimburseDAO.getOne(rId);
+            reimburse.setReimburseStatus("refuse");
+            reimburse.setNote(note);
+            reimburseDAO.save(reimburse);
             BussinessTravel travel = travelDAO.getOne(reimburse.getTravelID());
             travel.setTravelStatus("O");
             travelDAO.save(travel);

@@ -25,6 +25,7 @@ public class TravelReq {
     String maker;
     String makerName;
     LocalDate makeDate;
+    String note;
 
     public String getReqNum() {
         return reqNum;
@@ -120,5 +121,13 @@ public class TravelReq {
 
     public void setMakeDate(LocalDate makeDate) {
         this.makeDate = makeDate;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
     }
 }

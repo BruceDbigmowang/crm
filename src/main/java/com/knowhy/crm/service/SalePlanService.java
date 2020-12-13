@@ -75,7 +75,15 @@ public class SalePlanService {
     }
 
     public List<SalesPlan> findAllCanOperate(String account , String status){
-        return salesPlanDAO.findByPlanStatus(status);
+//        return salesPlanDAO.findByPlanStatus(status);
+        String saleArrange = "C";
+        return salesPlanDAO.findByPrincipalAndPlanStatusAndSaleArrange(account , status , saleArrange);
+    }
+
+    public List<SalesPlan> findAllCanOperateByName(String account , String status , String customerName){
+//        return salesPlanDAO.findByPlanStatus(status);
+        String saleArrange = "C";
+        return salesPlanDAO.findByCustomerNameLikeAndPrincipalAndPlanStatusAndSaleArrange(customerName , account , status , saleArrange);
     }
 
     public int getStep(String salePlanID){
@@ -85,6 +93,15 @@ public class SalePlanService {
             return 1;
         }else{
             return step;
+        }
+    }
+
+    public SalesPlan findByCustomerCode(String customerCode){
+        List<SalesPlan> salesPlanList = salesPlanDAO.findByCustomerCode(customerCode);
+        if(salesPlanList != null && salesPlanList.size() > 0){
+            return salesPlanList.get(0);
+        }else{
+            return null;
         }
     }
 }

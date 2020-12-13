@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<title>客户管理——地区配置</title>
+<head th:include="include/fore/newHeader::html" ></head>
+<body>
+<div id="workingArea">
+    <div th:replace="include/fore/top::html" ></div>
+    <div th:replace="include/fore/leftMenu::html" ></div>
+    <div th:replace="include/fore/homePages/customerManage/customerMaintain/areaPage::html" ></div>
+</div>
+<script>
+    $(function () {
+        getAllArea();
+    })
+
+    function getAllArea() {
+        $.ajax({
+            type:"post",
+            url:"getAllArea",
+            async:false,
+            success:function (data) {
+                $("#allFirst").html("");
+                for(var i = 0 ; i < data.length ; i++){
+                    var no = i + 1;
+                    $("#allFirst").append("<tr>"+
+                        "<td style='display: none'>"+data[i].id+"</td>"+
+                    "<td>"+no+"</td>"+
+                    "<td>"+data[i].areaName+"</td>"+
+                    "<td>"+"<a href='#' data-toggle=\"modal\" data-target=\"#myModal\" onclick='getProvinceOrNot(this)'>查询</a>"+"</td>"+
+                        "</tr>")
+                }
+            }
+        })
+    }
+
+    function getProvinceOrNot(obj) {
+        var aId = obj.parentNode.parentNode.cells[0].innerText;
+        $("#areaId").val(aId);
+        $.ajax({
+            type:"post",
+            data:{"aId":aId},
+            url:"findProvinceByArea",
+            async:false,
+            success:function (data) {
+                $("#hasProvince").html("");
+                $("#hasNotProvince").html("");
+                var list1 = data.list1;
+                var list2 = data.list2;
+                for(var i = 0 ; i < list1.length ; i++){
+                    var no = i + 1;
+                    $("#hasProvince").append("<tr>"+
+                        "<td style='display: none'>"+list1[i].id+"</td>"+
+                    "<td>"+no+"</td>"+
+                    "<td>"+list1[i].provinceName+"</td>"+
+                        "</tr>");
+                }
+                for(var i = 0 ; i < list2.length ; i++){
+                    var no = i + 1;
+                    $("#hasNotProvince").append("<tr>"+
+                        "<td style='display: none'>"+list2[i].id+"</td>"+
+                        "<td>"+no+"</td>"+
+                        "<td>"+list2[i].provinceName+"</td>"+
+                        "<td>"+"<a href='#' onclick='addProvinceToArea(this)'>添加</a>"+"</td>"+
+                        "</tr>");
+                }
+            }
+        })
+    }
+
+    function getProvince() {
+        var aId = $("#areaId").val();
+        $("#areaId").val(aId);
+        $.ajax({
+            type:"post",
+            data:{"aId":aId},
+            url:"findProvinceByArea",
+            async:false,
+            success:function (data) {
+                $("#hasProvince").html("");
+                $("#hasNotProvince").html("");
+                var list1 = data.list1;
+                var list2 = data.list2;
+                for(var i = 0 ; i < list1.length ; i++){
+                    var no = i + 1;
+                    $("#hasProvince").append("<tr>"+
+                        "<td style='display: none'>"+list1[i].id+"</td>"+
+                        "<td>"+no+"</td>"+
+                        "<td>"+list1[i].provinceName+"</td>"+
+                        "</tr>");
+                }
+                for(var i = 0 ; i < list2.length ; i++){
+                    var no = i + 1;
+                    $("#hasNotProvince").append("<tr>"+
+                        "<td style='display: none'>"+list2[i].id+"</td>"+
+                        "<td>"+no+"</td>"+
+                        "<td>"+list2[i].provinceName+"</td>"+
+                        "<td>"+"<a href='#' onclick='addProvinceToArea(this)'>添加</a>"+"</td>"+
+                        "</tr>");
+                }
+            }
+        })
+    }
+
+    function addProvinceToArea(obj) {
+        var aId = $("#areaId").val();
+        var pId = obj.parentNode.parentNode.cells[0].innerText;
+        $.ajax({
+            type:"post",
+            data:{"aId":aId , "pId":pId},
+            url:"updateProvince",
+            async:false,
+            success:function (data) {
+                if(data == "OK"){
+                    $.message({
+                        message:"已添加",
+                        type:'success'
+                    });
+                    getProvince();
+                }else{
+                    $.message({
+                        message:data,
+                        type:'error'
+                    })
+                }
+            }
+        })
+    }
+</script>
+</body>
+</html>

@@ -1,13 +1,9 @@
 package com.knowhy.crm.controller;
 
-import com.knowhy.crm.dao.CustomerDAO;
-import com.knowhy.crm.dao.SaleManDAO;
-import com.knowhy.crm.dao.SalesPlanDAO;
-import com.knowhy.crm.pojo.Customer;
-import com.knowhy.crm.pojo.IUser;
-import com.knowhy.crm.pojo.SaleMan;
-import com.knowhy.crm.pojo.SalesPlan;
+import com.knowhy.crm.dao.*;
+import com.knowhy.crm.pojo.*;
 import com.knowhy.crm.service.CustomerService;
+import com.knowhy.crm.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpSession;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -28,14 +25,36 @@ public class CustomerPoolController {
     SalesPlanDAO salesPlanDAO;
     @Autowired
     CustomerDAO customerDAO;
+    @Autowired
+    TaskDAO taskDAO;
+    @Autowired
+    TaskService taskService;
+    @Autowired
+    TaskSumDAO taskSumDAO;
 
     @RequestMapping("/loadAllSaleMan")
     public List<SaleMan> getAllSaleMan(){
         return saleManDAO.findAll();
     }
 
+    @RequestMapping("/selectSaleManByCondition")
+    public List<SaleMan> selectSaleMan(String condition){
+        condition = "%"+condition+"%";
+        List<SaleMan> saleManList = new ArrayList<>();
+        List<SaleMan> saleManList1 = saleManDAO.findByAccountLike(condition);
+        for(SaleMan saleMan : saleManList1){
+            saleManList.add(saleMan);
+        }
+        List<SaleMan> saleManList2 = saleManDAO.findByNameLike(condition);
+        for(SaleMan saleMan : saleManList2){
+            saleManList.add(saleMan);
+        }
+        return saleManList;
+    }
+
     @RequestMapping("/arrangeCustomer")
-    public String toArrange(String ids , String account){
+    public String toArrange(String ids , String account , HttpSession session){
+        IUser user = (IUser)session.getAttribute("user");
         if(account.equals("0")){
             return "请选择销售人员";
         }
@@ -44,11 +63,11 @@ public class CustomerPoolController {
             return "请选择客户";
         }else{
             String[] IDS = ids.split(",");
-//            try{
-                customerService.arrangeCustomer(IDS , account , name);
-//            }catch (Exception e){
-//                return e.getMessage();
-//            }
+            try{
+                customerService.arrangeCustomer(IDS , account , name , user.getAccount());
+            }catch (Exception e){
+                return e.getMessage();
+            }
         }
         return "分配成功";
     }
@@ -67,6 +86,9 @@ public class CustomerPoolController {
 
         //修改销售计划表中的数据
         SalesPlan salesPlan = salesPlanDAO.findByCustomerCode(salePlanID).get(0);
+        salesPlan.setUpdateDate(LocalDate.now());
+        salesPlan.setSpendTime(7);
+        salesPlan.setDeadline(LocalDate.now().plusDays(7));
         String follow = salesPlan.getAllOperator();
         if(follow != null && !"".equals(follow)){
             follow = follow+","+account;
@@ -76,10 +98,31 @@ public class CustomerPoolController {
         salesPlan.setPrincipal(account);
         salesPlan.setPrincipalName(name);
         salesPlan.setAllOperator(follow);
+        salesPlan.setSaleArrange("O");
 //            salesPlan.setPlanStatus("first");
         try{
             customerDAO.save(customer);
             salesPlanDAO.save(salesPlan);
+
+            Task task = new Task();
+            task.setSalePlanID(salesPlan.getId());
+            task.setCustomerCode(salesPlan.getCustomerCode());
+            task.setCustomerName(salesPlan.getCustomerName());
+            task.setPrincipal(user.getAccount());
+            task.setJobName("销售排程");
+            task.setDescription("一级预警提醒");
+            task.setJobLevel(1);
+            task.setDeadline(LocalDate.now());
+            task.setRemainTime(0);
+            task.setReceiver(user.getAccount());
+            task.setExceedTime(0);
+            task.setCreater(user.getAccount());
+            task.setCreateDate(LocalDate.now());
+            task.setAuthority("sb");
+            taskDAO.save(task);
+
+            taskService.saveTask(salePlanID , "销售排程"  , "foreArrangeSale" , LocalDate.now() , 1);
+
         }catch (Exception e){
             return e.getMessage();
         }
@@ -101,14 +144,38 @@ public class CustomerPoolController {
             String customerID = salePlan.getCustomerCode();
             salePlan.setPrincipal(null);
             salePlan.setPrincipalName(null);
+            salePlan.setUpdateDate(LocalDate.now());
             salesPlanDAO.save(salePlan);
             Customer customer = customerDAO.getOne(customerID);
             customer.setFollowStatus("O");
             customer.setFollowPerson(null);
             customer.setFollowName(null);
             customerDAO.save(customer);
+            //删除客户的同时，删除与之相关的所有任务信息
+            System.out.println(reqNum);
+            taskDAO.deleteBySalePlanID(reqNum);
+            System.out.println("删除任务表1");
+            taskSumDAO.deleteBySalePlanID(reqNum);
+            System.out.println("删除任务表2");
+
         }catch (Exception e){
             return e.getMessage();
+        }
+        return "OK";
+    }
+
+    @RequestMapping("/deleteCustomer")
+    public String toDeleteCustomer(String[] customerIDs){
+        for(String customerID : customerIDs){
+            try{
+                customerService.deleteCustomer(customerID);
+                SalesPlan salesPlan = salesPlanDAO.findByCustomerCode(customerID).get(0);
+                taskDAO.deleteBySalePlanID(salesPlan.getId());
+                System.out.println("CustomerPoolController");
+                taskSumDAO.deleteBySalePlanID(salesPlan.getId());
+            }catch (Exception e){
+                return e.getMessage();
+            }
         }
         return "OK";
     }

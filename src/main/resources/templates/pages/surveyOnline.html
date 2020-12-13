@@ -10,6 +10,7 @@
 </div>
 <script>
     $(function () {
+        judgeFunc();
         loadFirstPlan();
         getAllSaleMan();
     });
@@ -18,31 +19,207 @@
         elem: '#travelDate' //指定元素
     });
 
-    function loadFirstPlan() {
-        var status = "third";
+    function judgeFunc() {
         $.ajax({
             type:"post",
-            data:{"status":status},
-            url:"findCanOperate",
+            url:"getSaleRole",
             async:false,
             success:function (data) {
-                $("#allFirst").html("");
-                for(var i = 0 ; i < data.length ; i++){
-                    $("#allFirst").append("<tr>"+
-                        "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+data[i].id+"</td>"+
-                        "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+data[i].customerName+"</td>"+
-                        "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+data[i].describe+"</td>"+
-                        "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+data[i].principalName+"</td>"+
-                        "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a href='#' data-toggle=\"modal\" data-target=\"#myModal2\" onclick=\"getRowId(this)\">在线尽调</a>"+
-                        "<a href='#' style=\"margin-left: 10px;\" onclick=\"giveup(this)\">挂起</a>"+
-                        "</td>"
-                        +"</tr>");
-
-                    $("#customer").append('<option value="'+data[i].customerCode+'">'+data[i].customerName+"</option>");
-                    $("#customer2").append('<option value="'+data[i].customerCode+'">'+data[i].customerName+"</option>");
-                }
+                $("#funcInput").val(data);
             }
         })
+    }
+
+    function loadFirstPlan() {
+        var role = $("#funcInput").val();
+        if(role == "0"){
+            var status = "third";
+            $.ajax({
+                type:"post",
+                data:{"status":status},
+                url:"findCanOperateAndOperated",
+                async:false,
+                success:function (data) {
+                    var list1 = data.list1;
+                    $("#allFirst").html("");
+                    $("#customer").html("");
+                    $("#customer2").html("");
+                    for(var i = 0 ; i < list1.length ; i++){
+                        $("#allFirst").append("<tr>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].id+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].customerName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].describe+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].deadline+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].principalName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a href='#' data-toggle=\"modal\" data-target=\"#myModal2\" onclick=\"getRowId(this)\">在线尽调</a>"+
+                            // "<a href='#' style=\"margin-left: 10px;\" onclick=\"giveup(this)\">挂起</a>"+
+                            "</td>"
+                            +"</tr>");
+
+                        $("#customer").append('<option value="'+list1[i].customerCode+'">'+list1[i].customerName+"</option>");
+                        $("#customer2").append('<option value="'+list1[i].customerCode+'">'+list1[i].customerName+"</option>");
+                    }
+                    var list2 = data.list2;
+                    $("#allSecond").html("");
+                    for(var i = 0 ; i < list2.length ; i++){
+                        $("#allSecond").append("<tr>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].id+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].customerName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].describe+"</td>"+
+                            // "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].deadline+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].principalName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a href='#' data-toggle=\"modal\" data-target=\"#myModal5\" onclick='loadSearchData(this)'>查看</a>"+
+                            // "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a href='#' data-toggle=\"modal\" data-target=\"#myModal2\" onclick=\"getRowId(this)\">在线尽调</a>"+
+                            // "<a href='#' style=\"margin-left: 10px;\" onclick=\"giveup(this)\">挂起</a>"+
+                            "</td>"
+                            +"</tr>");
+                    }
+                }
+            })
+        }else{
+            var status = "third";
+            $.ajax({
+                type:"post",
+                data:{"status":status},
+                url:"findCanOperateAndOperatedByAdmin",
+                async:false,
+                success:function (data) {
+                    var list1 = data.list1;
+                    $("#allFirst").html("");
+                    $("#customer").html("");
+                    $("#customer2").html("");
+                    for(var i = 0 ; i < list1.length ; i++){
+                        $("#allFirst").append("<tr>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].id+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].customerName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].describe+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].deadline+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].principalName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a href='#' data-toggle=\"modal\" data-target=\"#myModal2\" onclick=\"getRowId(this)\">在线尽调</a>"+
+                            // "<a href='#' style=\"margin-left: 10px;\" onclick=\"giveup(this)\">挂起</a>"+
+                            "</td>"
+                            +"</tr>");
+
+                        $("#customer").append('<option value="'+list1[i].customerCode+'">'+list1[i].customerName+"</option>");
+                        $("#customer2").append('<option value="'+list1[i].customerCode+'">'+list1[i].customerName+"</option>");
+                    }
+                    var trs = document.getElementById("firstData").rows;
+                    for(var i = 0 ; i < trs.length ; i++){
+                        var cell = trs[i].cells[5];
+                        cell.style.display = 'none';
+                    }
+                    var list2 = data.list2;
+                    $("#allSecond").html("");
+                    for(var i = 0 ; i < list2.length ; i++){
+                        $("#allSecond").append("<tr>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].id+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].customerName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].describe+"</td>"+
+                            // "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].deadline+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].principalName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a href='#' data-toggle=\"modal\" data-target=\"#myModal5\" onclick='loadSearchData(this)'>查看</a>"+
+                            // "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a href='#' data-toggle=\"modal\" data-target=\"#myModal2\" onclick=\"getRowId(this)\">在线尽调</a>"+
+                            // "<a href='#' style=\"margin-left: 10px;\" onclick=\"giveup(this)\">挂起</a>"+
+                            "</td>"
+                            +"</tr>");
+                    }
+                }
+            })
+        }
+
+
+    }
+
+
+    function getOneByCustomer() {
+        var role = $("#funcInput").val();
+        if(role == "0"){
+            var customerName = $("#customerNameSearch").val();
+            var status = "third";
+            $.ajax({
+                type:"post",
+                data:{"customerName":customerName , "status":status},
+                url:"findCanOperateByName",
+                async:false,
+                success:function (data) {
+                    var list1 = data.list1;
+                    $("#allFirst").html("");
+                    for(var i = 0 ; i < list1.length ; i++) {
+                        $("#allFirst").append("<tr>" +
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">" + list1[i].id + "</td>" +
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">" + list1[i].customerName + "</td>" +
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">" + list1[i].describe + "</td>" +
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">" + list1[i].deadline + "</td>" +
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">" + list1[i].principalName + "</td>" +
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">" + "<a href='#' data-toggle=\"modal\" data-target=\"#myModal2\" onclick=\"getRowId(this)\">在线尽调</a>" +
+                            // "<a href='#' style=\"margin-left: 10px;\" onclick=\"giveup(this)\">挂起</a>"+
+                            "</td>"
+                            + "</tr>");
+                    }
+                    var list2 = data.list2;
+                    $("#allSecond").html("");
+                    for(var i = 0 ; i < list2.length ; i++){
+                        $("#allSecond").append("<tr>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].id+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].customerName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].describe+"</td>"+
+                            // "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].deadline+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].principalName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a href='#' data-toggle=\"modal\" data-target=\"#myModal5\" onclick='loadSearchData(this)'>查看</a>"+
+                            // "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a href='#' data-toggle=\"modal\" data-target=\"#myModal2\" onclick=\"getRowId(this)\">在线尽调</a>"+
+                            // "<a href='#' style=\"margin-left: 10px;\" onclick=\"giveup(this)\">挂起</a>"+
+                            "</td>"
+                            +"</tr>");
+                    }
+                }
+            })
+        }else{
+            var customerName = $("#customerNameSearch").val();
+            var status = "third";
+            $.ajax({
+                type:"post",
+                data:{"customerName":customerName , "status":status},
+                url:"findCanOperateByNameAndAdmin",
+                async:false,
+                success:function (data) {
+                    var list1 = data.list1;
+                    $("#allFirst").html("");
+                    for(var i = 0 ; i < list1.length ; i++) {
+                        $("#allFirst").append("<tr>" +
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">" + list1[i].id + "</td>" +
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">" + list1[i].customerName + "</td>" +
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">" + list1[i].describe + "</td>" +
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">" + list1[i].deadline + "</td>" +
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">" + list1[i].principalName + "</td>" +
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">" + "<a href='#' data-toggle=\"modal\" data-target=\"#myModal2\" onclick=\"getRowId(this)\">在线尽调</a>" +
+                            // "<a href='#' style=\"margin-left: 10px;\" onclick=\"giveup(this)\">挂起</a>"+
+                            "</td>"
+                            + "</tr>");
+                    }
+                    var trs = document.getElementById("firstData").rows;
+                    for(var i = 0 ; i < trs.length ; i++){
+                        var cell = trs[i].cells[5];
+                        cell.style.display = 'none';
+                    }
+                    var list2 = data.list2;
+                    $("#allSecond").html("");
+                    for(var i = 0 ; i < list2.length ; i++){
+                        $("#allSecond").append("<tr>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].id+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].customerName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].describe+"</td>"+
+                            // "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].deadline+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].principalName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a href='#' data-toggle=\"modal\" data-target=\"#myModal5\" onclick='loadSearchData(this)'>查看</a>"+
+                            // "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a href='#' data-toggle=\"modal\" data-target=\"#myModal2\" onclick=\"getRowId(this)\">在线尽调</a>"+
+                            // "<a href='#' style=\"margin-left: 10px;\" onclick=\"giveup(this)\">挂起</a>"+
+                            "</td>"
+                            +"</tr>");
+                    }
+                }
+            })
+        }
+
     }
 
     function giveup(obj) {
@@ -859,6 +1036,7 @@
                         type:'success'
                     });
                     $("#myModal4").modal('hide');
+                    cleanUpPage();
                 }else{
                     $.message({
                         message:data,
@@ -869,8 +1047,400 @@
         })
     }
 
+    function cleanUpPage() {
+        $("#travelDate").val("");
+        $("#travelTarget").val("");
+        $("#supportPerson").val("");
+        $("#spend").val("");
+        $("#costCenter").val("");
+        $("#other").val("");
+        $("#travelSum").val("");
+        $("#needSupport").val("");
+        $("#trouble").val("");
+        $("#oppose").val("");
+        $("#nextPlan").val("");
+        $("#travelCost").val("");
+        $("#eattingCost").val("");
+        $("#serverCost").val("");
+        $("#otherCost").val("");
+        $("#voucher").val("");
+    }
 
+    function loadSearchData(obj) {
+        var salePlanID = obj.parentNode.parentNode.cells[0].innerText;
+        $("#salePlanID").val(salePlanID);
+        searchFirst();
+    }
+
+    function searchFirst() {
+        var salePlanID = $("#salePlanID").val();
+        $.ajax({
+            type:"post",
+            data:{"salePlanID":salePlanID},
+            url:"loadCompanyDataOnline",
+            async:false,
+            success:function (data) {
+                $("#mainPart").html("");
+                $("#mainPart").append('<table class="table">'+"<tr>"+"<td style=\"font-size: 14px;\">公司的全称</td>"+"<td>"+data.companyName+"</td>"+"</tr>" +
+                    "                        <tr>" +
+                    "                            <td style=\"font-size: 14px;\">联系人姓名</td>" +
+                    "                            <td>"+data.contact+"</td>" +
+                    "                        </tr>\n" +
+                    "                        <tr>\n" +
+                    "                            <td style=\"font-size: 14px;\">联系方式</td>\n" +
+                    "                            <td>"+data.contactWay+"</td>\n" +
+                    "                        </tr>\n" +
+                    "                        <tr id=\"wechat\">\n" +
+                    "                            <td style=\"font-size: 14px;\">微信号</td>\n" +
+                    "                            <td style=\"font-size: 14px;\">"+data.wechatNum+"</td>\n" +
+                    "                        </tr>"+
+                    "<tr>\n" +
+                    "            <td style=\"font-size: 14px;vertical-align: inherit;\">公司的注册资本</td>\n" +
+                    "            <td style=\"font-size: 14px;\">\n" +data.registerMoney+ "</td>\n" +
+                    "        </tr>\n" +
+                    "        <tr>\n" +
+                    "            <td style=\"font-size: 14px;vertical-align: inherit;\">公司成立于</td>\n" +
+                    "            <td style=\"font-size: 14px;\">\n" +data.establishTime+"            </td>\n" +
+                    "        </tr>\n" +
+                    "        <tr>\n" +
+                    "            <td style=\"font-size: 14px;vertical-align: inherit;\">公司的性质</td>\n" +
+                    "            <td style=\"font-size: 14px;\">\n"+data.bussinessNature+"</td>\n" +
+                    "        </tr>\n" +
+                    "        <tr>\n" +
+                    "            <td style=\"font-size: 14px;vertical-align: inherit;\">公司有几个子公司</td>\n" +
+                    "            <td style=\"font-size: 14px;\">\n"+data.sonCompanyNum+"</td>\n" +
+                    "        </tr>\n" +
+                    "        <tr>\n" +
+                    "            <td style=\"font-size: 14px;\">公司员工数量</td>\n" +
+                    "            <td style=\"font-size: 14px;\">\n"+data.employeeNum+"</td>\n" +
+                    "        </tr>"+
+                    "<tr>\n" +
+                    "            <td style=\"font-size: 14px;\">公司所在的行业</td>\n" +
+                    "            <td>\n" +data.industry+"</td>\n" +
+                    "        </tr>\n" +
+                    "        <tr>"+
+                    "            <td style=\"font-size: 14px;\">公司是该行业的</td>\n" +
+                    "            <td>\n" +data.industryNature+"</td>\n" +
+                    +"</tr>\n" +
+                    "        <tr>"+
+                    "            <td style=\"font-size: 14px;\">公司产品</td>\n" +
+                    "            <td>\n" +data.product+"</td>\n" +
+                    +"</tr>\n" +
+                    "</table>");
+                $("#footerPart").html("");
+                $("#footerPart").append('<button data-dismiss="modal" class="btn btn-default" type="button">关闭</button>\n' +
+                    '                    <button class="btn btn-primary" type="button" onclick="searchSecond()">下一页</button>');
+            }
+        })
+
+    }
+
+    function searchSecond() {
+        var salePlanID = $("#salePlanID").val();
+        $.ajax({
+            type:"post",
+            data:{"salePlanID":salePlanID},
+            url:"loadKnowMoreOnline",
+            async:false,
+            success:function (data) {
+                $("#mainPart").html("");
+                $("#mainPart").append('<table class="table">'+"<tr>"+"<td style=\"font-size: 14px;\">合同途径了解诺而为</td>"+"<td>"+data.means+"</td>"+"</tr>" +
+                    "                        <tr>" +
+                    "                            <td style=\"font-size: 14px;\">是否做过刀具外包管理</td>" +
+                    "                            <td>"+data.toolManage+"</td>" +
+                    "                        </tr>\n" +
+                    "                        <tr>\n" +
+                    "                            <td style=\"font-size: 14px;\">项目联系人</td>\n" +
+                    "                            <td>"+data.principle+"</td>\n" +
+                    "                        </tr>\n" +
+                    "                        <tr id=\"wechat\">\n" +
+                    "                            <td style=\"font-size: 14px;\">手机号</td>\n" +
+                    "                            <td style=\"font-size: 14px;\">"+data.mobile+"</td>\n" +
+                    "                        </tr>"+
+                    "<tr>\n" +
+                    "            <td style=\"font-size: 14px;vertical-align: inherit;\">邮箱</td>\n" +
+                    "            <td style=\"font-size: 14px;\">\n" +data.email+ "</td>\n" +
+                    "        </tr>\n" +
+                    "        <tr>\n" +
+                    "            <td style=\"font-size: 14px;vertical-align: inherit;\">项目进度要求</td>\n" +
+                    "            <td style=\"font-size: 14px;\">\n" +data.progressAsk+"</td>\n" +
+                    "        </tr>\n" +
+                    "</table>");
+                $("#footerPart").html("");
+                $("#footerPart").append('<button data-dismiss="modal" class="btn btn-default" type="button">关闭</button>\n' +
+                    '                    <button class="btn btn-primary" type="button" onclick="searchFirst()">上一页</button>\n' +
+                    '                    <button class="btn btn-primary" type="button" onclick="searchThird()">下一页</button>');
+            }
+        })
+    }
+
+    function searchThird() {
+        var salePlanID = $("#salePlanID").val();
+        $.ajax({
+            type: "post",
+            data: {"salePlanID": salePlanID},
+            url: "loadManufactureOnline",
+            async: false,
+            success: function (data) {
+                $("#mainPart").html("");
+                $("#mainPart").append('<table class="table">' + "<tr>" + "<td style=\"font-size: 14px;\">三年平均产值</td>" + "<td>" + data.production + "</td>" + "</tr>" +
+                    "                        <tr>" +
+                    "                            <td style=\"font-size: 14px;\">产品的销售市场</td>" +
+                    "                            <td>" + data.market + "</td>" +
+                    "                        </tr>\n" +
+                    "                        <tr>\n" +
+                    "                            <td style=\"font-size: 14px;\">竞争对手</td>\n" +
+                    "                            <td>" + data.competitor + "</td>\n" +
+                    "                        </tr>\n" +
+                    "                        <tr id=\"wechat\">\n" +
+                    "                            <td style=\"font-size: 14px;\">三年内发展计划</td>\n" +
+                    "                            <td style=\"font-size: 14px;\">" + data.project + "</td>\n" +
+                    "                        </tr>" +
+                    "<tr>\n" +
+                    "            <td style=\"font-size: 14px;vertical-align: inherit;\">公司主要的设备类型</td>\n" +
+                    "            <td style=\"font-size: 14px;\">\n" + data.assetType + "</td>\n" +
+                    "        </tr>\n" +
+                    "        <tr>\n" +
+                    "            <td style=\"font-size: 14px;vertical-align: inherit;\">刀具采购来源</td>\n" +
+                    "            <td style=\"font-size: 14px;\">\n" + data.resource + "            </td>\n" +
+                    "        </tr>\n" +
+                    "        <tr>\n" +
+                    "            <td style=\"font-size: 14px;vertical-align: inherit;\">主要的设备品牌</td>\n" +
+                    "            <td style=\"font-size: 14px;\">\n" + data.brand + "</td>\n" +
+                    "        </tr>\n" +
+                    "        <tr>\n" +
+                    "            <td style=\"font-size: 14px;vertical-align: inherit;\">设备数量</td>\n" +
+                    "            <td style=\"font-size: 14px;\">\n" + data.amount + "</td>\n" +
+                    "        </tr>\n" +
+                    "        <tr>\n" +
+                    "            <td style=\"font-size: 14px;vertical-align: inherit;\">设备使用年限</td>\n" +
+                    "            <td style=\"font-size: 14px;\">\n" + data.life + "</td>\n" +
+                    "        </tr>\n" +
+                    "        <tr>\n" +
+                    "            <td style=\"font-size: 14px;\">产品的主要生产形式</td>\n" +
+                    "            <td style=\"font-size: 14px;\">\n" + data.form + "</td>\n" +
+                    "        </tr>" +
+                    "<tr>\n" +
+                    "            <td style=\"font-size: 14px;\">近3年刀具采购金额</td>\n" +
+                    "            <td>\n" + data.buyMoney + "</td>\n" +
+                    "        </tr>\n" +
+                    "        <tr>" +
+                    "            <td style=\"font-size: 14px;\">刀具采购的主要来源</td>\n" +
+                    "            <td>\n" + data.buySource + "</td>\n" +
+                    +"</tr>\n" +
+                    "        <tr>" +
+                    "            <td style=\"font-size: 14px;\">刀具采购的主要品牌</td>\n" +
+                    "            <td>\n" + data.buyBrand + "</td>\n" +
+                    +"</tr>\n" +
+                    +"</tr>\n" +
+                    "        <tr>" +
+                    "            <td style=\"font-size: 14px;\">刀具采购的模式</td>\n" +
+                    "            <td>\n" + data.buyModel + "</td>\n" +
+                    +"</tr>\n" +
+                    +"</tr>\n" +
+                    "        <tr>" +
+                    "            <td style=\"font-size: 14px;\">刀具库存管理模式</td>\n" +
+                    "            <td>\n" + data.manageModel + "</td>\n" +
+                    +"</tr>\n" +
+                    "</table>");
+                $("#footerPart").html("");
+                $("#footerPart").append('<button data-dismiss="modal" class="btn btn-default" type="button">关闭</button>\n' +
+                    '                    <button class="btn btn-primary" type="button" onclick="searchSecond()">上一页</button>\n' +
+                    '                    <button class="btn btn-primary" type="button" onclick="searchFourth()">下一页</button>');
+            }
+
+        })
+    }
+
+    function searchFourth() {
+        var salePlanID = $("#salePlanID").val();
+        $.ajax({
+            type:"post",
+            data:{"salePlanID":salePlanID},
+            url:"loadDataDetailOnline",
+            async:false,
+            success:function (data) {
+                $("#mainPart").html("");
+                $("#mainPart").append("<table class='table'>"+
+                    "<tr>\n" +
+                    "                <td colspan=\"2\" style=\"font-size: 14px;\">硬质合金旋转类</td>\n" +
+                    "            </tr>\n" +
+                    "            <tr>\n" +
+                    "                <td style=\"font-size: 14px;\">钻铰类头约占</td>\n" +
+                    "                <td style=\"font-size: 14px;\">"+data.ztzb+"%"+"</td>\n" +
+                    "            </tr>\n" +
+                    "            <tr>\n" +
+                    "                <td style=\"font-size: 14px;\">铣刀约占</td>\n" +
+                    "                <td>"+data.xdzb+"%"+"</td>\n" +
+                    "            </tr>\n" +
+                    "            <tr>\n" +
+                    "                <td style=\"font-size: 14px;\">丝锥约占</td>\n" +
+                    "                <td>"+data.szzb+"%"+"</td>\n" +
+                    "            </tr>\n" +
+                    "            <tr>\n" +
+                    "                <td style=\"font-size: 14px;\">其它约占</td>\n" +
+                    "                <td>"+data.qtOne+"%</td>\n" +
+                    "            </tr>\n" +
+                    "\n" +
+                    "            <tr>\n" +
+                    "                <td colspan=\"2\" style=\"font-size: 14px;\">硬质合金刀片类</td>\n" +
+                    "            </tr>\n" +
+                    "            <tr>\n" +
+                    "                <td style=\"font-size: 14px;\">车刀片约占</td>\n" +
+                    "                <td>"+data.cdpzb+"%</td>\n" +
+                    "            </tr>\n" +
+                    "            <tr>\n" +
+                    "                <td style=\"font-size: 14px;\">铣刀片约占</td>\n" +
+                    "                <td>"+data.xdpzb+"%</td>\n" +
+                    "            </tr>\n" +
+                    "            <tr>\n" +
+                    "                <td style=\"font-size: 14px;\">钻镗刀片类约占</td>\n" +
+                    "                <td>"+data.tdpzb+"%</td>\n" +
+                    "            </tr>\n" +
+                    "            <tr>\n" +
+                    "                <td style=\"font-size: 14px;\">其它约占</td>\n" +
+                    "                <td>"+data.qtTwo+"%</td>\n" +
+                    "            </tr>\n" +
+                    "\n" +
+                    "            <tr>\n" +
+                    "                <td colspan=\"2\" style=\"font-size: 14px;\">超硬刀具类</td>\n" +
+                    "            </tr>\n" +
+                    "            <tr>\n" +
+                    "                <td style=\"font-size: 14px;\">CBN 约占</td>\n" +
+                    "                <td>"+data.cbn+"%</td>\n" +
+                    "            </tr>\n" +
+                    "            <tr>\n" +
+                    "                <td style=\"font-size: 14px;\">PCD 约占</td>\n" +
+                    "                <td>"+data.pcd+"%</td>\n" +
+                    "            </tr>\n" +
+                    "            <tr>\n" +
+                    "                <td style=\"font-size: 14px;\">焊接超硬约占</td>\n" +
+                    "                <td>"+data.hjzb+"%</td>\n" +
+                    "            </tr>\n" +
+                    "            <tr>\n" +
+                    "                <td style=\"font-size: 14px;\">公司是否使用高速钢刀具</td>\n" +
+                    "                <td style=\"font-size: 14px;\">\n"+data.hasGSG +"</td>\n" +
+                    "            </tr>\n" +
+                    "<tr>\n" +
+                    "            <td style=\"font-size: 14px;width: 160px;\">公司目前的刀具库存总金额</td>\n" +
+                    "            <td style=\"font-size: 14px;\">\n"+data.stockMoney+"</td>\n" +
+                    "        </tr>\n" +
+                    "        <tr>\n" +
+                    "            <td colspan=\"2\" style=\"font-size: 14px;width: 160px;\">\n" +
+                    "                您公司刀具库龄的占比\n" +
+                    "            </td>\n" +
+                    "        </tr>\n" +
+                    "        <tr>\n" +
+                    "            <td style=\"font-size: 14px;\"><90 天约占</td>\n" +
+                    "            <td>"+data.stockOne+"%</td>\n" +
+                    "        </tr>\n" +
+                    "        <tr>\n" +
+                    "            <td style=\"font-size: 14px;\">90-180 天约占</td>\n" +
+                    "            <td>"+data.stockTwo+"%</td>\n" +
+                    "        </tr>\n" +
+                    "        <tr>\n" +
+                    "            <td style=\"font-size: 14px;\">180-365 天约占</td>\n" +
+                    "            <td>"+data.stockThree+"%</td>\n" +
+                    "        </tr>\n" +
+                    "        <tr>\n" +
+                    "            <td style=\"font-size: 14px;\">365 天以上约占</td>\n" +
+                    "            <td>"+data.stockFour+"%</td>\n" +
+                    "        </tr>\n" +
+                    "        <tr>\n" +
+                    "            <td colspan=\"2\" style=\"font-size: 14px;\">公司刀具库存占比约为</td>\n" +
+                    "        </tr>\n" +
+                    "        <tr>\n" +
+                    "            <td style=\"font-size: 14px;\">标准刀具约占</td>\n" +
+                    "            <td>"+data.normalTool+"%</td>\n" +
+                    "        </tr>\n" +
+                    "        <tr>\n" +
+                    "            <td style=\"font-size: 14px;\">非标刀具约占</td>\n" +
+                    "            <td>"+data.unnormTool+"%</td>\n" +
+                    "        </tr>"+
+                    "<tr>\n" +
+                    "            <td style=\"font-size: 14px;width: 215px;\"><span style=\"color: red\" y>*</span>公司是否使用ERP 管理系统</td>\n" +
+                    "            <td style=\"font-size: 14px;\">\n" +data.hasERP+"            </td>\n" +
+                    "        </tr>\n" +
+                    "        <tr>\n" +
+                    "            <td style=\"font-size: 14px;\"><span style=\"color: red\" y>*</span>公司是否使用MES 管理系统</td>\n" +
+                    "            <td style=\"font-size: 14px;\">\n" +data.hasMES+"            </td>\n" +
+                    "        </tr>\n" +
+                    "        <tr>\n" +
+                    "            <td style=\"font-size: 14px;\">公司生产现场的换班安排</td>\n" +
+                    "            <td style=\"font-size: 14px;\">\n" +data.shiftManage+"            </td>\n" +
+                    "        </tr>\n" +
+                    "        <tr>\n" +
+                    "            <td style=\"font-size: 14px;\">公司生产休息</td>\n" +
+                    "            <td style=\"font-size: 14px;\">\n" +data.productRest+"            </td>\n" +
+                    "        </tr>\n" +
+                    "        <tr>\n" +
+                    "            <td style=\"font-size: 14px;\">您公司生产线共有</td>\n" +
+                    "            <td>"+data.productNum+"条</td>\n" +
+                    "        </tr>"+
+                    "<tr>\n" +
+                    "            <td style=\"font-size: 14px;\">公司库管的人数</td>\n" +
+                    "            <td>"+data.stockPerson+"人</td>\n" +
+                    "        </tr>\n" +
+                    "        <tr>\n" +
+                    "            <td style=\"font-size: 14px;\">公司刀具调试发放的人数</td>\n" +
+                    "            <td>"+data.grantPerson+"人</td>\n" +
+                    "        </tr>\n" +
+                    "        <tr>\n" +
+                    "            <td style=\"font-size: 14px;\">您公司刀具发放方式</td>\n" +
+                    "            <td style=\"font-size: 14px;\">\n" +data.grantWay+"            </td>\n" +
+                    "        </tr>\n" +
+                    "        <tr>\n" +
+                    "            <td style=\"font-size: 14px;\">您公司刀具回收方式</td>\n" +
+                    "            <td style=\"font-size: 14px;\">\n" +data.returnWay+"            </td>\n" +
+                    "        </tr>\n" +
+                    "        <tr>\n" +
+                    "            <td style=\"font-size: 14px;\">您公司刀具的付款周期</td>\n" +
+                    "            <td style=\"font-size: 14px;\">\n" +data.payCycle+"</td>\n" +
+                    "        </tr>\n" +
+                    "        <tr>\n" +
+                    "            <td style=\"font-size: 14px;\">您公司付款方式</td>\n" +
+                    "            <td style=\"font-size: 14px;\">\n" +data.payWay+"            </td>\n" +
+                    "        </tr>"+
+                    "<tr>\n" +
+                    "            <td style=\"font-size: 14px;\">您公司目前刀具修磨</td>\n" +
+                    "            <td style=\"font-size: 14px;\">\n" +data.repair+"            </td>\n" +
+                    "        </tr>\n" +
+                    "        <tr>\n" +
+                    "            <td style=\"font-size: 14px;\">您公司的刀具有优化流程</td>\n" +
+                    "            <td style=\"font-size: 14px;\">\n" +data.optimize+"            </td>\n" +
+                    "        </tr>\n" +
+                    "        <tr>\n" +
+                    "            <td style=\"font-size: 14px;width: 170px;\">您公司目前刀具管理的主要诉求是（可多选）</td>\n" +
+                    "            <td style=\"font-size: 14px;\">\n" +data.appeal+ "            </td>\n" +
+                    "        </tr>"
+                    +"</table>");
+                $("#footerPart").html("");
+                $("#footerPart").append('<button data-dismiss="modal" class="btn btn-default" type="button">关闭</button>\n' +
+                    '                    <button class="btn btn-primary" type="button" onclick="searchThird()">上一页</button>\n');
+            }
+        })
+    }
 
 </script>
+<style>
+    #mainContent{
+        overflow:hidden;
+        width:100%;
+    }
+
+    #myTabContent{
+        width:calc(100% + 15px);/*使滚动条超出当前元素的父元素边界，而父元素设置了overflow为hidden，使溢出内容隐藏，即隐藏了滚动条*/
+        height:550px;
+        padding-right:15px;
+        box-sizing:content-box;/*兼容ie，使盒模型为w3c盒模型*/
+        overflow-y:scroll;/*控制能沿y轴滚动*/
+    }
+    #firstData{
+        width:100%;
+    }
+    #secondData{
+        width:100%;
+    }
+</style>
 </body>
 </html>

@@ -9,7 +9,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * </p>
  *
  * @author Bruce
- * @since 2020-07-02
+ * @since 2020-10-19
  */
 public interface CrmSalesplanMapper extends BaseMapper<CrmSalesplan> {
 

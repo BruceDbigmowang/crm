@@ -1,0 +1,9 @@
+springboot:
+-----------------------（CRUD:create  read  update  delete）-----------------------------------
+		1、不支持jsp
+		
+		使用jsp，需要配置：导入jar包，配置application.properties文件
+		
+		2、使用mybatis_xml方式，也需要配置application.properties文件
+		
+		

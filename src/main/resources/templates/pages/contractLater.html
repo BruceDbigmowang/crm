@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<title>销售过程——保密协议签订</title>
+<title>销售过程——合同签订</title>
 <head th:include="include/fore/newHeader::html" ></head>
 <body>
 <div id="workingArea">
@@ -10,6 +10,7 @@
 </div>
 <script>
     $(function () {
+        judgeFunc();
         loadFirstPlan();
         getAllSaleMan();
     });
@@ -18,35 +19,209 @@
         elem: '#travelDate' //指定元素
     });
 
-    function loadFirstPlan() {
-        var status = "seventh";
+    function judgeFunc() {
         $.ajax({
             type:"post",
-            data:{"status":status},
-            url:"findCanOperate",
+            url:"getSaleRole",
             async:false,
             success:function (data) {
-                $("#allFirst").html("");
-                $("#customer").html("");
-                $("#customer").append("<option value='0'>"+"--请选择--"+"</option>");
-                $("#customer2").html("");
-                $("#customer2").append("<option value='0'>"+"--请选择--"+"</option>");
-                for(var i = 0 ; i < data.length ; i++){
-                    $("#allFirst").append("<tr>"+
-                        "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+data[i].id+"</td>"+
-                        "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+data[i].customerName+"</td>"+
-                        "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+data[i].describe+"</td>"+
-                        "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+data[i].principalName+"</td>"+
-                        "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a href='#' data-toggle=\"modal\" data-target=\"#myModal2\" onclick=\"getRowId(this)\">最终合同</a>"+
-                        "<a href='#' style=\"margin-left: 10px;\" onclick=\"giveup(this)\">挂起</a>"+
-                        "</td>"
-                        +"</tr>");
-
-                    $("#customer").append('<option value="'+data[i].customerCode+'">'+data[i].customerName+"</option>");
-                    $("#customer2").append('<option value="'+data[i].customerCode+'">'+data[i].customerName+"</option>");
-                }
+                $("#funcInput").val(data);
             }
         })
+    }
+
+    function loadFirstPlan() {
+        var role = $("#funcInput").val();
+        if(role == "0"){
+            var status = "seventh";
+            $.ajax({
+                type:"post",
+                data:{"status":status},
+                url:"findCanOperateAndOperated",
+                async:false,
+                success:function (data) {
+                    var list1 = data.list1;
+                    $("#allFirst").html("");
+                    $("#customer").html("");
+                    $("#customer").append("<option value='0'>"+"--请选择--"+"</option>");
+                    $("#customer2").html("");
+                    $("#customer2").append("<option value='0'>"+"--请选择--"+"</option>");
+                    for(var i = 0 ; i < list1.length ; i++){
+                        $("#allFirst").append("<tr>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].id+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].customerName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].describe+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].deadline+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].principalName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a href='#' data-toggle=\"modal\" data-target=\"#myModal2\" onclick=\"getRowId(this)\">最终合同</a>"+
+                            // "<a href='#' style=\"margin-left: 10px;\" onclick=\"giveup(this)\">挂起</a>"+
+                            "</td>"
+                            +"</tr>");
+
+                        $("#customer").append('<option value="'+list1[i].customerCode+'">'+list1[i].customerName+"</option>");
+                        $("#customer2").append('<option value="'+list1[i].customerCode+'">'+list1[i].customerName+"</option>");
+                    }
+                    var list2 = data.list2;
+                    $("#allSecond").html("");
+                    for(var i = 0 ; i < list2.length ; i++){
+                        $("#allSecond").append("<tr>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].id+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].customerName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].describe+"</td>"+
+                            // "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].deadline+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].principalName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a href='#' data-toggle=\"modal\" data-target=\"#myModal5\" onclick='getContractHistoryS(this)'>查看</a>"+
+                            // "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a href='#' data-toggle=\"modal\" data-target=\"#myModal2\" onclick=\"getRowId(this)\">最终合同</a>"+
+                            // "<a href='#' style=\"margin-left: 10px;\" onclick=\"giveup(this)\">挂起</a>"+
+                            "</td>"
+                            +"</tr>");
+                    }
+                }
+            })
+        }else{
+            var status = "seventh";
+            $.ajax({
+                type:"post",
+                data:{"status":status},
+                url:"findCanOperateAndOperatedByAdmin",
+                async:false,
+                success:function (data) {
+                    var list1 = data.list1;
+                    $("#allFirst").html("");
+                    $("#customer").html("");
+                    $("#customer").append("<option value='0'>"+"--请选择--"+"</option>");
+                    $("#customer2").html("");
+                    $("#customer2").append("<option value='0'>"+"--请选择--"+"</option>");
+                    for(var i = 0 ; i < list1.length ; i++){
+                        $("#allFirst").append("<tr>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].id+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].customerName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].describe+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].deadline+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].principalName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a href='#' data-toggle=\"modal\" data-target=\"#myModal2\" onclick=\"getRowId(this)\">最终合同</a>"+
+                            // "<a href='#' style=\"margin-left: 10px;\" onclick=\"giveup(this)\">挂起</a>"+
+                            "</td>"
+                            +"</tr>");
+
+                        $("#customer").append('<option value="'+list1[i].customerCode+'">'+list1[i].customerName+"</option>");
+                        $("#customer2").append('<option value="'+list1[i].customerCode+'">'+list1[i].customerName+"</option>");
+                    }
+                    var trs = document.getElementById("firstData").rows;
+                    for(var i = 0 ; i < trs.length ; i++){
+                        var cell = trs[i].cells[5];
+                        cell.style.display = 'none';
+                    }
+                    var list2 = data.list2;
+                    $("#allSecond").html("");
+                    for(var i = 0 ; i < list2.length ; i++){
+                        $("#allSecond").append("<tr>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].id+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].customerName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].describe+"</td>"+
+                            // "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].deadline+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].principalName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a href='#' data-toggle=\"modal\" data-target=\"#myModal5\" onclick='getContractHistoryS(this)'>查看</a>"+
+                            // "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a href='#' data-toggle=\"modal\" data-target=\"#myModal2\" onclick=\"getRowId(this)\">最终合同</a>"+
+                            // "<a href='#' style=\"margin-left: 10px;\" onclick=\"giveup(this)\">挂起</a>"+
+                            "</td>"
+                            +"</tr>");
+                    }
+                }
+            })
+        }
+
+    }
+
+    function getOneByCustomer() {
+        var role = $("#funcInput").val();
+        if(role == "0"){
+            var customerName = $("#customerNameSearch").val();
+            var status = "seventh";
+            $.ajax({
+                type:"post",
+                data:{"customerName":customerName , "status":status},
+                url:"findCanOperateByName",
+                async:false,
+                success:function (data) {
+                    var list1 = list1.list1;
+                    $("#allFirst").html("");
+                    for(var i = 0 ; i < data.length ; i++){
+                        $("#allFirst").append("<tr>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].id+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].customerName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].describe+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].deadline+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].principalName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a href='#' data-toggle=\"modal\" data-target=\"#myModal2\" onclick=\"getRowId(this)\">最终合同</a>"+
+                            // "<a href='#' style=\"margin-left: 10px;\" onclick=\"giveup(this)\">挂起</a>"+
+                            "</td>"
+                            +"</tr>");
+                    }
+                    var list2 = data.list2;
+                    $("#allSecond").html("");
+                    for(var i = 0 ; i < list2.length ; i++){
+                        $("#allSecond").append("<tr>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].id+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].customerName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].describe+"</td>"+
+                            // "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].deadline+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].principalName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a href='#' data-toggle=\"modal\" data-target=\"#myModal5\" onclick='getContractHistoryS(this)'>查看</a>"+
+                            // "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a href='#' data-toggle=\"modal\" data-target=\"#myModal2\" onclick=\"getRowId(this)\">最终合同</a>"+
+                            // "<a href='#' style=\"margin-left: 10px;\" onclick=\"giveup(this)\">挂起</a>"+
+                            "</td>"
+                            +"</tr>");
+                    }
+                }
+            })
+        }else{
+            var customerName = $("#customerNameSearch").val();
+            var status = "seventh";
+            $.ajax({
+                type:"post",
+                data:{"customerName":customerName , "status":status},
+                url:"findCanOperateByNameAndAdmin",
+                async:false,
+                success:function (data) {
+                    var list1 = list1.list1;
+                    $("#allFirst").html("");
+                    for(var i = 0 ; i < data.length ; i++){
+                        $("#allFirst").append("<tr>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].id+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].customerName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].describe+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].deadline+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list1[i].principalName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a href='#' data-toggle=\"modal\" data-target=\"#myModal2\" onclick=\"getRowId(this)\">最终合同</a>"+
+                            // "<a href='#' style=\"margin-left: 10px;\" onclick=\"giveup(this)\">挂起</a>"+
+                            "</td>"
+                            +"</tr>");
+                    }
+                    var trs = document.getElementById("firstData").rows;
+                    for(var i = 0 ; i < trs.length ; i++){
+                        var cell = trs[i].cells[5];
+                        cell.style.display = 'none';
+                    }
+                    var list2 = data.list2;
+                    $("#allSecond").html("");
+                    for(var i = 0 ; i < list2.length ; i++){
+                        $("#allSecond").append("<tr>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].id+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].customerName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].describe+"</td>"+
+                            // "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].deadline+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+list2[i].principalName+"</td>"+
+                            "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a href='#' data-toggle=\"modal\" data-target=\"#myModal5\" onclick='getContractHistoryS(this)'>查看</a>"+
+                            // "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a href='#' data-toggle=\"modal\" data-target=\"#myModal2\" onclick=\"getRowId(this)\">最终合同</a>"+
+                            // "<a href='#' style=\"margin-left: 10px;\" onclick=\"giveup(this)\">挂起</a>"+
+                            "</td>"
+                            +"</tr>");
+                    }
+                }
+            })
+        }
+
     }
 
     function giveup(obj) {
@@ -110,6 +285,7 @@
                         type:'success'
                     });
                     $("#myModal2").modal('hide');
+                    cleanUpPage();
                 }else{
                     $.message({
                         message:data,
@@ -188,6 +364,7 @@
                         type:'success'
                     });
                     $("#myModal").modal('hide');
+                    cleanUpPage();
                 }else{
                     $.message({
                         message:data,
@@ -230,6 +407,7 @@
                         type:'success'
                     });
                     $("#myModal4").modal('hide');
+                    cleanUpPage();
                 }else{
                     $.message({
                         message:data,
@@ -239,6 +417,69 @@
             }
         })
     }
+
+    function cleanUpPage() {
+        $("#travelDate").val("");
+        $("#travelTarget").val("");
+        $("#supportPerson").val("");
+        $("#spend").val("");
+        $("#costCenter").val("");
+        $("#other").val("");
+        $("#travelSum").val("");
+        $("#needSupport").val("");
+        $("#trouble").val("");
+        $("#oppose").val("");
+        $("#nextPlan").val("");
+        $("#travelCost").val("");
+        $("#eattingCost").val("");
+        $("#serverCost").val("");
+        $("#otherCost").val("");
+        $("#voucher").val("");
+        $("#contractS").val("");
+        $("#note").val("");
+    }
+
+    function getContractHistoryS(obj) {
+        var salePlanID = obj.parentNode.parentNode.cells[0].innerText;
+        $.ajax({
+            type:"post",
+            data:{"salePlanID":salePlanID},
+            url:"getContractHistory",
+            async:false,
+            success:function (data) {
+                $("#contractHistory").html("");
+                for(var i = 0 ; i < data.length ; i++){
+                    var no = i + 1;
+                    $("#contractHistory").append("<tr>"
+                        +"<td>"+no+"</td>"
+                        +"<td>"+"<a href='downLoadContractS?filename="+data[i].secondFile+"'>"+data[i].secondFile+"</a>"+"</td>"
+                        +"<td>"+"最终合同"+"</td>"
+                        +"<td>"+data[i].secondMakeDate+"</td>"
+                        +"</tr>");
+                }
+            }
+        })
+    }
 </script>
+<style>
+    #mainContent{
+        overflow:hidden;
+        width:100%;
+    }
+
+    #myTabContent{
+        width:calc(100% + 15px);/*使滚动条超出当前元素的父元素边界，而父元素设置了overflow为hidden，使溢出内容隐藏，即隐藏了滚动条*/
+        height:550px;
+        padding-right:15px;
+        box-sizing:content-box;/*兼容ie，使盒模型为w3c盒模型*/
+        overflow-y:scroll;/*控制能沿y轴滚动*/
+    }
+    #firstData{
+        width:100%;
+    }
+    #secondData{
+        width:100%;
+    }
+</style>
 </body>
 </html>

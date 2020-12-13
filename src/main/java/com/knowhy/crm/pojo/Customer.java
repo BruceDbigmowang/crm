@@ -31,10 +31,12 @@ public class Customer {
     String creater;
     String createrName;
     LocalDate createDate;
+    String source;
     String followPerson;
     String followName;
     LocalDate followDate;
     String followStatus;
+    String city;
 
     public String getId() {
         return id;
@@ -180,6 +182,14 @@ public class Customer {
         this.createDate = createDate;
     }
 
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
+    }
+
     public String getFollowPerson() {
         return followPerson;
     }
@@ -210,5 +220,13 @@ public class Customer {
 
     public void setFollowStatus(String followStatus) {
         this.followStatus = followStatus;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
     }
 }

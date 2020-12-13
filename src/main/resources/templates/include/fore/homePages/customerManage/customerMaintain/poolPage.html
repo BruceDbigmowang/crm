@@ -3,9 +3,9 @@
     <div id="mainContent" class="container-widget">
 
         <div style="width:100%;margin: 0px auto;">
-            <div>
+            <div id="mainData">
                 <span style="font-size: 16px;">客户管理 / 公海池</span>
-                <div style="background-color: white;height:617px"><br>
+                <div style="background-color: white;"><br>
                     <table style="width: 500px;border: 0px;">
                         <tr>
                             <td style="width: 400px">
@@ -14,18 +14,21 @@
                             <td><button class="btn btn-warning" onclick="loadAllCustomerPoolByName()">查询</button></td>
                         </tr>
                     </table>
-                    <table style="width:100%;border: 0px;margin-top: 10px;">
-                        <tr>
-                            <td style="width: 10px">
-                                <input id="chooseAll" type="checkbox">
-                            </td>
-                            <td style="width: 40px;">全选</td><td></td>
-                            <td style="width: 70px;">被分配人：</td>
-                            <td style="width: 290px;"><select id="saleMen" class="form-control"><option>请选择</option></select></td>
-                            <td style="width: 75px;"><button class="btn btn-warning" onclick="chooseCustomer()">分配</button></td>
-                        </tr>
-                    </table>
-                    <table id="seaPool" style="width:100%;" class="table table-striped table-bordered table-hover  table-condensed">
+                    <div shiro:hasPermission="allocationOrder">
+                        <table style="width:100%;border: 0px;margin-top: 10px;">
+                            <tr>
+                                <td style="width: 10px">
+                                    <input id="chooseAll" type="checkbox">
+                                </td>
+                                <td style="width: 40px;">全选</td><td></td>
+                                <td style="width: 70px;">被分配人：</td>
+                                <td style="width: 290px;"><input id="saleMenAccount" type="hidden"><input id="saleMen" class="form-control" autocomplete="off" onclick="getAllSaleMen()"></td>
+                                <td style="width: 75px;"><button class="btn btn-warning" onclick="chooseCustomer()">分配</button></td>
+                                <td style="width: 75px;"><button class="btn btn-warning" onclick="dropCustomer()">删除</button></td>
+                            </tr>
+                        </table>
+                    </div>
+                    <table id="seaPool" style="width:100%;margin-top: 10px;" class="table table-striped table-bordered table-hover  table-condensed">
                         <thead style="background-color: #dde5e5;font-size: 14px;text-align: left;vertical-align: inherit;">
                         <tr>
                             <th style="width: 10px;"></th>
@@ -42,13 +45,45 @@
                         <tbody id="customerPool"></tbody>
                     </table>
                     <div id="poolPage" style="width:1050px;display: none;text-align: center">
-                        <a style="color: #ff6d0a;" onclick="loadAllCustomerPool()">首页</a>&nbsp&nbsp&nbsp<a style="color: #ff6d0a;" onclick="loadAllCustomerPoolPrevious()">上一页</a>&nbsp&nbsp&nbsp<a style="color: #ff6d0a;" onclick="loadAllCustomerPoolNext()">下一页</a>&nbsp&nbsp&nbsp<a style="color: #ff6d0a;">末页</a>
+                        <a href="#" style="color: #ff6d0a;" onclick="loadAllCustomerPool()">首页</a>&nbsp&nbsp&nbsp<a href="#" style="color: #ff6d0a;" onclick="loadAllCustomerPoolPrevious()">上一页</a>&nbsp&nbsp&nbsp<a href="#" style="color: #ff6d0a;" onclick="loadAllCustomerPoolNext()">下一页</a>&nbsp&nbsp&nbsp<a href="#" style="color: #ff6d0a;" onclick="loadAllCustomerLast()">末页</a>
                     </div>
                 </div>
             </div>
         </div>
 
     </div>
+
+    <div class="modal fade" id="myModal"  data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button data-dismiss="modal" class="close" type="button"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title">选择销售员</h4>
+                </div>
+                <div class="modal-body" style="height: 600px;overflow: auto;">
+                    <table>
+                        <tr>
+                            <td style="width: 300px;"><input id="saleManCondition" placeholder="请输入销售人员账号/姓名" class="form-control"></td>
+                            <td style="width: 120px;">
+                                <button class="btn btn-warning" onclick="selectSaleMan()">查询</button>
+                            </td>
+                        </tr>
+                    </table><br>
+                    <table class="table table-striped table-bordered table-hover  table-condensed">
+                        <thead style="background-color: #dde5e5;font-size: 14px;text-align: left;vertical-align: inherit;">
+                        <tr>
+                            <td style="width: 200px;">账号</td>
+                            <td style="width: 200px;">姓名</td>
+                            <td style="width: 100px;">操作</td>
+                        </tr>
+                        </thead>
+                        <tbody id="allSalesMan"></tbody>
+                    </table>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div>
+
     <div class="row footer">
         <div class="col-md-6 text-left">
             &nbsp;&nbsp;&nbsp;&nbsp;
