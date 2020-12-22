@@ -87,11 +87,11 @@ public class AddService {
             }
             String decision = String.valueOf(lo.get(4)).trim();
             if("".equals(decision)){
-                return "第"+target+"行决策者未填写";
+//                return "第"+target+"行决策者未填写";
             }
             String decisionPhone = String.valueOf(lo.get(5)).trim();
             if("".equals(decisionPhone)){
-                return "第"+target+"行决策者联系方式未填写";
+//                return "第"+target+"行决策者联系方式未填写";
             }else if(!decisionPhone.matches("[0-9]{1,}")){
                 return "第"+target+"行决策者联系方式填写错误（只能包含数字）";
             }
@@ -100,11 +100,11 @@ public class AddService {
                 return "第"+target+"行项目负责人未填写";
             }
             String phone = String.valueOf(lo.get(7)).trim();
-            if("".equals(phone)){
-                return "第"+target+"行项目负责人联系方式未填写";
-            }else if(!phone.matches("[0-9]{1,}")){
-                return "第"+target+"行项目负责人联系方式填写错误（只能包含数字）";
-            }
+//            if("".equals(phone)){
+//                return "第"+target+"行项目负责人联系方式未填写";
+//            }else if(!phone.matches("[0-9]{1,}")){
+//                return "第"+target+"行项目负责人联系方式填写错误（只能包含数字）";
+//            }
         }
         return "OK";
     }
@@ -152,7 +152,14 @@ public class AddService {
             customer.setCreateDate(LocalDate.now());
             customer.setCompanyAddress(companyAddress);
             String city = companyAddress.split("市")[0];
-            customer.setCity(city);
+            if(city.contains("省")){
+                customer.setCity(city.split("省")[1]);
+            } else if(city.contains("自治区")){
+                customer.setCity(city.split("自治区")[1]);
+            }else{
+                customer.setCity(city);
+            }
+
             customer.setFollowStatus("O");
 
             //系统自动生成客户编号
@@ -190,6 +197,10 @@ public class AddService {
             salesPlan.setMakeDate(LocalDate.now());
             salesPlan.setSpendTime(7);
             salesPlan.setStep(1);
+            salesPlan.setSaleArrange("O");
+            salesPlan.setOperateArrange("O");
+            salesPlan.setReportWrite("O");
+            salesPlan.setServiceWrite("O");
             salePlanService.createSalePlan(salesPlan);
 
             targetNum = targetNum + 1;

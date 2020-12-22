@@ -150,4 +150,9 @@ public class PageController {
     public String toArea(){
         return "pages/areas";
     }
+
+    @RequestMapping("/foreUserCenter")
+    public String toUserCenter(){
+        return "pages/accountCenter";
+    }
 }

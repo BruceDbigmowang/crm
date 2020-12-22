@@ -3027,22 +3027,25 @@ var customerStart = 1;
 var customerPages;
 
 function findAllCustomer() {
-    customerStart = 1;
     $.ajax({
         type:"post",
-        data:{"start":customerStart},
-        url:"selectCustomerByPage",
+        url:"selectAllCustomerByPage",
         async:false,
         success:function (data) {
+            var oldTable = $('#example0').dataTable();
+            oldTable.fnClearTable(); //清空一下table
+            oldTable.fnDestroy();
+
             $("#dataforCustomer").html("");
-            customerPages = data.pages;
             var customers = data.customers;
             for(var i = 0 ; i < customers.length ; i++){
                 $("#dataforCustomer").append("<tr>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a data-toggle=\"modal\" data-target=\"#myModal2\" onclick='getCustomerId(this)'>"+customers[i].id+"</a>"+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].name+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].customerType+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].decisionMaker+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].principal+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].followName+"</td>"+"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].createDate+"</td>"+"</tr>");
                 // $("#dataforCustomer").append("<tr>"+"<td>"+customers[i].name+"</td>"+"<td>"+customers[i].contact+"</td>"+"<td>"+customers[i].phone+"</td>"+"<td>"+customers[i].customerType+"</td>"+"<td>"+customers[i].industry+"</td>"+"<td>"+customers[i].principal+"</td>"+"<td>"+formatDate(customers[i].createDate)+"</td>"+"</tr>");
 
             }
-            $("#customerPage").show();
+            $('#example0').DataTable({
+                "order": [ 6, 'desc' ]
+            });
         },
         error:function () {
             $.message({
@@ -3293,8 +3296,10 @@ function getTodayCustomer() {
         url:"getTodayCustomer",
         async:false,
         success:function (data) {
+            var oldTable = $('#example0').dataTable();
+            oldTable.fnClearTable(); //清空一下table
+            oldTable.fnDestroy();
             $("#dataforCustomer").html("");
-            $("#customerPage").hide();
             var result = data.result;
             if(result == "OK"){
                 var customers = data.customers;
@@ -3303,6 +3308,9 @@ function getTodayCustomer() {
                     // $("#dataforCustomer").append("<tr>"+"<td>"+customers[i].name+"</td>"+"<td>"+customers[i].contact+"</td>"+"<td>"+customers[i].phone+"</td>"+"<td>"+customers[i].customerType+"</td>"+"<td>"+customers[i].industry+"</td>"+"<td>"+customers[i].principal+"</td>"+"<td>"+formatDate(customers[i].createDate)+"</td>"+"</tr>");
 
                 }
+                $('#example0').DataTable({
+                    "order": [ 6, 'desc' ]
+                });
             }else{
                 $.message({
                     message:result,
@@ -3339,8 +3347,10 @@ function getYesterdayCustomer() {
         url:"getTodayCustomer",
         async:false,
         success:function (data) {
+            var oldTable = $('#example0').dataTable();
+            oldTable.fnClearTable(); //清空一下table
+            oldTable.fnDestroy();
             $("#dataforCustomer").html("");
-            $("#customerPage").hide();
             var result = data.result;
             if(result == "OK"){
                 var customers = data.customers;
@@ -3349,6 +3359,9 @@ function getYesterdayCustomer() {
                     // $("#dataforCustomer").append("<tr>"+"<td>"+customers[i].name+"</td>"+"<td>"+customers[i].contact+"</td>"+"<td>"+customers[i].phone+"</td>"+"<td>"+customers[i].customerType+"</td>"+"<td>"+customers[i].industry+"</td>"+"<td>"+customers[i].principal+"</td>"+"<td>"+formatDate(customers[i].createDate)+"</td>"+"</tr>");
 
                 }
+                $('#example0').DataTable({
+                    "order": [ 6, 'desc' ]
+                });
             }else{
                 $.message({
                     message:result,
@@ -3383,8 +3396,10 @@ function getThisWeekCustomer() {
         url:"getTodayCustomer",
         async:false,
         success:function (data) {
+            var oldTable = $('#example0').dataTable();
+            oldTable.fnClearTable(); //清空一下table
+            oldTable.fnDestroy();
             $("#dataforCustomer").html("");
-            $("#customerPage").hide();
             var result = data.result;
             if(result == "OK"){
                 var customers = data.customers;
@@ -3393,6 +3408,9 @@ function getThisWeekCustomer() {
                     // $("#dataforCustomer").append("<tr>"+"<td>"+customers[i].name+"</td>"+"<td>"+customers[i].contact+"</td>"+"<td>"+customers[i].phone+"</td>"+"<td>"+customers[i].customerType+"</td>"+"<td>"+customers[i].industry+"</td>"+"<td>"+customers[i].principal+"</td>"+"<td>"+formatDate(customers[i].createDate)+"</td>"+"</tr>");
 
                 }
+                $('#example0').DataTable({
+                    "order": [ 6, 'desc' ]
+                });
             }else{
                 $.message({
                     message:result,
@@ -3418,8 +3436,11 @@ function getLastWeekCustomer() {
         url:"getTodayCustomer",
         async:false,
         success:function (data) {
+            var oldTable = $('#example0').dataTable();
+            oldTable.fnClearTable(); //清空一下table
+            oldTable.fnDestroy();
+
             $("#dataforCustomer").html("");
-            $("#customerPage").hide();
             var result = data.result;
             if(result == "OK"){
                 var customers = data.customers;
@@ -3428,6 +3449,9 @@ function getLastWeekCustomer() {
                     // $("#dataforCustomer").append("<tr>"+"<td>"+customers[i].name+"</td>"+"<td>"+customers[i].contact+"</td>"+"<td>"+customers[i].phone+"</td>"+"<td>"+customers[i].customerType+"</td>"+"<td>"+customers[i].industry+"</td>"+"<td>"+customers[i].principal+"</td>"+"<td>"+formatDate(customers[i].createDate)+"</td>"+"</tr>");
 
                 }
+                $('#example0').DataTable({
+                    "order": [ 6, 'desc' ]
+                });
             }else{
                 $.message({
                     message:result,
@@ -3472,8 +3496,11 @@ function getThisMonthCustomer() {
         url:"getTodayCustomer",
         async:false,
         success:function (data) {
+            var oldTable = $('#example0').dataTable();
+            oldTable.fnClearTable(); //清空一下table
+            oldTable.fnDestroy();
+
             $("#dataforCustomer").html("");
-            $("#customerPage").hide();
             var result = data.result;
             if(result == "OK"){
                 var customers = data.customers;
@@ -3482,6 +3509,9 @@ function getThisMonthCustomer() {
                     // $("#dataforCustomer").append("<tr>"+"<td>"+customers[i].name+"</td>"+"<td>"+customers[i].contact+"</td>"+"<td>"+customers[i].phone+"</td>"+"<td>"+customers[i].customerType+"</td>"+"<td>"+customers[i].industry+"</td>"+"<td>"+customers[i].principal+"</td>"+"<td>"+formatDate(customers[i].createDate)+"</td>"+"</tr>");
 
                 }
+                $('#example0').DataTable({
+                    "order": [ 6, 'desc' ]
+                });
             }else{
                 $.message({
                     message:result,
@@ -3528,8 +3558,11 @@ function getLastMonthCustomer() {
         url:"getTodayCustomer",
         async:false,
         success:function (data) {
+            var oldTable = $('#example0').dataTable();
+            oldTable.fnClearTable(); //清空一下table
+            oldTable.fnDestroy();
+
             $("#dataforCustomer").html("");
-            $("#customerPage").hide();
             var result = data.result;
             if(result == "OK"){
                 var customers = data.customers;
@@ -3538,6 +3571,9 @@ function getLastMonthCustomer() {
                     // $("#dataforCustomer").append("<tr>"+"<td>"+customers[i].name+"</td>"+"<td>"+customers[i].contact+"</td>"+"<td>"+customers[i].phone+"</td>"+"<td>"+customers[i].customerType+"</td>"+"<td>"+customers[i].industry+"</td>"+"<td>"+customers[i].principal+"</td>"+"<td>"+formatDate(customers[i].createDate)+"</td>"+"</tr>");
 
                 }
+                $('#example0').DataTable({
+                    "order": [ 6, 'desc' ]
+                });
             }else{
                 $.message({
                     message:result,
@@ -3706,15 +3742,16 @@ var oppoSatrt = 1;
 var oppoPages;
 
 function getOppoByPageLoad() {
-    oppoSatrt = 1;
     $.ajax({
         type:"post",
-        data:{"start":oppoSatrt},
         url:"getOpportunityByPage",
         async:false,
         success:function(data){
+            var oldTable = $('#example0').dataTable();
+            oldTable.fnClearTable(); //清空一下table
+            oldTable.fnDestroy();
+
             $("#opportunityData").html("");
-            oppoPages = data.pages;
             var oppos = data.oppos;
             for(var i = 0 ; i < oppos.length ; i++){
                 $("#opportunityData").append("<tr>"
@@ -3727,10 +3764,10 @@ function getOppoByPageLoad() {
                     +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].mobile+"</td>"
                     +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].principal+"</td>"
                     +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].makeDate+"</td>"
-                    +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a href='#' data-toggle=\"modal\" data-target=\"#myModal2\" onclick='createActivity(this)'>"+"举办活动"+"</a>"+"<a style='margin-left: 10px;' data-toggle=\"modal\" data-target=\"#myModal\" onclick='loadDetail(this)'>编辑</a>"+"</td>"
+                    +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a href='#' data-toggle=\"modal\" data-target=\"#myModal2\" onclick='createActivity(this)'>"+"举办活动"+"</a>"+"<br>"+"<a href='#' style='margin-left: 10px;' data-toggle=\"modal\" data-target=\"#myModal\" onclick='loadDetail(this)'>编辑</a>"+"</td>"
                     +"</tr>");
             }
-            $("#pageDIV").show();
+            $('#example0').DataTable();
         }
     })
 }
@@ -3874,7 +3911,7 @@ function getOppoByPageLast() {
                         +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].mobile+"</td>"
                         +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].principal+"</td>"
                         +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].makeDate+"</td>"
-                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a href='#' data-toggle=\"modal\" data-target=\"#myModal2\" onclick='createActivity(this)'>"+"举办活动"+"</a>"+"<a style='margin-left: 10px;' data-toggle=\"modal\" data-target=\"#myModal\" onclick='loadDetail(this)'>编辑</a>"+"</td>"
+                        +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a href='#' data-toggle=\"modal\" data-target=\"#myModal2\" onclick='createActivity(this)'>"+"举办活动"+"</a>"+"<br>"+"<a style='margin-left: 10px;' data-toggle=\"modal\" data-target=\"#myModal\" onclick='loadDetail(this)'>编辑</a>"+"</td>"
                         +"</tr>");
                 }
                 $("#pageDIV").show();
@@ -3894,6 +3931,10 @@ function getOppoByAddress() {
         url:"findOppoByAddress",
         async:false,
         success:function(data){
+            var oldTable = $('#example0').dataTable();
+            oldTable.fnClearTable(); //清空一下table
+            oldTable.fnDestroy();
+
             $("#opportunityData").html("");
             var oppos = data.oppos;
             for(var i = 0 ; i < oppos.length ; i++){
@@ -3907,10 +3948,10 @@ function getOppoByAddress() {
                     +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].mobile+"</td>"
                     +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].principal+"</td>"
                     +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].makeDate+"</td>"
-                    +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a href='#' data-toggle=\"modal\" data-target=\"#myModal2\" onclick='createActivity(this)'>"+"举办活动"+"</a>"+"<a style='margin-left: 10px;' data-toggle=\"modal\" data-target=\"#myModal\" onclick='loadDetail(this)'>编辑</a>"+"</td>"
+                    +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a href='#' data-toggle=\"modal\" data-target=\"#myModal2\" onclick='createActivity(this)'>"+"举办活动"+"</a>"+"<br>"+"<a style='margin-left: 10px;' data-toggle=\"modal\" data-target=\"#myModal\" onclick='loadDetail(this)'>编辑</a>"+"</td>"
                     +"</tr>");
             }
-            $("#pageDIV").hide();
+            $('#example0').DataTable();
         }
     })
 }
@@ -3923,6 +3964,10 @@ function getOppoByResource(obj) {
         url:"findOppoByResource",
         async:false,
         success:function(data){
+            var oldTable = $('#example0').dataTable();
+            oldTable.fnClearTable(); //清空一下table
+            oldTable.fnDestroy();
+
             $("#opportunityData").html("");
             var oppos = data.oppos;
             for(var i = 0 ; i < oppos.length ; i++){
@@ -3936,10 +3981,10 @@ function getOppoByResource(obj) {
                     +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].mobile+"</td>"
                     +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].principal+"</td>"
                     +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+oppos[i].makeDate+"</td>"
-                    +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a href='#' data-toggle=\"modal\" data-target=\"#myModal2\" onclick='createActivity(this)'>"+"举办活动"+"</a>"+"<a style='margin-left: 10px;' data-toggle=\"modal\" data-target=\"#myModal\" onclick='loadDetail(this)'>编辑</a>"+"</td>"
+                    +"<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<a href='#' data-toggle=\"modal\" data-target=\"#myModal2\" onclick='createActivity(this)'>"+"举办活动"+"</a>"+"<br>"+"<a style='margin-left: 10px;' data-toggle=\"modal\" data-target=\"#myModal\" onclick='loadDetail(this)'>编辑</a>"+"</td>"
                     +"</tr>");
             }
-            $("#pageDIV").hide();
+            $('#example0').DataTable();
         }
     })
 }

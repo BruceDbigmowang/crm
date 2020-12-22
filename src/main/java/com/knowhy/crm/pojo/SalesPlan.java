@@ -2,6 +2,7 @@ package com.knowhy.crm.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.sun.istack.Nullable;
+import org.hibernate.annotations.Proxy;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -14,6 +15,7 @@ import java.util.Date;
 @Entity
 @Table(name = "CRM_SalesPlan")
 @JsonIgnoreProperties({"handler" , "hibernateLazyInitializer"})
+@Proxy(lazy = false)
 public class SalesPlan {
     @Id
     @Column(name = "salesPlanNumber")

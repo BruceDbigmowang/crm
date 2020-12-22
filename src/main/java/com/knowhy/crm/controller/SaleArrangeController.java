@@ -663,6 +663,9 @@ public class SaleArrangeController {
 
         for(int i = 0 ; i < steps.size() ; i++){
             String bdate = bdates[i];
+            if(bdate.equals("0")){
+                continue;
+            }
             LocalDate btime = LocalDate.parse(bdate , fmt);
             String step = steps.get(i);
             int during = days.get(i);

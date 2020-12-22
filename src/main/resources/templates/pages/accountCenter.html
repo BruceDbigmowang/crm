@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<title>个人中心</title>
+<head th:include="include/fore/newHeader::html" ></head>
+<body>
+<div id="workingArea">
+    <div th:replace="include/fore/top::html" ></div>
+    <div th:replace="include/fore/leftMenu::html" ></div>
+    <div th:replace="include/fore/homePages/userManage/userCenter::html" ></div>
+</div>
+<script>
+
+    $(function(){
+        getPersonalInfo();
+        changeHeight();
+    })
+
+    function changeHeight() {
+        var totalHeight = 900;
+        if(totalHeight > 776){
+            var height = totalHeight -60;
+            $("#mainContent").css('height' , totalHeight);
+            $("#leftMenu").css('height' , height)
+        }
+    }
+</script>
+
+</body>
+</html>

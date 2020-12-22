@@ -43,24 +43,12 @@ public class PrincipalListController {
     DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     @RequestMapping("/showAllPrincipalByPage")
-    public Map<String , Object> getPrincipalByPage(int start){
+    public Map<String , Object> getPrincipalByPage(){
         Map<String,Object> map = new HashMap<>();
-        QueryWrapper<CrmPrincipallist> queryWrapper =  new QueryWrapper<>();
-        queryWrapper.orderByDesc("createDate");
-        Page<CrmPrincipallist> page = new Page<>(start,10);  // 查询第1页，每页返回5条
-        IPage<CrmPrincipallist> iPage = crmPrincipallistMapper.selectPage(page,queryWrapper);
-        int total = (int)iPage.getTotal();
-        int size;
-        if(total%10 == 0){
-            size = total/10;
-        }else{
-            size = total/10 + 1;
-        }
 
-        List<CrmPrincipallist> principallists = iPage.getRecords();
+        List<PrincipalList> principalLists = principalListDAO.findAll();
 
-        map.put("allPrincipal", principallists);
-        map.put("pageSize" , size);
+        map.put("allPrincipal", principalLists);
         return map;
     }
 

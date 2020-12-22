@@ -17,14 +17,11 @@
     })
 
     function getAddressByPage() {
-        start = 1;
         $.ajax({
             type:"post",
-            data:{"start":start},
             url:"findAddressByPage",
             async:false,
             success:function (data) {
-                pageSize = data.pageSize;
                 var addressList = data.allAddress;
                 $("#dataforAddress").html("");
                 for(var i = 0 ; i < addressList.length ; i++){
@@ -38,11 +35,7 @@
                         "<td>"+"<a href='#' data-toggle=\"modal\" data-target=\"#myModal\" onclick='getAddressByCustomer(this)'>"+addressList[i].customerName+"</a>"+"</td>"+
                         "</tr>");
                 }
-                $("#addressPage").show();
-                $.message({
-                    message:"当前是第"+start+"页",
-                    type:"success"
-                })
+                $('#example0').DataTable();
             }
         })
 

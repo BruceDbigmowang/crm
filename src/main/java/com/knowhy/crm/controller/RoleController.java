@@ -240,4 +240,20 @@ public class RoleController {
         }
         return result;
     }
+
+    @RequestMapping("/createNewRole")
+    public String saveNewRole(String roleName){
+        if(roleName == null || "".equals(roleName)){
+            return "请填写角色名称";
+        }else{
+            Roles roles = new Roles();
+            roles.setRoleName(roleName);
+            try{
+                rolesDAO.save(roles);
+            }catch (Exception e){
+                return e.getMessage();
+            }
+            return "OK";
+        }
+    }
 }

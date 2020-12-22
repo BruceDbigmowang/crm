@@ -11,83 +11,6 @@
 <!--    a:hover { color: #fff; text-decoration: underline; }/* 鼠标移动到链接上 */-->
 <!--</style>-->
 <script>
-    $(function() {
-
-        $(".sidebar-panel nav > li > a").click(function(){
-            var target= $(this).attr("link_url");
-            if (target != null) {
-                showAtRight(target);
-            }
-        });
-        $(".sidebar-panel ull > li > a").click(function(){
-            var target= $(this).attr("link_url");
-            if (target != null) {
-                showAtRight(target);
-            }
-        });
-
-
-    });
-
-    /**
-     * xml指向jsp页面
-     * @param url
-     * @returns
-     */
-    function showAtRight(obj) {
-        var target= $(obj).attr("link_url");
-        var xmlHttp;
-        if (window.XMLHttpRequest) {
-            xmlHttp=new XMLHttpRequest();
-        }
-        else {
-            xmlHttp=new ActiveXObject("Microsoft.XMLHTTP");
-        }
-        xmlHttp.onreadystatechange=function() {
-            if (xmlHttp.readyState == 4) {
-                //xmlHttp.readyState == 4    ����    finished downloading response
-                if (xmlHttp.status == 200) {
-                    document.getElementById("mainContent").innerHTML=xmlHttp.responseText;
-                    executeScript(xmlHttp.responseText);
-                }
-                else if (xmlHttp.status == 404){
-                    alert("出错了  （错误代码：404 Not Found），……！");
-                    return;
-                }
-                else if (xmlHttp.status == 403) {
-                    alert("出错了   （错误代码：403 Forbidden），……");
-                    return;
-                }
-                else {
-                    alert("出错了   （错误代码：" + request.status + "），……");
-                    return;
-                }
-            }
-        }
-        xmlHttp.open("GET", target, true);
-        xmlHttp.send();
-    }
-    function executeScript(html){
-        var reg = /<script[^>]*>([^\x00]+)$/i;
-        //������HTMLƬ�ΰ�<\/script>���
-        var htmlBlock = html.split("<\/script>");
-        for (var i in htmlBlock)
-        {
-            var blocks;
-            if (blocks = htmlBlock[i].match(reg))
-            {
-                var code = blocks[1].replace(/<!--/, '');
-                try
-                {
-                    eval(code)
-                }
-                catch (e)
-                {
-                }
-            }
-        }
-    }
-
     $(function(){
         changeHeight();
         getHeadPic();
@@ -110,39 +33,6 @@
                 alert("设备类型文件上传出错");
             }
         })
-    }
-
-    function showContent(url) {
-        var xmlHttp;
-        if (window.XMLHttpRequest) {
-            xmlHttp=new XMLHttpRequest();
-        }
-        else {
-            xmlHttp=new ActiveXObject("Microsoft.XMLHTTP");
-        }
-        xmlHttp.onreadystatechange=function() {
-            if (xmlHttp.readyState == 4) {
-                //xmlHttp.readyState == 4    ����    finished downloading response
-                if (xmlHttp.status == 200) {
-                    document.getElementById("mainContent").innerHTML=xmlHttp.responseText;
-                    executeScript(xmlHttp.responseText);
-                }
-                else if (xmlHttp.status == 404){
-                    alert("出错了  （错误代码：404 Not Found），……！");
-                    return;
-                }
-                else if (xmlHttp.status == 403) {
-                    alert("出错了   （错误代码：403 Forbidden），……");
-                    return;
-                }
-                else {
-                    alert("出错了   （错误代码：" + request.status + "），……");
-                    return;
-                }
-            }
-        }
-        xmlHttp.open("GET", url, true);
-        xmlHttp.send();
     }
 
     function changeHeight() {

@@ -140,23 +140,12 @@ public class OpportunityController {
     }
 
     @RequestMapping("/getOpportunityByPage")
-    public Map<String, Object> findOpportunity(int start){
+    public Map<String, Object> findOpportunity(){
         Map<String , Object> map = new HashMap<>();
 
-        QueryWrapper<CrmOpportunity> queryWrapper =  new QueryWrapper<>();
-        queryWrapper.orderByDesc("makeDate");
-        Page<CrmOpportunity> page = new Page<>(start,10);  // 查询第1页，每页返回5条
-        IPage<CrmOpportunity> iPage = crmOpportunityMapper.selectPage(page,queryWrapper);
-        int total = (int)iPage.getTotal();
-        int size;
-        if(total%10 == 0){
-            size = total/10;
-        }else{
-            size = total/10 + 1;
-        }
-        List<CrmOpportunity> crmOpportunityList = iPage.getRecords();
-        map.put("oppos" , crmOpportunityList);
-        map.put("pages" , size);
+        List<Opportunity> opportunityList = opportunityDAO.findAll();
+
+        map.put("oppos" , opportunityList);
 
         return map;
     }

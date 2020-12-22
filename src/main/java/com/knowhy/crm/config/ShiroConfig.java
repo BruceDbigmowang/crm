@@ -61,6 +61,7 @@ public class ShiroConfig {
         perms.put("/foreAddressManage" , "authc");
         perms.put("/foreSatisfaction" , "authc");
         perms.put("/foreAllArea" , "authc");
+        perms.put("/foreUserCenter" , "authc");
 
         shiroFilterFactoryBean.setLoginUrl("loginPage");
         shiroFilterFactoryBean.setUnauthorizedUrl("loginPage");

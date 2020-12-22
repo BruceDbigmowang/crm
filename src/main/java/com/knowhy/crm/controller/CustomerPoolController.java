@@ -53,7 +53,7 @@ public class CustomerPoolController {
     }
 
     @RequestMapping("/arrangeCustomer")
-    public String toArrange(String ids , String account , HttpSession session){
+    public synchronized String toArrange(String ids , String account , HttpSession session){
         IUser user = (IUser)session.getAttribute("user");
         if(account.equals("0")){
             return "请选择销售人员";

@@ -3,6 +3,7 @@ package com.knowhy.crm.pojo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
+import org.hibernate.annotations.Proxy;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -11,6 +12,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "CRM_DeptGroup")
 @JsonIgnoreProperties({"handler" , "hibernateLazyInitializer"})
+@Proxy(lazy = false)
 public class DeptGroup {
     @Id
     String account;

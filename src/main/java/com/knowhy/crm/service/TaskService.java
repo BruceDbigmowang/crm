@@ -138,22 +138,36 @@ public class TaskService {
      * 剩余天数 = 0 ,今天是最后期限
      * 剩余天数 < 0 ,已超期多少天
      */
-    public void doTaskTwice(){
+    public synchronized void doTaskTwice(){
         List<Task> taskList = taskDAO.findByDeadline(LocalDate.now());
         List<Task> taskList1 = taskDAO.findByDeadlineBefore(LocalDate.now());
         for(Task task1 : taskList1){
-            taskList.add(task1);
+            if(!taskList.contains(task1)){
+                taskList.add(task1);
+            }
         }
+        System.out.println("涉及的任务共有"+taskList.size()+"条");
+        int nonum = 0;
         for (Task task : taskList){
             String salePlanID = task.getSalePlanID();
             int level = task.getJobLevel();
             String taskName = task.getJobName();
+            /**
+             * 追踪每一条数据
+             */
+
+            nonum = nonum + 1;
+            System.out.println("第"+nonum+"条数据的任务等级为："+level);
+
             if(level == 2){
 
                 //发送消息
                 String authority = task.getAuthority();
-                if(authority.equals("sb")){
+
+                System.out.println("第"+nonum+"条任务的所有人："+authority);
+//                if("sb".equals(authority)){
                     String[] receivers = task.getReceiver().split(",");
+                    System.out.println("第"+nonum+"条任务相关人员为："+receivers[0]);
                     for(String receive : receivers){
                         String phone = iUserDAO.getOne(receive).getPhone();
                         String message = task.getCustomerName()+"("+task.getSalePlanID()+")"+"处于"+task.getJobName()+"阶段,剩余"+task.getRemainTime()+"天";
@@ -161,8 +175,10 @@ public class TaskService {
                          * 获取相关人员的邮箱地址，发送邮件
                          */
                         List<String> receiverList = emailService.getReceiveFirst(task.getSalePlanID());
+                        System.out.println("需要向"+receiverList.size()+"个人发送邮件");
                         for(int i = 0 ; i < receiverList.size() ; i++){
                             String receiver = receiverList.get(i);
+                            System.out.println(receiver);
                             String result = new SendEmail().SendEmailMessage(receiver , message);
                             System.out.println("向-"+receiver+"-发送："+message+"->"+new Date());
                             continue;
@@ -170,15 +186,16 @@ public class TaskService {
 
 
                     }
-                }else if(authority.equals("all")){
-                    List<String> accountList = userService.findFinanceAccount();
-                    for(String account : accountList){
-                        String phone = iUserDAO.getOne(account).getPhone();
-                        String message = task.getCustomerName()+"("+task.getSalePlanID()+")"+"处于"+task.getJobName()+"阶段,剩余"+task.getRemainTime()+"天";
-//                        SendRemind.getPhonemsg(phone , task.getCustomerName() , task.getJobName() , task.getRemainTime());
-                        System.out.println("向"+phone+"发送："+message+"->"+new Date());
-                    }
-                }
+//                }else{
+//                    System.out.println("系统错误执行了all的代码");
+//                    List<String> accountList = userService.findFinanceAccount();
+//                    for(String account : accountList){
+//                        String phone = iUserDAO.getOne(account).getPhone();
+//                        String message = task.getCustomerName()+"("+task.getSalePlanID()+")"+"处于"+task.getJobName()+"阶段,剩余"+task.getRemainTime()+"天";
+////                        SendRemind.getPhonemsg(phone , task.getCustomerName() , task.getJobName() , task.getRemainTime());
+//                        System.out.println("向"+phone+"发送："+message+"->"+new Date());
+//                    }
+//                }
 
                 //二级预警任务执行过之后 从任务表中删除
                 int id = task.getId();
@@ -189,8 +206,10 @@ public class TaskService {
             }else if(level == 1){
                 //发送消息
                 String authority = task.getAuthority();
-                if(authority.equals("sb")){
+                System.out.println("第"+nonum+"条任务的所有人："+authority);
+//                if("sb".equals(authority)){
                     String[] receivers = task.getReceiver().split(",");
+                    System.out.println("第"+nonum+"条任务相关人员为："+receivers[0]);
                     for(String receive : receivers){
                         String phone = iUserDAO.getOne(receive).getPhone();
                         String message = task.getCustomerName()+"("+task.getSalePlanID()+")"+"处于"+task.getJobName()+"阶段,剩余"+task.getRemainTime()+"天";
@@ -199,24 +218,27 @@ public class TaskService {
                          * 一级预警，还需要发送邮件给领导
                          */
                         List<String> receiverList = emailService.getReceiveSecond(task.getSalePlanID());
+                        System.out.println("需要向"+receiverList.size()+"个人发送邮件");
                         for(int i = 0 ; i < receiverList.size() ; i++){
                             String receiver = receiverList.get(i);
                             String result = new SendEmail().SendEmailMessage(receiver , message);
+                            System.out.println(receiver);
                             System.out.println("向-"+receiver+"-发送："+message+"->"+new Date());
                             continue;
                         }
 
 
                     }
-                }else if(authority.equals("all")){
-                    List<String> accountList = userService.findFinanceAccount();
-                    for(String account : accountList){
-                        String phone = iUserDAO.getOne(account).getPhone();
-                        String message = task.getCustomerName()+"("+task.getSalePlanID()+")"+"处于"+task.getJobName()+"阶段,剩余"+task.getRemainTime()+"天";
-//                        SendRemind.getPhonemsg(phone , task.getCustomerName() , task.getJobName() , task.getRemainTime());
-                        System.out.println("向"+phone+"发送："+message+"->"+new Date());
-                    }
-                }
+//                }else{
+//                    List<String> accountList = userService.findFinanceAccount();
+//                    System.out.println("系统错误执行了all的代码");
+//                    for(String account : accountList){
+//                        String phone = iUserDAO.getOne(account).getPhone();
+//                        String message = task.getCustomerName()+"("+task.getSalePlanID()+")"+"处于"+task.getJobName()+"阶段,剩余"+task.getRemainTime()+"天";
+////                        SendRemind.getPhonemsg(phone , task.getCustomerName() , task.getJobName() , task.getRemainTime());
+//                        System.out.println("向"+phone+"发送："+message+"->"+new Date());
+//                    }
+//                }
 
                 //一级预警提醒任务执行完之后，更新任务于明天再次执行
                 int remainTime = task.getRemainTime() - 1;
@@ -295,9 +317,11 @@ public class TaskService {
 
     public void updateTask(String salePlanID , String taskName , int level){
         List<TaskSum> sumList = taskSumDAO.findBySalePlanIDAndTask(salePlanID , taskName);
-        TaskSum sum = sumList.get(0);
-        sum.setTaskLevel(level);
-        taskSumDAO.save(sum);
+        if(sumList != null && sumList.size() != 0){
+            TaskSum sum = sumList.get(0);
+            sum.setTaskLevel(level);
+            taskSumDAO.save(sum);
+        }
     }
 
     @Transactional
@@ -331,8 +355,17 @@ public class TaskService {
         String operator = contractRecords.get(0).getSteward();
         LocalDate deadline = contractRecords.get(0).getDeadline();
         LocalDate now = LocalDate.now();
-        LocalDate nextMonth = LocalDate.of(now.getYear(), now.getMonthValue() + 1, 1);//下个月的第一天
-        LocalDate lastTime = LocalDate.of(now.getYear(), now.getMonthValue() + 1, 15);
+        LocalDate nextMonth = null;
+        LocalDate lastTime = null;
+        if(now.getMonthValue() < 12){
+            nextMonth = LocalDate.of(now.getYear(), now.getMonthValue() + 1, 1);
+            lastTime = LocalDate.of(now.getYear(), now.getMonthValue() + 1, 15);
+        }else{
+            nextMonth = LocalDate.of(now.getYear()+1 , now.getMonthValue() - 11, 1);
+            lastTime = LocalDate.of(now.getYear()+ 1 , now.getMonthValue() - 11, 15);
+        }
+//        LocalDate lastTime = null;// LocalDate.of(now.getYear(), now.getMonthValue() + 1, 15);
+
         LocalDate lastDay = nextMonth.with(TemporalAdjusters.lastDayOfMonth()); //下个月最后一天
 
         /**
@@ -479,7 +512,12 @@ public class TaskService {
         String operator = contractRecords.get(0).getSteward();
         LocalDate deadline = contractRecords.get(0).getDeadline();
         LocalDate now = LocalDate.now();
-        LocalDate nextMonth = LocalDate.of(now.getYear(), now.getMonthValue() + 1, 1);//下个月的第一天
+        LocalDate nextMonth = null;
+        if(now.getMonthValue() < 12){
+            nextMonth = LocalDate.of(now.getYear(), now.getMonthValue() + 1, 1);
+        }else{
+            nextMonth = LocalDate.of(now.getYear()+1 , now.getMonthValue() - 11, 1);
+        }
         LocalDate lastDay = nextMonth.with(TemporalAdjusters.lastDayOfMonth()); //下个月最后一天
         LocalDate firstTime = lastDay.minusDays(7);
 

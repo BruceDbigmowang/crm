@@ -17,10 +17,8 @@
     })
 
     function loadPrincipalListByPage() {
-        start = 1;
         $.ajax({
             type:"post",
-            data:{"start":start},
             url:"showAllPrincipalByPage",
             async:false,
             success:function (data) {
@@ -38,11 +36,7 @@
                     "<td>"+"<a href='#' onclick='getCustomerByPrincipal(this)' data-toggle=\"modal\" data-target=\"#myModal\">"+principals[i].customerName+"</a>"+"</td>"+
                     "</tr>");
                 }
-                $("#principalPage").show();
-                $.message({
-                    message:"当前为第"+start+"页",
-                    type:"success"
-                })
+                $('#example0').DataTable();
             }
         })
     }

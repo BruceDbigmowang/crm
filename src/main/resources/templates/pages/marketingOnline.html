@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<title>商机管理——线上推广</title>
+<title>商机管理——推广活动</title>
 <head th:include="include/fore/newHeader::html" ></head>
 <body>
 <div id="workingArea">
@@ -122,8 +122,9 @@
                         +"<td>"+data[i].isPlan+"</td>"
                         +"<td>"+data[i].createrName+"</td>"
                         +"<td>"+"<a data-toggle=\"modal\" data-target=\"#myModal2\" onclick='getMid(this)'>"+"维护"+"</a>"+"</td>"
-                        +"</tr>")
+                        +"</tr>");
                 }
+                $('#example0').DataTable();
             }
         })
     }

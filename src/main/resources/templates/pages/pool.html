@@ -35,15 +35,19 @@
     }
 
     function loadAllCustomerPool() {
-        customerStartPool = 1;
+        // customerStartPool = 1;
         $.ajax({
             type:"post",
-            data:{"start":customerStartPool},
-            url:"selectCustomerByPageAndCondition",
+            // data:{"start":customerStartPool},
+            url:"selectAllCustomer",
             async:false,
             success:function (data) {
+                var oldTable = $('#example0').dataTable();
+                oldTable.fnClearTable(); //清空一下table
+                oldTable.fnDestroy();
+
                 $("#customerPool").html("");
-                customerPagesPool = data.pages;
+                // customerPagesPool = data.pages;
                 var customers = data.customers;
                 var role = data.role;
                 if(role == 1){
@@ -59,6 +63,9 @@
                             "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].followName+"</td>"+
                             "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"<button class='btn btn-warning' onclick='followSalePlan(this)'>跟进</button>"+"</td>"+"</tr>");
                     }
+                    $('#example0').DataTable({
+                        "order": [ 1, 'desc' ]
+                    });
                 }else{
                     for(var i = 0 ; i < customers.length ; i++){
                         $("#customerPool").append("<tr>"+
@@ -72,6 +79,9 @@
                             "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+customers[i].followName+"</td>"+
                             "<td style=\"font-size: 14px;text-align: left;vertical-align: inherit;\">"+"</td>"+"</tr>");
                     }
+                    $('#example0').DataTable({
+                        "order": [ 1, 'desc' ]
+                    });
                 }
 
                 $("#poolPage").show();

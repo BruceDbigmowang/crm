@@ -11,6 +11,7 @@ import com.knowhy.crm.service.CustomerService;
 import com.knowhy.crm.service.SalePlanService;
 import com.knowhy.crm.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -56,6 +57,8 @@ public class CustomerController {
     AddressListDAO addressListDAO;
     @Autowired
     OfflineFileDAO offlineFileDAO;
+    @Autowired
+    SalesPlanDAO salesPlanDAO;
 
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
     SimpleDateFormat sdf2 = new SimpleDateFormat("yyyyMMdd");
@@ -209,6 +212,8 @@ public class CustomerController {
         salesPlan.setSpendTime(7);
         salesPlan.setSaleArrange("O");
         salesPlan.setOperateArrange("O");
+        salesPlan.setServiceWrite("O");
+        salesPlan.setReportWrite("O");
         salePlanService.createSalePlan(salesPlan);
         return "客户创建成功";
     }
@@ -234,8 +239,79 @@ public class CustomerController {
         }
         List<CrmCustomer> crmCustomerList = iPage.getRecords();
 
+        for(int i = 0 ; i < crmCustomerList.size() ; i++){
+            CrmCustomer crmCustomer = crmCustomerList.get(i);
+            String crmCustomerCode = crmCustomer.getId();
+
+            List<SalesPlan> salesPlanList = salesPlanDAO.findByCustomerCode(crmCustomerCode);
+            if(salesPlanList == null || salesPlanList.size() == 0){
+                crmCustomer.setDecisionMaker("");
+            }else{
+                SalesPlan salesPlan = salesPlanList.get(0);
+                String planStatus = salesPlan.getPlanStatus();
+                switch (planStatus){
+                    case "first":
+                        String principal = salesPlan.getPrincipal();
+                        if(principal == null){
+                            crmCustomer.setDecisionMaker("待分配");
+                        }else{
+                            String saleArrange = salesPlan.getSaleArrange();
+                            if(saleArrange.equals("O")){
+                                crmCustomer.setDecisionMaker("销售排程");
+                            }else{
+                                crmCustomer.setDecisionMaker("介绍交流");
+                            }
+                        }
+                        break;
+                    case "second":
+                        crmCustomer.setDecisionMaker("销售过程—保密协议签订");
+                        break;
+                    case "third":
+                        crmCustomer.setDecisionMaker("销售过程—在线尽调");
+                        break;
+                    case "fourth":
+                        crmCustomer.setDecisionMaker("销售过程—现场尽调");
+                        break;
+                    case "fifth":
+                        crmCustomer.setDecisionMaker("销售过程—方案交流");
+                        break;
+                    case "sixth":
+                        crmCustomer.setDecisionMaker("销售过程—合同交流");
+                        break;
+                    case "seventh":
+                        crmCustomer.setDecisionMaker("销售过程—合同签订");
+                        break;
+                    case "eighth":
+                        crmCustomer.setDecisionMaker("合同管理—合同归档");
+                        break;
+                    case "ninth":
+                        crmCustomer.setDecisionMaker("运营服务—计划排程");
+                        break;
+                    case "tenth":
+                        crmCustomer.setDecisionMaker("运营服务—运营导入");
+                        break;
+                    case "eleventh":
+                        crmCustomer.setDecisionMaker("运营服务—技术服务/月度汇报");
+                        break;
+                    case "over":
+                        crmCustomer.setDecisionMaker("完结");
+                        break;
+                }
+            }
+
+        }
+
         map.put("customers", crmCustomerList);
         map.put("pages" , size);
+        return map;
+    }
+
+    @RequestMapping("/selectAllCustomerByPage")
+    public Map<String , Object> getCustomerByPage(){
+        Map<String,Object> map = new HashMap<>();
+
+        List<Customer> customerList = customerDAO.findAll(Sort.by(Sort.Direction.DESC,"createDate"));
+        map.put("customers", customerList);
         return map;
     }
 
@@ -289,6 +365,23 @@ public class CustomerController {
 
         map.put("customers", crmCustomerList);
         map.put("pages" , size);
+        return map;
+    }
+
+    @RequestMapping("/selectAllCustomer")
+    public Map<String , Object> getAllCustomer( HttpSession session){
+        Map<String,Object> map = new HashMap<>();
+
+        List<Customer> customerList = customerDAO.findByFollowStatusOrderByCreateDate("O");
+        IUser user = (IUser)session.getAttribute("user");
+        List<String> perms = userService.findAllFunc(user.getAccount());
+        if(perms.contains("followSalePlan")){
+            map.put("role" , 1);
+        }else{
+            map.put("role" , 0);
+        }
+
+        map.put("customers", customerList);
         return map;
     }
 

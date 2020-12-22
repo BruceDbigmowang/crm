@@ -17,4 +17,6 @@ public interface CustomerDAO extends JpaRepository<Customer , String> {
 
     List<Customer> findByCreateDate(LocalDate createDate);
 
+    List<Customer> findByFollowStatusOrderByCreateDate(String followStatus);
+
 }

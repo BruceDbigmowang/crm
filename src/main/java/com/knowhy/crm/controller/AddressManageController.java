@@ -35,24 +35,12 @@ public class AddressManageController {
     CrmAddresslistMapper crmAddresslistMapper;
 
     @RequestMapping("/findAddressByPage")
-    public Map<String , Object>getAddressByPage(int start){
+    public Map<String , Object>getAddressByPage(){
         Map<String,Object> map = new HashMap<>();
-        QueryWrapper<CrmAddresslist> queryWrapper =  new QueryWrapper<>();
-        queryWrapper.orderByDesc("createDate");
-        Page<CrmAddresslist> page = new Page<>(start,10);  // 查询第1页，每页返回5条
-        IPage<CrmAddresslist> iPage = crmAddresslistMapper.selectPage(page,queryWrapper);
-        int total = (int)iPage.getTotal();
-        int size;
-        if(total%10 == 0){
-            size = total/10;
-        }else{
-            size = total/10 + 1;
-        }
 
-        List<CrmAddresslist> addresslists = iPage.getRecords();
+        List<AddressList> addresslists = addressListDAO.findAll();
 
         map.put("allAddress", addresslists);
-        map.put("pageSize" , size);
         return map;
     }
 
