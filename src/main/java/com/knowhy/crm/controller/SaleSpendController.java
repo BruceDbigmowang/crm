@@ -121,7 +121,7 @@ public class SaleSpendController {
         System.out.println("--->"+type);
         System.out.println("--->"+name);
         List<SaleSpend> saleSpendList = saleSpendService.findSpendByParams(type , name);
-        if(saleSpendList == null || saleSpendList.size() == 0){
+        if(saleSpendList.isEmpty()){
             map.put("result" , "NO");
         }else{
             map.put("result" , "OK");

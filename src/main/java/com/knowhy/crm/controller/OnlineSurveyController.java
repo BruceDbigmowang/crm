@@ -755,7 +755,7 @@ public class OnlineSurveyController {
             planDAO.save(salesPlan);
 
         List<ArrangeRecord> arrangeRecordList = arrangeRecordDAO.findBySalePlanIDAndStepAndType(salePlanID , "线上尽调" , "sale");
-        if(arrangeRecordList != null && arrangeRecordList.size() != 0){
+        if(!arrangeRecordList.isEmpty()){
             ArrangeRecord arrangeRecord = arrangeRecordList.get(0);
             arrangeRecord.setCompleteStatus("C");
             arrangeRecordDAO.save(arrangeRecord);
@@ -778,7 +778,7 @@ public class OnlineSurveyController {
     @RequestMapping("/loadCompanyDataOnline")
     public CompanyInfo findCompanyData(String salePlanID){
         List<CompanyInfo> companyInfoList = companyInfoDAO.findBySalePlanID(salePlanID);
-        if(companyInfoList == null || companyInfoList.size() == 0){
+        if(companyInfoList.isEmpty()){
             return null;
         }else{
             return companyInfoList.get(0);
@@ -788,12 +788,12 @@ public class OnlineSurveyController {
     @RequestMapping("/loadKnowMoreOnline")
     public KnowMore findKnowMoreData(String salePlanID){
         List<CompanyInfo> companyInfoList = companyInfoDAO.findBySalePlanID(salePlanID);
-        if(companyInfoList == null || companyInfoList.size() == 0){
+        if(companyInfoList.isEmpty()){
             return null;
         }else{
             int cid = companyInfoList.get(0).getId();
             List<KnowMore> knowMoreList = knowMoreDAO.findByCid(cid);
-            if(knowMoreList == null || knowMoreList.size() == 0){
+            if(knowMoreList.isEmpty()){
                 return null;
             }else{
                 return knowMoreList.get(0);
@@ -804,12 +804,12 @@ public class OnlineSurveyController {
     @RequestMapping("/loadManufactureOnline")
     public Manufacture findManufactureData(String salePlanID){
         List<CompanyInfo> companyInfoList = companyInfoDAO.findBySalePlanID(salePlanID);
-        if(companyInfoList == null || companyInfoList.size() == 0){
+        if(companyInfoList.isEmpty()){
             return null;
         }else{
             int cid = companyInfoList.get(0).getId();
             List<Manufacture> manufactureList = manufactureDAO.findByCid(cid);
-            if(manufactureList == null || manufactureList.size() == 0){
+            if(manufactureList.isEmpty()){
                 return null;
             }else{
                 return manufactureList.get(0);
@@ -820,12 +820,12 @@ public class OnlineSurveyController {
     @RequestMapping("/loadDataDetailOnline")
     public DataDetail findDataDetailData(String salePlanID){
         List<CompanyInfo> companyInfoList = companyInfoDAO.findBySalePlanID(salePlanID);
-        if(companyInfoList == null || companyInfoList.size() == 0){
+        if(companyInfoList.isEmpty()){
             return null;
         }else{
             int cid = companyInfoList.get(0).getId();
             List<DataDetail> dataDetailList = dataDetailDAO.findByCid(cid);
-            if(dataDetailList == null || dataDetailList.size() == 0){
+            if(dataDetailList.isEmpty()){
                 return null;
             }else{
                 return dataDetailList.get(0);

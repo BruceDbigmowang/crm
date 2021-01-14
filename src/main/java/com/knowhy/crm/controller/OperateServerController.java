@@ -125,7 +125,7 @@ public class OperateServerController {
             taskList.setSaleManAccount(user.getAccount());
             taskList.setSaleManName(user.getName());
             List<ContractRecord> contractRecords = contractRecordDAO.findBySalePlanID(salePlanID);
-            if(contractRecords == null || contractRecords.size() == 0){
+            if(contractRecords.isEmpty()){
                 return "未查到归档信息";
             }
             operator = contractRecords.get(0).getServer();

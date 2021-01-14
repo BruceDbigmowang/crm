@@ -56,7 +56,7 @@ public class RequestController {
         }
 
         List<CrmTravelreq> crmTravelreqList = iPage.getRecords();
-        if(crmTravelreqList == null || crmTravelreqList.size() == 0){
+        if(crmTravelreqList.isEmpty()){
             map.put("info" , "no");
         }else{
             map.put("info" , "ok");
@@ -72,7 +72,7 @@ public class RequestController {
         IUser user = (IUser)session.getAttribute("user");
         String account = user.getAccount();
         List<TravelReq> reqList = reqService.findAllApprove(account);
-        if(reqList == null || reqList.size() == 0){
+        if(reqList.isEmpty()){
             map.put("info" , "no");
         }else{
             map.put("info" , "ok");

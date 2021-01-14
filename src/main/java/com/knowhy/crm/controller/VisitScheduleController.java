@@ -108,7 +108,7 @@ public class VisitScheduleController {
         Map<String , Object> map = new HashMap<>();
         if(visitScheduleService.isSalePlanNum(search)){
             List<VisitSchedule> visitScheduleList = visitScheduleService.findByNumber(search);
-            if(visitScheduleList != null && visitScheduleList.size() != 0){
+            if(!visitScheduleList.isEmpty()){
                 map.put("result" , "OK");
                 map.put("visitSchedules" , visitScheduleList);
             }else{
@@ -116,7 +116,7 @@ public class VisitScheduleController {
             }
         }else{
             List<VisitSchedule> visitScheduleList = visitScheduleService.findByName(search);
-            if(visitScheduleList != null && visitScheduleList.size() != 0){
+            if(!visitScheduleList.isEmpty()){
                 map.put("result" , "OK");
                 map.put("visitSchedules" , visitScheduleList);
             }else{

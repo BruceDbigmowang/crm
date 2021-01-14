@@ -124,7 +124,7 @@ public class SaleArrangeController {
                 taskSumList.remove(taskSum);
             }
         }
-        if(taskSumList == null || taskSumList.size() == 0){
+        if(taskSumList.isEmpty()){
             map.put("info" , "no");
         }else{
             String city = taskSumList.get(0).getCity();
@@ -594,7 +594,7 @@ public class SaleArrangeController {
         for(int i = 0 ; i < steps.size() ; i++){
             String step = steps.get(i);
             List<ArrangeRecord> arrangeRecordList = arrangeRecordDAO.findBySalePlanIDAndStepAndType(salePlanID , step , "sale");
-            if(arrangeRecordList != null && arrangeRecordList.size() != 0){
+            if(!arrangeRecordList.isEmpty()){
                 records.add(arrangeRecordList.get(0));
             }else{
                 ArrangeRecord arrangeRecord = new ArrangeRecord();
@@ -694,21 +694,21 @@ public class SaleArrangeController {
                 arrangeRecordDAO.save(arrangeRecord);
 
                 List<TaskSum> taskSumList = taskSumDAO.findBySalePlanIDAndTask(salePlanID , step);
-                if(taskSumList != null && taskSumList.size() != 0){
+                if(!taskSumList.isEmpty()){
                     TaskSum taskSum = taskSumList.get(0);
                     taskSum.setBdate(btime);
                     taskSum.setDeadline(btime.plusDays(during));
                     taskSumDAO.save(taskSum);
                 }
                 List<Task> taskList = taskDAO.findBySalePlanIDAndJobNameAndJobLevel(salePlanID , step , 2);
-                if(taskList != null && taskList.size() != 0){
+                if(!taskList.isEmpty()){
                     Task task = taskList.get(0);
                     task.setDeadline(btime.plusDays(rest));
                     taskDAO.save(task);
                 }
 
                 List<Task> taskList2 = taskDAO.findBySalePlanIDAndJobNameAndJobLevel(salePlanID , step , 1);
-                if(taskList2 != null && taskList2.size() != 0){
+                if(!taskList2.isEmpty()){
                     Task task = taskList2.get(0);
                     task.setDeadline(btime.plusDays(rest2));
                     taskDAO.save(task);

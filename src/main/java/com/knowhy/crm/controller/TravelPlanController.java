@@ -118,7 +118,7 @@ public class TravelPlanController {
         boolean checkResult = salesPlanDAO.existsById(param);
         if(checkResult){
             List<TravelPlan> travelPlanList = travelPlanService.findBySalePlanNum(param);
-            if(travelPlanList != null && travelPlanList.size() != 0){
+            if(!travelPlanList.isEmpty()){
                 map.put("travels" , travelPlanList);
                 map.put("result" , "OK");
             }else{
@@ -126,7 +126,7 @@ public class TravelPlanController {
             }
         }else{
             List<TravelPlan> travelPlanList = travelPlanService.findByCustomerName(param);
-            if(travelPlanList != null && travelPlanList.size() != 0){
+            if(!travelPlanList.isEmpty()){
                 map.put("travels" , travelPlanList);
                 map.put("result" , "OK");
             }else{

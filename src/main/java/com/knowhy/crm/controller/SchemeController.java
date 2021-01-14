@@ -127,7 +127,7 @@ public class SchemeController {
                     reqDAO.save(req);
 
                     List<Scheme> schemeList = schemeDAO.findByReqNum(salePlanNum);
-                    if(schemeList == null || schemeList.size() == 0){
+                    if(schemeList.isEmpty()){
                         Scheme scheme = new Scheme();
                         scheme.setReqNum(salePlanNum);
                         scheme.setCustomerCode(customerCode);
@@ -206,7 +206,7 @@ public class SchemeController {
         String makerName = user.getName();
 
         List<Scheme> schemeList = schemeDAO.findByReqNum(reqNum);
-        if(schemeList == null || schemeList.size() == 0){
+        if(schemeList.isEmpty()){
             return "请先上传初步方案";
         }
 
@@ -309,7 +309,7 @@ public class SchemeController {
                     planDAO.save(plan);
 
                     List<ArrangeRecord> arrangeRecordList = arrangeRecordDAO.findBySalePlanIDAndStepAndType(salePlanID , "方案交流" , "sale");
-                    if(arrangeRecordList != null && arrangeRecordList.size() != 0){
+                    if(!arrangeRecordList.isEmpty()){
                         ArrangeRecord arrangeRecord = arrangeRecordList.get(0);
                         arrangeRecord.setCompleteStatus("C");
                         arrangeRecordDAO.save(arrangeRecord);

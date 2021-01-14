@@ -63,7 +63,7 @@ public class SatisfactionController {
         for(int i = 0 ; i < salesPlanList.size() ; i++){
             String customerCode = salesPlanList.get(i).getCustomerCode();
             List<Satisfaction> satisfactionList = satisfactionDAO.findByCustomerCode(customerCode);
-            if(satisfactionList != null && satisfactionList.size() != 0){
+            if(!satisfactionList.isEmpty()){
                 Satisfaction satisfaction = satisfactionList.get(0);
                 if(satisfaction.getStatus().equals("N")){
                     noSatisfaction.add(satisfaction);
@@ -149,7 +149,7 @@ public class SatisfactionController {
             for(int i = 0 ; i < salesPlanList.size() ; i++){
                 String customerCode = salesPlanList.get(i).getCustomerCode();
                 List<Satisfaction> satisfactionList = satisfactionDAO.findByCustomerCode(customerCode);
-                if(satisfactionList != null && satisfactionList.size() != 0){
+                if(!satisfactionList.isEmpty()){
                     Satisfaction satisfaction = satisfactionList.get(0);
                     if(satisfaction.getStatus().equals("N")){
                         noSatisfaction.add(satisfaction);
@@ -183,7 +183,7 @@ public class SatisfactionController {
             for(int i = 0 ; i < contractRecordList.size() ; i++){
                 String customerCode = contractRecordList.get(i).getCustomerCode();
                 List<Satisfaction> satisfactionList = satisfactionDAO.findByCustomerCode(customerCode);
-                if(satisfactionList != null && satisfactionList.size() != 0){
+                if(!satisfactionList.isEmpty()){
                     Satisfaction satisfaction = satisfactionList.get(0);
                     if(satisfaction.getStatus().equals("N")){
                         noSatisfaction.add(satisfaction);
@@ -217,7 +217,7 @@ public class SatisfactionController {
             for(int i = 0 ; i < contractRecordList.size() ; i++){
                 String customerCode = contractRecordList.get(i).getCustomerCode();
                 List<Satisfaction> satisfactionList = satisfactionDAO.findByCustomerCode(customerCode);
-                if(satisfactionList != null && satisfactionList.size() != 0){
+                if(!satisfactionList.isEmpty()){
                     Satisfaction satisfaction = satisfactionList.get(0);
                     if(satisfaction.getStatus().equals("N")){
                         noSatisfaction.add(satisfaction);
@@ -251,7 +251,7 @@ public class SatisfactionController {
             for(int i = 0 ; i < salesPlanList.size() ; i++){
                 String customerCode = salesPlanList.get(i).getCustomerCode();
                 List<Satisfaction> satisfactionList = satisfactionDAO.findByCustomerCode(customerCode);
-                if(satisfactionList != null && satisfactionList.size() != 0){
+                if(!satisfactionList.isEmpty()){
                     Satisfaction satisfaction = satisfactionList.get(0);
                     if(satisfaction.getStatus().equals("N")){
                         noSatisfaction.add(satisfaction);
@@ -298,7 +298,7 @@ public class SatisfactionController {
             for(int i = 0 ; i < salesPlanList.size() ; i++){
                 String customerCode = salesPlanList.get(i).getCustomerCode();
                 List<Satisfaction> satisfactionList = satisfactionDAO.findByCustomerCode(customerCode);
-                if(satisfactionList != null && satisfactionList.size() != 0){
+                if(!satisfactionList.isEmpty()){
                     Satisfaction satisfaction = satisfactionList.get(0);
                     if(satisfaction.getStatus().equals("N")){
                         noSatisfaction.add(satisfaction);
@@ -332,7 +332,7 @@ public class SatisfactionController {
             for(int i = 0 ; i < contractRecordList.size() ; i++){
                 String customerCode = contractRecordList.get(i).getCustomerCode();
                 List<Satisfaction> satisfactionList = satisfactionDAO.findByCustomerCode(customerCode);
-                if(satisfactionList != null && satisfactionList.size() != 0){
+                if(!satisfactionList.isEmpty()){
                     Satisfaction satisfaction = satisfactionList.get(0);
                     if(satisfaction.getStatus().equals("N")){
                         noSatisfaction.add(satisfaction);
@@ -366,7 +366,7 @@ public class SatisfactionController {
             for(int i = 0 ; i < contractRecordList.size() ; i++){
                 String customerCode = contractRecordList.get(i).getCustomerCode();
                 List<Satisfaction> satisfactionList = satisfactionDAO.findByCustomerCode(customerCode);
-                if(satisfactionList != null && satisfactionList.size() != 0){
+                if(!satisfactionList.isEmpty()){
                     Satisfaction satisfaction = satisfactionList.get(0);
                     if(satisfaction.getStatus().equals("N")){
                         noSatisfaction.add(satisfaction);
@@ -400,7 +400,7 @@ public class SatisfactionController {
             for(int i = 0 ; i < salesPlanList.size() ; i++){
                 String customerCode = salesPlanList.get(i).getCustomerCode();
                 List<Satisfaction> satisfactionList = satisfactionDAO.findByCustomerCode(customerCode);
-                if(satisfactionList != null && satisfactionList.size() != 0){
+                if(!satisfactionList.isEmpty()){
                     Satisfaction satisfaction = satisfactionList.get(0);
                     if(satisfaction.getStatus().equals("N")){
                         noSatisfaction.add(satisfaction);

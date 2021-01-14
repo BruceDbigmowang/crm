@@ -64,7 +64,7 @@ public class SecretFileController {
 //        try{
 
         List<ArrangeRecord> arrangeRecordList = arrangeRecordDAO.findBySalePlanIDAndStepAndType(salePlanID , "保密协议签订" , "sale");
-        if(arrangeRecordList != null && arrangeRecordList.size() != 0){
+        if(!arrangeRecordList.isEmpty()){
             ArrangeRecord arrangeRecord = arrangeRecordList.get(0);
             arrangeRecord.setCompleteStatus("C");
             arrangeRecordDAO.save(arrangeRecord);
@@ -86,7 +86,7 @@ public class SecretFileController {
     public SecretFile getSecretFileById(String salePlanID){
         System.out.println(salePlanID);
         List<SecretFile> secretFileList = secretFileDAO.findBySalePlanId(salePlanID);
-        if(secretFileList != null && secretFileList.size() > 0){
+        if(!secretFileList.isEmpty()){
             return secretFileList.get(0);
         }else{
             return null;

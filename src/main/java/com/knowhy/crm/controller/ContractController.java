@@ -139,7 +139,7 @@ public class ContractController {
                     planDAO.save(plan);
 
                     List<ArrangeRecord> arrangeRecordList = arrangeRecordDAO.findBySalePlanIDAndStepAndType(salePlanID , "合同交流" , "sale");
-                    if(arrangeRecordList != null && arrangeRecordList.size() != 0){
+                    if(!arrangeRecordList.isEmpty()){
                         ArrangeRecord arrangeRecord = arrangeRecordList.get(0);
                         arrangeRecord.setCompleteStatus("C");
                         arrangeRecordDAO.save(arrangeRecord);
@@ -291,7 +291,7 @@ public class ContractController {
                     planDAO.save(plan);
 
                     List<ArrangeRecord> arrangeRecordList = arrangeRecordDAO.findBySalePlanIDAndStepAndType(salePlanID , "合同签订" , "sale");
-                    if(arrangeRecordList != null && arrangeRecordList.size() != 0){
+                    if(!arrangeRecordList.isEmpty()){
                         ArrangeRecord arrangeRecord = arrangeRecordList.get(0);
                         arrangeRecord.setCompleteStatus("C");
                         arrangeRecordDAO.save(arrangeRecord);

@@ -52,7 +52,7 @@ public class SalePlanController {
     public Map<String,Object> getAll(@RequestParam("start")int start){
         List<SalesPlan> salesPlanList = salePlanService.findAllSalePlan();
         Map<String , Object> map = new HashMap<>();
-        if(salesPlanList == null || salesPlanList.size() == 0){
+        if(salesPlanList.isEmpty()){
             map.put("result" , "暂无数据");
         }else{
             QueryWrapper<CrmSalesplan> queryWrapper =  new QueryWrapper<>();

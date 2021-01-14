@@ -16,11 +16,14 @@ public class SendEmail {
         // 收件人电子邮箱
         String to = receiveEmail;
 
-        // 发件人电子邮箱
-        String from = "2483498610@qq.com";
+//        // 收件人电子邮箱
+//        String to = "abcd@gmail.com";
 
-        // 指定发送邮件的主机为 smtp.qq.com
-        String host = "smtp.qq.com";  //QQ 邮件服务器
+        // 发件人电子邮箱
+        String from = "crmadmin@knowhy.com.cn";
+
+        // 指定发送邮件的主机为 localhost
+        String host = "smtp.knowhy.com.cn";
 
         // 获取系统属性
         Properties properties = System.getProperties();
@@ -28,14 +31,8 @@ public class SendEmail {
         // 设置邮件服务器
         properties.setProperty("mail.smtp.host", host);
 
-        properties.put("mail.smtp.auth", "true");
         // 获取默认session对象
-        Session session = Session.getDefaultInstance(properties,new Authenticator(){
-            public PasswordAuthentication getPasswordAuthentication()
-            {
-                return new PasswordAuthentication("2483498610@qq.com", "wvppiqzpbyrydjie"); //发件人邮件用户名、授权码
-            }
-        });
+        Session session = Session.getDefaultInstance(properties);
 
         try{
             // 创建默认的 MimeMessage 对象
@@ -49,14 +46,14 @@ public class SendEmail {
                     new InternetAddress(to));
 
             // Set Subject: 头部头字段
-            message.setSubject("客户进度更新");
+            message.setSubject("预警提示");
 
             // 设置消息体
             message.setText(text);
 
             // 发送消息
             Transport.send(message);
-            System.out.println("Sent message successfully....from 2483498610@qq.com");
+            System.out.println("Sent message successfully....");
         }catch (MessagingException mex) {
             mex.printStackTrace();
         }

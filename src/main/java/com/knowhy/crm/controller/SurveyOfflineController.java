@@ -949,7 +949,7 @@ public class SurveyOfflineController {
         SalesPlan salesPlan=  salesPlanDAO.getOne(salePlanID);
         List<OfflineFile> offlineFileList = offlineFileDAO.findBySalePlanIDAndType(salePlanID , type);
         if(type.equals("saleList")){
-            if(offlineFileList == null || offlineFileList.size() == 0){
+            if(offlineFileList.isEmpty()){
                 offlineFile.setSalePlanID(salePlanID);
                 offlineFile.setCustomerCode(salesPlan.getCustomerCode());
                 offlineFile.setCustomerName(salesPlan.getCustomerName());
@@ -965,7 +965,7 @@ public class SurveyOfflineController {
                 }
                 salesPlan.setPlanStatus("fifth");
                 List<ArrangeRecord> arrangeRecordList = arrangeRecordDAO.findBySalePlanIDAndStepAndType(salePlanID , "现场尽调" , "sale");
-                if(arrangeRecordList != null && arrangeRecordList.size() != 0){
+                if(!arrangeRecordList.isEmpty()){
                     ArrangeRecord arrangeRecord = arrangeRecordList.get(0);
                     arrangeRecord.setCompleteStatus("C");
                     arrangeRecordDAO.save(arrangeRecord);
@@ -984,7 +984,7 @@ public class SurveyOfflineController {
                 offlineFileDAO.save(offlineFile);
             }
         }else{
-            if(offlineFileList == null || offlineFileList.size() == 0){
+            if(offlineFileList.isEmpty()){
                 offlineFile.setSalePlanID(salePlanID);
                 offlineFile.setCustomerCode(salesPlan.getCustomerCode());
                 offlineFile.setCustomerName(salesPlan.getCustomerName());
@@ -1019,7 +1019,7 @@ public class SurveyOfflineController {
     public String saveOrUpdatePayment(String salePlanID , String payCycle , String payWay , HttpSession session){
         IUser user = (IUser)session.getAttribute("user");
         List<Payment> paymentList = paymentDAO.findBySalePlanID(salePlanID);
-        if(paymentList == null || paymentList.size() == 0){
+        if(paymentList.isEmpty()){
             Payment payment = new Payment();
             payment.setSalePlanID(salePlanID);
             SalesPlan salesPlan = salesPlanDAO.getOne(salePlanID);

@@ -421,7 +421,7 @@ public class BussinessTravelController {
         TravelReq req = reqDAO.getOne(orderID);
         Map<String , Object> map = new HashMap<>();
         map.put("travel",travel);
-        if(travelSumList != null && travelSumList.size() != 0){
+        if(!travelSumList.isEmpty()){
             map.put("sum" , travelSumList.get(0));
         }
         return map;

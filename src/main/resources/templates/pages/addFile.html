@@ -453,8 +453,8 @@
         var trainAsk = $("#trainAsk option:selected").val();
         var serverAsk = $("#serverAsk option:selected").val();
         var clearWay = $("#clearWay option:selected").val();
-        var currency = $("#currency").text();
-        var parities = $("#currency").val();
+        var currency = $("#currency").find("option:selected").text();
+        var parities = $("#currency option:selected").val();
         var annualMoney = $("#annualMoney").val();
         var concludeDate = $("#concludeDate").val();
         var effectiveDate = $("#effectiveDate").val();

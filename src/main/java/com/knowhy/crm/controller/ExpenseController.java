@@ -112,7 +112,7 @@ public class ExpenseController {
     @RequestMapping("/getAllNeedAppprove")
     public Object getAllApprove(){
         List<ExpenseHead> expenseHeadList = expenseService.getAllApprove();
-        if(expenseHeadList == null || expenseHeadList.size() == 0){
+        if(expenseHeadList.isEmpty()){
             return "暂无数据";
         }else{
             return expenseHeadList;
@@ -124,7 +124,7 @@ public class ExpenseController {
         IUser user = (IUser)session.getAttribute("user");
         String account = user.getAccount();
         List<ExpenseHead> expenseHeadList = expenseService.findHeadByAccountAndStatus(account , status);
-        if(expenseHeadList == null || expenseHeadList.size() == 0){
+        if(expenseHeadList.isEmpty()){
             return "暂无数据";
         }else{
             return expenseHeadList;

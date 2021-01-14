@@ -240,7 +240,12 @@ public class IntroduceController {
             if(postcodes != null && postcodes.length > i){
                 String postcode = postcodes[i];
                 if(!"".equals(postcode)){
-                    addressList.setPostcode(postcode);
+                    if(postcode.length() != 6){
+                        return "第"+target+"行邮编填写不符规则";
+                    }else{
+                        addressList.setPostcode(postcode);
+                    }
+
                 }
             }
             if(principals != null && principals.length == address.length){
@@ -296,7 +301,7 @@ public class IntroduceController {
         List<TaskSum> sumList = taskSumDAO.findBySalePlanIDAndTask(salePlanID , "保密协议签订");
 
         List<ArrangeRecord> arrangeRecordList = arrangeRecordDAO.findBySalePlanIDAndStepAndType(salePlanID , "介绍交流" , "sale");
-        if(arrangeRecordList != null && arrangeRecordList.size() != 0){
+        if(!arrangeRecordList.isEmpty()){
             ArrangeRecord arrangeRecord = arrangeRecordList.get(0);
             arrangeRecord.setCompleteStatus("C");
             arrangeRecordDAO.save(arrangeRecord);
