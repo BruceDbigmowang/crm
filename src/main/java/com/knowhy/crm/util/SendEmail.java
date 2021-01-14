@@ -16,14 +16,11 @@ public class SendEmail {
         // 收件人电子邮箱
         String to = receiveEmail;
 
-//        // 收件人电子邮箱
-//        String to = "abcd@gmail.com";
-
         // 发件人电子邮箱
         String from = "crmadmin@knowhy.com.cn";
 
-        // 指定发送邮件的主机为 localhost
-        String host = "smtp.knowhy.com.cn";
+        // 指定发送邮件的主机为 smtp.qq.com
+        String host = "smtp.knowhy.com.cn";  //QQ 邮件服务器
 
         // 获取系统属性
         Properties properties = System.getProperties();
@@ -31,8 +28,14 @@ public class SendEmail {
         // 设置邮件服务器
         properties.setProperty("mail.smtp.host", host);
 
+        properties.put("mail.smtp.auth", "true");
         // 获取默认session对象
-        Session session = Session.getDefaultInstance(properties);
+        Session session = Session.getDefaultInstance(properties,new Authenticator(){
+            public PasswordAuthentication getPasswordAuthentication()
+            {
+                return new PasswordAuthentication("crmadmin@knowhy.com.cn", "Abc111111"); //发件人邮件用户名、授权码
+            }
+        });
 
         try{
             // 创建默认的 MimeMessage 对象
@@ -46,14 +49,14 @@ public class SendEmail {
                     new InternetAddress(to));
 
             // Set Subject: 头部头字段
-            message.setSubject("预警提示");
+            message.setSubject("客户预警提醒");
 
             // 设置消息体
             message.setText(text);
 
             // 发送消息
             Transport.send(message);
-            System.out.println("Sent message successfully....");
+            System.out.println("Sent message successfully....from runoob.com");
         }catch (MessagingException mex) {
             mex.printStackTrace();
         }
