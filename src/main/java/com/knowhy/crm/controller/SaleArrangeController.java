@@ -182,7 +182,7 @@ public class SaleArrangeController {
             LocalDate pervious = starts.get(i);
             LocalDate later = starts.get(i + 1);
             int tartget = i;
-            if(pervious.isBefore(later)){
+            if(pervious.isBefore(later) || pervious.isEqual(later)){
 
             }else{
                 String result = "";

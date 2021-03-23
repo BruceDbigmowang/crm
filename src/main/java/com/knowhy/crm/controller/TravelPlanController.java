@@ -9,7 +9,6 @@ import com.knowhy.crm.mapper.CrmTravelplanMapper;
 import com.knowhy.crm.pojo.IUser;
 import com.knowhy.crm.pojo.TravelPlan;
 import com.knowhy.crm.service.TravelPlanService;
-import com.knowhy.crm.service.VisitScheduleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -30,8 +29,6 @@ import java.util.Map;
 public class TravelPlanController {
     @Autowired
     TravelPlanService travelPlanService;
-    @Autowired
-    VisitScheduleService visitScheduleService;
     @Resource
     CrmTravelplanMapper crmTravelplanMapper;
     @Autowired

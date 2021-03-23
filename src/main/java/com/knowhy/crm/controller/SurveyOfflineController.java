@@ -11,7 +11,10 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpSession;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 public class SurveyOfflineController {
@@ -1044,5 +1047,29 @@ public class SurveyOfflineController {
             paymentDAO.save(payment);
         }
         return "OK";
+    }
+
+    @RequestMapping("/getPayment")
+    public Map<String , Object> getPayment(String salePlanID){
+        List<Payment> paymentList = paymentDAO.findBySalePlanID(salePlanID);
+        Map<String , Object> map = new HashMap<>();
+        if(paymentList.isEmpty()){
+            map.put("result" , "no");
+        }else{
+            map.put("result" , "ok");
+            String payCycleStr = paymentList.get(0).getPayCycle();
+            System.out.println(payCycleStr);
+            String[] payCycleArr = payCycleStr.split(",");
+            System.out.println(payCycleArr.length);
+            List<String> cycleList = Arrays.asList(payCycleArr);
+            System.out.println(cycleList.size());
+            map.put("cycle" , cycleList);
+            String payWayStr = paymentList.get(0).getPayWay();
+            System.out.println(payWayStr);
+            String[] payWayArr = payWayStr.split(",");
+            List<String> wayList = Arrays.asList(payWayArr);
+            map.put("way" , wayList);
+        }
+        return map;
     }
 }

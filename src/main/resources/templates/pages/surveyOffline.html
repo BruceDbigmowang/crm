@@ -130,10 +130,43 @@
     function saveExcelFile() {
         var type = $("#offlineType").val();
         if(type == "pay"){
-            var payCycle = $("#payCycle option:selected").val();
-            var payWay = $("#payWay option:selected").val();
+            // var payCycle = $("#payCycle option:selected").val();
+
+            var obj = document.getElementsByName("payCycle");
+            var payCycle = [];
+            for (k in obj) {
+                if (obj[k].checked)
+                    payCycle.push(obj[k].value);
+            }
+
+            var payCycleStr = "";
+            for(var i = 0 ; i < payCycle.length; i++){
+                if(i == 0){
+                    payCycleStr = payCycleStr + payCycle[i];
+                }else{
+                    payCycleStr = payCycleStr+ "," + payCycle[i];
+                }
+            }
+
+            // var payWay = $("#payWay option:selected").val();
+
+            var obj2 = document.getElementsByName("payWay");
+            var payWay = [];
+            for (k in obj2) {
+                if (obj2[k].checked)
+                    payWay.push(obj2[k].value);
+            }
+            var payWayStr = "";
+            for(var i = 0 ; i < payWay.length; i++){
+                if(i == 0){
+                    payWayStr = payWayStr + payWay[i];
+                }else{
+                    payWayStr = payWayStr+ "," + payWay[i];
+                }
+            }
+
             var salePlanID = $("#customerID").val();
-            var data = {"type":type , "payCycle":payCycle , "payWay":payWay , "salePlanID":salePlanID};
+            var data = {"type":type , "payCycle":payCycleStr , "payWay":payWayStr , "salePlanID":salePlanID};
             $.ajax({
                 type:"post",
                 data:data,
@@ -462,21 +495,27 @@
             '                        <tr>\n' +
             '                            <td>付款周期</td>\n' +
             '                            <td>\n' +
-            '                                <select id="payCycle" class="form-control">\n' +
-            '                                    <option value="预付款">预付款</option>\n' +
-            '                                    <option value="30天">30天</option>\n' +
-            '                                    <option value="60天">60天</option>\n' +
-            '                                    <option value="90天">90天</option>\n' +
-            '                                </select>\n' +
+            // '                                <select id="payCycle" class="form-control">\n' +
+            // '                                    <option value="预付款">预付款</option>\n' +
+            // '                                    <option value="30天">30天</option>\n' +
+            // '                                    <option value="60天">60天</option>\n' +
+            // '                                    <option value="90天">90天</option>\n' +
+            // '                                </select>\n' +
+                '<input name="payCycle" type="checkbox" style="width: 20px;vertical-align:middle; margin-top:0;" value="预付款">'+"预付款"+
+            '<input name="payCycle" type="checkbox" style="width: 20px;margin-left: 5%;vertical-align:middle; margin-top:0;" value="30天">'+"30天"+
+            '<input name="payCycle" type="checkbox" style="width: 20px;margin-left: 5%;vertical-align:middle; margin-top:0;" value="60天">'+"60天"+
+            '<input name="payCycle" type="checkbox" style="width: 20px;margin-left: 5%;vertical-align:middle; margin-top:0;" value="90天">'+"90天"+
             '                            </td>\n' +
             '                        </tr>\n' +
             '                        <tr>\n' +
             '                            <td>付款方式</td>\n' +
             '                            <td>\n' +
-            '                                <select id="payWay" class="form-control">\n' +
-            '                                    <option value="现金">现金</option>\n' +
-            '                                    <option value="电子承兑">电子承兑</option>\n' +
-            '                                </select>\n' +
+            // '                                <select id="payWay" class="form-control">\n' +
+            // '                                    <option value="现金">现金</option>\n' +
+            // '                                    <option value="电子承兑">电子承兑</option>\n' +
+            // '                                </select>\n' +
+            '<input name="payWay" type="checkbox" style="width: 20px;vertical-align:middle; margin-top:0;" value="现金">'+"现金"+
+            '<input name="payWay" type="checkbox" style="width: 20px;margin-left: 5%;vertical-align:middle; margin-top:0;" value="电子承兑">'+"电子承兑"+
             '                            </td>\n' +
             '                        </tr>\n' +
             '                    </table>');
@@ -485,6 +524,40 @@
         $("#footPart").append("<button class=\"btn btn-primary\" type=\"button\" onclick='loadPreviousPage()'>上一页</button>\n" +
             "<button data-dismiss=\"modal\" class=\"btn btn-default\" type=\"button\">关闭</button>\n" +
             "                    <button class=\"btn btn-primary\" type=\"button\" onclick=\"saveExcelFile()\">下一页</button>");
+
+        var salePlanID = $("#customerID").val();
+        $.ajax({
+            type:"post",
+            data:{"salePlanID":salePlanID},
+            url:"getPayment",
+            async:false,
+            success:function (data) {
+                var result = data.result;
+                if(result == "ok"){
+                    var cycleList = data.cycle;
+                    var wayList = data.way;
+                    for(var i = 0 ; i < cycleList.length ; i++){
+                        var payCycle = cycleList[i];
+                        var inputs = document.getElementsByName('payCycle');
+                        for(var j = 0 ; j < inputs.length ; j++){
+                            if(payCycle ==inputs[j].value){
+                                inputs[j].checked = true;
+                            }
+                        }
+                    }
+
+                    for(var i = 0 ; i < wayList.length ; i++){
+                        var payWay = wayList[i];
+                        var inputs = document.getElementsByName('payWay');
+                        for(var j = 0 ; j < inputs.length ; j++){
+                            if(payWay ==inputs[j].value){
+                                inputs[j].checked = true;
+                            }
+                        }
+                    }
+                }
+            }
+        })
 
     }
 

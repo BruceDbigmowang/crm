@@ -1,5 +1,6 @@
 package com.knowhy.crm.entity;
 
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.time.LocalDateTime;
 import com.knowhy.crm.entity.BaseEntity;
@@ -24,6 +25,7 @@ public class CrmAccount extends BaseEntity {
 
     private static final long serialVersionUID = 1L;
 
+    @TableId
     private String account;
 
     private String name;

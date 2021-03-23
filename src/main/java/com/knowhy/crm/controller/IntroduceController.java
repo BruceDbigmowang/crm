@@ -128,7 +128,7 @@ public class IntroduceController {
                 if("".equals(email)){
                     return "第"+target+"行邮箱未填写";
                 }else{
-                    String str="^([a-zA-Z0-9]*[-_]?[a-zA-Z0-9]+)*@([a-zA-Z0-9]*[-_]?[a-zA-Z0-9]+)+[\\.][A-Za-z]{2,3}([\\.][A-Za-z]{2})?$";
+                    String str="^([a-z0-9A-Z]+[-|\\.]?)+[a-z0-9A-Z]@([a-z0-9A-Z]+(-[a-z0-9A-Z]+)?\\.)+[a-zA-Z]{2,}$";
                     Pattern p = Pattern.compile(str);
                     Matcher m = p.matcher(email);
                     if(!m.matches()){
@@ -307,12 +307,7 @@ public class IntroduceController {
             arrangeRecordDAO.save(arrangeRecord);
         }
 
-        plan.setPlanStatus("second");
-        plan.setUpdateDate(LocalDate.now());
-        plan.setSpendTime(7);
-        plan.setDeadline(sumList.get(0).getDeadline());
-        plan.setStep(2);
-        salesPlanDAO.save(plan);
+
 
         for(PrincipalList principalList : principalLists){
             principalListDAO.save(principalList);
@@ -320,6 +315,13 @@ public class IntroduceController {
         for(AddressList addressList : addressLists){
             addressListDAO.save(addressList);
         }
+
+        plan.setPlanStatus("second");
+        plan.setUpdateDate(LocalDate.now());
+        plan.setSpendTime(7);
+        plan.setDeadline(sumList.get(0).getDeadline());
+        plan.setStep(2);
+        salesPlanDAO.save(plan);
 
         taskDAO.deleteBySalePlanIDAndJobName(salePlanID , "介绍交流");
         taskSumDAO.deleteBySalePlanIDAndTask(salePlanID , "介绍交流");
